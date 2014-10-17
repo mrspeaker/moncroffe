@@ -19,6 +19,8 @@ Player.prototype = {
 		this.obj.position.x = 2;
 		this.obj.position.z = 2;
 
+		this.obj.rotation.y = Math.PI;
+
 		var controls = this.controls = new THREE.FirstPersonControls(this.obj);
 		controls.movementSpeed = 3;
 		controls.lookSpeed = 0.1;
@@ -52,19 +54,23 @@ Player.prototype = {
 		}
 
 		var col = this.screen.getTouchingVoxels(this);
-		if (!col.below) {
+		if (col.inside) {
+			obj.position.y = col.inside[1] + this.bb.h;
+		}
+		else if (!col.below) {
 			obj.translateY(-0.1);
 		} else {
 			obj.position.y = col.below[1] + this.bb.h;
 		}
 
-		this.camera.position.set(
-			this.obj.position.x,
-			this.obj.position.y,
-			this.obj.position.z);
+		camera.position.set(
+			obj.position.x + this.bb.w / 2,
+			obj.position.y,
+			obj.position.z);
 
-		this.camera.rotation.x = this.obj.rotation.x;
-		this.camera.rotation.y = this.obj.rotation.y;
-		this.camera.rotation.z = this.obj.rotation.z;
+		camera.rotation.set(
+			obj.rotation.x,
+			obj.rotation.y,
+			obj.rotation.z);
 	}
 };
