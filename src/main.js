@@ -4,14 +4,13 @@ var main = {
 
 	init: function () {
 
-		
 		this.initThree();
 		this.player = new Player(this.camera, this).init();
 
-		var ambientLight = new THREE.AmbientLight(0x333);
+		var ambientLight = new THREE.AmbientLight(0x333333);
 		this.scene.add(ambientLight);
 
-		var light = new THREE.PointLight( 0xffffff, 1, 100 ); 
+		var light = new THREE.PointLight( 0xffffcc, 1, 100 ); 
 		light.position.set(0, 10, 0); 
 		this.scene.add(light);
 
@@ -20,7 +19,7 @@ var main = {
 		// this.scene.add(directionalLight);
 
 		var geometry = new THREE.BoxGeometry(1, 1, 1);
-		var material = new THREE.MeshLambertMaterial( { color: 0x88ff88	 } );
+		var material = new THREE.MeshLambertMaterial( { color: 0xffffff	 } );
 
 		this.chunk = [];
 		var chunkSize = this.chunkSize;
@@ -30,7 +29,7 @@ var main = {
 				this.chunk[i][j] = [];
 				for (var k = 0; k < chunkSize; k++) {
 					this.chunk[i][j][k] = j === 0 || 	
-						j === 1 && i < 10  && k < 10 ||
+						j === 1 && ((i < 10 && k < 10) || (i > 15 && k > 15)) ||
 						j === 2 && i < 5 && k < 5 ? true : false;
 					if (this.chunk[i][j][k]) {
 						mesh = new THREE.Mesh(geometry, material);
@@ -93,6 +92,6 @@ var main = {
 	},
 
 	render: function () {
-		this.renderer.render( this.scene, this.camera );
+		this.renderer.render(this.scene, this.camera);
 	}
 };

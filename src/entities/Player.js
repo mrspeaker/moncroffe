@@ -19,52 +19,44 @@ Player.prototype = {
 		this.obj.position.x = 2;
 		this.obj.position.z = 2;
 
-		this.obj.rotation.y = Math.PI;
-
 		var controls = this.controls = new THREE.FirstPersonControls(this.obj);
+		controls.lon = 235;
 		controls.movementSpeed = 3;
 		controls.lookSpeed = 0.1;
 		controls.lookVertical = false;
+
 		return this;
 	},
 
 	update: function (delta) {
 
 		var obj = this.obj,
-			camera = this.camera;
-
-		var move = this.controls.update(delta);
-
-		var lim = 100;
+			camera = this.camera,
+			lim = 100,
+			move = this.controls.update(delta);
 
 		obj.translateX(move[0]);
-		if (obj.position.x < -lim) {
-			obj.position.x = -lim;
-		}
-		if (obj.position.x > lim) {
-			obj.position.x = lim;
-		}
 		obj.translateY(move[1]);
 		obj.translateZ(move[2]);
-		if (obj.position.z > lim) {
-			obj.position.z = lim;
-		}
-		if (obj.position.z < -lim) {
-			obj.position.z = -lim;
-		}
-
 		var col = this.screen.getTouchingVoxels(this);
-		if (col.inside) {
-			obj.position.y = col.inside[1] + this.bb.h;
-		}
-		else if (!col.below) {
-			obj.translateY(-0.1);
+
+		if (!col.inside) {
+			
+			if (!col.below) {
+				obj.translateY(-0.1);
+			} else {
+				obj.position.y = col.below[1] + this.bb.h;
+			}
+
 		} else {
-			obj.position.y = col.below[1] + this.bb.h;
+			//obj.position.y = col.inside[1] + this.bb.h;
+			obj.translateX(-move[0]);
+			obj.translateY(-move[1]);
+			obj.translateZ(-move[2]);
 		}
 
 		camera.position.set(
-			obj.position.x + this.bb.w / 2,
+			obj.position.x,
 			obj.position.y,
 			obj.position.z);
 
