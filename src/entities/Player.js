@@ -11,16 +11,18 @@ Player.prototype = {
 		this.bb = {
 			w: 0.7, 
 			d: 0.7, 
-			h: 1.2
+			h: 1.9
 		};
 
-		this.obj = new THREE.Object3D();
+		var obj = this.obj = new THREE.Object3D();
 
-		this.obj.position.y = 6;
-		this.obj.position.x = 2;
-		this.obj.position.z = 2;
+		obj.position.y = 6;
+		obj.position.x = 0;
+		obj.position.z = 3;
 
-		var controls = this.controls = new THREE.FirstPersonControls(this.obj);
+		obj.rotation.y = 0;
+
+		var controls = this.controls = new THREE.FirstPersonControls(obj);
 		controls.lon = 235;
 		controls.movementSpeed = 3;
 		controls.lookSpeed = 0.1;
@@ -36,6 +38,8 @@ Player.prototype = {
 			lim = 100,
 			move = this.controls.update(delta),
 			jump = move[3];
+
+		
 
 		if (jump) {
 			this.acc = 1.5;
@@ -54,7 +58,7 @@ Player.prototype = {
 			if (!col.below) {
 				obj.translateY(-0.3);
 			} else {
-				obj.position.y = col.below[1] + this.bb.h;
+				obj.position.y = col.below[1];
 			}
 
 		} else {
@@ -66,7 +70,7 @@ Player.prototype = {
 
 		camera.position.set(
 			obj.position.x,
-			obj.position.y,
+			obj.position.y + this.bb.h,
 			obj.position.z);
 
 		camera.rotation.set(

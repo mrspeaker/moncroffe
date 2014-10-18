@@ -20,7 +20,7 @@ var main = {
 		this.scene.add(directionalLight);
 		*/
 
-		var geometry = new THREE.BoxGeometry(1, 1, 1);
+		var geometry = new THREE.BoxGeometry(0.99, 0.99, 0.99);
 		var material = new THREE.MeshLambertMaterial( { color: 0xffffff	 } );
 
 		this.chunk = [];
@@ -64,7 +64,7 @@ var main = {
 		this.renderer = renderer = new THREE.WebGLRenderer({ antialias: true });
 		renderer.setSize(window.innerWidth, window.innerHeight);
 
-		document.body.appendChild(renderer.domElement);
+		document.querySelector("#board").appendChild(renderer.domElement);
 
 	},
 
@@ -93,10 +93,12 @@ var main = {
 
 		xl = p.x | 0;
 		xr = p.x + bb.w | 0;
-		ytop = p.y | 0;
-		ybot = p.y - bb.h | 0;
+		ytop = p.y + bb.h | 0;
+		ybot = p.y | 0;
 		zl = p.z | 0;
-		zr = p.z + bb.d | 0;	 	
+		zr = p.z + bb.d | 0;
+
+		document.querySelector("#watch").innerHTML = xl + ":" + zl + ":" + ytop + " / " + ybot;	 	
 
 		return {
 			inside: this.chunk[zl][ytop][xl] ? [xl, ytop, zl] : false,

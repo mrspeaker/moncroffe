@@ -2,3 +2,14 @@ body {
 	margin: 0;
 	padding: 0;
 }
+
+#watch {
+	width: 200px;
+	height: 180px;
+	font-size: 20pt;
+	position:absolute;
+	top: 0;
+	left: 0;
+	color: #999;
+	font-family: helvetica;
+}
