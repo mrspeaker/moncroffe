@@ -33,7 +33,16 @@ Player.prototype = {
 		var obj = this.obj,
 			camera = this.camera,
 			lim = 100,
-			move = this.controls.update(delta);
+			move = this.controls.update(delta),
+			jump = move[3];
+
+		if (jump) {
+			this.acc = 1.5;
+		}
+		if (this.acc > 0) {
+			this.acc -= 0.2;
+			obj.translateY(this.acc);
+		}
 
 		obj.translateX(move[0]);
 		obj.translateY(move[1]);
@@ -43,7 +52,7 @@ Player.prototype = {
 		if (!col.inside) {
 			
 			if (!col.below) {
-				obj.translateY(-0.1);
+				obj.translateY(-0.3);
 			} else {
 				obj.position.y = col.below[1] + this.bb.h;
 			}
@@ -54,6 +63,7 @@ Player.prototype = {
 			obj.translateY(-move[1]);
 			obj.translateZ(-move[2]);
 		}
+
 
 		camera.position.set(
 			obj.position.x,
