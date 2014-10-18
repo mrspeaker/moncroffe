@@ -7,6 +7,7 @@ var Player = function (camera, screen) {
 Player.prototype.constructor = Player;
 Player.prototype = {
 	init: function () {
+		
 		this.bb = {
 			w: 0.7, 
 			d: 0.7, 
@@ -50,7 +51,6 @@ Player.prototype = {
 		var col = this.screen.getTouchingVoxels(this);
 
 		if (!col.inside) {
-			
 			if (!col.below) {
 				obj.translateY(-0.3);
 			} else {
@@ -58,7 +58,6 @@ Player.prototype = {
 			}
 
 		} else {
-			//obj.position.y = col.inside[1] + this.bb.h;
 			obj.translateX(-move[0]);
 			obj.translateY(-move[1]);
 			obj.translateZ(-move[2]);

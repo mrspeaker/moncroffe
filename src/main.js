@@ -14,9 +14,11 @@ var main = {
 		light.position.set(10, 20, 10); 
 		this.scene.add(light);
 
+		/*
 		var directionalLight = new THREE.DirectionalLight(0x000044);
 		directionalLight.position.set(20, 10, 20).normalize();
 		this.scene.add(directionalLight);
+		*/
 
 		var geometry = new THREE.BoxGeometry(1, 1, 1);
 		var material = new THREE.MeshLambertMaterial( { color: 0xffffff	 } );
@@ -30,7 +32,8 @@ var main = {
 				for (var k = 0; k < chunkSize; k++) {
 					this.chunk[i][j][k] = j === 0 || 	
 						j === 1 && ((i < 10 && k < 10) || (i > 15 && k > 15)) ||
-						j === 2 && i < 5 && k < 5 ? true : Math.random() < 0.05;
+						j === 2 && i < 5 && k < 5 ||
+						j === 3 && i == 0 && k == 0 ? true : false;
 					if (this.chunk[i][j][k]) {
 						mesh = new THREE.Mesh(geometry, material);
 
@@ -50,13 +53,15 @@ var main = {
 
 		this.run();
 	},
+
 	initThree: function () {
+
 		var scene, camera, renderer;
 
 		this.scene = scene = new THREE.Scene();
 
 		this.camera = camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
-		this.renderer = renderer = new THREE.WebGLRenderer( { antialias: true } );
+		this.renderer = renderer = new THREE.WebGLRenderer({ antialias: true });
 		renderer.setSize(window.innerWidth, window.innerHeight);
 
 		document.body.appendChild(renderer.domElement);
@@ -76,18 +81,26 @@ var main = {
 
 	getTouchingVoxels: function (e) {
 
-		var p = e.obj.position,
+		var cnk = this.chunk,
+			p = e.obj.position,
 			bb = e.bb,
-			x, ytop, ybot, z;
+			xl,
+			xr,
+			ytop, 
+			ybot, 
+			zl,
+			zr;
 
-		x = p.x | 0;
+		xl = p.x | 0;
+		xr = p.x + bb.w | 0;
 		ytop = p.y | 0;
 		ybot = p.y - bb.h | 0;
-		z = p.z | 0;
+		zl = p.z | 0;
+		zr = p.z + bb.d | 0;	 	
 
 		return {
-			inside: this.chunk[z][ytop][x] ? [x, ytop, z] : false,
-			below: this.chunk[z][ybot][x] ? [x, ybot, z] : false
+			inside: this.chunk[zl][ytop][xl] ? [xl, ytop, zl] : false,
+			below: this.chunk[zl][ybot][xl] ? [xl, ybot, zl] : false
 		}
 	},
 
