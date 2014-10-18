@@ -11,12 +11,12 @@ var main = {
 		this.scene.add(ambientLight);
 
 		var light = new THREE.PointLight( 0xffffcc, 1, 100 ); 
-		light.position.set(0, 10, 0); 
+		light.position.set(10, 20, 10); 
 		this.scene.add(light);
 
-		// var directionalLight = new THREE.DirectionalLight(0xffffff);
-		// directionalLight.position.set(1, 10, 1).normalize();
-		// this.scene.add(directionalLight);
+		var directionalLight = new THREE.DirectionalLight(0x000044);
+		directionalLight.position.set(20, 10, 20).normalize();
+		this.scene.add(directionalLight);
 
 		var geometry = new THREE.BoxGeometry(1, 1, 1);
 		var material = new THREE.MeshLambertMaterial( { color: 0xffffff	 } );
@@ -30,7 +30,7 @@ var main = {
 				for (var k = 0; k < chunkSize; k++) {
 					this.chunk[i][j][k] = j === 0 || 	
 						j === 1 && ((i < 10 && k < 10) || (i > 15 && k > 15)) ||
-						j === 2 && i < 5 && k < 5 ? true : false;
+						j === 2 && i < 5 && k < 5 ? true : Math.random() < 0.05;
 					if (this.chunk[i][j][k]) {
 						mesh = new THREE.Mesh(geometry, material);
 
