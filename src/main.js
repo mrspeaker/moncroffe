@@ -28,52 +28,71 @@ var main = {
 		this.scene.add(directionalLight);*/
 
 		var blockSize = 1;
-		var geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
 
 		var tex = THREE.ImageUtils.loadTexture('res/images/terrain-orig.png');
 		tex.magFilter = THREE.NearestFilter;
-		tex.minFilter = THREE.LinearMipMapLinearFilter;
+		tex.minFilter = THREE.NearestFilter;
 
 	    var material = new THREE.MeshLambertMaterial({ 
 	    	map: tex,
 	    	wrapAround: true
 	    });
 
-	    function getBlock(x, y) {
-	    	return [
-		    	new THREE.Vector2(x / 16, y / 16), 
-		    	new THREE.Vector2((x + 1) / 16, y / 16),
-		    	new THREE.Vector2((x + 1) / 16, (y + 1) / 16), 
-		    	new THREE.Vector2(x / 16, (y + 1) / 16)
-	    	];
+	    var geoms = [];
+
+	    function getGeometry(type) {
+
+	    	if (geoms[type]) {
+	    		return geoms[type];
+	    	}
+
+	    	var geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize),
+	    		// F, B, T, B, L, R
+	    		blocks = {
+	    			grass: [[3, 15], [3, 15], [0, 15], [2, 15], [3, 15], [3, 15]],
+	    			stone: [[1, 15], [1, 15], [1, 15], [1, 15], [1, 15], [1, 15]],
+	    			dirt: [[2, 15], [2, 15], [2, 15], [2, 15], [2, 15], [2, 15]],
+	    			tree: [[4, 14], [4, 14], [5, 14], [5, 14], [4, 14], [4, 14]],
+	    			cobble: [[0, 14], [0, 14], [0, 14], [0, 14], [0, 14], [0, 14]],
+	    			gold: [[0, 13], [0, 13], [0, 13], [0, 13], [0, 13], [0, 13]],
+	    			snow: [[2, 11], [2, 11], [2, 11], [2, 11], [2, 11], [2, 11]]
+	    		},
+	    		block = blocks[type];
+    	    
+    	    function getBlock(x, y) {
+    	    	return [
+    		    	new THREE.Vector2(x / 16, y / 16),
+    		    	new THREE.Vector2((x + 1) / 16, y / 16),
+    		    	new THREE.Vector2((x + 1) / 16, (y + 1) / 16), 
+    		    	new THREE.Vector2(x / 16, (y + 1) / 16)
+    	    	];
+    	    }
+
+    	    var front = getBlock(block[0][0], block[0][1]),
+    			back = getBlock(block[1][0], block[1][1]),
+    			top = getBlock(block[2][0], block[2][1]),
+    			bottom = getBlock(block[3][0], block[3][1]),
+    			right = getBlock(block[4][0], block[4][1]),
+    			left = getBlock(block[5][0], block[5][1]);
+
+    		geometry.faceVertexUvs[0] = [];
+    		geometry.faceVertexUvs[0][0] = [ front[3], front[0], front[2] ];
+    		geometry.faceVertexUvs[0][1] = [ front[0], front[1], front[2] ];
+    		geometry.faceVertexUvs[0][2] = [ back[3], back[0], back[2] ];
+    		geometry.faceVertexUvs[0][3] = [ back[0], back[1], back[2] ];
+    		geometry.faceVertexUvs[0][4] = [ top[3], top[0], top[2] ];
+    		geometry.faceVertexUvs[0][5] = [ top[0], top[1], top[2] ];
+    		geometry.faceVertexUvs[0][6] = [ bottom[3], bottom[0], bottom[2] ];
+    		geometry.faceVertexUvs[0][7] = [ bottom[0], bottom[1], bottom[2] ];
+    		geometry.faceVertexUvs[0][8] = [ right[3], right[0], right[2] ];
+    		geometry.faceVertexUvs[0][9] = [ right[0], right[1], right[2] ];
+    		geometry.faceVertexUvs[0][10] = [ left[3], left[0], left[2] ];
+    		geometry.faceVertexUvs[0][11] = [ left[0], left[1], left[2] ];
+
+    		geoms[type] = geometry;
+
+    		return geometry;
 	    }
-
-	    var bricks = getBlock(Math.random() * 15 | 0, 12 + (Math.random() * 4 | 0));
-		var clouds = getBlock(Math.random() * 15 | 0, 12 + (Math.random() * 4 | 0));
-		var crate = getBlock(Math.random() * 15 | 0, 12 + (Math.random() * 4 | 0));
-		var stone = getBlock(Math.random() * 15 | 0, 12 + (Math.random() * 4 | 0));
-		var water = getBlock(Math.random() * 15 | 0, 12 + (Math.random() * 4 | 0));
-		var wood = getBlock(Math.random() * 15 | 0, 12 + (Math.random() * 4 | 0));
-
-		geometry.faceVertexUvs[0] = [];
-
-		geometry.faceVertexUvs[0][0] = [ bricks[0], bricks[1], bricks[3] ];
-		geometry.faceVertexUvs[0][1] = [ bricks[1], bricks[2], bricks[3] ];
-		 
-		geometry.faceVertexUvs[0][2] = [ clouds[0], clouds[1], clouds[3] ];
-		geometry.faceVertexUvs[0][3] = [ clouds[1], clouds[2], clouds[3] ];
-		 
-		geometry.faceVertexUvs[0][4] = [ crate[0], crate[1], crate[3] ];
-		geometry.faceVertexUvs[0][5] = [ crate[1], crate[2], crate[3] ];
-		 
-		geometry.faceVertexUvs[0][6] = [ stone[0], stone[1], stone[3] ];
-		geometry.faceVertexUvs[0][7] = [ stone[1], stone[2], stone[3] ];
-		 
-		geometry.faceVertexUvs[0][8] = [ water[0], water[1], water[3] ];
-		geometry.faceVertexUvs[0][9] = [ water[1], water[2], water[3] ];
-		 
-		geometry.faceVertexUvs[0][10] = [ wood[0], wood[1], wood[3] ];
-		geometry.faceVertexUvs[0][11] = [ wood[1], wood[2], wood[3] ];
 
 		this.chunk = [];
 		var chunkSize = this.chunkSize;
@@ -89,6 +108,8 @@ var main = {
 
 						j === 3 && i > 5 && k > 5 ? true : false;
 					if (this.chunk[i][j][k]) {
+						var blocks = ["grass", "stone", "dirt", "tree", "cobble", "gold", "snow"];
+						var geometry = getGeometry(blocks[Math.random() * blocks.length | 0]);
 						mesh = new THREE.Mesh(geometry, material);
 
 						mesh.position.x = k;
