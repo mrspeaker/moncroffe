@@ -22,11 +22,66 @@ Player.prototype = {
 
 		obj.rotation.y = 0;
 
-		var controls = this.controls = new THREE.FirstPersonControls(obj);
+		/*var controls = this.controls = new THREE.FirstPersonControls(obj);
 		controls.lon = 235;
 		controls.movementSpeed = 3;
 		controls.lookSpeed = 0.1;
-		controls.lookVertical = false;
+		controls.lookVertical = false;*/
+		var controls = this.controls = new THREE.PointerLockControls(this.camera);
+		this.screen.scene.add(controls.getObject());
+
+		var blocker = document.getElementById( 'blocker' );
+		var instructions = document.getElementById( 'instructions' );
+		// http://www.html5rocks.com/en/tutorials/pointerlock/intro/
+		var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+		if ( havePointerLock ) {
+			var element = document.body;
+			var pointerlockchange = function ( event ) {
+				if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+					controls.enabled = true;
+					blocker.style.display = 'none';
+				} else {
+					controls.enabled = false;
+					blocker.style.display = '-webkit-box';
+					blocker.style.display = '-moz-box';
+					blocker.style.display = 'box';
+					instructions.style.display = '';
+				}
+			}
+			var pointerlockerror = function ( event ) {
+				instructions.style.display = '';
+			}
+		
+			// Hook pointer lock state change events
+			document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+			document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+			document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+			document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+			document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+			document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+			instructions.addEventListener( 'click', function ( event ) {
+				instructions.style.display = 'none';
+				// Ask the browser to lock the pointer
+				element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+				if ( /Firefox/i.test( navigator.userAgent ) ) {
+					var fullscreenchange = function ( event ) {
+						if ( document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element ) {
+							document.removeEventListener( 'fullscreenchange', fullscreenchange );
+							document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
+							element.requestPointerLock();
+						}
+					}
+					document.addEventListener( 'fullscreenchange', fullscreenchange, false );
+					document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
+					element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+					element.requestFullscreen();
+				} else {
+					element.requestPointerLock();
+				}
+			}, false );
+		} else {
+			instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+		}
 
 		return this;
 	},
@@ -36,9 +91,10 @@ Player.prototype = {
 		var obj = this.obj,
 			camera = this.camera,
 			lim = 100,
-			move = this.controls.update(delta),
+			move = [0, 0, 0, 0],//this.controls.update(delta),
 			jump = move[3];
 
+		this.controls.update();
 		
 
 		if (jump) {
@@ -67,7 +123,8 @@ Player.prototype = {
 			obj.translateZ(-move[2]);
 		}
 
-		
+		//console.log(camera.position, camera.rotation)
+		/*
 
 		camera.position.set(
 			obj.position.x - this.bb.w / 2,
@@ -77,6 +134,6 @@ Player.prototype = {
 		camera.rotation.set(
 			obj.rotation.x,
 			obj.rotation.y,
-			obj.rotation.z);
+			obj.rotation.z);*/
 	}
 };

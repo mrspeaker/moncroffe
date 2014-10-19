@@ -7,20 +7,20 @@ var main = {
 		this.initThree();
 		this.player = new Player(this.camera, this).init();
 
-		var ambientLight = new THREE.AmbientLight(0x333333);
+		var ambientLight = new THREE.AmbientLight(0x111111);
 		this.scene.add(ambientLight);
 
-		var light = new THREE.PointLight( 0xffffcc, 1, 100 ); 
-		light.position.set(10, 20, 10); 
+		var light = new THREE.PointLight( 0xffffff, 1, 10 ); 
+		light.position.set(10, 2.2, 10); 
 		this.scene.add(light);
 
-		/*
-		var directionalLight = new THREE.DirectionalLight(0x000044);
+		/*var directionalLight = new THREE.DirectionalLight(0x000044);
 		directionalLight.position.set(20, 10, 20).normalize();
-		this.scene.add(directionalLight);
-		*/
+		this.scene.add(directionalLight);*/
 
-		var geometry = new THREE.BoxGeometry(0.99, 0.99, 0.99);
+
+		var blockSize = 1;
+		var geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
 		var material = new THREE.MeshLambertMaterial( { color: 0xffffff	 } );
 
 		this.chunk = [];
@@ -56,6 +56,12 @@ var main = {
 		this.run();
 	},
 
+	onWindowResize: function () {
+		this.camera.aspect = window.innerWidth / window.innerHeight;
+		this.camera.updateProjectionMatrix();
+		this.renderer.setSize( window.innerWidth, window.innerHeight );
+	},
+
 	initThree: function () {
 
 		var scene, camera, renderer;
@@ -67,6 +73,9 @@ var main = {
 		renderer.setSize(window.innerWidth, window.innerHeight);
 
 		document.querySelector("#board").appendChild(renderer.domElement);
+
+		var self = this;
+		window.addEventListener( 'resize', function () { self.onWindowResize(); }, false );
 
 	},
 
