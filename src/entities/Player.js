@@ -54,24 +54,25 @@ Player.prototype = {
 		obj.translateZ(move[2]);
 		var col = this.screen.getTouchingVoxels(this);
 
-		if (!col.inside) {
+		if (!col.centerBot) {
 			if (!col.below) {
+			 	// "Gravity" 
 				obj.translateY(-0.3);
 			} else {
 				obj.position.y = col.below[1];
 			}
-
 		} else {
 			obj.translateX(-move[0]);
 			obj.translateY(-move[1]);
 			obj.translateZ(-move[2]);
 		}
 
+		
 
 		camera.position.set(
-			obj.position.x,
+			obj.position.x - this.bb.w / 2,
 			obj.position.y + this.bb.h,
-			obj.position.z);
+			obj.position.z - this.bb.d / 2);
 
 		camera.rotation.set(
 			obj.rotation.x,

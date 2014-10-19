@@ -33,7 +33,9 @@ var main = {
 					this.chunk[i][j][k] = j === 0 || 	
 						j === 1 && ((i < 10 && k < 10) || (i > 15 && k > 15)) ||
 						j === 2 && i < 5 && k < 5 ||
-						j === 3 && i == 0 && k == 0 ? true : false;
+						j === 3 && i == 0 && k == 0 ||
+
+						j === 3 && i > 5 && k > 5 ? true : false;
 					if (this.chunk[i][j][k]) {
 						mesh = new THREE.Mesh(geometry, material);
 
@@ -85,23 +87,27 @@ var main = {
 			p = e.obj.position,
 			bb = e.bb,
 			xl,
+			xm,
 			xr,
 			ytop, 
 			ybot, 
 			zl,
+			zm,
 			zr;
 
 		xl = p.x | 0;
+		xm = p.x + (bb.w / 2) | 0;
 		xr = p.x + bb.w | 0;
 		ytop = p.y + bb.h | 0;
 		ybot = p.y | 0;
 		zl = p.z | 0;
+		zm = p.z + (bb.d / 2) | 0;
 		zr = p.z + bb.d | 0;
 
-		document.querySelector("#watch").innerHTML = xl + ":" + zl + ":" + ytop + " / " + ybot;	 	
+		document.querySelector("#watch").innerHTML = xm + ":" + zm + ":" + ytop + " / " + ybot;	 	
 
 		return {
-			inside: this.chunk[zl][ytop][xl] ? [xl, ytop, zl] : false,
+			centerBot: this.chunk[zm][ybot + 1][xm] ? true : false,
 			below: this.chunk[zl][ybot][xl] ? [xl, ybot, zl] : false
 		}
 	},
