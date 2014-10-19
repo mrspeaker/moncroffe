@@ -7,21 +7,60 @@ var main = {
 		this.initThree();
 		this.player = new Player(this.camera, this).init();
 
-		var ambientLight = new THREE.AmbientLight(0x111111);
+		this.scene.fog = new THREE.Fog(0xaaaaaa, 0.010, 40);
+		var ambientLight = new THREE.AmbientLight(0x888888);
 		this.scene.add(ambientLight);
+
+
+		//var hemiLight = new THREE.HemisphereLight( 0x0000ff, 0x00ff00, 0.6 ); 
+		//this.scene.add(hemiLight);
 
 		var light = new THREE.PointLight( 0xffffff, 1, 10 ); 
 		light.position.set(10, 2.2, 10); 
+		this.scene.add(light);
+
+		light = new THREE.PointLight( 0xffffff, 1, 10 ); 
+		light.position.set(0, 5, 8); 
 		this.scene.add(light);
 
 		/*var directionalLight = new THREE.DirectionalLight(0x000044);
 		directionalLight.position.set(20, 10, 20).normalize();
 		this.scene.add(directionalLight);*/
 
-
 		var blockSize = 1;
 		var geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
-		var material = new THREE.MeshLambertMaterial( { color: 0xffffff	 } );
+
+	    var material = new THREE.MeshPhongMaterial({ 
+	    	map: THREE.ImageUtils.loadTexture('res/images/all.jpg'),
+	    	wrapAround: true
+	    });
+
+	    var bricks = [new THREE.Vector2(0, .666), new THREE.Vector2(.5, .666), new THREE.Vector2(.5, 1), new THREE.Vector2(0, 1)];
+		var clouds = [new THREE.Vector2(.5, .666), new THREE.Vector2(1, .666), new THREE.Vector2(1, 1), new THREE.Vector2(.5, 1)];
+		var crate = [new THREE.Vector2(0, .333), new THREE.Vector2(.5, .333), new THREE.Vector2(.5, .666), new THREE.Vector2(0, .666)];
+		var stone = [new THREE.Vector2(.5, .333), new THREE.Vector2(1, .333), new THREE.Vector2(1, .666), new THREE.Vector2(.5, .666)];
+		var water = [new THREE.Vector2(0, 0), new THREE.Vector2(.5, 0), new THREE.Vector2(.5, .333), new THREE.Vector2(0, .333)];
+		var wood = [new THREE.Vector2(.5, 0), new THREE.Vector2(1, 0), new THREE.Vector2(1, .333), new THREE.Vector2(.5, .333)];
+
+		geometry.faceVertexUvs[0] = [];
+
+		geometry.faceVertexUvs[0][0] = [ bricks[0], bricks[1], bricks[3] ];
+		geometry.faceVertexUvs[0][1] = [ bricks[1], bricks[2], bricks[3] ];
+		 
+		geometry.faceVertexUvs[0][2] = [ clouds[0], clouds[1], clouds[3] ];
+		geometry.faceVertexUvs[0][3] = [ clouds[1], clouds[2], clouds[3] ];
+		 
+		geometry.faceVertexUvs[0][4] = [ crate[0], crate[1], crate[3] ];
+		geometry.faceVertexUvs[0][5] = [ crate[1], crate[2], crate[3] ];
+		 
+		geometry.faceVertexUvs[0][6] = [ stone[0], stone[1], stone[3] ];
+		geometry.faceVertexUvs[0][7] = [ stone[1], stone[2], stone[3] ];
+		 
+		geometry.faceVertexUvs[0][8] = [ water[0], water[1], water[3] ];
+		geometry.faceVertexUvs[0][9] = [ water[1], water[2], water[3] ];
+		 
+		geometry.faceVertexUvs[0][10] = [ wood[0], wood[1], wood[3] ];
+		geometry.faceVertexUvs[0][11] = [ wood[1], wood[2], wood[3] ];
 
 		this.chunk = [];
 		var chunkSize = this.chunkSize;
@@ -70,6 +109,7 @@ var main = {
 
 		this.camera = camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
 		this.renderer = renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer.setClearColor( 0xffffff, 1);
 		renderer.setSize(window.innerWidth, window.innerHeight);
 
 		document.querySelector("#board").appendChild(renderer.domElement);
