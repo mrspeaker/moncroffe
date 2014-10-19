@@ -7,7 +7,7 @@ var main = {
 		this.initThree();
 		this.player = new Player(this.camera, this).init();
 
-		this.scene.fog = new THREE.Fog(0xaaaaaa, 0.010, 40);
+		this.scene.fog = new THREE.Fog(0xD7EAF9, 0.1, 80);
 		var ambientLight = new THREE.AmbientLight(0x888888);
 		this.scene.add(ambientLight);
 
@@ -30,17 +30,30 @@ var main = {
 		var blockSize = 1;
 		var geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
 
-	    var material = new THREE.MeshPhongMaterial({ 
-	    	map: THREE.ImageUtils.loadTexture('res/images/all.jpg'),
+		var tex = THREE.ImageUtils.loadTexture('res/images/terrain-orig.png');
+		tex.magFilter = THREE.NearestFilter;
+		tex.minFilter = THREE.LinearMipMapLinearFilter;
+
+	    var material = new THREE.MeshLambertMaterial({ 
+	    	map: tex,
 	    	wrapAround: true
 	    });
 
-	    var bricks = [new THREE.Vector2(0, .666), new THREE.Vector2(.5, .666), new THREE.Vector2(.5, 1), new THREE.Vector2(0, 1)];
-		var clouds = [new THREE.Vector2(.5, .666), new THREE.Vector2(1, .666), new THREE.Vector2(1, 1), new THREE.Vector2(.5, 1)];
-		var crate = [new THREE.Vector2(0, .333), new THREE.Vector2(.5, .333), new THREE.Vector2(.5, .666), new THREE.Vector2(0, .666)];
-		var stone = [new THREE.Vector2(.5, .333), new THREE.Vector2(1, .333), new THREE.Vector2(1, .666), new THREE.Vector2(.5, .666)];
-		var water = [new THREE.Vector2(0, 0), new THREE.Vector2(.5, 0), new THREE.Vector2(.5, .333), new THREE.Vector2(0, .333)];
-		var wood = [new THREE.Vector2(.5, 0), new THREE.Vector2(1, 0), new THREE.Vector2(1, .333), new THREE.Vector2(.5, .333)];
+	    function getBlock(x, y) {
+	    	return [
+		    	new THREE.Vector2(x / 16, y / 16), 
+		    	new THREE.Vector2((x + 1) / 16, y / 16),
+		    	new THREE.Vector2((x + 1) / 16, (y + 1) / 16), 
+		    	new THREE.Vector2(x / 16, (y + 1) / 16)
+	    	];
+	    }
+
+	    var bricks = getBlock(Math.random() * 15 | 0, 12 + (Math.random() * 4 | 0));
+		var clouds = getBlock(Math.random() * 15 | 0, 12 + (Math.random() * 4 | 0));
+		var crate = getBlock(Math.random() * 15 | 0, 12 + (Math.random() * 4 | 0));
+		var stone = getBlock(Math.random() * 15 | 0, 12 + (Math.random() * 4 | 0));
+		var water = getBlock(Math.random() * 15 | 0, 12 + (Math.random() * 4 | 0));
+		var wood = getBlock(Math.random() * 15 | 0, 12 + (Math.random() * 4 | 0));
 
 		geometry.faceVertexUvs[0] = [];
 
@@ -109,7 +122,7 @@ var main = {
 
 		this.camera = camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
 		this.renderer = renderer = new THREE.WebGLRenderer({ antialias: true });
-		renderer.setClearColor( 0xffffff, 1);
+		renderer.setClearColor( 0x88C4EC, 1);
 		renderer.setSize(window.innerWidth, window.innerHeight);
 
 		document.querySelector("#board").appendChild(renderer.domElement);
