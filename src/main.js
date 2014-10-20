@@ -109,7 +109,7 @@ var main = {
 						j === 3 && i > 5 && k > 5 ? true : false;
 					if (this.chunk[i][j][k]) {
 						var blocks = ["grass", "stone", "dirt", "tree", "cobble", "gold", "snow"];
-						var geometry = getGeometry(blocks[Math.random() * blocks.length | 0]);
+						var geometry = getGeometry(blocks[Math.abs(Math.sin(Date.now()) / 2) * blocks.length | 0]);
 						mesh = new THREE.Mesh(geometry, material);
 
 						mesh.position.x = k;

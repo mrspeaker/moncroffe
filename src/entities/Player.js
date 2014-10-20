@@ -94,9 +94,19 @@ Player.prototype = {
 			move = [0, 0, 0, 0],//this.controls.update(delta),
 			jump = move[3];
 
+		//obj = this.controls.getObject();
+		//this.obj = this.controls.getObject();
 		this.controls.update();
-		
 
+		var col = this.screen.getTouchingVoxels(this);
+
+		if (!col.centerBot) {
+			this.controls.isOnObject = false;
+		} else {
+			this.controls.isOnObject = true;
+		}
+		
+/*
 		if (jump) {
 			this.acc = 1.5;
 		}
@@ -121,12 +131,12 @@ Player.prototype = {
 			obj.translateX(-move[0]);
 			obj.translateY(-move[1]);
 			obj.translateZ(-move[2]);
-		}
+		}*/
 
 		//console.log(camera.position, camera.rotation)
-		/*
+		
 
-		camera.position.set(
+		/*camera.position.set(
 			obj.position.x - this.bb.w / 2,
 			obj.position.y + this.bb.h,
 			obj.position.z - this.bb.d / 2);
