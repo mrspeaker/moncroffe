@@ -2,13 +2,15 @@ var main = {
 
 	chunkSize: 20,
 
+	day: false,
+
 	init: function () {
 
 		this.initThree();
 		this.player = new Player(this.camera, this).init();
 
-		this.scene.fog = new THREE.Fog(0xD7EAF9, 0.1, 80);
-		var ambientLight = new THREE.AmbientLight(0x888888);
+		this.scene.fog = new THREE.Fog(this.day ? 0xD7EAF9 : 0x111111, 0.1, 80);
+		var ambientLight = new THREE.AmbientLight(this.day ? 0x888888 : 0x333333);
 		this.scene.add(ambientLight);
 
 
@@ -147,7 +149,7 @@ var main = {
 
 		this.camera = camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
 		this.renderer = renderer = new THREE.WebGLRenderer();
-		renderer.setClearColor( 0x88C4EC, 1);
+		renderer.setClearColor( this.day ? 0x88C4EC : 0x000000, 1);
 		renderer.setSize(window.innerWidth, window.innerHeight);
 
 		document.querySelector("#board").appendChild(renderer.domElement);
