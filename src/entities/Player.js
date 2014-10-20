@@ -22,19 +22,21 @@ Player.prototype = {
 
 		obj.rotation.y = 0;
 
-		/*var controls = this.controls = new THREE.FirstPersonControls(obj);
-		controls.lon = 235;
-		controls.movementSpeed = 3;
-		controls.lookSpeed = 0.1;
-		controls.lookVertical = false;*/
-		var controls = this.controls = new THREE.PointerLockControls(this.camera);
+		var controls = this.controls = this.createControls();
 		this.screen.scene.add(controls.getObject());
+
+		return this;
+	},
+
+	createControls: function () {
+
+		var controls = new THREE.PointerLockControls(this.camera);
 
 		var blocker = document.getElementById( 'blocker' );
 		var instructions = document.getElementById( 'instructions' );
 		// http://www.html5rocks.com/en/tutorials/pointerlock/intro/
 		var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
-		if ( havePointerLock ) {
+		if (havePointerLock) {
 			var element = document.body;
 			var pointerlockchange = function ( event ) {
 				if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
@@ -63,27 +65,13 @@ Player.prototype = {
 				instructions.style.display = 'none';
 				// Ask the browser to lock the pointer
 				element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-				if ( /Firefox/i.test( navigator.userAgent ) ) {
-					var fullscreenchange = function ( event ) {
-						if ( document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element ) {
-							document.removeEventListener( 'fullscreenchange', fullscreenchange );
-							document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
-							element.requestPointerLock();
-						}
-					}
-					document.addEventListener( 'fullscreenchange', fullscreenchange, false );
-					document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
-					element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
-					element.requestFullscreen();
-				} else {
-					element.requestPointerLock();
-				}
+				element.requestPointerLock();
 			}, false );
 		} else {
 			instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
 		}
 
-		return this;
+		return controls;
 	},
 
 	update: function (delta) {

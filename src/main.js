@@ -193,6 +193,12 @@ var main = {
 		zm = p.z + (bb.d / 2) | 0;
 		zr = p.z + bb.d | 0;
 
+		//  Take the unit surface normal of the colliding voxel (pointing outward).
+    	//	Multiply it by the dot product of itself and the player velocity.
+    	//  Subtract it from the player's velocity.
+		// This will give you the "slide against the wall" effect that most games employ (without any problematic trigonometry)
+
+
 		document.querySelector("#watch").innerHTML = xm + ":" + zm + ":" + ytop + " / " + ybot;	 	
 
 		return {
