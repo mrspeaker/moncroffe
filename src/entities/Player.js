@@ -14,13 +14,13 @@ Player.prototype = {
 			h: 1.9
 		};
 
+		this.velocity = new THREE.Vector3(0, 0, 0);
+
 		var obj = this.obj = new THREE.Object3D();
 
-		obj.position.y = 6;
-		obj.position.x = 0;
-		obj.position.z = 3;
-
-		obj.rotation.y = 0;
+		obj.position.y = 1;
+		obj.position.x = 2;
+		obj.position.z = 18;
 
 		var controls = this.controls = this.createControls();
 		this.screen.scene.add(controls.getObject());
@@ -77,22 +77,35 @@ Player.prototype = {
 	update: function (delta) {
 
 		var obj = this.obj,
-			camera = this.camera,
-			lim = 100,
-			move = [0, 0, 0, 0],//this.controls.update(delta),
-			jump = move[3];
+			//camera = this.camera,
+			move = this.controls.update(),//this.controls.update(delta),
+			jump = move.jump;
 
-		//obj = this.controls.getObject();
-		//this.obj = this.controls.getObject();
-		this.controls.update();
+		//if (move.delta === 0) return;
 
-		var col = this.screen.getTouchingVoxels(this);
+		var drag = 10.0;
+		this.velocity.x -= this.velocity.x * drag * move.delta;
+		this.velocity.z -= this.velocity.z * drag * move.delta;
+		//this.velocity.y -= 9.8 * drag * move.delta;
+
+		this.velocity.x += move.x;
+		this.velocity.z += move.z;
+
+		/*var col = this.screen.getTouchingVoxels(this);
 
 		if (!col.centerBot) {
 			this.controls.isOnObject = false;
 		} else {
 			this.controls.isOnObject = true;
-		}
+		}*/
+
+		// Hmm - dodgy - copying the rotation back to the player
+		this.obj.rotation.set(move.rot.x, move.rot.y, move.rot.z);
+
+		this.obj.translateX(this.velocity.x * move.delta);
+		this.obj.translateZ(this.velocity.z * move.delta);
+
+		this.controls.setPos(this.obj.position.x, 0, this.obj.position.z);
 		
 /*
 		if (jump) {
