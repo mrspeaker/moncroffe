@@ -17,7 +17,7 @@ Player.prototype = {
 		this.velocity = new THREE.Vector3(0, 0, 0);
 
 		var obj = this.obj = new THREE.Object3D();
-		obj.position.y = 1;
+		obj.position.y =10;
 		obj.position.x = 2;
 		obj.position.z = 18;
 
@@ -79,28 +79,53 @@ Player.prototype = {
 			move = this.controls.update(),
 			jump = move.jump;
 
+		// Hmm - dodgy - copying the rotation back to the player
+		obj.rotation.set(move.rot.x, move.rot.y, move.rot.z);
+
 		var drag = 10.0;
 		this.velocity.x -= this.velocity.x * drag * move.delta;
 		this.velocity.z -= this.velocity.z * drag * move.delta;
-		//this.velocity.y -= 9.8 * drag * move.delta;
+		this.velocity.y -= 9.8 * drag * move.delta;
 
 		this.velocity.x += move.x;
 		this.velocity.z += move.z;
 
-		/*var col = this.screen.getTouchingVoxels(this);
-		if (!col.centerBot) {
-			this.controls.isOnObject = false;
+		obj.translateX(this.velocity.x * move.delta);
+		obj.translateY(this.velocity.y * move.delta);
+		obj.translateZ(this.velocity.z * move.delta);
+
+		document.querySelector("#watch").innerHTML = obj.position.y
+
+		if (obj.position.y < 0) {
+			this.velocity.y = 0;
+			obj.position.y = 0;
+		}
+
+		if (move.jump) {
+			this.velocity.y += 25;
+		}
+		/*ar col = this.screen.getTouchingVoxels(this);
+		if (!col.below) {
+			console.log("in the air!")
 		} else {
-			this.controls.isOnObject = true;
+			if (move.jump) {
+				this.velocity.y += 25;
+			}
+
+			console.log("on the ground!", move.jump);
+			//obj.position.y = col.below[1];
 		}*/
 
-		// Hmm - dodgy - copying the rotation back to the player
-		this.obj.rotation.set(move.rot.x, move.rot.y, move.rot.z);
+		/*if (!col.centerBot) {
+			
+		} else {
+			obj.translateX(- this.velocity.x * move.delta);
+			obj.translateY(- this.velocity.y * move.delta);
+			obj.translateZ(- this.velocity.z * move.delta);
+		}*/
 
-		this.obj.translateX(this.velocity.x * move.delta);
-		this.obj.translateZ(this.velocity.z * move.delta);
-
-		this.controls.setPos(this.obj.position.x, 0, this.obj.position.z);
+		
+		this.controls.setPos(obj.position.x, obj.position.y + this.bb.h, obj.position.z);
 		
 /*
 		if (jump) {

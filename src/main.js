@@ -198,8 +198,7 @@ var main = {
     	//  Subtract it from the player's velocity.
 		// This will give you the "slide against the wall" effect that most games employ (without any problematic trigonometry)
 
-
-		document.querySelector("#watch").innerHTML = xm + ":" + zm + ":" + ytop + " / " + ybot;	 	
+		//document.querySelector("#watch").innerHTML = xm + ":" + zm + ":" + ytop + " / " + ybot;	 	
 
 		return {
 			centerBot: this.chunk[zm][ybot + 1][xm] ? true : false,
