@@ -96,6 +96,8 @@ var main = {
 
 		this.chunk = [];
 		var chunkSize = this.chunkSize;
+		var totalGeom = new THREE.Geometry();
+		var materials = [];
 		for (var i = 0; i < chunkSize; i++) {
 			this.chunk[i] = [];
 			for (var j = 0; j  < chunkSize; j++) {
@@ -106,23 +108,25 @@ var main = {
 						j === 2 && i < 5 && k < 5 ||
 						j === 3 && i == 0 && k == 0 ||
 
-						j === 3 && i > 5 && k > 5 ? true : false;
+						j === 3 && i > 5 && k > 5 ? true : Math.random() < 0.05;
 					if (this.chunk[i][j][k]) {
-						var blocks = ["grass", "stone", "dirt", "tree", "cobble", "gold", "snow"];
-						var geometry = getGeometry(blocks[Math.abs(Math.sin(Date.now()) / 2) * blocks.length | 0]);
+						var blocks = ["grass", "stone", "dirt","grass", "stone", "dirt", "grass", "stone", "dirt", "tree", "cobble", "gold", "snow"];
+						var geometry = getGeometry(blocks[Math.random() * blocks.length | 0]);
 						mesh = new THREE.Mesh(geometry, material);
-
-						mesh.position.x = k;
-						mesh.position.y = j;
-						mesh.position.z = i;
+						materials.push(material);
 
 						mesh.position.set(k, j, i);
 
-						this.scene.add(mesh);
+						mesh.updateMatrix();
+						totalGeom.merge(mesh.geometry, mesh.matrix);
+
 					}
 				}
 			}
 		}
+
+		var total = new THREE.Mesh(totalGeom, material);
+		this.scene.add(total);
 
 		this.clock = new THREE.Clock();
 
