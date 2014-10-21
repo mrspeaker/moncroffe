@@ -11,13 +11,13 @@ Player.prototype = {
 		this.bb = {
 			w: 0.7, 
 			d: 0.7, 
-			h: 1.9
+			h: 0.9
 		};
 
 		this.velocity = new THREE.Vector3(0, 0, 0);
 
 		var obj = this.obj = new THREE.Object3D();
-		obj.position.y =10;
+		obj.position.y = 1;
 		obj.position.x = 2;
 		obj.position.z = 18;
 
@@ -80,88 +80,50 @@ Player.prototype = {
 			jump = move.jump;
 
 		// Hmm - dodgy - copying the rotation back to the player
+		// weird having 2 objects for player orientation
 		obj.rotation.set(move.rot.x, move.rot.y, move.rot.z);
 
+		var xo = this.velocity.x,
+			zo = this.velocity.z,
+			yo = this.velocity.y;
+
+		xo += move.x;
+		zo += move.z;
+
 		var drag = 10.0;
-		this.velocity.x -= this.velocity.x * drag * move.delta;
-		this.velocity.z -= this.velocity.z * drag * move.delta;
-		this.velocity.y -= 9.8 * drag * move.delta;
+		xo -= xo * drag * move.delta;
+		zo -= zo * drag * move.delta;
+		yo -= 9.8 * drag * move.delta;
 
-		this.velocity.x += move.x;
-		this.velocity.z += move.z;
+		obj.translateX(xo * move.delta);
+		obj.translateY(yo * move.delta);
+		obj.translateZ(zo * move.delta);
 
-		obj.translateX(this.velocity.x * move.delta);
-		obj.translateY(this.velocity.y * move.delta);
-		obj.translateZ(this.velocity.z * move.delta);
+		// document.querySelector("#watch").innerHTML = obj.position.y
 
-		document.querySelector("#watch").innerHTML = obj.position.y
+		// Check if ok...
+		var col = this.screen.getTouchingVoxels(this);
+		if (col.below) {
+			obj.position.y = col.below[1] + 1;
+			yo = 0;
+		}
 
 		if (obj.position.y < 0) {
-			this.velocity.y = 0;
+			yo = 0;
 			obj.position.y = 0;
 		}
 
 		if (move.jump) {
-			this.velocity.y += 25;
+			yo += 30;
 		}
-		/*ar col = this.screen.getTouchingVoxels(this);
-		if (!col.below) {
-			console.log("in the air!")
-		} else {
-			if (move.jump) {
-				this.velocity.y += 25;
-			}
 
-			console.log("on the ground!", move.jump);
-			//obj.position.y = col.below[1];
-		}*/
+		if (obj.position.x < 0) obj.position.x = 0;
+		if (obj.position.z < 0) obj.position.z = 0;
 
-		/*if (!col.centerBot) {
-			
-		} else {
-			obj.translateX(- this.velocity.x * move.delta);
-			obj.translateY(- this.velocity.y * move.delta);
-			obj.translateZ(- this.velocity.z * move.delta);
-		}*/
-
+		// Store the leftover 
+		this.velocity.set(xo, yo, zo);
 		
 		this.controls.setPos(obj.position.x, obj.position.y + this.bb.h, obj.position.z);
-		
-/*
-		if (jump) {
-			this.acc = 1.5;
-		}
-		if (this.acc > 0) {
-			this.acc -= 0.2;
-			obj.translateY(this.acc);
-		}
 
-		obj.translateX(move[0]);
-		obj.translateY(move[1]);
-		obj.translateZ(move[2]);
-		var col = this.screen.getTouchingVoxels(this);
-
-		if (!col.centerBot) {
-			if (!col.below) {
-			 	// "Gravity" 
-				obj.translateY(-0.3);
-			} else {
-				obj.position.y = col.below[1];
-			}
-		} else {
-			obj.translateX(-move[0]);
-			obj.translateY(-move[1]);
-			obj.translateZ(-move[2]);
-		}*/
-
-		/*camera.position.set(
-			obj.position.x - this.bb.w / 2,
-			obj.position.y + this.bb.h,
-			obj.position.z - this.bb.d / 2);
-
-		camera.rotation.set(
-			obj.rotation.x,
-			obj.rotation.y,
-			obj.rotation.z);*/
 	}
 };

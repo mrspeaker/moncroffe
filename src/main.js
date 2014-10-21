@@ -133,6 +133,8 @@ var main = {
 		this.clock = new THREE.Clock();
 
 		this.run();
+
+		document.querySelector("#watch").innerHTML = "";
 	},
 
 	onWindowResize: function () {
@@ -200,9 +202,11 @@ var main = {
 
 		//document.querySelector("#watch").innerHTML = xm + ":" + zm + ":" + ytop + " / " + ybot;	 	
 
+		if (ybot < 0) ybot = 0;
+
 		return {
-			centerBot: this.chunk[zm][ybot + 1][xm] ? true : false,
-			below: this.chunk[zl][ybot][xl] ? [xl, ybot, zl] : false
+			//centerBot: this.chunk[zm][ybot + 1][xm] ? true : false,
+			below: this.chunk[zm][ybot][xm] ? [xl, ybot, zl] : false
 		}
 	},
 
