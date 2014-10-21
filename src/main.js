@@ -117,7 +117,8 @@ var main = {
 						mesh = new THREE.Mesh(geometry, material);
 						materials.push(material);
 
-						mesh.position.set(k, j, i);
+						// Move up so bottom of cube is at 0, not -0.5
+						mesh.position.set(k, j + blockSize / 2, i);
 
 						mesh.updateMatrix();
 						totalGeom.merge(mesh.geometry, mesh.matrix);
@@ -149,7 +150,7 @@ var main = {
 
 		this.scene = scene = new THREE.Scene();
 
-		this.camera = camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
+		this.camera = camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
 		this.renderer = renderer = new THREE.WebGLRenderer();
 		renderer.setClearColor( this.day ? 0x88C4EC : 0x000000, 1);
 		renderer.setSize(window.innerWidth, window.innerHeight);
@@ -175,7 +176,7 @@ var main = {
 	getTouchingVoxels: function (e) {
 
 		var cnk = this.chunk,
-			p = e.obj.position,
+			p = e.playerObj.position,
 			bb = e.bb,
 			xl,
 			xm,
@@ -189,8 +190,8 @@ var main = {
 		xl = p.x | 0;
 		xm = p.x + (bb.w / 2) | 0;
 		xr = p.x + bb.w | 0;
-		ytop = p.y + bb.h | 0;
-		ybot = p.y | 0;
+		ytop = p.y + (bb.h / 2) | 0;
+		ybot = p.y - (bb.h / 2) | 0;
 		zl = p.z | 0;
 		zm = p.z + (bb.d / 2) | 0;
 		zr = p.z + bb.d | 0;
@@ -207,8 +208,8 @@ var main = {
 		return {
 			//centerBot: this.chunk[zm][ybot + 1][xm] ? true : false,
 			below: this.chunk[zm][ybot][xm] ? [xl, ybot, zl] : false,
-			ftl: this.chunk[zl][ybot + 1][xl] ? [xl, ybot + 1, zl] : false,
-			ftr: this.chunk[zl][ybot + 1][xr] ? [xr, ybot + 1, zl] : false
+			ftl: this.chunk[zl][ybot][xl] ? [xl, ybot, zl] : false,
+			ftr: this.chunk[zl][ybot][xr] ? [xr, ybot, zl] : false
 		}
 	},
 

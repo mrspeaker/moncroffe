@@ -13,23 +13,21 @@ Player.prototype = {
 		this.bb = {
 			w: 0.7, 
 			d: 0.7, 
-			h: 0.9
+			h: 1.9
 		};
 
 		this.velocity = new THREE.Vector3(0, 0, 0);
 
-		var obj = this.obj = new THREE.Object3D();
-		obj.position.y = 1;
-		obj.position.x = 2;
-		obj.position.z = 18;
+		var playerObj = this.playerObj = new THREE.Object3D();
+		playerObj.position.set(0, 1 + (this.bb.h / 2), 10);
+	    playerObj.add(
+			new THREE.Mesh(
+	    		new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d), 
+	    		new THREE.MeshLambertMaterial({ color: 0xff00ff })));
 
-		var geometry = new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d);
-		var material = new THREE.MeshLambertMaterial({ 
-	    	color: 0xff0000
-	    });
-	    this.mesh = mesh = new THREE.Mesh(geometry, material);
-
-	    this.screen.scene.add(mesh);
+	    if (this.thrd) {
+	    	this.screen.scene.add(playerObj);
+	    }
 
 		var controls = this.controls = this.createControls();
 		this.screen.scene.add(controls.getObject());
@@ -39,10 +37,13 @@ Player.prototype = {
 
 	createControls: function () {
 
-		var controls = new THREE.PointerLockControls(this.thrd ? this.mesh : this.camera);
+		var controls = new THREE.PointerLockControls(this.thrd ? new THREE.Object3D(): this.camera);
+		
 		if (this.thrd) {
-			this.camera.position.set(-3, 2, 9);
+			this.camera.position.set(-8, 2, 10);
 			this.camera.rotation.set(0, -Math.PI / 2 , 0);
+		} else {
+			this.camera.position.y = this.bb.h - 1 - 0.2;
 		}
 
 		var blocker = document.getElementById( 'blocker' );
@@ -89,7 +90,7 @@ Player.prototype = {
 
 	update: function (delta) {
 
-		var obj = this.obj,
+		var obj = this.playerObj,
 			move = this.controls.update(),
 			jump = move.jump;
 
@@ -115,33 +116,38 @@ Player.prototype = {
 
 		// Check if ok...
 		var col = this.screen.getTouchingVoxels(this);
+		var msgg = "";
 		if (col.below) {
-			obj.position.y = col.below[1]; // + 1;
+			msgg = "below"
+			obj.position.y = col.below[1] + 1+ (this.bb.h / 2) ;// + 1 + (this.bb.h / 2);
 			yo = 0;
+		} else {
+			msgg = "nope"
 		}
 
-		if (obj.position.y < 0) {
+		if (obj.position.y < (this.bb.h / 2)) {
 			yo = 0;
-			obj.position.y = 0;
+			obj.position.y = (this.bb.h / 2);
 		}
 
 		if (move.jump) {
-			yo += 30;
+			//obj.position.y += 1;
+			yo += 120 * drag * move.delta;
 		}
 
-		if (obj.position.x < 0) obj.position.x = 0;
-		if (obj.position.z < 0) obj.position.z = 0;
+		//if (obj.position.x < 0) obj.position.x = 0;
+		//if (obj.position.z < 0) obj.position.z = 0;
 
-		document.querySelector("#watch").innerHTML = (col.ftl ? col.ftl[0] : "") + ":" + (col.ftr ? col.ftr[0] : "")
+		msg(msgg + ":" + obj.position.y.toFixed(2));// + (col.ftl ? col.ftl[0] : "") + ":" + (col.ftr ? col.ftr[0] : ""));
 
-		if (col.ftl || col.ftr) {
+		/*if (col.ftl || col.ftr) {
 			obj.translateX(-xo * move.delta);
 			//obj.translateY(-yo * move.delta);
 			obj.translateZ(-zo * move.delta);
 			xo = 0;
 			//yo = 0;
 			zo = 0;
-		}
+		}*/
 
 		// Store the leftover 
 		this.velocity.set(xo, yo, zo);
