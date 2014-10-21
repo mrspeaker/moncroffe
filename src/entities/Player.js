@@ -2,6 +2,8 @@ var Player = function (camera, screen) {
 
 	this.camera = camera;
 	this.screen = screen;
+
+	this.thrd = false;
 };
 
 Player.prototype.constructor = Player;
@@ -21,6 +23,14 @@ Player.prototype = {
 		obj.position.x = 2;
 		obj.position.z = 18;
 
+		var geometry = new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d);
+		var material = new THREE.MeshLambertMaterial({ 
+	    	color: 0xff0000
+	    });
+	    this.mesh = mesh = new THREE.Mesh(geometry, material);
+
+	    this.screen.scene.add(mesh);
+
 		var controls = this.controls = this.createControls();
 		this.screen.scene.add(controls.getObject());
 
@@ -29,7 +39,11 @@ Player.prototype = {
 
 	createControls: function () {
 
-		var controls = new THREE.PointerLockControls(this.camera);
+		var controls = new THREE.PointerLockControls(this.thrd ? this.mesh : this.camera);
+		if (this.thrd) {
+			this.camera.position.set(-3, 2, 9);
+			this.camera.rotation.set(0, -Math.PI / 2 , 0);
+		}
 
 		var blocker = document.getElementById( 'blocker' );
 		var instructions = document.getElementById( 'instructions' );
@@ -99,8 +113,6 @@ Player.prototype = {
 		obj.translateY(yo * move.delta);
 		obj.translateZ(zo * move.delta);
 
-		// document.querySelector("#watch").innerHTML = obj.position.y
-
 		// Check if ok...
 		var col = this.screen.getTouchingVoxels(this);
 		if (col.below) {
@@ -119,6 +131,17 @@ Player.prototype = {
 
 		if (obj.position.x < 0) obj.position.x = 0;
 		if (obj.position.z < 0) obj.position.z = 0;
+
+		document.querySelector("#watch").innerHTML = (col.ftl ? col.ftl[0] : "") + ":" + (col.ftr ? col.ftr[0] : "")
+
+		if (col.ftl || col.ftr) {
+			obj.translateX(-xo * move.delta);
+			obj.translateY(-yo * move.delta);
+			obj.translateZ(-zo * move.delta);
+			xo = 0;
+			yo = 0;
+			zo = 0;
+		}
 
 		// Store the leftover 
 		this.velocity.set(xo, yo, zo);

@@ -110,7 +110,7 @@ var main = {
 						j === 2 && i < 5 && k < 5 ||
 						j === 3 && i == 0 && k == 0 ||
 
-						j === 3 && i > 5 && k > 5 ? true : Math.random() < 0.05;
+						j === 3 && i > 5 && k > 5 ? true : false;// Math.random() < 0.05;
 					if (this.chunk[i][j][k]) {
 						var blocks = ["grass", "stone", "dirt","grass", "stone", "dirt", "grass", "stone", "dirt", "tree", "cobble", "gold", "snow"];
 						var geometry = getGeometry(blocks[Math.random() * blocks.length | 0]);
@@ -206,7 +206,9 @@ var main = {
 
 		return {
 			//centerBot: this.chunk[zm][ybot + 1][xm] ? true : false,
-			below: this.chunk[zm][ybot][xm] ? [xl, ybot, zl] : false
+			below: this.chunk[zm][ybot][xm] ? [xl, ybot, zl] : false,
+			ftl: this.chunk[zl][ybot + 1][xl] ? [xl, ybot + 1, zl] : false,
+			ftr: this.chunk[zl][ybot + 1][xr] ? [xr, ybot + 1, zl] : false
 		}
 	},
 
