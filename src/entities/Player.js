@@ -116,7 +116,7 @@ Player.prototype = {
 		// Check if ok...
 		var col = this.screen.getTouchingVoxels(this);
 		if (col.below) {
-			obj.position.y = col.below[1] + 1;
+			obj.position.y = col.below[1]; // + 1;
 			yo = 0;
 		}
 
@@ -136,17 +136,18 @@ Player.prototype = {
 
 		if (col.ftl || col.ftr) {
 			obj.translateX(-xo * move.delta);
-			obj.translateY(-yo * move.delta);
+			//obj.translateY(-yo * move.delta);
 			obj.translateZ(-zo * move.delta);
 			xo = 0;
-			yo = 0;
+			//yo = 0;
 			zo = 0;
 		}
 
 		// Store the leftover 
 		this.velocity.set(xo, yo, zo);
 		
-		this.controls.setPos(obj.position.x, obj.position.y + this.bb.h, obj.position.z);
+		this.controls.setPos(obj.position.x, obj.position.y, obj.position.z);
+		if (!this.thrd) this.screen.camera.y += this.bb.h;
 
 	}
 };
