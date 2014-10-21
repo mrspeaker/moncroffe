@@ -110,7 +110,7 @@ var main = {
 						j === 2 && i < 5 && k < 5 ||
 						j === 3 && i == 0 && k == 0 ||
 
-						j === 3 && i > 5 && k > 5 ? true : false;// Math.random() < 0.05;
+						j === 3 && i > 5 && k > 5 ? true : Math.random() < 0.02;
 					if (this.chunk[i][j][k]) {
 						var blocks = ["grass", "stone", "dirt","grass", "stone", "dirt", "grass", "stone", "dirt", "tree", "cobble", "gold", "snow"];
 						var geometry = getGeometry(blocks[Math.random() * blocks.length | 0]);

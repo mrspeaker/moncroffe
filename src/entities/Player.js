@@ -132,11 +132,16 @@ Player.prototype = {
 
 		if (move.jump) {
 			//obj.position.y += 1;
-			yo += 120 * drag * move.delta;
+			yo += 145 * drag * move.delta;
 		}
 
+		var chunkSize = this.screen.chunkSize - 1;
 		//if (obj.position.x < 0) obj.position.x = 0;
-		//if (obj.position.z < 0) obj.position.z = 0;
+		if (obj.position.z < 0) obj.position.z = 0;
+		if (obj.position.x > chunkSize) obj.position.x = chunkSize;
+		if (obj.position.z > chunkSize) obj.position.z = chunkSize;
+		if (obj.position.y > chunkSize) obj.position.y = chunkSize;
+
 
 		msg(msgg + ":" + obj.position.y.toFixed(2));// + (col.ftl ? col.ftl[0] : "") + ":" + (col.ftr ? col.ftr[0] : ""));
 
