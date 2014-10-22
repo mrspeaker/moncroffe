@@ -165,7 +165,7 @@ var main = {
 	run: function () {
 		this.tick();
 		this.render();
-		requestAnimationFrame(() => main.run());
+		requestAnimationFrame(function () { main.run() });
 	},
 
 	tick: function () {
@@ -187,14 +187,14 @@ var main = {
 			zm,
 			zr;
 
-		xl = p.x | 0;
-		xm = p.x + (bb.w / 2) | 0;
-		xr = p.x + bb.w | 0;
+		xl = p.x - (bb.w / 2) | 0;
+		xm = Math.round(p.x);
+		xr = p.x + (bb.w / 2) | 0;
 		ytop = p.y + (bb.h / 2) | 0;
 		ybot = p.y - (bb.h / 2) | 0;
-		zl = p.z | 0;
-		zm = p.z + (bb.d / 2) | 0;
-		zr = p.z + bb.d | 0;
+		zl = p.z - (bb.d / 2) | 0;
+		zm = Math.round(p.z);
+		zr = p.z + (bb.d / 2) | 0;
 
 		//  Take the unit surface normal of the colliding voxel (pointing outward).
     	//	Multiply it by the dot product of itself and the player velocity.

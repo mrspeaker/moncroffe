@@ -29,6 +29,12 @@ Player.prototype = {
 	    	this.screen.scene.add(playerObj);
 	    }
 
+	    this.edge = edge = new THREE.Mesh(
+			new THREE.BoxGeometry(0.1, 0.3, 0.1), 
+			new THREE.MeshLambertMaterial({ color: 0x0099ff }));
+	   	edge.position.x = -(this.bb.w / 2);
+	   	edge.position.z = -(this.bb.d / 2)
+
 	    this.marker = new THREE.Object3D();
 	    this.marker.add(new THREE.Mesh(
 	    		new THREE.BoxGeometry(this.bb.w, 0.1, this.bb.d), 
@@ -39,6 +45,7 @@ Player.prototype = {
 		this.marker.add(new THREE.Mesh(
 	    		new THREE.BoxGeometry(0.5, 0.2, 0.05), 
 	    		new THREE.MeshLambertMaterial({ color: 0x00ffff })));
+		this.marker.add(edge);
 		this.screen.scene.add(this.marker);
 
 		var controls = this.controls = this.createControls();
