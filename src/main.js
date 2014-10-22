@@ -190,11 +190,13 @@ var main = {
 		xl = Math.round(p.x - (bb.w / 2));
 		xm = Math.round(p.x);
 		xr = Math.round(p.x + (bb.w / 2));
-		ytop = p.y + (bb.h / 2) | 0;
-		ybot = p.y - (bb.h / 2) | 0;
+
 		zl = Math.round(p.z - (bb.d / 2));
 		zm = Math.round(p.z);
 		zr = Math.round(p.z + (bb.d / 2));
+
+		ytop = p.y + (bb.h / 2) | 0;
+		ybot = p.y - (bb.h / 2) | 0;
 
 		//  Take the unit surface normal of the colliding voxel (pointing outward).
     	//	Multiply it by the dot product of itself and the player velocity.
@@ -204,11 +206,9 @@ var main = {
 		if (ybot < 0) ybot = 0;
 
 		return {
-			//centerBot: this.chunk[zm][ybot + 1][xm] ? true : false,
 			below: ch[zl][ybot][xl] || ch[zr][ybot][xl] || ch[zl][ybot][xr] || ch[zr][ybot][xr] ? [xm, ybot, zm] : false,
-			//below: ch[zm][ybot][xm] ? [xl, ybot, zl] : false, 
-			ftl: ch[zl][ybot][xl] ? [xl, ybot, zl] : false,
-			ftr: ch[zl][ybot][xr] ? [xr, ybot, zl] : false
+			feet: ch[zm][ybot + 1][xm] ? true : false,
+			head: ch[zm][ytop][xm] ? true : false
 		}
 	},
 

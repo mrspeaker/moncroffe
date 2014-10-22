@@ -103,8 +103,13 @@ Player.prototype = {
 		if (obj.position.z > chunkSize) obj.position.z = chunkSize;
 		if (obj.position.y > chunkSize) obj.position.y = chunkSize;
 
+		if (col.feet || col.head) {
+			obj.translateX(-xo * delta);
+			obj.translateZ(-zo * delta);
+			xo = zo = 0;
+		}
 
-		msg(obj.position.y.toFixed(2));
+		msg(obj.position.y.toFixed(2) + ":" + col.feet + ":" + col.head);
 
 		// Store the leftovers
 		this.velocity.set(xo, yo, zo);
