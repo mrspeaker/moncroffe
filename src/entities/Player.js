@@ -35,6 +35,65 @@ Player.prototype = {
 		return this;
 	},
 
+	update: function (delta) {
+
+		var obj = this.playerObj,
+			move = this.controls.update(delta);
+
+		// Hmm - dodgy - copying the rotation back to the player
+		// weird having 2 objects for player orientation
+		obj.rotation.set(move.rot.x, move.rot.y, move.rot.z);
+
+		var xo = this.velocity.x,
+			zo = this.velocity.z,
+			yo = this.velocity.y;
+
+		xo += move.x;
+		zo += move.z;
+
+		var drag = 10.0;
+		xo -= xo * drag * delta;
+		zo -= zo * drag * delta;
+		yo -= 9.8 * drag * delta;
+
+		obj.translateX(xo * delta);
+		obj.translateY(yo * delta);
+		obj.translateZ(zo * delta);
+
+		// Check if ok...
+		var col = this.screen.getTouchingBlocks(this);
+		if (col.below) {
+			obj.position.y = col.below[1] + 1+ (this.bb.h / 2) ;// + 1 + (this.bb.h / 2);
+			yo = 0;
+		}
+
+		// Check if fallen past ground
+		if (obj.position.y < (this.bb.h / 2)) {
+			yo = 0;
+			obj.position.y = (this.bb.h / 2);
+		}
+
+		if (move.jump) {
+			yo += 145 * drag * delta;
+		}
+
+		var chunkSize = this.screen.chunkSize - 1;
+		//if (obj.position.x < 0) obj.position.x = 0;
+		if (obj.position.z < 0) obj.position.z = 0;
+		if (obj.position.x > chunkSize) obj.position.x = chunkSize;
+		if (obj.position.z > chunkSize) obj.position.z = chunkSize;
+		if (obj.position.y > chunkSize) obj.position.y = chunkSize;
+
+
+		msg(obj.position.y.toFixed(2));
+
+		// Store the leftovers
+		this.velocity.set(xo, yo, zo);
+		
+		this.controls.setPos(obj.position.x, obj.position.y, obj.position.z);
+
+	},
+
 	createControls: function () {
 
 		var controls = new THREE.PointerLockControls(this.thrd ? new THREE.Object3D(): this.camera);
@@ -86,79 +145,6 @@ Player.prototype = {
 		}
 
 		return controls;
-	},
-
-	update: function (delta) {
-
-		var obj = this.playerObj,
-			move = this.controls.update(),
-			jump = move.jump;
-
-		// Hmm - dodgy - copying the rotation back to the player
-		// weird having 2 objects for player orientation
-		obj.rotation.set(move.rot.x, move.rot.y, move.rot.z);
-
-		var xo = this.velocity.x,
-			zo = this.velocity.z,
-			yo = this.velocity.y;
-
-		xo += move.x;
-		zo += move.z;
-
-		var drag = 10.0;
-		xo -= xo * drag * move.delta;
-		zo -= zo * drag * move.delta;
-		yo -= 9.8 * drag * move.delta;
-
-		obj.translateX(xo * move.delta);
-		obj.translateY(yo * move.delta);
-		obj.translateZ(zo * move.delta);
-
-		// Check if ok...
-		var col = this.screen.getTouchingVoxels(this);
-		var msgg = "";
-		if (col.below) {
-			msgg = "below"
-			obj.position.y = col.below[1] + 1+ (this.bb.h / 2) ;// + 1 + (this.bb.h / 2);
-			yo = 0;
-		} else {
-			msgg = "nope"
-		}
-
-		if (obj.position.y < (this.bb.h / 2)) {
-			yo = 0;
-			obj.position.y = (this.bb.h / 2);
-		}
-
-		if (move.jump) {
-			//obj.position.y += 1;
-			yo += 145 * drag * move.delta;
-		}
-
-		var chunkSize = this.screen.chunkSize - 1;
-		//if (obj.position.x < 0) obj.position.x = 0;
-		if (obj.position.z < 0) obj.position.z = 0;
-		if (obj.position.x > chunkSize) obj.position.x = chunkSize;
-		if (obj.position.z > chunkSize) obj.position.z = chunkSize;
-		if (obj.position.y > chunkSize) obj.position.y = chunkSize;
-
-
-		msg(msgg + ":" + obj.position.y.toFixed(2));// + (col.ftl ? col.ftl[0] : "") + ":" + (col.ftr ? col.ftr[0] : ""));
-
-		/*if (col.ftl || col.ftr) {
-			obj.translateX(-xo * move.delta);
-			//obj.translateY(-yo * move.delta);
-			obj.translateZ(-zo * move.delta);
-			xo = 0;
-			//yo = 0;
-			zo = 0;
-		}*/
-
-		// Store the leftover 
-		this.velocity.set(xo, yo, zo);
-		
-		this.controls.setPos(obj.position.x, obj.position.y, obj.position.z);
-		if (!this.thrd) this.screen.camera.y += this.bb.h;
-
 	}
+
 };

@@ -1,6 +1,7 @@
 var main = {
 
 	chunkSize: 20,
+	blockSize: 1,
 
 	day: false,
 
@@ -9,38 +10,19 @@ var main = {
 		this.initThree();
 		this.player = new Player(this.camera, this).init();
 
-		this.scene.fog = new THREE.Fog(this.day ? 0xD7EAF9 : 0x111111, 0.1, 80);
-		var ambientLight = new THREE.AmbientLight(this.day ? 0x888888 : 0x333333);
-		this.scene.add(ambientLight);
+		this.addLights();
 
+		var blockTex = THREE.ImageUtils.loadTexture('res/images/terrain-orig.png');
+		blockTex.magFilter = THREE.NearestFilter;
+		blockTex.minFilter = THREE.NearestFilter;
 
-		//var hemiLight = new THREE.HemisphereLight( 0x0000ff, 0x00ff00, 0.6 ); 
-		//this.scene.add(hemiLight);
-
-		var light = new THREE.PointLight( 0xffffff, 1, 10 ); 
-		light.position.set(10, 2.2, 10); 
-		this.scene.add(light);
-
-		light = new THREE.PointLight( 0xffffff, 1, 10 ); 
-		light.position.set(0, 5, 8); 
-		this.scene.add(light);
-
-		/*var directionalLight = new THREE.DirectionalLight(0x000044);
-		directionalLight.position.set(20, 10, 20).normalize();
-		this.scene.add(directionalLight);*/
-
-		var blockSize = 1;
-
-		var tex = THREE.ImageUtils.loadTexture('res/images/terrain-orig.png');
-		tex.magFilter = THREE.NearestFilter;
-		tex.minFilter = THREE.NearestFilter;
-
-	    var material = new THREE.MeshLambertMaterial({ 
-	    	map: tex,
+	    var blockMaterial = new THREE.MeshLambertMaterial({ 
+	    	map: blockTex,
 	    	wrapAround: true
 	    });
 
-	    var geoms = [];
+	    var geoms = [],
+	    	blockSize = this.blockSize;
 
 	    function getGeometry(type) {
 
@@ -75,31 +57,35 @@ var main = {
     			top = getBlock(block[2][0], block[2][1]),
     			bottom = getBlock(block[3][0], block[3][1]),
     			right = getBlock(block[4][0], block[4][1]),
-    			left = getBlock(block[5][0], block[5][1]);
+    			left = getBlock(block[5][0], block[5][1]),
 
-    		geometry.faceVertexUvs[0] = [];
-    		geometry.faceVertexUvs[0][0] = [ front[3], front[0], front[2] ];
-    		geometry.faceVertexUvs[0][1] = [ front[0], front[1], front[2] ];
-    		geometry.faceVertexUvs[0][2] = [ back[3], back[0], back[2] ];
-    		geometry.faceVertexUvs[0][3] = [ back[0], back[1], back[2] ];
-    		geometry.faceVertexUvs[0][4] = [ top[3], top[0], top[2] ];
-    		geometry.faceVertexUvs[0][5] = [ top[0], top[1], top[2] ];
-    		geometry.faceVertexUvs[0][6] = [ bottom[3], bottom[0], bottom[2] ];
-    		geometry.faceVertexUvs[0][7] = [ bottom[0], bottom[1], bottom[2] ];
-    		geometry.faceVertexUvs[0][8] = [ right[3], right[0], right[2] ];
-    		geometry.faceVertexUvs[0][9] = [ right[0], right[1], right[2] ];
-    		geometry.faceVertexUvs[0][10] = [ left[3], left[0], left[2] ];
-    		geometry.faceVertexUvs[0][11] = [ left[0], left[1], left[2] ];
+    			faceUVs = geometry.faceVertexUvs;
+
+    		faceUVs[0] = [];
+    		faceUVs[0][0] = [front[3], front[0], front[2]];
+    		faceUVs[0][1] = [front[0], front[1], front[2]];
+    		faceUVs[0][2] = [back[3], back[0], back[2]];
+    		faceUVs[0][3] = [back[0], back[1], back[2]];
+    		faceUVs[0][4] = [top[3], top[0], top[2]];
+    		faceUVs[0][5] = [top[0], top[1], top[2]];
+    		faceUVs[0][6] = [bottom[3], bottom[0], bottom[2]];
+    		faceUVs[0][7] = [bottom[0], bottom[1], bottom[2]];
+    		faceUVs[0][8] = [right[3], right[0], right[2]];
+    		faceUVs[0][9] = [right[0], right[1], right[2]];
+    		faceUVs[0][10] = [left[3], left[0], left[2]];
+    		faceUVs[0][11] = [left[0], left[1], left[2]];
 
     		geoms[type] = geometry;
 
     		return geometry;
 	    }
 
+
+	    // Create the chunk
 		this.chunk = [];
-		var chunkSize = this.chunkSize;
-		var totalGeom = new THREE.Geometry();
-		var materials = [];
+		var chunkSize = this.chunkSize,
+			totalGeom = new THREE.Geometry();
+
 		for (var i = 0; i < chunkSize; i++) {
 			this.chunk[i] = [];
 			for (var j = 0; j  < chunkSize; j++) {
@@ -112,10 +98,9 @@ var main = {
 
 						j === 3 && i > 5 && k > 5 ? true : Math.random() < 0.02;
 					if (this.chunk[i][j][k]) {
-						var blocks = ["grass", "stone", "dirt","grass", "stone", "dirt", "grass", "stone", "dirt", "tree", "cobble", "gold", "snow"];
-						var geometry = getGeometry(blocks[Math.random() * blocks.length | 0]);
-						mesh = new THREE.Mesh(geometry, material);
-						materials.push(material);
+						var blocks = ["grass", "stone", "dirt","grass", "stone", "dirt", "grass", "stone", "dirt", "tree", "cobble", "gold", "snow"],
+							geometry = getGeometry(blocks[Math.random() * blocks.length | 0]),
+							mesh = new THREE.Mesh(geometry, blockMaterial);
 
 						// Move up so bottom of cube is at 0, not -0.5
 						mesh.position.set(k, j + blockSize / 2, i);
@@ -128,14 +113,13 @@ var main = {
 			}
 		}
 
-		var total = new THREE.Mesh(totalGeom, material);
-		this.scene.add(total);
+		// Add all the geometry
+		this.scene.add(new THREE.Mesh(totalGeom, blockMaterial));
 
 		this.clock = new THREE.Clock();
-
 		this.run();
 
-		document.querySelector("#watch").innerHTML = "";
+		msg("");
 	},
 
 	onWindowResize: function () {
@@ -162,6 +146,22 @@ var main = {
 
 	},
 
+	addLights: function () {
+
+		this.scene.fog = new THREE.Fog(this.day ? 0xD7EAF9 : 0x111111, 0.1, 80);
+		var ambientLight = new THREE.AmbientLight(this.day ? 0x888888 : 0x333333);
+		this.scene.add(ambientLight);
+
+		var light = new THREE.PointLight( 0xffffff, 1, 10 ); 
+		light.position.set(10, 2.2, 10); 
+		this.scene.add(light);
+
+		light = new THREE.PointLight( 0xffffff, 1, 10 ); 
+		light.position.set(0, 5, 8); 
+		this.scene.add(light);
+
+	},
+
 	run: function () {
 		this.tick();
 		this.render();
@@ -173,7 +173,7 @@ var main = {
 		this.player.update(delta);
 	},
 
-	getTouchingVoxels: function (e) {
+	getTouchingBlocks: function (e) {
 
 		var cnk = this.chunk,
 			p = e.playerObj.position,
@@ -199,9 +199,7 @@ var main = {
 		//  Take the unit surface normal of the colliding voxel (pointing outward).
     	//	Multiply it by the dot product of itself and the player velocity.
     	//  Subtract it from the player's velocity.
-		// This will give you the "slide against the wall" effect that most games employ (without any problematic trigonometry)
-
-		//document.querySelector("#watch").innerHTML = xm + ":" + zm + ":" + ytop + " / " + ybot;	 	
+		// This will give you the "slide against the wall" effect that most games employ (without any problematic trigonometry) 	
 
 		if (ybot < 0) ybot = 0;
 
