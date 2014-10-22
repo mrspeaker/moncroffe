@@ -134,7 +134,7 @@ var main = {
 
 		this.scene = scene = new THREE.Scene();
 
-		this.camera = camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 500);
+		this.camera = camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 500);
 		this.renderer = renderer = new THREE.WebGLRenderer();
 		renderer.setClearColor( this.day ? 0x88C4EC : 0x000000, 1);
 		renderer.setSize(window.innerWidth, window.innerHeight);
@@ -198,17 +198,12 @@ var main = {
 		ytop = p.y + (bb.h / 2) | 0;
 		ybot = p.y - (bb.h / 2) | 0;
 
-		//  Take the unit surface normal of the colliding voxel (pointing outward).
-    	//	Multiply it by the dot product of itself and the player velocity.
-    	//  Subtract it from the player's velocity.
-		// This will give you the "slide against the wall" effect that most games employ (without any problematic trigonometry) 	
-
 		if (ybot < 0) ybot = 0;
 
 		return {
 			below: ch[zl][ybot][xl] || ch[zr][ybot][xl] || ch[zl][ybot][xr] || ch[zr][ybot][xr] ? [xm, ybot, zm] : false,
-			feet: ch[zm][ybot + 1][xm] ? true : false,
-			head: ch[zm][ytop][xm] ? true : false
+			feet: ch[zl][ybot + 1][xl] || ch[zr][ybot + 1][xl] || ch[zl][ybot + 1][xr] || ch[zr][ybot + 1][xr]  ? true : false,
+			head: ch[zl][ytop][xl] || ch[zr][ytop][xl] || ch[zl][ytop][xr] || ch[zr][ytop][xr] ? true : false
 		}
 	},
 

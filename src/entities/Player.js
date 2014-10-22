@@ -29,29 +29,33 @@ Player.prototype = {
 	    	this.screen.scene.add(playerObj);
 	    }
 
-	    this.edge = edge = new THREE.Mesh(
-			new THREE.BoxGeometry(0.1, 0.3, 0.1), 
-			new THREE.MeshLambertMaterial({ color: 0x0099ff }));
-	   	edge.position.x = -(this.bb.w / 2);
-	   	edge.position.z = -(this.bb.d / 2)
-
-	    this.marker = new THREE.Object3D();
-	    this.marker.add(new THREE.Mesh(
-	    		new THREE.BoxGeometry(this.bb.w, 0.1, this.bb.d), 
-	    		new THREE.MeshLambertMaterial({ color: 0x0000ff })));
-		this.marker.add(new THREE.Mesh(
-	    		new THREE.BoxGeometry(0.05, 0.2, 0.5), 
-	    		new THREE.MeshLambertMaterial({ color: 0x00ffff })));
-		this.marker.add(new THREE.Mesh(
-	    		new THREE.BoxGeometry(0.5, 0.2, 0.05), 
-	    		new THREE.MeshLambertMaterial({ color: 0x00ffff })));
-		this.marker.add(edge);
-		this.screen.scene.add(this.marker);
+	    this.addPlayerBase();
 
 		var controls = this.controls = this.createControls();
 		this.screen.scene.add(controls.getObject());
 
 		return this;
+	},
+
+	addPlayerBase: function () {
+		this.edge = edge = new THREE.Mesh(
+			new THREE.BoxGeometry(0.1, 0.3, 0.1), 
+			new THREE.MeshLambertMaterial({ color: 0x0099ff }));
+			edge.position.x = -(this.bb.w / 2);
+			edge.position.z = -(this.bb.d / 2)
+
+		this.marker = new THREE.Object3D();
+		this.marker.add(new THREE.Mesh(
+			new THREE.BoxGeometry(this.bb.w, 0.1, this.bb.d), 
+			new THREE.MeshLambertMaterial({ color: 0x0000ff })));
+		this.marker.add(new THREE.Mesh(
+			new THREE.BoxGeometry(0.05, 0.2, 0.5), 
+			new THREE.MeshLambertMaterial({ color: 0x00ffff })));
+		this.marker.add(new THREE.Mesh(
+			new THREE.BoxGeometry(0.5, 0.2, 0.05), 
+			new THREE.MeshLambertMaterial({ color: 0x00ffff })));
+		this.marker.add(edge);
+		this.screen.scene.add(this.marker);
 	},
 
 	update: function (delta) {
@@ -70,10 +74,10 @@ Player.prototype = {
 		xo += move.x;
 		zo += move.z;
 
-		var drag = 10.0;
-		xo -= xo * drag * delta;
-		zo -= zo * drag * delta;
-		yo -= 9.8 * drag * delta;
+		var drag = 10.0 * delta;
+		xo -= xo * drag;
+		zo -= zo * drag;
+		yo -= 9.8 * drag;
 
 		obj.translateX(xo * delta);
 		obj.translateY(yo * delta);
@@ -93,7 +97,7 @@ Player.prototype = {
 		}
 
 		if (move.jump) {
-			yo += 145 * drag * delta;
+			yo += 145 * drag;
 		}
 
 		var chunkSize = this.screen.chunkSize - 1;
@@ -103,17 +107,32 @@ Player.prototype = {
 		if (obj.position.z > chunkSize) obj.position.z = chunkSize;
 		if (obj.position.y > chunkSize) obj.position.y = chunkSize;
 
-		if (col.feet || col.head) {
-			obj.translateX(-xo * delta);
-			obj.translateZ(-zo * delta);
-			xo = zo = 0;
+		if (col.feet) { // || col.head) {
+			//obj.translateX(-xo * delta);
+			//obj.translateZ(-zo * delta);
+			//xo = zo = 0;
+
+			var vel = new THREE.Vector3(xo, 0, zo);
+
+			//  Take the unit surface normal of the colliding voxel (pointing outward).
+			var unitNormal = new THREE.Vector3(0, 1, 0);
+    		//	Multiply it by the dot product of itself and the player velocity.
+    		var dot = unitNormal.dot(vel);
+    		unitNormal.multiplyScalar(dot);
+    		//  Subtract it from the player's velocity.
+    		vel.sub(unitNormal);
+
+    		xo = vel.x;
+    		zo = -vel.z;
+
+    		// console.log(vel.x.toFixed(1) + ":" + vel.z.toFixed(1))
+
 		}
 
-		msg(obj.position.y.toFixed(2) + ":" + col.feet + ":" + col.head);
-
-		// Store the leftovers
 		this.velocity.set(xo, yo, zo);
-		
+
+		msg(obj.position.z.toFixed(2) + ":" + obj.position.y.toFixed(2) + ":" + col.feet + ":" + col.head);
+
 		this.controls.setPos(obj.position.x, obj.position.y, obj.position.z);
 
 		this.marker.position.set(obj.position.x, obj.position.y - (this.bb.h / 2) + 0.05, obj.position.z);
