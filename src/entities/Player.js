@@ -1,14 +1,12 @@
-var Player = function (camera, screen) {
+var Player = {
 
-	this.camera = camera;
-	this.screen = screen;
+	thrd: false,
 
-	this.thrd = false;
-};
+	init: function (camera, screen) {
 
-Player.prototype.constructor = Player;
-Player.prototype = {
-	init: function () {
+		this.camera = camera;
+		this.screen = screen;
+
 		
 		this.bb = {
 			w: 0.7, 

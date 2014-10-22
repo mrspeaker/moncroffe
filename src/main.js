@@ -8,7 +8,7 @@ var main = {
 	init: function () {
 
 		this.initThree();
-		this.player = new Player(this.camera, this).init();
+		this.player = Object.create(Player).init(this.camera, this);
 
 		this.addLights();
 
@@ -202,7 +202,7 @@ var main = {
 
 		return {
 			below: ch[zl][ybot][xl] || ch[zr][ybot][xl] || ch[zl][ybot][xr] || ch[zr][ybot][xr] ? [xm, ybot, zm] : false,
-			feet: ch[zl][ybot + 1][xl] || ch[zr][ybot + 1][xl] || ch[zl][ybot + 1][xr] || ch[zr][ybot + 1][xr]  ? true : false,
+			feet: ch[zl][ybot + 1][xl] || ch[zr][ybot + 1][xl] || ch[zl][ybot + 1][xr] || ch[zr][ybot + 1][xr] ? true : false,
 			head: ch[zl][ytop][xl] || ch[zr][ytop][xl] || ch[zl][ytop][xr] || ch[zr][ytop][xr] ? true : false
 		}
 	},
