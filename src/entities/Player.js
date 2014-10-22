@@ -19,15 +19,27 @@ Player.prototype = {
 		this.velocity = new THREE.Vector3(0, 0, 0);
 
 		var playerObj = this.playerObj = new THREE.Object3D();
-		playerObj.position.set(0, 1 + (this.bb.h / 2), 10);
+		playerObj.position.set(0, 1 + (this.bb.h / 2), 15);
 	    playerObj.add(
 			new THREE.Mesh(
 	    		new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d), 
-	    		new THREE.MeshLambertMaterial({ color: 0xff00ff })));
+	    		new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: true})));
 
 	    if (this.thrd) {
 	    	this.screen.scene.add(playerObj);
 	    }
+
+	    this.marker = new THREE.Object3D();
+	    this.marker.add(new THREE.Mesh(
+	    		new THREE.BoxGeometry(this.bb.w, 0.1, this.bb.d), 
+	    		new THREE.MeshLambertMaterial({ color: 0x0000ff })));
+		this.marker.add(new THREE.Mesh(
+	    		new THREE.BoxGeometry(0.05, 0.2, 0.5), 
+	    		new THREE.MeshLambertMaterial({ color: 0x00ffff })));
+		this.marker.add(new THREE.Mesh(
+	    		new THREE.BoxGeometry(0.5, 0.2, 0.05), 
+	    		new THREE.MeshLambertMaterial({ color: 0x00ffff })));
+		this.screen.scene.add(this.marker);
 
 		var controls = this.controls = this.createControls();
 		this.screen.scene.add(controls.getObject());
@@ -91,6 +103,8 @@ Player.prototype = {
 		this.velocity.set(xo, yo, zo);
 		
 		this.controls.setPos(obj.position.x, obj.position.y, obj.position.z);
+
+		this.marker.position.set(obj.position.x, obj.position.y - (this.bb.h / 2) + 0.05, obj.position.z);
 
 	},
 
