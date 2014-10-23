@@ -203,7 +203,11 @@ var main = {
 		return {
 			below: ch[zl][ybot][xl] || ch[zr][ybot][xl] || ch[zl][ybot][xr] || ch[zr][ybot][xr] ? [xm, ybot, zm] : false,
 			feet: ch[zl][ybot + 1][xl] || ch[zr][ybot + 1][xl] || ch[zl][ybot + 1][xr] || ch[zr][ybot + 1][xr] ? true : false,
-			head: ch[zl][ytop][xl] || ch[zr][ytop][xl] || ch[zl][ytop][xr] || ch[zr][ytop][xr] ? true : false
+			head: ch[zl][ytop][xl] || ch[zr][ytop][xl] || ch[zl][ytop][xr] || ch[zr][ytop][xr] ? true : false,
+			zlhit: ch[zl][ybot + 1][xl] || ch[zl][ybot + 1][xr] || ch[zl][ytop][xl] || ch[zl][ytop][xr] ? zr : false,
+			zrhit: ch[zr][ybot + 1][xl] || ch[zr][ybot + 1][xr] || ch[zr][ytop][xl] || ch[zr][ytop][xr] ? zl : false,
+			xlhit: ch[zl][ybot + 1][xl] || ch[zr][ybot + 1][xl] ? xl : false,
+			xrhit: ch[zl][ybot + 1][xr] || ch[zr][ybot + 1][xr] ? xr : false
 		}
 	},
 

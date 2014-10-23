@@ -93,9 +93,23 @@ var Player = {
 		// Check if ok...
 		var col = this.screen.getTouchingBlocks(this);
 		if (col.below) {
-			obj.position.y = col.below[1] + 1+ (this.bb.h / 2) ;// + 1 + (this.bb.h / 2);
+			obj.position.y = col.below[1] + 1 + (this.bb.h / 2) ;// + 1 + (this.bb.h / 2);
 			yo = 0;
 		}
+		var superMagicNumber = 0.15;
+		if (col.zlhit) {
+			obj.position.z = col.zlhit - superMagicNumber;
+		}
+		if (col.zrhit) {
+			obj.position.z = col.zrhit + superMagicNumber;
+		}
+
+		/*if (col.xlhit) {
+			obj.position.x = col.xlhit - (this.bb.w / 2);
+		}
+		if (col.xrhit) {
+			//obj.position.x = col.xrhit;
+		}*/
 
 		// Check if fallen past ground
 		if (obj.position.y < (this.bb.h / 2)) {
@@ -119,6 +133,7 @@ var Player = {
 		if (obj.position.z > chunkSize) obj.position.z = chunkSize;
 		if (obj.position.y > chunkSize) obj.position.y = chunkSize;
 
+		/*
 		if (col.feet || col.head) {
 			//obj.translateX(-xo * delta);
 			//obj.translateZ(-zo * delta);
@@ -142,7 +157,8 @@ var Player = {
 
     		//msg(vel.x.toFixed(2) + ":" + vel.y.toFixed(2) + ":" + vel.z.toFixed(2));
     		
-		}
+		}*/
+
 
 		//this.velocity.set(xo, yo, zo);
 		this.velocity.set(0, yo, 0);
