@@ -59,7 +59,9 @@ var Player = {
 	update: function (delta) {
 
 		var obj = this.playerObj,
-			move = this.controls.update(delta);
+			move = this.controls.update(delta),
+			power = 200 * delta,
+			drag = 10 * delta;
 
 		// Hmm - dodgy - copying the rotation back to the player
 		// weird having 2 objects for player orientation
@@ -69,17 +71,24 @@ var Player = {
 			zo = this.velocity.z,
 			yo = this.velocity.y;
 
-		xo += move.x;
-		zo += move.z;
+		var op = obj.position.clone(),
+			np;
 
-		var drag = 10.0 * delta;
-		xo -= xo * drag;
-		zo -= zo * drag;
+		xo += move.x * power;
+		zo += move.z * power;
+
+		//xo -= xo * drag;
+		//zo -= zo * drag;
 		yo -= 9.8 * drag;
 
 		obj.translateX(xo * delta);
 		obj.translateY(yo * delta);
 		obj.translateZ(zo * delta);
+
+		np = obj.position.clone();
+		np.sub(op);
+
+		msg(np.x.toFixed(2) + ":" + np.y.toFixed(2) + ":" + np.z.toFixed(2));
 
 		// Check if ok...
 		var col = this.screen.getTouchingBlocks(this);
@@ -98,6 +107,11 @@ var Player = {
 			yo += 145 * drag;
 		}
 
+		if (yo > 0 && col.head) {
+			//obj.position.y = col.head[1] + (this.bb.h / 2);
+			yo = 0;
+		} 
+
 		var chunkSize = this.screen.chunkSize - 1;
 		//if (obj.position.x < 0) obj.position.x = 0;
 		if (obj.position.z < 0) obj.position.z = 0;
@@ -105,31 +119,35 @@ var Player = {
 		if (obj.position.z > chunkSize) obj.position.z = chunkSize;
 		if (obj.position.y > chunkSize) obj.position.y = chunkSize;
 
-		if (col.feet) { // || col.head) {
+		if (col.feet || col.head) {
 			//obj.translateX(-xo * delta);
 			//obj.translateZ(-zo * delta);
 			//xo = zo = 0;
 
-			var vel = new THREE.Vector3(xo, 0, zo);
+			var vel = new THREE.Vector3(np.x, 0, np.y);
 
 			//  Take the unit surface normal of the colliding voxel (pointing outward).
-			var unitNormal = new THREE.Vector3(0, 1, 0);
+			var unitNormal = new THREE.Vector3(0, 0, 1);
     		//	Multiply it by the dot product of itself and the player velocity.
     		var dot = unitNormal.dot(vel);
-    		unitNormal.multiplyScalar(dot);
+    		unitNormal.multiplyScalar(-dot);
     		//  Subtract it from the player's velocity.
     		vel.sub(unitNormal);
 
     		xo = vel.x;
-    		zo = -vel.z;
+    		zo = vel.z;
+    		
+    		obj.translateX(vel.x);
+    		obj.translateZ(-vel.z);
 
-    		// console.log(vel.x.toFixed(1) + ":" + vel.z.toFixed(1))
-
+    		//msg(vel.x.toFixed(2) + ":" + vel.y.toFixed(2) + ":" + vel.z.toFixed(2));
+    		
 		}
 
-		this.velocity.set(xo, yo, zo);
+		//this.velocity.set(xo, yo, zo);
+		this.velocity.set(0, yo, 0);
 
-		msg(obj.position.z.toFixed(2) + ":" + obj.position.y.toFixed(2) + ":" + col.feet + ":" + col.head);
+		//msg(obj.position.z.toFixed(2) + ":" + obj.position.y.toFixed(2) + ":" + col.feet + ":" + col.head);
 
 		this.controls.setPos(obj.position.x, obj.position.y, obj.position.z);
 
