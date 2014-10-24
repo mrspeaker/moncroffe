@@ -6,6 +6,7 @@ var main = {
 	day: false,
 
 	count: 0,
+	oneFrameEvery: 1,
 
 	init: function () {
 
@@ -165,13 +166,15 @@ var main = {
 	},
 
 	run: function () {
-		this.tick();
-		this.render();
+		if (this.count++ % this.oneFrameEvery === 0) {
+			this.tick();
+			this.render();
+		}
 		requestAnimationFrame(function () { main.run() });
 	},
 
 	tick: function () {
-		var delta = this.clock.getDelta();
+		var delta = this.clock.getDelta() / this.oneFrameEvery;
 		this.player.update(delta);
 	},
 
@@ -196,8 +199,6 @@ var main = {
 			nyb = Math.round((p.y + move.y) - (bb.h / 2) - 0.5), // Erm, why -0.5? dunno.
 			nyt = Math.round((p.y + move.y) + (bb.h / 2) - 0.5);
 
-		if (nyb < 0) { nyb = 0; }
-
 		// Check forward/backward
 		if (!(
 			ch[nzl][yb][xl] || ch[nzl][yb][xr] || ch[nzr][yb][xl] || ch[nzr][yb][xr] ||
@@ -219,15 +220,16 @@ var main = {
 		}
 
 		// Check bottom
-		var hitGround = true;
-		if (!(ch[zl][nyb][xl] || ch[zl][nyb][xr] || ch[zr][nyb][xl] || ch[zr][nyb][xr])) {
+		var hitGround = true,
+			pushingAndJumping = (move.y > 0 && (move.z || move.y));
+		if (pushingAndJumping || !(ch[zl][nyb][xl] || ch[zl][nyb][xr] || ch[zr][nyb][xl] || ch[zr][nyb][xr])) {
 			hitGround = false;
 			p.y += move.y;
 		} else {
 			p.y = yb + (bb.h / 2);
 		}
 
-		// Check top: TODO: this ain't right. Jumping in messed up. Can get stuck in cubes.
+		// Check top: TODO: this ain't quite right - can get stuck in cubes (might also be pushingAndJumping prob).
 		if (!hitGround && (ch[zl][nyt][xl] || ch[zl][nyt][xr] || ch[zr][nyt][xl] || ch[zr][nyt][xr])) {
 			p.y = nyt - (bb.h / 2);
 			hitGround = true;

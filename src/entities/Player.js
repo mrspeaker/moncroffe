@@ -17,7 +17,7 @@ var Player = {
 		this.velocity = new THREE.Vector3(0, 0, 0);
 
 		var playerObj = this.playerObj = new THREE.Object3D();
-		playerObj.position.set(0, 2 + (this.bb.h / 2), 15);
+		playerObj.position.set(0, 1 + (this.bb.h / 2), 15);
 	    playerObj.add(
 			new THREE.Mesh(
 	    		new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d), 
@@ -109,7 +109,7 @@ var Player = {
 			obj.position.y = 0 + (this.bb.h / 2);
 		}
 
-		if (move.jump) {
+		if (col.ground && move.jump) {
 			yo += jump * drag;
 		}
 
