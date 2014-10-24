@@ -96,20 +96,16 @@ var Player = {
 			obj.position.y = col.below[1] + 1 + (this.bb.h / 2) ;// + 1 + (this.bb.h / 2);
 			yo = 0;
 		}
-		var superMagicNumber = 0.15;
-		if (col.zlhit) {
-			obj.position.z = col.zlhit - superMagicNumber;
-		}
-		if (col.zrhit) {
-			obj.position.z = col.zrhit + superMagicNumber;
-		}
+		var superMagicNumber = 0.14;
 
-		/*if (col.xlhit) {
-			obj.position.x = col.xlhit - (this.bb.w / 2);
+		if (col.top || col.bot) {
+			if (col.top) obj.position.z = col.top - superMagicNumber;
+			if (col.bot) obj.position.z = col.bot + superMagicNumber;
+		} else if (col.left || col.right) {
+			if (col.left) obj.position.x = col.left - superMagicNumber;
+			if (col.right) obj.position.x = col.right + superMagicNumber;
 		}
-		if (col.xrhit) {
-			//obj.position.x = col.xrhit;
-		}*/
+		
 
 		// Check if fallen past ground
 		if (obj.position.y < (this.bb.h / 2)) {

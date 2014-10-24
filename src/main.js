@@ -200,14 +200,22 @@ var main = {
 
 		if (ybot < 0) ybot = 0;
 
+		var tl = ch[zl][ybot + 1][xl] || ch[zl][ytop][xl],
+			tr = ch[zl][ybot + 1][xr] || ch[zl][ytop][xr],
+			bl = ch[zr][ybot + 1][xl] || ch[zr][ytop][xl],
+			br = ch[zr][ybot + 1][xr] || ch[zr][ytop][xr];
+
+		var top = (tl || tr) && !(bl || br) ? zr : false,
+			bot = (bl || br) && !(tl || tr) ? zl : false,
+			left = (tl || bl) && !(tr || br) ? xr : false,
+			right = (tr || br) && !(tl || bl) ? xl : false;
+
 		return {
 			below: ch[zl][ybot][xl] || ch[zr][ybot][xl] || ch[zl][ybot][xr] || ch[zr][ybot][xr] ? [xm, ybot, zm] : false,
-			feet: ch[zl][ybot + 1][xl] || ch[zr][ybot + 1][xl] || ch[zl][ybot + 1][xr] || ch[zr][ybot + 1][xr] ? true : false,
-			head: ch[zl][ytop][xl] || ch[zr][ytop][xl] || ch[zl][ytop][xr] || ch[zr][ytop][xr] ? true : false,
-			zlhit: ch[zl][ybot + 1][xl] || ch[zl][ybot + 1][xr] || ch[zl][ytop][xl] || ch[zl][ytop][xr] ? zr : false,
-			zrhit: ch[zr][ybot + 1][xl] || ch[zr][ybot + 1][xr] || ch[zr][ytop][xl] || ch[zr][ytop][xr] ? zl : false,
-			xlhit: ch[zl][ybot + 1][xl] || ch[zr][ybot + 1][xl] ? xl : false,
-			xrhit: ch[zl][ybot + 1][xr] || ch[zr][ybot + 1][xr] ? xr : false
+			top: top,
+			bot: bot,
+			left: left,
+			right: right
 		}
 	},
 
