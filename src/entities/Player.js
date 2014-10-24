@@ -17,7 +17,7 @@ var Player = {
 		this.velocity = new THREE.Vector3(0, 0, 0);
 
 		var playerObj = this.playerObj = new THREE.Object3D();
-		playerObj.position.set(0, 1 + (this.bb.h / 2), 15);
+		playerObj.position.set(0, 2 + (this.bb.h / 2), 15);
 	    playerObj.add(
 			new THREE.Mesh(
 	    		new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d), 
@@ -61,18 +61,17 @@ var Player = {
 		var obj = this.playerObj,
 			move = this.controls.update(delta),
 			power = 200 * delta,
+			jump = 130,
 			drag = 10 * delta;
 
-		// Hmm - dodgy - copying the rotation back to the player
-		// weird having 2 objects for player orientation
 		obj.rotation.set(move.rot.x, move.rot.y, move.rot.z);
 
 		var xo = this.velocity.x,
 			zo = this.velocity.z,
 			yo = this.velocity.y;
 
-		var op = obj.position.clone(),
-			np;
+		var oldPos = obj.position.clone(),
+			newPos;
 
 		xo += move.x * power;
 		zo += move.z * power;
@@ -81,61 +80,49 @@ var Player = {
 		//zo -= zo * drag;
 		yo -= 9.8 * drag;
 
+		// TODO: translate without doing the actual translate, please.
 		obj.translateX(xo * delta);
 		obj.translateY(yo * delta);
 		obj.translateZ(zo * delta);
 
-		np = obj.position.clone();
-		np.sub(op);
+		newPos = obj.position.clone();
+		newPos.sub(oldPos);
 
-		msg(np.x.toFixed(2) + ":" + np.y.toFixed(2) + ":" + np.z.toFixed(2));
+		obj.translateX(-xo * delta);
+		obj.translateY(-yo * delta);
+		obj.translateZ(-zo * delta);
 
 		// Check if ok...
-		var col = this.screen.getTouchingBlocks(this);
-		if (col.below) {
-			obj.position.y = col.below[1] + 1 + (this.bb.h / 2) ;// + 1 + (this.bb.h / 2);
+		var col = this.screen.tryMove(this, newPos);
+
+		obj.position.x = col.x;
+		obj.position.y = col.y;
+		obj.position.z = col.z;
+
+		if (col.ground) {
 			yo = 0;
 		}
-		var superMagicNumber = 0.14;
-
-		if (col.top || col.bot) {
-			if (col.top) obj.position.z = col.top - superMagicNumber;
-			if (col.bot) obj.position.z = col.bot + superMagicNumber;
-		} else if (col.left || col.right) {
-			if (col.left) obj.position.x = col.left - superMagicNumber;
-			if (col.right) obj.position.x = col.right + superMagicNumber;
-		}
-		
 
 		// Check if fallen past ground
-		if (obj.position.y < (this.bb.h / 2)) {
+		if (obj.position.y < 0 + (this.bb.h / 2)) {
 			yo = 0;
-			obj.position.y = (this.bb.h / 2);
+			obj.position.y = 0 + (this.bb.h / 2);
 		}
 
 		if (move.jump) {
-			yo += 145 * drag;
+			yo += jump * drag;
 		}
 
-		// Hit head
-		if (yo > 0 && col.head) {
-			yo = 0;
-		} 
-
+		// Confine to chunk
 		var chunkSize = this.screen.chunkSize - 1;
-		//if (obj.position.x < 0) obj.position.x = 0;
 		if (obj.position.z < 0) obj.position.z = 0;
 		if (obj.position.x > chunkSize) obj.position.x = chunkSize;
 		if (obj.position.z > chunkSize) obj.position.z = chunkSize;
 		if (obj.position.y > chunkSize) obj.position.y = chunkSize;
 
-		//this.velocity.set(xo, yo, zo);
 		this.velocity.set(0, yo, 0);
-
 		this.controls.setPos(obj.position.x, obj.position.y, obj.position.z);
-
 		this.marker.position.set(obj.position.x, obj.position.y - (this.bb.h / 2) + 0.05, obj.position.z);
-
 	},
 
 	createControls: function () {
@@ -143,7 +130,7 @@ var Player = {
 		var controls = new THREE.PointerLockControls(this.thrd ? new THREE.Object3D(): this.camera);
 		
 		if (this.thrd) {
-			this.camera.position.set(-8, 2, 10);
+			this.camera.position.set(-5, 2, 10);
 			this.camera.rotation.set(0, -Math.PI / 2 , 0);
 		} else {
 			this.camera.position.y = this.bb.h - 1 - 0.2;

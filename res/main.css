@@ -16,6 +16,7 @@ body {
 	top: 0;
 	left: 0;
 	color: #999;
+	font-family: monospace;
 }
 
 #blocker {

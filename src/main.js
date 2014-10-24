@@ -5,6 +5,8 @@ var main = {
 
 	day: false,
 
+	count: 0,
+
 	init: function () {
 
 		this.initThree();
@@ -169,54 +171,69 @@ var main = {
 	},
 
 	tick: function () {
-		var delta = this.clock.getDelta()
+		var delta = this.clock.getDelta();
 		this.player.update(delta);
 	},
 
-	getTouchingBlocks: function (e) {
+	tryMove: function (e, move) {
 
 		var ch = this.chunk,
-			p = e.playerObj.position,
-			bb = e.bb,
-			xl,
-			xm,
-			xr,
-			ytop, 
-			ybot, 
-			zl,
-			zm,
-			zr;
+			p = e.playerObj.position.clone(),
+			bb = e.bb;
 
-		xl = Math.round(p.x - (bb.w / 2));
-		xm = Math.round(p.x);
-		xr = Math.round(p.x + (bb.w / 2));
+		var xl = Math.round(p.x - (bb.w / 2)),
+			xr = Math.round(p.x + (bb.w / 2)),
+			nxl = Math.round((p.x + move.x) - (bb.w / 2)),
+			nxr = Math.round((p.x + move.x) + (bb.w / 2));
+		
+		var zl = Math.round(p.z - (bb.d / 2)),
+			zr = Math.round(p.z + (bb.d / 2)),
+			nzl = Math.round((p.z + move.z) - (bb.d / 2)),
+			nzr = Math.round((p.z + move.z) + (bb.d / 2));
 
-		zl = Math.round(p.z - (bb.d / 2));
-		zm = Math.round(p.z);
-		zr = Math.round(p.z + (bb.d / 2));
+		var yb = Math.round(p.y - (bb.h / 2)),
+			yt = Math.round(p.y + (bb.h / 2) - 0.5),
+			nyb = Math.round((p.y + move.y) - (bb.h / 2) - 0.5), // Erm, why -0.5? dunno.
+			nyt = Math.round((p.y + move.y) + (bb.h / 2) - 0.5);
 
-		ytop = p.y + (bb.h / 2) | 0;
-		ybot = p.y - (bb.h / 2) | 0;
+		if (nyb < 0) { nyb = 0; }
 
-		if (ybot < 0) ybot = 0;
-
-		var tl = ch[zl][ybot + 1][xl] || ch[zl][ytop][xl],
-			tr = ch[zl][ybot + 1][xr] || ch[zl][ytop][xr],
-			bl = ch[zr][ybot + 1][xl] || ch[zr][ytop][xl],
-			br = ch[zr][ybot + 1][xr] || ch[zr][ytop][xr];
-
-		var top = (tl || tr) && !(bl || br) ? zr : false,
-			bot = (bl || br) && !(tl || tr) ? zl : false,
-			left = (tl || bl) && !(tr || br) ? xr : false,
-			right = (tr || br) && !(tl || bl) ? xl : false;
-
-		return {
-			below: ch[zl][ybot][xl] || ch[zr][ybot][xl] || ch[zl][ybot][xr] || ch[zr][ybot][xr] ? [xm, ybot, zm] : false,
-			top: top,
-			bot: bot,
-			left: left,
-			right: right
+		// Check forward/backward
+		if (!(
+			ch[nzl][yb][xl] || ch[nzl][yb][xr] || ch[nzr][yb][xl] || ch[nzr][yb][xr] ||
+			ch[nzl][yt][xl] || ch[nzl][yt][xr] || ch[nzr][yt][xl] || ch[nzr][yt][xr]
+		)) {
+			p.z += move.z;
+			zl = nzl;
+			zr = nzr;
 		}
+
+		// Check left/right
+		if (!(
+			ch[zl][yb][nxl] || ch[zr][yb][nxl] || ch[zl][yb][nxr] || ch[zr][yb][nxr] ||
+			ch[zl][yt][nxl] || ch[zr][yt][nxl] || ch[zl][yt][nxr] || ch[zr][yt][nxr]
+		)) {
+			p.x += move.x;
+			xl = nxl;
+			xr = nxr;
+		}
+
+		// Check bottom
+		var hitGround = true;
+		if (!(ch[zl][nyb][xl] || ch[zl][nyb][xr] || ch[zr][nyb][xl] || ch[zr][nyb][xr])) {
+			hitGround = false;
+			p.y += move.y;
+		} else {
+			p.y = yb + (bb.h / 2);
+		}
+
+		// Check top: TODO: this ain't right. Jumping in messed up. Can get stuck in cubes.
+		if (!hitGround && (ch[zl][nyt][xl] || ch[zl][nyt][xr] || ch[zr][nyt][xl] || ch[zr][nyt][xr])) {
+			p.y = nyt - (bb.h / 2);
+			hitGround = true;
+		}
+		
+		return {x: p.x, y: p.y, z: p.z, ground: hitGround};
 	},
 
 	render: function () {
