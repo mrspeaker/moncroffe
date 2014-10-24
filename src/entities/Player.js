@@ -117,8 +117,8 @@ var Player = {
 			yo += 145 * drag;
 		}
 
+		// Hit head
 		if (yo > 0 && col.head) {
-			//obj.position.y = col.head[1] + (this.bb.h / 2);
 			yo = 0;
 		} 
 
@@ -129,37 +129,8 @@ var Player = {
 		if (obj.position.z > chunkSize) obj.position.z = chunkSize;
 		if (obj.position.y > chunkSize) obj.position.y = chunkSize;
 
-		/*
-		if (col.feet || col.head) {
-			//obj.translateX(-xo * delta);
-			//obj.translateZ(-zo * delta);
-			//xo = zo = 0;
-
-			var vel = new THREE.Vector3(np.x, 0, np.y);
-
-			//  Take the unit surface normal of the colliding voxel (pointing outward).
-			var unitNormal = new THREE.Vector3(0, 0, 1);
-    		//	Multiply it by the dot product of itself and the player velocity.
-    		var dot = unitNormal.dot(vel);
-    		unitNormal.multiplyScalar(-dot);
-    		//  Subtract it from the player's velocity.
-    		vel.sub(unitNormal);
-
-    		xo = vel.x;
-    		zo = vel.z;
-    		
-    		obj.translateX(vel.x);
-    		obj.translateZ(-vel.z);
-
-    		//msg(vel.x.toFixed(2) + ":" + vel.y.toFixed(2) + ":" + vel.z.toFixed(2));
-    		
-		}*/
-
-
 		//this.velocity.set(xo, yo, zo);
 		this.velocity.set(0, yo, 0);
-
-		//msg(obj.position.z.toFixed(2) + ":" + obj.position.y.toFixed(2) + ":" + col.feet + ":" + col.head);
 
 		this.controls.setPos(obj.position.x, obj.position.y, obj.position.z);
 
