@@ -27,6 +27,9 @@ var main = {
 		this.run();
 
 		document.addEventListener("mousedown", (function(){
+			if (!this.player.controls.enabled) {
+				return;
+			}
 			this.reChunk = true;
 		}).bind(this), false);
 
@@ -80,19 +83,22 @@ var main = {
 
 	    // Create the chunk
 		this.chunk = [];
-		for (var i = 0; i < this.chunkWidth; i++) {
-			this.chunk[i] = [];
-			for (var j = 0; j  < this.chunkHeight; j++) {
-				this.chunk[i][j] = [];
-				for (var k = 0; k < this.chunkWidth; k++) {
-					this.chunk[i][j][k] = j === 0 || 	
-						j === 1 && ((i < 10 && k < 10) || (i > 15 && k > 15)) ||
-						j === 2 && i < 5 && k < 5 ||
-						j === 3 && i == 0 && k == 0 ||
-
-						j === 3 && i > 5 && k > 5 ? 
-							this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1] : 
-							Math.random() < 0.008 ? this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1] : 0;
+		for (var z = 0; z < this.chunkWidth; z++) {
+			this.chunk[z] = [];
+			for (var y = 0; y < this.chunkHeight; y++) {
+				this.chunk[z][y] = [];
+				for (var x = 0; x < this.chunkWidth; x++) {
+					if (y === 0) {
+						this.chunk[z][y][x] =this.blocks[((Math.random() * this.blocks.length - 1 ) | 0) + 1];
+					} else if (x > 0 &&
+						(Math.sqrt(x * x + y * y + (z * 5)) < 10 && Math.sqrt(x * x + y * y + (z *5)) > 9)) {
+						this.chunk[z][y][x] =  "grass";
+					}else {
+						this.chunk[z][y][x] = 
+							y === 4 && z > 9 && x > 8 ? 
+								["tree", "stone"][Math.random() * 2 | 0] : 
+							Math.random() < 0.01 && x!== 0 ? this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1] : 0;
+					}
 				}
 			}
 		}
@@ -208,12 +214,12 @@ var main = {
 		var ambientLight = new THREE.AmbientLight(this.day ? 0x888888 : 0x333333);
 		this.scene.add(ambientLight);
 
-		var light = new THREE.PointLight( 0xffffff, 1, 10 ); 
-		light.position.set(10, 2.2, 10); 
+		var light = new THREE.PointLight( 0xffffff, 1, 20 ); 
+		light.position.set(5, 5, 5); 
 		this.scene.add(light);
 
 		light = new THREE.PointLight( 0xffffff, 1, 10 ); 
-		light.position.set(0, 5, 8); 
+		light.position.set(this.chunkWidth - 5, 5, this.chunkWidth - 5); 
 		this.scene.add(light);
 
 	},
