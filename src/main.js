@@ -98,8 +98,8 @@ var main = {
 				for (var x = 0; x < this.chunkWidth; x++) {
 					if (y === 0) {
 						this.chunk[z][y][x] =this.blocks[((Math.random() * this.blocks.length - 1 ) | 0) + 1];
-					} else if (x > 0 &&
-						(Math.sqrt(x * x + y * y + (z * 5)) < 10 && Math.sqrt(x * x + y * y + (z *5)) > 9)) {
+					} else if (
+						Math.sqrt(x * x + y * y + (z * 5)) < 10 && Math.sqrt(x * x + y * y + (z *5)) > 9) {
 						this.chunk[z][y][x] =  "grass";
 					}else {
 						this.chunk[z][y][x] = 
