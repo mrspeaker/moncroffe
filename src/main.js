@@ -2,37 +2,104 @@ var main = {
 
 	chunkSize: 25,
 	blockSize: 1,
+	blocks: ["blank", "grass", "stone", "dirt", "tree", "cobble", "gold", "snow"],
 
 	day: false,
 
 	count: 0,
 	oneFrameEvery: 1,
 
+	reChunk: false,
+
 	init: function () {
 
 		this.initThree();
 		this.player = Object.create(Player).init(this.camera, this);
 
-		this.sel = new THREE.Mesh(
-	    		new THREE.BoxGeometry(1.0, 1.0, 1.0), 
-	    		new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: false}));
-		this.sel.position.set(1, 2, 8);
-		this.sel.material.opacity = 0.5;
-		this.sel.material.transparent = true
-
-		this.scene.add(this.sel);
-
+		this.addCursorObject();
 		this.addLights();
+		this.createTextures();
+		
+		this.createChunk();
+		this.scene.add(this.totalGeomMesh = this.getChunkGeom());
 
-		var blockTex = THREE.ImageUtils.loadTexture('res/images/terrain-orig.png');
-		blockTex.magFilter = THREE.NearestFilter;
-		blockTex.minFilter = THREE.NearestFilter;
+		this.run();
 
-	    var blockMaterial = new THREE.MeshLambertMaterial({ 
-	    	map: blockTex,
-	    	wrapAround: true
-	    });
+		document.addEventListener("mousedown", (function(){
+			this.reChunk = true;
+		}).bind(this), false);
 
+		msg("");
+	},
+
+	initThree: function () {
+
+		var scene, camera, renderer;
+
+		this.scene = scene = new THREE.Scene();
+
+		this.camera = camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 500);
+		this.renderer = renderer = new THREE.WebGLRenderer();
+		renderer.setClearColor( this.day ? 0x88C4EC : 0x000000, 1);
+		renderer.setSize(window.innerWidth, window.innerHeight);
+
+		document.querySelector("#board").appendChild(renderer.domElement);
+
+		var self = this;
+		window.addEventListener( 'resize', function () { 
+			self.camera.aspect = window.innerWidth / window.innerHeight;
+			self.camera.updateProjectionMatrix();
+			self.renderer.setSize( window.innerWidth, window.innerHeight );
+		}, false );
+
+		this.clock = new THREE.Clock();
+
+	},
+
+	addCursorObject: function () {
+		var cursor = this.cursor = new THREE.Mesh(
+			new THREE.BoxGeometry(1.0, 1.0, 1.0), 
+			new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: false}));
+		cursor.position.set(1, 2, 8);
+		cursor.material.opacity = 0.5;
+		cursor.material.transparent = true;
+
+		this.scene.add(cursor);
+	},
+
+	createTextures: function () {
+		this.textures = {
+			blocks: THREE.ImageUtils.loadTexture('res/images/terrain-orig.png')
+		}
+		this.textures.blocks.magFilter = THREE.NearestFilter;
+		this.textures.blocks.minFilter = THREE.NearestFilter;
+	},
+
+	createChunk: function () {
+
+	    // Create the chunk
+		this.chunk = [];
+		var chunkSize = this.chunkSize;
+
+		for (var i = 0; i < chunkSize; i++) {
+			this.chunk[i] = [];
+			for (var j = 0; j  < chunkSize; j++) {
+				this.chunk[i][j] = [];
+				for (var k = 0; k < chunkSize; k++) {
+					this.chunk[i][j][k] = j === 0 || 	
+						j === 1 && ((i < 10 && k < 10) || (i > 15 && k > 15)) ||
+						j === 2 && i < 5 && k < 5 ||
+						j === 3 && i == 0 && k == 0 ||
+
+						j === 3 && i > 5 && k > 5 ? 
+							this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1] : 
+							Math.random() < 0.02 ? this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1] : 0;
+				}
+			}
+		}
+	},
+
+	getChunkGeom: function () {
 	    var geoms = [],
 	    	blockSize = this.blockSize;
 
@@ -94,30 +161,20 @@ var main = {
 
 
 	    // Create the chunk
-		this.chunk = [];
 		var chunkSize = this.chunkSize,
 			totalGeom = new THREE.Geometry();
 
 		for (var i = 0; i < chunkSize; i++) {
-			this.chunk[i] = [];
 			for (var j = 0; j  < chunkSize; j++) {
-				this.chunk[i][j] = [];
 				for (var k = 0; k < chunkSize; k++) {
-					this.chunk[i][j][k] = j === 0 || 	
-						j === 1 && ((i < 10 && k < 10) || (i > 15 && k > 15)) ||
-						j === 2 && i < 5 && k < 5 ||
-						j === 3 && i == 0 && k == 0 ||
-
-						j === 3 && i > 5 && k > 5 ? true : Math.random() < 0.02;
 					if (this.chunk[i][j][k]) {
-						var blocks = ["grass", "stone", "dirt","grass", "stone", "dirt", "grass", "stone", "dirt", "tree", "cobble", "gold", "snow"],
-							geometry = getGeometry(blocks[Math.random() * blocks.length | 0]),
+						var geometry = getGeometry(this.chunk[i][j][k]),
 							mesh = new THREE.Mesh(geometry, blockMaterial);
 
 						// Move up so bottom of cube is at 0, not -0.5
 						mesh.position.set(k, j + blockSize / 2, i);
-
 						mesh.updateMatrix();
+
 						totalGeom.merge(mesh.geometry, mesh.matrix);
 
 					}
@@ -125,55 +182,26 @@ var main = {
 			}
 		}
 
-		// Add all the geometry
-		this.scene.add(new THREE.Mesh(totalGeom, blockMaterial));
-
-		this.clock = new THREE.Clock();
-		this.run();
-
-		document.addEventListener("mousedown", (function(){
-			this.cast();
-		}).bind(this), false);
-
-		msg("");
-	},
-
-	cast: function () {
-		var ob = this.player.controls,
-			sel = this.sel,
-			ch = this.chunk,
-			origin = ob.getObject().position.clone();
-
-		origin.addScalar(0.5);
-		
-		this.raycast(origin, ob.getDirection(), 5, function (x, y, z, face) {
-			sel.position.set(x + face.x, y + 0.5 + face.y, z + face.z);
-			return ch[z][y][x];
+		 var blockMaterial = new THREE.MeshLambertMaterial({ 
+			map: this.textures.blocks,
+			wrapAround: true
 		});
+	
+		return new THREE.Mesh(totalGeom, blockMaterial);
 	},
 
-	onWindowResize: function () {
-		this.camera.aspect = window.innerWidth / window.innerHeight;
-		this.camera.updateProjectionMatrix();
-		this.renderer.setSize( window.innerWidth, window.innerHeight );
-	},
-
-	initThree: function () {
-
-		var scene, camera, renderer;
-
-		this.scene = scene = new THREE.Scene();
-
-		this.camera = camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 500);
-		this.renderer = renderer = new THREE.WebGLRenderer();
-		renderer.setClearColor( this.day ? 0x88C4EC : 0x000000, 1);
-		renderer.setSize(window.innerWidth, window.innerHeight);
-
-		document.querySelector("#board").appendChild(renderer.domElement);
-
-		var self = this;
-		window.addEventListener( 'resize', function () { self.onWindowResize(); }, false );
-
+	addBlockAtSelection: function () {
+		// Todo: re-chunk.
+		// Add all the geometry.
+		// Just remesh the whole chunk. THis way is verrryy... wrong?
+		var cursor = this.cursor.position;
+		if (cursor.x < 0) {
+			return;
+		}
+		this.chunk[cursor.z][cursor.y - 0.5][cursor.x] = "dirt";
+		this.scene.remove(this.totalGeomMesh);
+		this.totalGeomMesh = this.getChunkGeom();
+		this.scene.add(this.totalGeomMesh);
 	},
 
 	addLights: function () {
@@ -201,10 +229,27 @@ var main = {
 	},
 
 	tick: function () {
+		if (this.reChunk) {
+			this.addBlockAtSelection();
+			this.reChunk = false;
+		}
 		var delta = this.clock.getDelta() / this.oneFrameEvery;
 		this.player.update(delta);
 	},
 
+	cast: function () {
+		var ob = this.player.controls,
+			cursor = this.cursor,
+			ch = this.chunk,
+			origin = ob.getObject().position.clone();
+
+		origin.addScalar(0.5);
+		
+		this.raycast(origin, ob.getDirection(), 5, function (x, y, z, face) {
+			cursor.position.set(x + face.x, y + 0.5 + face.y, z + face.z);
+			return ch[z][y][x];
+		});
+	},
 
 	raycast: function (origin, direction, radius, callback) {
 
@@ -339,7 +384,7 @@ var main = {
 	    }
 	  }
 	  if (!calledBack) {
-	  	callback(0, 3, 10, new THREE.Vector3(0, 1, 0))
+	  	callback(-1, 0, 10, new THREE.Vector3(0, 0, 0))
 	  }
 	},
 	
@@ -368,6 +413,9 @@ var main = {
 		if (xr < 0) xr = 0;
 		if (nxl < 0) nxl = 0;
 		if (nxr < 0) nxr = 0;
+
+		if (nyb < 0) nyb = 0;
+		if (nyt < 1) nyt = 1;
 
 		// Check forward/backward
 		if (!(

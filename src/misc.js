@@ -5,5 +5,10 @@ function MakeBox(w, d, h, col) {
 }
 
 function msg(m) {
-	document.querySelector("#watch").innerHTML = m;
+	var dom = document.querySelector("#watch"),
+		args = Array.prototype.slice.call(arguments);
+	dom.innerHTML = "";
+	args.forEach(function (m, i) {
+		dom.innerHTML += m + (i < args.length - 1 ? " : " : "");
+	});
 }
