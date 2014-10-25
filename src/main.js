@@ -10,7 +10,8 @@ var main = {
 	count: 0,
 	oneFrameEvery: 1,
 
-	reChunk: false,
+	doAddBlock: false,
+	doRemoveBlock: false,
 
 	init: function () {
 
@@ -26,11 +27,16 @@ var main = {
 
 		this.run();
 
-		document.addEventListener("mousedown", (function(){
+		document.addEventListener("mousedown", (function(e){
+			console.log(e);
 			if (!this.player.controls.enabled) {
 				return;
 			}
-			this.reChunk = true;
+			if (e.shiftKey) {
+				this.doRemoveBlock = true;
+			} else {
+				this.doAddBlock = true;
+			}
 		}).bind(this), false);
 
 		msg("");
@@ -67,6 +73,8 @@ var main = {
 		cursor.position.set(1, 2, 8);
 		cursor.material.opacity = 0.5;
 		cursor.material.transparent = true;
+
+		cursor.__face = null;
 
 		this.scene.add(cursor);
 	},
@@ -194,18 +202,33 @@ var main = {
 		return new THREE.Mesh(totalGeom, blockMaterial);
 	},
 
-	addBlockAtSelection: function () {
+	reMeshChunk: function () {
 		// Todo: re-chunk.
 		// Add all the geometry.
 		// Just remesh the whole chunk. THis way is verrryy... wrong?
+		this.scene.remove(this.totalGeomMesh);
+		this.totalGeomMesh = this.getChunkGeom();
+		this.scene.add(this.totalGeomMesh);
+	},
+
+	addBlockAtSelection: function () {
 		var cursor = this.cursor.position;
 		if (cursor.x < 0) {
 			return;
 		}
 		this.chunk[cursor.z][cursor.y - 0.5][cursor.x] = "dirt";
-		this.scene.remove(this.totalGeomMesh);
-		this.totalGeomMesh = this.getChunkGeom();
-		this.scene.add(this.totalGeomMesh);
+		this.reMeshChunk();
+	},
+
+	removeBlockAtSelection: function () {
+		var cursor = this.cursor.position;
+		if (cursor.x < 0) {
+			return;
+		}
+
+		var face = this.cursor.__face;
+		this.chunk[cursor.z - face.z][cursor.y - 0.5 - face.y][cursor.x - face.x] = 0;
+		this.reMeshChunk();
 	},
 
 	addLights: function () {
@@ -233,9 +256,13 @@ var main = {
 	},
 
 	tick: function () {
-		if (this.reChunk) {
+		if (this.doAddBlock) {
 			this.addBlockAtSelection();
-			this.reChunk = false;
+			this.doAddBlock = false;
+		}
+		if (this.doRemoveBlock) {
+			this.removeBlockAtSelection();
+			this.doRemoveBlock = false;
 		}
 		var delta = this.clock.getDelta() / this.oneFrameEvery;
 		delta = Math.min(60 / 1000, delta); // Limit for physics
@@ -259,6 +286,7 @@ var main = {
 				x = 0; y = 0; z = ch.lengh * 0.75 | 0;
 			}
 			cursor.position.set(x + face.x, y + 0.5 + face.y, z + face.z);
+			cursor.__face = face;
 			return ch[z][y][x];
 		});
 	},

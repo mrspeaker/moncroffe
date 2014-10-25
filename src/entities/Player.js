@@ -112,6 +112,7 @@ var Player = {
 		if (obj.position.y < 0 + (this.bb.h / 2)) {
 			yo = 0;
 			obj.position.y = 0 + (this.bb.h / 2);
+			col.ground = true; // Allow jumping!
 		}
 
 		if (col.ground && move.jump) {
