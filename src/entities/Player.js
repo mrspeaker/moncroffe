@@ -120,6 +120,8 @@ var Player = {
 		if (obj.position.z > chunkSize) obj.position.z = chunkSize;
 		if (obj.position.y > chunkSize) obj.position.y = chunkSize;
 
+		this.screen.cast();
+
 		this.velocity.set(0, yo, 0);
 		this.controls.setPos(obj.position.x, obj.position.y, obj.position.z);
 		this.marker.position.set(obj.position.x, obj.position.y - (this.bb.h / 2) + 0.05, obj.position.z);

@@ -1,6 +1,6 @@
 var main = {
 
-	chunkSize: 20,
+	chunkSize: 25,
 	blockSize: 1,
 
 	day: false,
@@ -12,6 +12,12 @@ var main = {
 
 		this.initThree();
 		this.player = Object.create(Player).init(this.camera, this);
+
+		this.sel = new THREE.Mesh(
+	    		new THREE.BoxGeometry(1.1, 1.1, 1.1), 
+	    		new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: false}));
+		this.sel.position.set(1, 2, 8);
+		this.scene.add(this.sel);
 
 		this.addLights();
 
@@ -122,7 +128,22 @@ var main = {
 		this.clock = new THREE.Clock();
 		this.run();
 
+		document.addEventListener("mousedown", (function(){
+			this.cast();
+		}).bind(this), false);
+
 		msg("");
+	},
+
+	cast: function () {
+		var ob = this.player.controls,
+			sel = this.sel,
+			ch = this.chunk;
+		
+		this.raycast(ob.getObject().position, ob.getDirection(), 10, function (x, y, z, face) {
+			sel.position.set(x + face.x, y + 0.5 + face.y, z + face.z);
+			return ch[z][y][x];
+		});
 	},
 
 	onWindowResize: function () {
@@ -178,6 +199,139 @@ var main = {
 		this.player.update(delta);
 	},
 
+
+	raycast: function (origin, direction, radius, callback) {
+
+		var wx = 20,
+			wy = 20,
+			wz = 20;
+
+		function intbound(s, ds) {
+		  // Find the smallest positive t such that s+t*ds is an integer.
+		  if (ds < 0) {
+		    return intbound(-s, -ds);
+		  } else {
+		    s = mod(s, 1);
+		    // problem is now s+t*ds = 1
+		    return (1-s)/ds;
+		  }
+		}
+
+		function signum(x) {
+		  return x > 0 ? 1 : x < 0 ? -1 : 0;
+		}
+
+		function mod(value, modulus) {
+		  return (value % modulus + modulus) % modulus;
+		}
+
+	  // From "A Fast Voxel Traversal Algorithm for Ray Tracing"
+	  // by John Amanatides and Andrew Woo, 1987
+	  // <http://www.cse.yorku.ca/~amana/research/grid.pdf>
+	  // <http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.42.3443>
+	  // Extensions to the described algorithm:
+	  //   • Imposed a distance limit.
+	  //   • The face passed through to reach the current cube is provided to
+	  //     the callback.
+	  
+	  // The foundation of this algorithm is a parameterized representation of
+	  // the provided ray,
+	  //                    origin + t * direction,
+	  // except that t is not actually stored; rather, at any given point in the
+	  // traversal, we keep track of the *greater* t values which we would have
+	  // if we took a step sufficient to cross a cube boundary along that axis
+	  // (i.e. change the integer part of the coordinate) in the variables
+	  // tMaxX, tMaxY, and tMaxZ.
+	  
+	  // Cube containing origin point.
+	  var x = Math.floor(origin.x);
+	  var y = Math.floor(origin.y);
+	  var z = Math.floor(origin.z);
+	  // Break out direction vector.
+	  var dx = direction.x;
+	  var dy = direction.y;
+	  var dz = direction.z;
+
+	  // Direction to increment x,y,z when stepping.
+	  var stepX = signum(dx);
+	  var stepY = signum(dy);
+	  var stepZ = signum(dz);
+	  // See description above. The initial values depend on the fractional
+	  // part of the origin.
+	  var tMaxX = intbound(origin.x, dx);
+	  var tMaxY = intbound(origin.y, dy);
+	  var tMaxZ = intbound(origin.z, dz);
+	  // The change in t when taking a step (always positive).
+	  var tDeltaX = stepX/dx;
+	  var tDeltaY = stepY/dy;
+	  var tDeltaZ = stepZ/dz;
+	  // Buffer for reporting faces to the callback.
+	  var face = new THREE.Vector3();
+	  
+	  // Avoids an infinite loop.
+	  if (dx === 0 && dy === 0 && dz === 0)
+	    throw new RangeError("Raycast in zero direction!");
+	  
+	  // Rescale from units of 1 cube-edge to units of 'direction' so we can
+	  // compare with 't'.
+	  radius /= Math.sqrt(dx*dx+dy*dy+dz*dz);
+	  
+	  while (/* ray has not gone past bounds of world */
+	         (stepX > 0 ? x < wx : x >= 0) &&
+	         (stepY > 0 ? y < wy : y >= 0) &&
+	         (stepZ > 0 ? z < wz : z >= 0)) {
+	    
+	    // Invoke the callback, unless we are not *yet* within the bounds of the
+	    // world.
+	    if (!(x < 0 || y < 0 || z < 0 || x >= wx || y >= wy || z >= wz))
+	      if (callback(x, y, z, face))
+	        break;
+	    
+	    // tMaxX stores the t-value at which we cross a cube boundary along the
+	    // X axis, and similarly for Y and Z. Therefore, choosing the least tMax
+	    // chooses the closest cube boundary. Only the first case of the four
+	    // has been commented in detail.
+	    if (tMaxX < tMaxY) {
+	      if (tMaxX < tMaxZ) {
+	        if (tMaxX > radius) break;
+	        // Update which cube we are now in.
+	        x += stepX;
+	        // Adjust tMaxX to the next X-oriented boundary crossing.
+	        tMaxX += tDeltaX;
+	        // Record the normal vector of the cube face we entered.
+	        face.x = -stepX;
+	        face.y = 0;
+	        face.z = 0;
+	      } else {
+	        if (tMaxZ > radius) break;
+	        z += stepZ;
+	        tMaxZ += tDeltaZ;
+	        face.x = 0;
+	        face.y = 0;
+	        face.z = -stepZ;
+	      }
+	    } else {
+	      if (tMaxY < tMaxZ) {
+	        if (tMaxY > radius) break;
+	        y += stepY;
+	        tMaxY += tDeltaY;
+	        face.x = 0;
+	        face.y = -stepY;
+	        face.z = 0;
+	      } else {
+	        // Identical to the second case, repeated for simplicity in
+	        // the conditionals.
+	        if (tMaxZ > radius) break;
+	        z += stepZ;
+	        tMaxZ += tDeltaZ;
+	        face.x = 0;
+	        face.y = 0;
+	        face.z = -stepZ;
+	      }
+	    }
+	  }
+	},
+	
 	tryMove: function (e, move) {
 
 		var ch = this.chunk,
@@ -188,7 +342,7 @@ var main = {
 			xr = Math.round(p.x + (bb.w / 2)),
 			nxl = Math.round((p.x + move.x) - (bb.w / 2)),
 			nxr = Math.round((p.x + move.x) + (bb.w / 2));
-		
+
 		var zl = Math.round(p.z - (bb.d / 2)),
 			zr = Math.round(p.z + (bb.d / 2)),
 			nzl = Math.round((p.z + move.z) - (bb.d / 2)),
@@ -196,8 +350,13 @@ var main = {
 
 		var yb = Math.round(p.y - (bb.h / 2)),
 			yt = Math.round(p.y + (bb.h / 2) - 0.5),
-			nyb = Math.round((p.y + move.y) - (bb.h / 2) - 0.5), // Erm, why -0.5? dunno.
+			nyb = Math.round((p.y + move.y) - (bb.h / 2) - 0.5), // Erm, why -0.5? dunno. Mabye replace yb/yt Math.round with floor.
 			nyt = Math.round((p.y + move.y) + (bb.h / 2) - 0.5);
+
+		if (xl < 0) xl = 0;
+		if (xr < 0) xr = 0;
+		if (nxl < 0) nxl = 0;
+		if (nxr < 0) nxr = 0;
 
 		// Check forward/backward
 		if (!(
@@ -229,9 +388,16 @@ var main = {
 			p.y = yb + (bb.h / 2);
 		}
 
-		// Check top: TODO: this ain't quite right - can get stuck in cubes (might also be pushingAndJumping prob).
-		if (!hitGround && (ch[zl][nyt][xl] || ch[zl][nyt][xr] || ch[zr][nyt][xl] || ch[zr][nyt][xr])) {
-			p.y = nyt - (bb.h / 2);
+		// Check top: 
+		/*
+			TODO: this ain't quite right - "slide down" cubes
+			Always detects a head hit if you are jumping and pushing.
+			It's detecting the sides not just the top
+			- Maybe a resolution problem: if sides, move back, if top move down
+			- Maybe because of forward/back and left/right done togetehr?
+		*/
+		if (ch[zl][nyt][xl] || ch[zl][nyt][xr] || ch[zr][nyt][xl] || ch[zr][nyt][xr]) {
+			//p.y = nyt - (bb.h / 2); // can't force down because it's detecting sides, not just top
 			hitGround = true;
 		}
 		
