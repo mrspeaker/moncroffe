@@ -1,6 +1,7 @@
 var main = {
 
-	chunkSize: 25,
+	chunkWidth: 24,
+	chunkHeight: 20,
 	blockSize: 1,
 	blocks: ["blank", "grass", "stone", "dirt", "tree", "cobble", "gold", "snow"],
 
@@ -79,13 +80,11 @@ var main = {
 
 	    // Create the chunk
 		this.chunk = [];
-		var chunkSize = this.chunkSize;
-
-		for (var i = 0; i < chunkSize; i++) {
+		for (var i = 0; i < this.chunkWidth; i++) {
 			this.chunk[i] = [];
-			for (var j = 0; j  < chunkSize; j++) {
+			for (var j = 0; j  < this.chunkHeight; j++) {
 				this.chunk[i][j] = [];
-				for (var k = 0; k < chunkSize; k++) {
+				for (var k = 0; k < this.chunkWidth; k++) {
 					this.chunk[i][j][k] = j === 0 || 	
 						j === 1 && ((i < 10 && k < 10) || (i > 15 && k > 15)) ||
 						j === 2 && i < 5 && k < 5 ||
@@ -93,7 +92,7 @@ var main = {
 
 						j === 3 && i > 5 && k > 5 ? 
 							this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1] : 
-							Math.random() < 0.02 ? this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1] : 0;
+							Math.random() < 0.008 ? this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1] : 0;
 				}
 			}
 		}
@@ -161,12 +160,11 @@ var main = {
 
 
 	    // Create the chunk
-		var chunkSize = this.chunkSize,
-			totalGeom = new THREE.Geometry();
+		var totalGeom = new THREE.Geometry();
 
-		for (var i = 0; i < chunkSize; i++) {
-			for (var j = 0; j  < chunkSize; j++) {
-				for (var k = 0; k < chunkSize; k++) {
+		for (var i = 0; i < this.chunkWidth; i++) {
+			for (var j = 0; j  < this.chunkHeight; j++) {
+				for (var k = 0; k < this.chunkWidth; k++) {
 					if (this.chunk[i][j][k]) {
 						var geometry = getGeometry(this.chunk[i][j][k]),
 							mesh = new THREE.Mesh(geometry, blockMaterial);
@@ -234,6 +232,11 @@ var main = {
 			this.reChunk = false;
 		}
 		var delta = this.clock.getDelta() / this.oneFrameEvery;
+		delta = Math.min(60 / 1000, delta); // Limit for physics
+		var dt = delta * 1000 | 0;
+		if (dt < 15 || dt > 21) {
+			msg(dt);
+		}
 		this.player.update(delta);
 	},
 
@@ -246,6 +249,9 @@ var main = {
 		origin.addScalar(0.5);
 		
 		this.raycast(origin, ob.getDirection(), 5, function (x, y, z, face) {
+			if (x < 0) {
+				x = 0; y = 0; z = ch.lengh * 0.75 | 0;
+			}
 			cursor.position.set(x + face.x, y + 0.5 + face.y, z + face.z);
 			return ch[z][y][x];
 		});
@@ -253,7 +259,8 @@ var main = {
 
 	raycast: function (origin, direction, radius, callback) {
 
-		var wx = wy = wz = this.chunkSize;
+		var wx = wz = this.chunkWidth,
+			wy = this.chunkHeight;
 
 		function intbound(s, ds) {
 		  // Find the smallest positive t such that s+t*ds is an integer.
@@ -384,7 +391,7 @@ var main = {
 	    }
 	  }
 	  if (!calledBack) {
-	  	callback(-1, 0, 10, new THREE.Vector3(0, 0, 0))
+	  	callback(-1, -1, -1, new THREE.Vector3(0, 0, 0))
 	  }
 	},
 	

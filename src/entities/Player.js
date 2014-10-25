@@ -17,7 +17,8 @@ var Player = {
 		this.velocity = new THREE.Vector3(0, 0, 0);
 
 		var playerObj = this.playerObj = new THREE.Object3D();
-		playerObj.position.set(0, 1 + (this.bb.h / 2), 15);
+
+		playerObj.position.set(screen.chunkWidth * 0.1, 4 +  (this.bb.h / 2), screen.chunkWidth * 0.75);
 	    playerObj.add(
 			new THREE.Mesh(
 	    		new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d), 
@@ -65,7 +66,7 @@ var Player = {
 		var obj = this.playerObj,
 			move = this.controls.update(delta),
 			power = 200 * delta,
-			jump = 130,
+			jump = 23,
 			drag = 10 * delta;
 
 		obj.rotation.set(move.rot.x, move.rot.y, move.rot.z);
@@ -114,7 +115,7 @@ var Player = {
 		}
 
 		if (col.ground && move.jump) {
-			yo += jump * drag;
+			yo += jump;
 		}
 
 		// Confine to chunk
