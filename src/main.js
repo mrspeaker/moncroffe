@@ -14,9 +14,12 @@ var main = {
 		this.player = Object.create(Player).init(this.camera, this);
 
 		this.sel = new THREE.Mesh(
-	    		new THREE.BoxGeometry(1.1, 1.1, 1.1), 
+	    		new THREE.BoxGeometry(1.0, 1.0, 1.0), 
 	    		new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: false}));
 		this.sel.position.set(1, 2, 8);
+		this.sel.material.opacity = 0.5;
+		this.sel.material.transparent = true
+
 		this.scene.add(this.sel);
 
 		this.addLights();
@@ -138,9 +141,12 @@ var main = {
 	cast: function () {
 		var ob = this.player.controls,
 			sel = this.sel,
-			ch = this.chunk;
+			ch = this.chunk,
+			origin = ob.getObject().position.clone();
+
+		origin.addScalar(0.5);
 		
-		this.raycast(ob.getObject().position, ob.getDirection(), 10, function (x, y, z, face) {
+		this.raycast(origin, ob.getDirection(), 5, function (x, y, z, face) {
 			sel.position.set(x + face.x, y + 0.5 + face.y, z + face.z);
 			return ch[z][y][x];
 		});
@@ -202,9 +208,7 @@ var main = {
 
 	raycast: function (origin, direction, radius, callback) {
 
-		var wx = 20,
-			wy = 20,
-			wz = 20;
+		var wx = wy = wz = this.chunkSize;
 
 		function intbound(s, ds) {
 		  // Find the smallest positive t such that s+t*ds is an integer.
@@ -276,6 +280,7 @@ var main = {
 	  // compare with 't'.
 	  radius /= Math.sqrt(dx*dx+dy*dy+dz*dz);
 	  
+	  var calledBack = false;
 	  while (/* ray has not gone past bounds of world */
 	         (stepX > 0 ? x < wx : x >= 0) &&
 	         (stepY > 0 ? y < wy : y >= 0) &&
@@ -284,8 +289,11 @@ var main = {
 	    // Invoke the callback, unless we are not *yet* within the bounds of the
 	    // world.
 	    if (!(x < 0 || y < 0 || z < 0 || x >= wx || y >= wy || z >= wz))
-	      if (callback(x, y, z, face))
+	      if (callback(x, y, z, face)) {
+	      	calledBack = true;
 	        break;
+	      }
+	   	
 	    
 	    // tMaxX stores the t-value at which we cross a cube boundary along the
 	    // X axis, and similarly for Y and Z. Therefore, choosing the least tMax
@@ -329,6 +337,9 @@ var main = {
 	        face.z = -stepZ;
 	      }
 	    }
+	  }
+	  if (!calledBack) {
+	  	callback(0, 3, 10, new THREE.Vector3(0, 1, 0))
 	  }
 	},
 	

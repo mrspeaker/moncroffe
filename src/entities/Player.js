@@ -58,6 +58,10 @@ var Player = {
 
 	update: function (delta) {
 
+		if (!this.controls.enabled) {
+			delta = 0;
+		}
+
 		var obj = this.playerObj,
 			move = this.controls.update(delta),
 			power = 200 * delta,
