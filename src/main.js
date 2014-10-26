@@ -68,7 +68,7 @@ var main = {
 
 	addCursorObject: function () {
 		var cursor = this.cursor = new THREE.Mesh(
-			new THREE.BoxGeometry(1.0, 1.0, 1.0), 
+			new THREE.BoxGeometry(1.01, 1.01, 1.01), 
 			new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: false}));
 		cursor.position.set(1, 2, 8);
 		cursor.material.opacity = 0.5;
@@ -216,7 +216,8 @@ var main = {
 		if (cursor.x < 0) {
 			return;
 		}
-		this.chunk[cursor.z][cursor.y - 0.5][cursor.x] = "dirt";
+				var face = this.cursor.__face;
+		this.chunk[cursor.z + face.z][cursor.y - 0.5 + face.y][cursor.x + face.x] = "dirt";
 		this.reMeshChunk();
 	},
 
@@ -226,8 +227,7 @@ var main = {
 			return;
 		}
 
-		var face = this.cursor.__face;
-		this.chunk[cursor.z - face.z][cursor.y - 0.5 - face.y][cursor.x - face.x] = 0;
+		this.chunk[cursor.z][cursor.y - 0.5][cursor.x] = 0;
 		this.reMeshChunk();
 	},
 
@@ -285,7 +285,7 @@ var main = {
 			if (x < 0) {
 				x = 0; y = 0; z = ch.lengh * 0.75 | 0;
 			}
-			cursor.position.set(x + face.x, y + 0.5 + face.y, z + face.z);
+			cursor.position.set(x, y + 0.5, z);
 			cursor.__face = face;
 			return ch[z][y][x];
 		});
