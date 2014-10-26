@@ -69,9 +69,9 @@ var main = {
 	addCursorObject: function () {
 		var cursor = this.cursor = new THREE.Mesh(
 			new THREE.BoxGeometry(1.01, 1.01, 1.01), 
-			new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: false}));
+			new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: false}));
 		cursor.position.set(1, 2, 8);
-		cursor.material.opacity = 0.5;
+		cursor.material.opacity = 0.2;
 		cursor.material.transparent = true;
 
 		cursor.__face = null;
