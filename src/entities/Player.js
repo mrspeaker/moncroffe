@@ -18,7 +18,7 @@ var Player = {
 
 		var playerObj = this.playerObj = new THREE.Object3D();
 
-		playerObj.position.set(screen.chunkWidth * 0.1, 4 +  (this.bb.h / 2), screen.chunkWidth * 0.75);
+		playerObj.position.set(screen.chunkWidth * 0.1, 7 +  (this.bb.h / 2), screen.chunkWidth * 0.75);
 	    playerObj.add(
 			new THREE.Mesh(
 	    		new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d), 
@@ -120,9 +120,11 @@ var Player = {
 		}
 
 		// Confine to chunk
-		if (obj.position.x > this.screen.chunkWidth - 1) obj.position.x = this.screen.chunkWidth -1;
+		var xChunks = 2,
+			zChunks = 2;
+		if (obj.position.x > xChunks * this.screen.chunkWidth - 1) obj.position.x = xChunks * this.screen.chunkWidth -1;
 		if (obj.position.z < 0) obj.position.z = 0;
-		if (obj.position.z > this.screen.chunkWidth - 1) obj.position.z = this.screen.chunkWidth - 1;
+		if (obj.position.z > zChunks * this.screen.chunkWidth - 1) obj.position.z = zChunks * this.screen.chunkWidth - 1;
 		if (obj.position.y > this.screen.chunkHeight - 1) obj.position.y = this.screen.chunkHeight - 1;
 
 		this.screen.cast();

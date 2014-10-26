@@ -1,7 +1,10 @@
 var main = {
 
-	chunkWidth: 24,
+	chunkWidth: 16,
 	chunkHeight: 20,
+	curChunkX: 0,
+	curChunkY: 0,
+
 	blockSize: 1,
 	blocks: ["blank", "grass", "stone", "dirt", "tree", "wood", "sand", "cobble", "gold", "snow", "ice"],
 	curBlock: 1,
@@ -26,8 +29,26 @@ var main = {
 		this.addLights();
 		this.createTextures();
 		
-		this.createChunk();
-		this.scene.add(this.totalGeomMesh = this.getChunkGeom());
+		this.chunk = this.createChunk();
+		// Reference to chunk data
+		this.chunks = {
+			"0:0": this.chunk,
+			"0:1": this.createChunk(),
+			"1:0": this.createChunk(),
+			"1:1": this.createChunk()
+		};
+
+		// Reference to chunk mesh
+		this.chunkGeom = {};
+		this.scene.add(this.chunkGeom["0:0"] = this.getChunkGeom(0, 0, this.chunks["0:0"]));
+		this.scene.add(this.chunkGeom["0:1"] = this.getChunkGeom(0, 1, this.chunks["0:1"]));
+
+		this.scene.add(this.chunkGeom["1:0"] = this.getChunkGeom(1, 0, this.chunks["1:0"]));
+		this.scene.add(this.chunkGeom["1:1"] = this.getChunkGeom(1, 1, this.chunks["1:1"]));
+
+		//this.scene.add(this.getChunkGeom(-1, 0));
+		//this.scene.add(this.getChunkGeom(0, -1));
+		//this.scene.add(this.getChunkGeom(1, -1));
 
 		this.run();
 
@@ -134,19 +155,19 @@ var main = {
 		var grounds = ["grass", "dirt"];
 
 	    // Create the chunk
-		this.chunk = [];
+		var chunk = [];
 		for (var z = 0; z < this.chunkWidth; z++) {
-			this.chunk[z] = [];
+			chunk[z] = [];
 			for (var y = 0; y < this.chunkHeight; y++) {
-				this.chunk[z][y] = [];
+				chunk[z][y] = [];
 				for (var x = 0; x < this.chunkWidth; x++) {
 					if (y === 0) {
-						this.chunk[z][y][x] = grounds[Math.random() * grounds.length | 0];
+						chunk[z][y][x] = grounds[Math.random() * grounds.length | 0];
 					} else if (
 						Math.sqrt(x * x + y * y + (z * 5)) < 10 && Math.sqrt(x * x + y * y + (z *5)) > 7) {
-						this.chunk[z][y][x] =  "grass";
+						chunk[z][y][x] =  "grass";
 					}else {
-						this.chunk[z][y][x] = 
+						chunk[z][y][x] = 
 							y === 4 && z > 9 && x > 8 ? 
 								["tree", "stone"][Math.random() * 2 | 0] : 
 							Math.random() < 0.01 && x!== 0 ? this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1] : 0;
@@ -154,9 +175,11 @@ var main = {
 				}
 			}
 		}
+
+		return chunk;
 	},
 
-	getChunkGeom: function () {
+	getChunkGeom: function (x, z, chunk) {
 	    var geoms = [],
 	    	blockSize = this.blockSize;
 
@@ -226,12 +249,12 @@ var main = {
 		for (var i = 0; i < this.chunkWidth; i++) {
 			for (var j = 0; j  < this.chunkHeight; j++) {
 				for (var k = 0; k < this.chunkWidth; k++) {
-					if (this.chunk[i][j][k]) {
-						var geometry = getGeometry(this.chunk[i][j][k]),
+					if (chunk[i][j][k]) {
+						var geometry = getGeometry(chunk[i][j][k]),
 							mesh = new THREE.Mesh(geometry, blockMaterial);
 
 						// Move up so bottom of cube is at 0, not -0.5
-						mesh.position.set(k, j + blockSize / 2, i);
+						mesh.position.set(k + (x * this.chunkWidth), j + blockSize / 2, i + (z * this.chunkWidth));
 						mesh.updateMatrix();
 
 						totalGeom.merge(mesh.geometry, mesh.matrix);
@@ -249,13 +272,14 @@ var main = {
 		return new THREE.Mesh(totalGeom, blockMaterial);
 	},
 
-	reMeshChunk: function () {
+	reMeshChunk: function (chunk) {
 		// Todo: re-chunk.
 		// Add all the geometry.
 		// Just remesh the whole chunk. THis way is verrryy... wrong?
-		this.scene.remove(this.totalGeomMesh);
-		this.totalGeomMesh = this.getChunkGeom();
-		this.scene.add(this.totalGeomMesh);
+		var split = chunk.split(":"); // TODO: ha... c'mon now.
+		this.scene.remove(this.chunkGeom[chunk]);
+		this.chunkGeom[chunk] = this.getChunkGeom(split[0], split[1], this.chunks[chunk]);
+		this.scene.add(this.chunkGeom[chunk]);
 	},
 
 	addBlockAtSelection: function () {
@@ -264,8 +288,12 @@ var main = {
 			return;
 		}
 		var face = this.cursor.__face;
-		this.chunk[cursor.z + face.z][cursor.y - 0.5 + face.y][cursor.x + face.x] = this.blocks[this.curBlock];
-		this.reMeshChunk();
+		var pos = this.cursor.__pos;
+
+		// TODO: BUG. pos + face could change chunks
+		// (eg, if you attach to a face in an ajacent chunk)
+		this.chunks[this.cursor.__chunk][pos.z + face.z][pos.y + face.y][pos.x + face.x] = this.blocks[this.curBlock];
+		this.reMeshChunk(this.cursor.__chunk);
 	},
 
 	removeBlockAtSelection: function () {
@@ -273,9 +301,9 @@ var main = {
 		if (cursor.x < 0) {
 			return;
 		}
-
-		this.chunk[cursor.z][cursor.y - 0.5][cursor.x] = 0;
-		this.reMeshChunk();
+		var pos = this.cursor.__pos;
+		this.chunks[this.cursor.__chunk][pos.z][pos.y][pos.x] = 0;
+		this.reMeshChunk(this.cursor.__chunk);
 	},
 
 	addLights: function () {
@@ -290,6 +318,10 @@ var main = {
 
 		light = new THREE.PointLight( 0xffffff, 1, 10 ); 
 		light.position.set(this.chunkWidth - 5, 5, this.chunkWidth - 5); 
+		this.scene.add(light);
+
+		light = new THREE.PointLight( 0xffffff, 1, 10 ); 
+		light.position.set(2 * this.chunkWidth - 5, 5, 2 * this.chunkWidth - 5); 
 		this.scene.add(light);
 
 	},
@@ -323,18 +355,34 @@ var main = {
 	cast: function () {
 		var ob = this.player.controls,
 			cursor = this.cursor,
-			ch = this.chunk,
-			origin = ob.getObject().position.clone();
+			chs = this.chunks,
+			origin = ob.getObject().position.clone(),
+			chW = this.chunkWidth;
 
 		origin.addScalar(0.5);
 		
 		this.raycast(origin, ob.getDirection(), 5, function (x, y, z, face) {
 			if (x < 0) {
-				x = 0; y = 0; z = ch.lengh * 0.75 | 0;
+				x = 0; y = 0; z = 0;
 			}
+			var chunkX = Math.floor(x / chW),
+				chunkZ = Math.floor(z / chW),
+				chunk = chs[chunkX + ":" + chunkZ];
+
+			if (!chunk) {
+				return false;
+			}
+
 			cursor.position.set(x, y + 0.5, z);
+
+			x -= chunkX * chW;
+			z -= chunkZ * chW;
+
 			cursor.__face = face;
-			return ch[z][y][x];
+			cursor.__chunk = chunkX + ":" + chunkZ;
+			cursor.__pos = {x: x, y: y, z: z};
+
+			return chs[cursor.__chunk][z][y][x];
 		});
 	},
 
@@ -414,14 +462,15 @@ var main = {
 	  radius /= Math.sqrt(dx*dx+dy*dy+dz*dz);
 	  
 	  var calledBack = false;
-	  while (/* ray has not gone past bounds of world */
-	         (stepX > 0 ? x < wx : x >= 0) &&
-	         (stepY > 0 ? y < wy : y >= 0) &&
-	         (stepZ > 0 ? z < wz : z >= 0)) {
+	  //while (/* ray has not gone past bounds of world */
+	  //       (stepX > 0 ? x < wx : x >= 0) &&
+	  //       (stepY > 0 ? y < wy : y >= 0) &&
+	  //       (stepZ > 0 ? z < wz : z >= 0)) {
+		while(true) {
 	    
 	    // Invoke the callback, unless we are not *yet* within the bounds of the
 	    // world.
-	    if (!(x < 0 || y < 0 || z < 0 || x >= wx || y >= wy || z >= wz))
+	    //if (!(x < 0 || y < 0 || z < 0 || x >= wx || y >= wy || z >= wz))
 	      if (callback(x, y, z, face)) {
 	      	calledBack = true;
 	        break;
@@ -475,12 +524,25 @@ var main = {
 	  	callback(-1, -1, -1, new THREE.Vector3(0, 0, 0))
 	  }
 	},
+
+	getBlockAt: function (x, y, z) {
+
+		var chunkX = Math.floor(x / this.chunkWidth),
+			chunkZ = Math.floor(z / this.chunkWidth);
+		
+		x -= chunkX * this.chunkWidth;
+		z -= chunkZ * this.chunkWidth;
+
+		return this.chunks[chunkX + ":" + chunkZ][z][y][x];
+
+	},
 	
 	tryMove: function (e, move) {
 
 		var ch = this.chunk,
 			p = e.playerObj.position.clone(),
-			bb = e.bb;
+			bb = e.bb,
+			block = this.getBlockAt.bind(this);
 
 		var xl = Math.round(p.x - (bb.w / 2)),
 			xr = Math.round(p.x + (bb.w / 2)),
@@ -509,8 +571,8 @@ var main = {
 
 		// Check forward/backward
 		if (!(
-			ch[nzl][yb][xl] || ch[nzl][yb][xr] || ch[nzr][yb][xl] || ch[nzr][yb][xr] ||
-			ch[nzl][yt][xl] || ch[nzl][yt][xr] || ch[nzr][yt][xl] || ch[nzr][yt][xr]
+			block(xl, yb, nzl) || block(xr, yb, nzl) || block(xl, yb, nzr) || block(xr, yb, nzr) ||
+			block(xl, yt, nzl) || block(xr, yt, nzl) || block(xl, yt, nzr) || block(xr, yt, nzr)
 		)) {
 			p.z += move.z;
 			zl = nzl;
@@ -519,8 +581,8 @@ var main = {
 
 		// Check left/right
 		if (!(
-			ch[zl][yb][nxl] || ch[zr][yb][nxl] || ch[zl][yb][nxr] || ch[zr][yb][nxr] ||
-			ch[zl][yt][nxl] || ch[zr][yt][nxl] || ch[zl][yt][nxr] || ch[zr][yt][nxr]
+			block(nxl, yb, zl) || block(nxl, yb, zr) || block(nxr, yb, zl) || block(nxr, yb, zr) ||
+			block(nxl, yt, zl) || block(nxl, yt, zr) || block(nxr, yt, zl) || block(nxr, yt, zr)
 		)) {
 			p.x += move.x;
 			xl = nxl;
@@ -530,7 +592,7 @@ var main = {
 		// Check bottom
 		var hitGround = true,
 			pushingAndJumping = (move.y > 0 && (move.z || move.y));
-		if (pushingAndJumping || !(ch[zl][nyb][xl] || ch[zl][nyb][xr] || ch[zr][nyb][xl] || ch[zr][nyb][xr])) {
+		if (pushingAndJumping || !(block(xl, nyb, zl) || block(xr, nyb, zl) || block(xl, nyb, zr) || block(xr, nyb, zr))) {
 			hitGround = false;
 			p.y += move.y;
 		} else {
@@ -545,7 +607,7 @@ var main = {
 			- Maybe a resolution problem: if sides, move back, if top move down
 			- Maybe because of forward/back and left/right done togetehr?
 		*/
-		if (ch[zl][nyt][xl] || ch[zl][nyt][xr] || ch[zr][nyt][xl] || ch[zr][nyt][xr]) {
+		if (block(xl, nyt, zl) || block(xr, nyt, zl) || block(xl, nyt, zr) || block(xr, nyt, zr)) {
 			//p.y = nyt - (bb.h / 2); // can't force down because it's detecting sides, not just top
 			hitGround = true;
 		}

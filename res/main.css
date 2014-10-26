@@ -23,6 +23,7 @@ body {
 #cursor {
 	position: absolute;
 	color :#888;
+	margin-top: 15px;
 	left: 50%;
 	top: 50%;
 }
