@@ -92,7 +92,7 @@ var main = {
 
 	changeTool: function (dir) {
 
-		if (Date.now() - this.lastBlockChange < 180) {
+		if (Date.now() - this.lastBlockChange < 200) {
 			return;
 		}
 		this.lastBlockChange = Date.now();
@@ -502,8 +502,10 @@ var main = {
 		if (nxl < 0) nxl = 0;
 		if (nxr < 0) nxr = 0;
 
+		// Ensure not out of bounds: down or up.
 		if (nyb < 0) nyb = 0;
 		if (nyt < 1) nyt = 1;
+		if (nyt > this.chunkHeight - 1) {nyt = this.chunkHeight - 1}
 
 		// Check forward/backward
 		if (!(

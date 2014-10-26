@@ -120,11 +120,10 @@ var Player = {
 		}
 
 		// Confine to chunk
-		var chunkSize = this.screen.chunkSize - 1;
+		if (obj.position.x > this.screen.chunkWidth - 1) obj.position.x = this.screen.chunkWidth -1;
 		if (obj.position.z < 0) obj.position.z = 0;
-		if (obj.position.x > chunkSize) obj.position.x = chunkSize;
-		if (obj.position.z > chunkSize) obj.position.z = chunkSize;
-		if (obj.position.y > chunkSize) obj.position.y = chunkSize;
+		if (obj.position.z > this.screen.chunkWidth - 1) obj.position.z = this.screen.chunkWidth - 1;
+		if (obj.position.y > this.screen.chunkHeight - 1) obj.position.y = this.screen.chunkHeight - 1;
 
 		this.screen.cast();
 
