@@ -64,10 +64,10 @@ var main = {
 		document.querySelector("#board").appendChild(renderer.domElement);
 
 		var self = this;
-		window.addEventListener( 'resize', function () { 
+		window.addEventListener("resize", function () { 
 			self.camera.aspect = window.innerWidth / window.innerHeight;
 			self.camera.updateProjectionMatrix();
-			self.renderer.setSize( window.innerWidth, window.innerHeight );
+			self.renderer.setSize(window.innerWidth, window.innerHeight);
 		}, false );
 
 		this.clock = new THREE.Clock();
