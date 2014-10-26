@@ -3,7 +3,9 @@ var main = {
 	chunkWidth: 24,
 	chunkHeight: 20,
 	blockSize: 1,
-	blocks: ["blank", "grass", "stone", "dirt", "tree", "cobble", "gold", "snow"],
+	blocks: ["blank", "grass", "stone", "dirt", "tree", "wood", "sand", "cobble", "gold", "snow", "ice"],
+	curBlock: 1,
+	lastBlockChange: Date.now(),
 
 	day: false,
 
@@ -29,23 +31,7 @@ var main = {
 
 		this.run();
 
-		document.addEventListener("mousedown", (function(e){
-			if (!this.player.controls.enabled) {
-				return;
-			}
-			
-			console.log(e.button)
-			if (e.shiftKey || e.button !== 0) {
-				this.doRemoveBlock = true;
-			} else {
-				this.doAddBlock = true;
-			}
-		}).bind(this), false);
-
-		document.addEventListener('contextmenu', function(e) {
-    		e.preventDefault();
-    		return false;
-		}, false);
+		this.bindHandlers();
 
 		msg("");
 	},
@@ -74,6 +60,54 @@ var main = {
 
 	},
 
+	bindHandlers: function () {
+		document.addEventListener("mousedown", (function(e){
+			if (!this.player.controls.enabled) {
+				return;
+			}
+			
+			if (e.shiftKey || e.button !== 0) {
+				this.doRemoveBlock = true;
+			} else {
+				this.doAddBlock = true;
+			}
+		}).bind(this), false);
+
+		document.addEventListener('contextmenu', function(e) {
+    		e.preventDefault();
+    		return false;
+		}, false);
+
+		var self = this;
+		function mousewheel(e) {
+
+			var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+
+			if (delta === -1) self.changeTool(1);
+			if (delta === 1) self.changeTool(-1);
+		}
+		document.addEventListener("mousewheel", mousewheel, false);
+		document.addEventListener("DOMMouseScroll", mousewheel, false);
+	},
+
+	changeTool: function (dir) {
+
+		if (Date.now() - this.lastBlockChange < 180) {
+			return;
+		}
+		this.lastBlockChange = Date.now();
+
+		this.curBlock += dir;
+		if (dir > 0 && this.curBlock > this.blocks.length - 1) {
+			this.curBlock = 1;
+		}
+		if (dir < 0 && this.curBlock === 0) {
+			this.curBlock = this.blocks.length - 1;
+		}
+
+		document.querySelector("#gui").innerHTML = this.blocks[this.curBlock];
+	},
+
 	addCursorObject: function () {
 		var cursor = this.cursor = new THREE.Mesh(
 			new THREE.BoxGeometry(1.01, 1.01, 1.01), 
@@ -97,6 +131,8 @@ var main = {
 
 	createChunk: function () {
 
+		var grounds = ["grass", "dirt"];
+
 	    // Create the chunk
 		this.chunk = [];
 		for (var z = 0; z < this.chunkWidth; z++) {
@@ -105,7 +141,7 @@ var main = {
 				this.chunk[z][y] = [];
 				for (var x = 0; x < this.chunkWidth; x++) {
 					if (y === 0) {
-						this.chunk[z][y][x] =this.blocks[((Math.random() * this.blocks.length - 1 ) | 0) + 1];
+						this.chunk[z][y][x] = grounds[Math.random() * grounds.length | 0];
 					} else if (
 						Math.sqrt(x * x + y * y + (z * 5)) < 10 && Math.sqrt(x * x + y * y + (z *5)) > 7) {
 						this.chunk[z][y][x] =  "grass";
@@ -137,9 +173,12 @@ var main = {
 	    			stone: [[1, 15], [1, 15], [1, 15], [1, 15], [1, 15], [1, 15]],
 	    			dirt: [[2, 15], [2, 15], [2, 15], [2, 15], [2, 15], [2, 15]],
 	    			tree: [[4, 14], [4, 14], [5, 14], [5, 14], [4, 14], [4, 14]],
+	    			wood: [[4, 15], [4, 15], [4, 15], [4, 15], [4, 15], [4, 15]],
+	    			sand: [[2, 14], [2, 14], [2, 14], [2, 14], [2, 14], [2, 14]],
 	    			cobble: [[0, 14], [0, 14], [0, 14], [0, 14], [0, 14], [0, 14]],
 	    			gold: [[0, 13], [0, 13], [0, 13], [0, 13], [0, 13], [0, 13]],
-	    			snow: [[2, 11], [2, 11], [2, 11], [2, 11], [2, 11], [2, 11]]
+	    			snow: [[2, 11], [2, 11], [2, 11], [2, 11], [2, 11], [2, 11]],
+	    			ice: [[3, 11], [3, 11], [3, 11], [3, 11], [3, 11], [3, 11]]
 	    		},
 	    		block = blocks[type];
     	    
@@ -224,8 +263,8 @@ var main = {
 		if (cursor.x < 0) {
 			return;
 		}
-				var face = this.cursor.__face;
-		this.chunk[cursor.z + face.z][cursor.y - 0.5 + face.y][cursor.x + face.x] = "dirt";
+		var face = this.cursor.__face;
+		this.chunk[cursor.z + face.z][cursor.y - 0.5 + face.y][cursor.x + face.x] = this.blocks[this.curBlock];
 		this.reMeshChunk();
 	},
 
