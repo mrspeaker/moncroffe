@@ -365,6 +365,8 @@ var main = {
 			if (x < 0) {
 				x = 0; y = 0; z = 0;
 			}
+			if (y < 0) y = 0; // looking below ground breaks
+
 			var chunkX = Math.floor(x / chW),
 				chunkZ = Math.floor(z / chW),
 				chunk = chs[chunkX + ":" + chunkZ];
