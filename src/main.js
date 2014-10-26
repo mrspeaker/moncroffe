@@ -13,6 +13,8 @@ var main = {
 	doAddBlock: false,
 	doRemoveBlock: false,
 
+	doingMouse: false,
+
 	init: function () {
 
 		this.initThree();
@@ -28,16 +30,22 @@ var main = {
 		this.run();
 
 		document.addEventListener("mousedown", (function(e){
-			console.log(e);
 			if (!this.player.controls.enabled) {
 				return;
 			}
-			if (e.shiftKey) {
+			
+			console.log(e.button)
+			if (e.shiftKey || e.button !== 0) {
 				this.doRemoveBlock = true;
 			} else {
 				this.doAddBlock = true;
 			}
 		}).bind(this), false);
+
+		document.addEventListener('contextmenu', function(e) {
+    		e.preventDefault();
+    		return false;
+		}, false);
 
 		msg("");
 	},
