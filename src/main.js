@@ -290,10 +290,30 @@ var main = {
 		var face = this.cursor.__face;
 		var pos = this.cursor.__pos;
 
-		// TODO: BUG. pos + face could change chunks
+		// THis is a fix because pos + face could change chunks
 		// (eg, if you attach to a face in an ajacent chunk)
-		this.chunks[this.cursor.__chunk][pos.z + face.z][pos.y + face.y][pos.x + face.x] = this.blocks[this.curBlock];
-		this.reMeshChunk(this.cursor.__chunk);
+		var chunkX = this.cursor.__chunkX,
+			chunkZ = this.cursor.__chunkZ;
+
+		if (pos.z + face.z >= this.chunkWidth) {
+			chunkZ++;
+			pos.z -= this.chunkWidth;
+		}
+		if (pos.z + face.z < 0) {
+			chunkZ--;
+			pos.z += this.chunkWidth;
+		}
+		if (pos.x + face.x >= this.chunkWidth) {
+			chunkX++;
+			pos.x -= this.chunkWidth;
+		}
+		if (pos.x + face.x < 0) {
+			chunkX--;
+			pos.x += this.chunkWidth;
+		}
+		var chunkId = chunkX + ":" + chunkZ;
+		this.chunks[chunkId][pos.z + face.z][pos.y + face.y][pos.x + face.x] = this.blocks[this.curBlock];
+		this.reMeshChunk(chunkId);
 	},
 
 	removeBlockAtSelection: function () {
@@ -382,6 +402,9 @@ var main = {
 
 			cursor.__face = face;
 			cursor.__chunk = chunkX + ":" + chunkZ;
+			cursor.__chunkX = chunkX;
+			cursor.__chunkZ = chunkZ;
+
 			cursor.__pos = {x: x, y: y, z: z};
 
 			return chs[cursor.__chunk][z][y][x];
@@ -390,8 +413,8 @@ var main = {
 
 	raycast: function (origin, direction, radius, callback) {
 
-		var wx = wz = this.chunkWidth,
-			wy = this.chunkHeight;
+		//var wx = wz = this.chunkWidth,
+	//		wy = this.chunkHeight;
 
 		function intbound(s, ds) {
 		  // Find the smallest positive t such that s+t*ds is an integer.
