@@ -1,24 +1,22 @@
 var main = {
 
+	day: false,
+
 	chunkWidth: 16,
 	chunkHeight: 20,
-	curChunkX: 0,
-	curChunkY: 0,
+	chunks: null,
+	chunkGeom: null,
 
 	blockSize: 1,
 	blocks: ["blank", "grass", "stone", "dirt", "tree", "wood", "sand", "cobble", "gold", "snow", "ice"],
-	curBlock: 1,
-	lastBlockChange: Date.now(),
+	curTool: 1,
+	lastToolChange: Date.now(),
 
-	day: false,
-
-	count: 0,
+	frame: 0,
 	oneFrameEvery: 1,
 
 	doAddBlock: false,
 	doRemoveBlock: false,
-
-	doingMouse: false,
 
 	init: function () {
 
@@ -28,28 +26,8 @@ var main = {
 		this.addCursorObject();
 		this.addLights();
 		this.createTextures();
+		this.createChunks();
 		
-		this.chunk = this.createChunk();
-		// Reference to chunk data
-		this.chunks = {
-			"0:0": this.chunk,
-			"0:1": this.createChunk(),
-			"1:0": this.createChunk(),
-			"1:1": this.createChunk()
-		};
-
-		// Reference to chunk mesh
-		this.chunkGeom = {};
-		this.scene.add(this.chunkGeom["0:0"] = this.getChunkGeom(0, 0, this.chunks["0:0"]));
-		this.scene.add(this.chunkGeom["0:1"] = this.getChunkGeom(0, 1, this.chunks["0:1"]));
-
-		this.scene.add(this.chunkGeom["1:0"] = this.getChunkGeom(1, 0, this.chunks["1:0"]));
-		this.scene.add(this.chunkGeom["1:1"] = this.getChunkGeom(1, 1, this.chunks["1:1"]));
-
-		//this.scene.add(this.getChunkGeom(-1, 0));
-		//this.scene.add(this.getChunkGeom(0, -1));
-		//this.scene.add(this.getChunkGeom(1, -1));
-
 		this.run();
 
 		this.bindHandlers();
@@ -94,39 +72,56 @@ var main = {
 			}
 		}).bind(this), false);
 
+		// Stop right-click menu
 		document.addEventListener('contextmenu', function(e) {
     		e.preventDefault();
     		return false;
 		}, false);
 
-		var self = this;
-		function mousewheel(e) {
-
+		var onMouseWheel = (function (e) {
 			var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-
-			if (delta === -1) self.changeTool(1);
-			if (delta === 1) self.changeTool(-1);
-		}
-		document.addEventListener("mousewheel", mousewheel, false);
-		document.addEventListener("DOMMouseScroll", mousewheel, false);
+			this.changeTool(-delta);
+		}).bind(this);
+		document.addEventListener("mousewheel", onMouseWheel, false);
+		document.addEventListener("DOMMouseScroll", onMouseWheel, false);
 	},
 
 	changeTool: function (dir) {
 
-		if (Date.now() - this.lastBlockChange < 200) {
+		if (Date.now() - this.lastToolChange < 200) {
 			return;
 		}
-		this.lastBlockChange = Date.now();
+		this.lastToolChange = Date.now();
 
-		this.curBlock += dir;
-		if (dir > 0 && this.curBlock > this.blocks.length - 1) {
-			this.curBlock = 1;
+		this.curTool += dir;
+		if (dir > 0 && this.curTool > this.blocks.length - 1) {
+			this.curTool = 1;
 		}
-		if (dir < 0 && this.curBlock === 0) {
-			this.curBlock = this.blocks.length - 1;
+		if (dir < 0 && this.curTool === 0) {
+			this.curTool = this.blocks.length - 1;
 		}
 
-		document.querySelector("#gui").innerHTML = this.blocks[this.curBlock];
+		document.querySelector("#gui").innerHTML = this.blocks[this.curTool];
+	},
+
+	createChunks: function () {
+
+		this.chunks = {}; // Reference to chunk data
+		this.chunkGeom = {}; // Reference to chunk mesh
+
+		var addChunk = (function (x, z) {
+			var id = x + ":" + z;
+			this.chunks[id] = this.createChunk();
+			this.chunkGeom[id] = this.createChunkGeom(x, z, this.chunks[id]);
+			this.scene.add(this.chunkGeom[id]);
+		}).bind(this);
+
+		addChunk(0, 0);
+		addChunk(0, 1);
+		addChunk(1, 0);
+		addChunk(1, 1);
+		// addChunk(-1, 0);
+
 	},
 
 	addCursorObject: function () {
@@ -152,8 +147,6 @@ var main = {
 
 	createChunk: function () {
 
-		var grounds = ["grass", "dirt"];
-
 	    // Create the chunk
 		var chunk = [];
 		for (var z = 0; z < this.chunkWidth; z++) {
@@ -162,15 +155,21 @@ var main = {
 				chunk[z][y] = [];
 				for (var x = 0; x < this.chunkWidth; x++) {
 					if (y === 0) {
-						chunk[z][y][x] = grounds[Math.random() * grounds.length | 0];
+						// Ground
+						chunk[z][y][x] = ["grass", "dirt"][Math.random() * 2 | 0];
 					} else if (
+						// Grass Sphere
 						Math.sqrt(x * x + y * y + (z * 5)) < 10 && Math.sqrt(x * x + y * y + (z *5)) > 7) {
 						chunk[z][y][x] =  "grass";
-					}else {
-						chunk[z][y][x] = 
-							y === 4 && z > 9 && x > 8 ? 
-								["tree", "stone"][Math.random() * 2 | 0] : 
-							Math.random() < 0.01 && x!== 0 ? this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1] : 0;
+					} else if (y === 4 && z > 9 && x > 8) {
+						// Platform
+						chunk[z][y][x] = ["tree", "stone"][Math.random() * 2 | 0];
+					} else if (Math.random() < 0.01) {
+						// Random block or air
+						chunk[z][y][x] = this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1];
+					} else {
+						// Air
+						chunk[z][y][x] = 0;
 					}
 				}
 			}
@@ -179,7 +178,7 @@ var main = {
 		return chunk;
 	},
 
-	getChunkGeom: function (x, z, chunk) {
+	createChunkGeom: function (x, z, chunk) {
 	    var geoms = [],
 	    	blockSize = this.blockSize;
 
@@ -276,16 +275,14 @@ var main = {
 		// This just deletes & recreates the whole chunk. THis way is verrryy... wrong? Slow at least.
 		var split = chunk.split(":"); // TODO: ha... c'mon now.
 		this.scene.remove(this.chunkGeom[chunk]);
-		this.chunkGeom[chunk] = this.getChunkGeom(split[0], split[1], this.chunks[chunk]);
+		this.chunkGeom[chunk] = this.createChunkGeom(split[0], split[1], this.chunks[chunk]);
 		this.scene.add(this.chunkGeom[chunk]);
 	},
 
 	addBlockAtCursor: function () {
-		/*var cursor = this.cursor.position;
-		if (cursor.x < 0) {
-			console.error("do i get here?")
+		if (!this.cursor.visible) {
 			return;
-		}*/
+		}
 		var face = this.cursor.__face,
 			pos = this.cursor.__pos;
 
@@ -313,13 +310,12 @@ var main = {
 
 		var chunkId = chunkX + ":" + chunkZ;
 		//console.log("wa?", chunkId, pos.z + face.z, pos.y + face.y, pos.x + face.x)
-		this.chunks[chunkId][pos.z + face.z][pos.y + face.y][pos.x + face.x] = this.blocks[this.curBlock];
+		this.chunks[chunkId][pos.z + face.z][pos.y + face.y][pos.x + face.x] = this.blocks[this.curTool];
 		this.reMeshChunk(chunkId);
 	},
 
 	removeBlockAtCursor: function () {
-		var cursor = this.cursor.position;
-		if (cursor.x < 0) {
+		if (!this.cursor.visible) {
 			return;
 		}
 		var pos = this.cursor.__pos;
@@ -348,7 +344,7 @@ var main = {
 	},
 
 	run: function () {
-		if (this.count++ % this.oneFrameEvery === 0) {
+		if (this.frame++ % this.oneFrameEvery === 0) {
 			this.tick();
 			this.render();
 		}
@@ -365,7 +361,7 @@ var main = {
 			this.doRemoveBlock = false;
 		}
 		var delta = this.clock.getDelta() / this.oneFrameEvery;
-		delta = Math.min(60 / 1000, delta); // Limit for physics
+		delta = Math.min(60 / 1000, delta); // HACK: Limit for physics
 		var dt = delta * 1000 | 0;
 		if (dt < 15 || dt > 21) {
 			msg(dt);
@@ -383,9 +379,13 @@ var main = {
 		origin.addScalar(0.5);
 		
 		this.raycast(origin, ob.getDirection(), 5, function (x, y, z, face) {
-			if (x < 0) {
-				x = 0; y = 0; z = 0;
+			if (x === "miss") {
+				cursor.visible = false;
+				return false;
 			}
+			
+			cursor.visible = true;
+
 			if (y < 0) y = 0; // looking below ground breaks
 
 			var chunkX = Math.floor(x / chW),
@@ -547,7 +547,8 @@ var main = {
 	    }
 	  }
 	  if (!calledBack) {
-	  	callback(-1, -1, -1, new THREE.Vector3(0, 0, 0))
+	  	callback("miss");
+	  	//callback(-1, -1, -1, new THREE.Vector3(0, 0, 0))
 	  }
 	},
 
