@@ -146,7 +146,11 @@ var main = {
 		addChunk(0, 1);
 		addChunk(1, 0);
 		addChunk(1, 1);
-		// addChunk(-1, 0);
+		
+		addChunk(-1, 0);
+		addChunk(0, -1); 
+		addChunk(2, 0);
+		addChunk(1, 2);
 
 	},
 
@@ -334,8 +338,12 @@ var main = {
 			pos.x += this.chunkWidth;
 		}
 
-		var chunkId = chunkX + ":" + chunkZ;
-		this.chunks[chunkId][pos.z + face.z][pos.y + face.y][pos.x + face.x] = this.blocks[this.curTool];
+		var chunkId = chunkX + ":" + chunkZ,
+			chunk = this.chunks[chunkId];
+		if (!chunk) {
+			return;
+		}
+		chunk[pos.z + face.z][pos.y + face.y][pos.x + face.x] = this.blocks[this.curTool];
 		this.reMeshChunk(chunkId);
 	},
 
@@ -576,19 +584,25 @@ var main = {
 	getBlockAt: function (x, y, z) {
 
 		var chunkX = Math.floor(x / this.chunkWidth),
-			chunkZ = Math.floor(z / this.chunkWidth);
+			chunkZ = Math.floor(z / this.chunkWidth),
+			chunk;
 		
 		x -= chunkX * this.chunkWidth;
 		z -= chunkZ * this.chunkWidth;
 
-		return this.chunks[chunkX + ":" + chunkZ][z][y][x];
+		chunk = this.chunks[chunkX + ":" + chunkZ];
+
+		if (!chunk) {
+			return 1;
+		}
+
+		return chunk[z][y][x];
 
 	},
 	
 	tryMove: function (e, move) {
 
-		var ch = this.chunk,
-			p = e.playerObj.position.clone(),
+		var p = e.playerObj.position.clone(),
 			bb = e.bb,
 			block = this.getBlockAt.bind(this);
 
@@ -606,11 +620,6 @@ var main = {
 			yt = Math.round(p.y + (bb.h / 2) - 0.5),
 			nyb = Math.round((p.y + move.y) - (bb.h / 2) - 0.5), // Erm, why -0.5? dunno. Mabye replace yb/yt Math.round with floor.
 			nyt = Math.round((p.y + move.y) + (bb.h / 2) - 0.5);
-
-		if (xl < 0) xl = 0;
-		if (xr < 0) xr = 0;
-		if (nxl < 0) nxl = 0;
-		if (nxr < 0) nxr = 0;
 
 		// Ensure not out of bounds: down or up.
 		if (nyb < 0) nyb = 0;

@@ -117,14 +117,6 @@ var Player = {
 			yo += jump;
 		}
 
-		// Confine to chunk
-		var xChunks = 2,
-			zChunks = 2;
-		if (obj.position.x > xChunks * this.screen.chunkWidth - 1) obj.position.x = xChunks * this.screen.chunkWidth -1;
-		if (obj.position.z < 0) obj.position.z = 0;
-		if (obj.position.z > zChunks * this.screen.chunkWidth - 1) obj.position.z = zChunks * this.screen.chunkWidth - 1;
-		if (obj.position.y > this.screen.chunkHeight - 1) obj.position.y = this.screen.chunkHeight - 1;
-
 		this.screen.cast();
 
 		this.velocity.set(0, yo, 0);

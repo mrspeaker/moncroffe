@@ -4,7 +4,6 @@ Minecraft style boxel demo... by Mr Speaker
 
 # bugz
 - can add block in position currently standing
-- can't have "negative" chunks
 - hit head slide down (and can get stuck in block)
 - camera looks through block when looking straight down
 - block/face selection weird when very close to blocks
