@@ -362,9 +362,11 @@ var main = {
 		var ambientLight = new THREE.AmbientLight(this.day ? 0x888888 : 0x333333);
 		this.scene.add(ambientLight);
 
-		var light = new THREE.PointLight( 0xffffff, 1, 20 ); 
-		light.position.set(5, 5, 5); 
+		var light = new THREE.PointLight( 0xffffff, 1, 8 );
+		light.position.set(0, 0, 0);
 		this.scene.add(light);
+
+		this.camera.add(light); // light follows player
 
 		light = new THREE.PointLight( 0xffffff, 1, 10 ); 
 		light.position.set(this.chunkWidth - 5, 5, this.chunkWidth - 5); 
