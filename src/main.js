@@ -273,22 +273,21 @@ var main = {
 	},
 
 	reMeshChunk: function (chunk) {
-		// Todo: re-chunk.
-		// Add all the geometry.
-		// Just remesh the whole chunk. THis way is verrryy... wrong?
+		// This just deletes & recreates the whole chunk. THis way is verrryy... wrong? Slow at least.
 		var split = chunk.split(":"); // TODO: ha... c'mon now.
 		this.scene.remove(this.chunkGeom[chunk]);
 		this.chunkGeom[chunk] = this.getChunkGeom(split[0], split[1], this.chunks[chunk]);
 		this.scene.add(this.chunkGeom[chunk]);
 	},
 
-	addBlockAtSelection: function () {
-		var cursor = this.cursor.position;
+	addBlockAtCursor: function () {
+		/*var cursor = this.cursor.position;
 		if (cursor.x < 0) {
+			console.error("do i get here?")
 			return;
-		}
-		var face = this.cursor.__face;
-		var pos = this.cursor.__pos;
+		}*/
+		var face = this.cursor.__face,
+			pos = this.cursor.__pos;
 
 		// THis is a fix because pos + face could change chunks
 		// (eg, if you attach to a face in an ajacent chunk)
@@ -311,12 +310,14 @@ var main = {
 			chunkX--;
 			pos.x += this.chunkWidth;
 		}
+
 		var chunkId = chunkX + ":" + chunkZ;
+		//console.log("wa?", chunkId, pos.z + face.z, pos.y + face.y, pos.x + face.x)
 		this.chunks[chunkId][pos.z + face.z][pos.y + face.y][pos.x + face.x] = this.blocks[this.curBlock];
 		this.reMeshChunk(chunkId);
 	},
 
-	removeBlockAtSelection: function () {
+	removeBlockAtCursor: function () {
 		var cursor = this.cursor.position;
 		if (cursor.x < 0) {
 			return;
@@ -356,11 +357,11 @@ var main = {
 
 	tick: function () {
 		if (this.doAddBlock) {
-			this.addBlockAtSelection();
+			this.addBlockAtCursor();
 			this.doAddBlock = false;
 		}
 		if (this.doRemoveBlock) {
-			this.removeBlockAtSelection();
+			this.removeBlockAtCursor();
 			this.doRemoveBlock = false;
 		}
 		var delta = this.clock.getDelta() / this.oneFrameEvery;
