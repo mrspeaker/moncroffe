@@ -130,7 +130,15 @@ var Player = {
 		this.screen.cast();
 
 		this.velocity.set(0, yo, 0);
-		this.controls.setPos(obj.position.x, obj.position.y, obj.position.z);
+
+		// bobbing
+		var size = 0.12,
+			speed = 200,
+			bobbing = col.ground && (obj.position.x !== oldPos.x || obj.position.z !== oldPos.z),
+			bobX = bobbing ? Math.sin(Date.now() / speed) * size : 0;
+			bobY = bobbing ? - Math.abs(Math.cos(Date.now() / speed)) * size + (size/2) : 0;
+		
+		this.controls.setPos(obj.position.x + bobX, obj.position.y + bobY, obj.position.z);
 		this.marker.position.set(obj.position.x, obj.position.y - (this.bb.h / 2) + 0.05, obj.position.z);
 	},
 
