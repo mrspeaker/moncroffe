@@ -362,7 +362,7 @@ var main = {
 		var ambientLight = new THREE.AmbientLight(this.day ? 0x888888 : 0x333333);
 		this.scene.add(ambientLight);
 
-		var light = new THREE.PointLight( 0xffffff, 1, 8 );
+		var light = new THREE.PointLight( 0xF3AC44, 1, 8 );
 		light.position.set(0, 0, 0);
 		this.scene.add(light);
 
