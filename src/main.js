@@ -21,7 +21,7 @@ var main = {
 	init: function () {
 
 		this.initThree();
-		this.player = Object.create(Player).init(this.camera, this);
+		this.player = Object.create(Player).init(this);
 
 		this.addCursorObject();
 		this.addLights();
@@ -37,25 +37,17 @@ var main = {
 
 	initThree: function () {
 
-		var scene, camera, renderer;
-
-		this.scene = scene = new THREE.Scene();
-
-		this.camera = camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 500);
-		this.renderer = renderer = new THREE.WebGLRenderer();
-		renderer.setClearColor( this.day ? 0x88C4EC : 0x000000, 1);
-		renderer.setSize(window.innerWidth, window.innerHeight);
-
-		document.querySelector("#board").appendChild(renderer.domElement);
-
-		var self = this;
-		window.addEventListener("resize", function () { 
-			self.camera.aspect = window.innerWidth / window.innerHeight;
-			self.camera.updateProjectionMatrix();
-			self.renderer.setSize(window.innerWidth, window.innerHeight);
-		}, false );
-
+		this.scene = new THREE.Scene();
+		
+		this.renderer = new THREE.WebGLRenderer();
+		this.renderer.setClearColor(this.day ? 0x88C4EC : 0x000000, 1);
+		
+		this.camera = new THREE.PerspectiveCamera(75, 1, 0.01, 500);
+		this.setCameraDimensions();
+		
 		this.clock = new THREE.Clock();
+		
+		document.querySelector("#board").appendChild(this.renderer.domElement);
 
 	},
 
@@ -64,7 +56,7 @@ var main = {
 			if (!this.player.controls.enabled) {
 				return;
 			}
-			
+
 			if (e.shiftKey || e.button !== 0) {
 				this.doRemoveBlock = true;
 			} else {
@@ -84,6 +76,14 @@ var main = {
 		}).bind(this);
 		document.addEventListener("mousewheel", onMouseWheel, false);
 		document.addEventListener("DOMMouseScroll", onMouseWheel, false);
+
+		window.addEventListener("resize", this.setCameraDimensions.bind(this), false );
+	},
+
+	setCameraDimensions: function () {
+		this.camera.aspect = window.innerWidth / window.innerHeight;
+		this.camera.updateProjectionMatrix();
+		this.renderer.setSize(window.innerWidth, window.innerHeight);
 	},
 
 	changeTool: function (dir) {
@@ -309,7 +309,6 @@ var main = {
 		}
 
 		var chunkId = chunkX + ":" + chunkZ;
-		//console.log("wa?", chunkId, pos.z + face.z, pos.y + face.y, pos.x + face.x)
 		this.chunks[chunkId][pos.z + face.z][pos.y + face.y][pos.x + face.x] = this.blocks[this.curTool];
 		this.reMeshChunk(chunkId);
 	},
@@ -413,9 +412,6 @@ var main = {
 	},
 
 	raycast: function (origin, direction, radius, callback) {
-
-		//var wx = wz = this.chunkWidth,
-	//		wy = this.chunkHeight;
 
 		function intbound(s, ds) {
 		  // Find the smallest positive t such that s+t*ds is an integer.
@@ -548,7 +544,6 @@ var main = {
 	  }
 	  if (!calledBack) {
 	  	callback("miss");
-	  	//callback(-1, -1, -1, new THREE.Vector3(0, 0, 0))
 	  }
 	},
 

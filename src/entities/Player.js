@@ -2,12 +2,10 @@ var Player = {
 
 	thrd: false,
 
-	init: function (camera, screen) {
+	init: function (screen) {
 
-		this.camera = camera;
 		this.screen = screen;
 
-		
 		this.bb = {
 			w: 0.7, 
 			d: 0.7, 
@@ -144,13 +142,14 @@ var Player = {
 
 	createControls: function () {
 
-		var controls = new THREE.PointerLockControls(this.thrd ? new THREE.Object3D(): this.camera);
+		var camera = this.screen.camera,
+			controls = new THREE.PointerLockControls(this.thrd ? new THREE.Object3D(): camera);
 		
 		if (this.thrd) {
-			this.camera.position.set(-5, 2, 10);
-			this.camera.rotation.set(0, -Math.PI / 2 , 0);
+			camera.position.set(-5, 2, 10);
+			camera.rotation.set(0, -Math.PI / 2 , 0);
 		} else {
-			this.camera.position.y = this.bb.h - 1 - 0.2;
+			camera.position.y = this.bb.h - 1 - 0.2;
 		}
 
 		var blocker = document.getElementById( 'blocker' );
