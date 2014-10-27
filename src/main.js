@@ -27,6 +27,20 @@ var main = {
 		this.addLights();
 		this.createTextures();
 		this.createChunks();
+
+
+		/*var self = this;
+		var mesher = new Worker('src/mesher.js');
+		mesher.onmessage = function (e) {
+     		var id = e.data.x + ":" + e.data.z;
+     		if (self.chunkGeom[id]) {
+     			console.log("removeeeed")
+     			self.scene.remove(self.chunkGeom[id])
+     		}
+     		var mesh = new THREE.Mesh(e.data.chunkGeom, e.data.chunkMaterial);
+     		self.chunkGeom[id] = mesh;
+			self.scene.add(self.chunkGeom[id]);
+   		};*/
 		
 		this.run();
 
@@ -34,6 +48,18 @@ var main = {
 
 		msg("");
 	},
+
+	/*addChunk: function (x, z) {
+		var id = x + ":" + z;
+		var chunk = this.chunks[id] = this.createChunk();
+
+		mesher.postMessage({x: x, z: z, chunkDetails: {
+			chunk: chunk,
+			chunkWidth: this.chunkWidth,
+			chunkHeight: this.chunkHeight
+		}});
+
+	},*/
 
 	initThree: function () {
 
@@ -263,7 +289,7 @@ var main = {
 			}
 		}
 
-		 var blockMaterial = new THREE.MeshLambertMaterial({ 
+		var blockMaterial = new THREE.MeshLambertMaterial({ 
 			map: this.textures.blocks,
 			wrapAround: true
 		});
