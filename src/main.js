@@ -29,14 +29,11 @@ var main = {
 		this.addLights();
 		this.createTextures();
 		this.createChunks();
-
 		this.addSkyBox();
-
 		this.updateDayNight();
-		
-		this.run();
-
 		this.bindHandlers();
+
+		this.run();
 
 		msg("");
 	},
@@ -266,7 +263,6 @@ var main = {
     			bottom = getBlock(block[3][0], block[3][1]),
     			right = getBlock(block[4][0], block[4][1]),
     			left = getBlock(block[5][0], block[5][1]),
-
     			faceUVs = geometry.faceVertexUvs;
 
     		faceUVs[0] = [];
@@ -282,6 +278,100 @@ var main = {
     		faceUVs[0][9] = [right[0], right[1], right[2]];
     		faceUVs[0][10] = [left[3], left[0], left[2]];
     		faceUVs[0][11] = [left[0], left[1], left[2]];
+
+
+			var faceIndices = [ 'a', 'b', 'c', 'd' ];
+			var c = []
+    		var size = 1;
+    		for (var i = 0; i < geometry.vertices.length; i++) {
+    			var point = geometry.vertices[ i ];
+    			var color = new THREE.Color( 0xffffff );
+    			color.setRGB( 0.5 + point.x / size, 0.5 + point.y / size, 0.5 + point.z / size );
+    			c[i] = color; // use this array for convenience
+			}
+    		
+    		// copy the colors to corresponding positions 
+			//     in each face's vertexColors array.
+			/*console.log(geometry.faces.length)
+			for (i = 0; i < geometry.faces.length; i++ ) {
+    			face = geometry.faces[ i ];
+    			numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
+    			for( var j = 0; j < numberOfSides; j++ ) {
+    				var color = new THREE.Color( 0xffffff );
+    				var r = Math.random();
+    				color.setRGB(r, r, r)
+        			vertexIndex = face[ faceIndices[ j ] ];
+        			face.vertexColors[ j ] = color// c[ vertexIndex ];
+    			}
+			}*/
+
+			var face = geometry.faces[0];
+			/*numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
+    			var r = Math.random();
+    			for( var j = 0; j < numberOfSides; j++ ) {
+    				var color = new THREE.Color( 0xffffff );
+    				
+    				color.setRGB(r, r, r)
+        			// vertexIndex = face[ faceIndices[ j ] ];
+        			face.vertexColors[ j ] = color// c[ vertexIndex ];
+    			}
+			*/
+			function lightitup (tri1, tri2) {
+
+				var shadow = 0x999999,
+					light = 0xffffff;
+				face = geometry.faces[tri1];
+				face.vertexColors[0] = new THREE.Color( light );
+				face.vertexColors[1] = new THREE.Color( shadow );
+				face.vertexColors[2] = new THREE.Color( light );
+
+				face = geometry.faces[tri2];
+				face.vertexColors[0] = new THREE.Color( shadow );
+				face.vertexColors[1] = new THREE.Color( shadow );    		
+				face.vertexColors[2] = new THREE.Color( light );
+
+			}
+
+			lightitup(0, 1);
+			lightitup(2, 3);
+			lightitup(8, 9);
+			lightitup(10, 11);
+			
+
+			/*var radius = 0.5;
+			for ( var i = 0; i < geometry.faces.length; i ++ ) {
+
+				f  = geometry.faces[ i ];
+				//f2 = geometry2.faces[ i ];
+				//f3 = geometry3.faces[ i ];
+
+				n = ( f instanceof THREE.Face3 ) ? 3 : 4;
+
+				for( var j = 0; j < n; j++ ) {
+
+					vertexIndex = f[ faceIndices[ j ] ];
+
+					p = geometry.vertices[ vertexIndex ];
+
+					color = new THREE.Color( 0xffffff );
+					color.setHSL( ( p.y / radius + 1 ) / 2, 1.0, 0.5 );
+
+					f.vertexColors[ j ] = color;
+
+					//color = new THREE.Color( 0xffffff );
+					//color.setHSL( 0.0, ( p.y / radius + 1 ) / 2, 0.5 );
+
+					//f2.vertexColors[ j ] = color;
+
+					//color = new THREE.Color( 0xffffff );
+					//color.setHSL( 0.125 * vertexIndex/geometry.vertices.length, 1.0, 0.5 );
+
+					//f3.vertexColors[ j ] = color;
+
+				}
+
+			}
+			*/
 
     		geoms[type] = geometry;
 
@@ -312,7 +402,8 @@ var main = {
 
 		var blockMaterial = new THREE.MeshLambertMaterial({ 
 			map: this.textures.blocks,
-			wrapAround: true
+			wrapAround: true,
+			vertexColors: THREE.VertexColors
 		});
 	
 		return new THREE.Mesh(totalGeom, blockMaterial);
