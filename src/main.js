@@ -376,17 +376,17 @@ var main = {
 	addLights: function () {
 
 		this.scene.fog = new THREE.Fog(this.day ? 0xD7EAF9 : 0x000000, 1, 80);
-		var ambientLight = new THREE.AmbientLight(this.day ? 0x888888 : 0x333333);
+		var ambientLight = new THREE.AmbientLight(this.day ? 0x888888 : 0x2f2f2f);
 		this.scene.add(ambientLight);
 
 		var light = new THREE.PointLight(0xF3AC44, 1, 8);
 		this.camera.add(light); // light follows player
 
-		light = new THREE.PointLight(0xffffff, 1, 10); 
+		light = new THREE.PointLight(0xF4D2A3, 1, 10); 
 		light.position.set(this.chunkWidth - 5, 5, this.chunkWidth - 5); 
 		this.scene.add(light);
 
-		light = new THREE.PointLight(0xffffff, 1, 10); 
+		light = new THREE.PointLight(0xF4D2A3, 1, 10); 
 		light.position.set(2 * this.chunkWidth - 5, 5, 2 * this.chunkWidth - 5); 
 		this.scene.add(light);
 
