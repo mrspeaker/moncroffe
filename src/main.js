@@ -1,6 +1,6 @@
 var main = {
 
-	day: urlParams.day || false,
+	day: true,
 
 	chunkWidth: 16,
 	chunkHeight: 20,
@@ -18,6 +18,8 @@ var main = {
 	doAddBlock: false,
 	doRemoveBlock: false,
 
+	lights: null,
+
 	init: function () {
 
 		this.initThree();
@@ -28,9 +30,9 @@ var main = {
 		this.createTextures();
 		this.createChunks();
 
-		if (!this.day) {
-			this.addSkyBox();
-		}
+		this.addSkyBox();
+
+		this.updateDayNight();
 		
 		this.run();
 
@@ -44,8 +46,7 @@ var main = {
 		this.scene = new THREE.Scene();
 		
 		this.renderer = new THREE.WebGLRenderer();
-		this.renderer.setClearColor(this.day ? 0x88C4EC : 0x000000, 1);
-		
+	
 		this.camera = new THREE.PerspectiveCamera(75, 1, 0.01, 500);
 		this.setCameraDimensions();
 		
@@ -82,6 +83,28 @@ var main = {
 		document.addEventListener("DOMMouseScroll", onMouseWheel, false);
 
 		window.addEventListener("resize", this.setCameraDimensions.bind(this), false );
+
+		document.addEventListener("keydown", (function(e){
+			if (e.keyCode === 69) {
+				this.day = !this.day;
+				this.updateDayNight();
+			}
+		}).bind(this), false);
+	},
+
+	updateDayNight: function () {
+		var day = this.day;
+
+		this.renderer.setClearColor(day ? 0x88C4EC : 0x000000, 1);
+		this.scene.fog = day ?
+			new THREE.Fog(0xD7EAF9, 10, 120) :
+			new THREE.Fog(0x000000, 1, 80);
+
+		this.scene.remove(this.lights.ambientLight);
+		this.lights.ambientLight = new THREE.AmbientLight(day ? 0x999999 : 0x2f2f2f);
+		this.scene.add(this.lights.ambientLight);
+		this.skybox.visible = !day;
+
 	},
 
 	setCameraDimensions: function () {
@@ -137,9 +160,9 @@ var main = {
 		var skyMaterial = new THREE.MeshLambertMaterial({ 
 			map: this.textures.night,
 			fog: false,
-			ambient: new THREE.Color(0xaaaaaa)
+			ambient: new THREE.Color(0x999999)
 		});
-		var sky = new THREE.Mesh(geometry, skyMaterial);
+		var sky = this.skybox = new THREE.Mesh(geometry, skyMaterial);
 		sky.material.side = THREE.BackSide;
 		this.scene.add(sky);
 	},
@@ -356,13 +379,9 @@ var main = {
 
 	addLights: function () {
 
-		if (this.day)
-			this.scene.fog = new THREE.Fog(0xD7EAF9, 10, 120);
-		else {
-			this.scene.fog = new THREE.Fog(0x000000, 1, 80);
-		}
-		var ambientLight = new THREE.AmbientLight(this.day ? 0x999999 : 0x2f2f2f);
-		this.scene.add(ambientLight);
+		this.lights = {};
+		this.lights.ambientLight = new THREE.AmbientLight(0x999999);
+		this.scene.add(this.lights.ambientLight);
 
 		var light = new THREE.PointLight(0xF3AC44, 1, 8);
 		this.camera.add(light); // light follows player
@@ -455,15 +474,17 @@ var main = {
 
 		var chunks = {}
 
-		chunks[this.setBlockAt(pos.x, pos.y, pos.z, "sand")] = true;
-		chunks[this.setBlockAt(pos.x - 1, pos.y, pos.z, "sand")] = true;
-		chunks[this.setBlockAt(pos.x + 1, pos.y, pos.z, "sand")] = true;
+		var type = 0;//"sand"
 
-		chunks[this.setBlockAt(pos.x, pos.y + 1, pos.z, "sand")] = true;
-		chunks[this.setBlockAt(pos.x, pos.y - 1, pos.z, "sand")] = true;
+		chunks[this.setBlockAt(pos.x, pos.y, pos.z, type)] = true;
+		chunks[this.setBlockAt(pos.x - 1, pos.y, pos.z, type)] = true;
+		chunks[this.setBlockAt(pos.x + 1, pos.y, pos.z, type)] = true;
+
+		chunks[this.setBlockAt(pos.x, pos.y + 1, pos.z, type)] = true;
+		chunks[this.setBlockAt(pos.x, pos.y - 1, pos.z, type)] = true;
 		
-		chunks[this.setBlockAt(pos.x, pos.y, pos.z + 1, "sand")] = true;
-		chunks[this.setBlockAt(pos.x, pos.y, pos.z - 1, "sand")] = true;
+		chunks[this.setBlockAt(pos.x, pos.y, pos.z + 1, type)] = true;
+		chunks[this.setBlockAt(pos.x, pos.y, pos.z - 1, type)] = true;
 
 		for (var ch in chunks) {
 			this.reMeshChunk(ch);
