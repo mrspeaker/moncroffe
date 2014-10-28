@@ -138,7 +138,7 @@ var Player = {
 			controls = new THREE.PointerLockControls(this.thrd ? new THREE.Object3D(): camera);
 		
 		if (this.thrd) {
-			camera.position.set(-5, 2, 10);
+			camera.position.set(-5, 12, 10);
 			camera.rotation.set(0, -Math.PI / 2 , 0);
 		} else {
 			camera.position.y = this.bb.h - 1 - 0.2;
