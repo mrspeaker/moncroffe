@@ -1,6 +1,6 @@
 var Player = {
 
-	thrd: false,
+	thrd: urlParams.third || false,
 
 	init: function (screen) {
 

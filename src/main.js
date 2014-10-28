@@ -1,6 +1,6 @@
 var main = {
 
-	day: false,
+	day: urlParams.day || false,
 
 	chunkWidth: 16,
 	chunkHeight: 20,
@@ -27,21 +27,10 @@ var main = {
 		this.addLights();
 		this.createTextures();
 		this.createChunks();
-		this.addSkyBox();
 
-
-		/*var self = this;
-		var mesher = new Worker('src/mesher.js');
-		mesher.onmessage = function (e) {
-     		var id = e.data.x + ":" + e.data.z;
-     		if (self.chunkGeom[id]) {
-     			console.log("removeeeed")
-     			self.scene.remove(self.chunkGeom[id])
-     		}
-     		var mesh = new THREE.Mesh(e.data.chunkGeom, e.data.chunkMaterial);
-     		self.chunkGeom[id] = mesh;
-			self.scene.add(self.chunkGeom[id]);
-   		};*/
+		if (!this.day) {
+			this.addSkyBox();
+		}
 		
 		this.run();
 
@@ -49,18 +38,6 @@ var main = {
 
 		msg("");
 	},
-
-	/*addChunk: function (x, z) {
-		var id = x + ":" + z;
-		var chunk = this.chunks[id] = this.createChunk();
-
-		mesher.postMessage({x: x, z: z, chunkDetails: {
-			chunk: chunk,
-			chunkWidth: this.chunkWidth,
-			chunkHeight: this.chunkHeight
-		}});
-
-	},*/
 
 	initThree: function () {
 
@@ -160,7 +137,7 @@ var main = {
 		var skyMaterial = new THREE.MeshLambertMaterial({ 
 			map: this.textures.night,
 			fog: false,
-			ambient: new THREE.Color(0x999999)
+			ambient: new THREE.Color(0xaaaaaa)
 		});
 		var sky = new THREE.Mesh(geometry, skyMaterial);
 		sky.material.side = THREE.BackSide;
@@ -182,8 +159,8 @@ var main = {
 
 	createTextures: function () {
 		this.textures = {
-			blocks: THREE.ImageUtils.loadTexture('res/images/terrain-orig.png'),
-			night: THREE.ImageUtils.loadTexture('res/images/night.jpg')
+			blocks: THREE.ImageUtils.loadTexture("res/images/terrain.png"),
+			night: THREE.ImageUtils.loadTexture("res/images/night.jpg")
 		}
 		this.textures.blocks.magFilter = THREE.NearestFilter;
 		this.textures.blocks.minFilter = THREE.NearestFilter;
@@ -320,6 +297,9 @@ var main = {
 
 	reMeshChunk: function (chunk) {
 		// This just deletes & recreates the whole chunk. THis way is verrryy... wrong? Slow at least.
+		if (!this.chunks[chunk]) {
+			return;
+		}
 		var split = chunk.split(":"); // TODO: ha... c'mon now.
 		this.scene.remove(this.chunkGeom[chunk]);
 		this.chunkGeom[chunk] = this.createChunkGeom(split[0], split[1], this.chunks[chunk]);
@@ -328,6 +308,7 @@ var main = {
 
 	addBlockAtCursor: function () {
 		if (!this.cursor.visible) {
+			this.fireOne();
 			return;
 		}
 		var face = this.cursor.__face,
@@ -375,8 +356,12 @@ var main = {
 
 	addLights: function () {
 
-		this.scene.fog = new THREE.Fog(this.day ? 0xD7EAF9 : 0x000000, 1, 80);
-		var ambientLight = new THREE.AmbientLight(this.day ? 0x888888 : 0x2f2f2f);
+		if (this.day)
+			this.scene.fog = new THREE.Fog(0xD7EAF9, 10, 120);
+		else {
+			this.scene.fog = new THREE.Fog(0x000000, 1, 80);
+		}
+		var ambientLight = new THREE.AmbientLight(this.day ? 0x999999 : 0x2f2f2f);
 		this.scene.add(ambientLight);
 
 		var light = new THREE.PointLight(0xF3AC44, 1, 8);
@@ -426,7 +411,7 @@ var main = {
 			chW = this.chunkWidth;
 
 		origin.addScalar(0.5);
-		
+
 		this.raycast(origin, ob.getDirection(), 5, function (x, y, z, face) {
 			if (x === "miss") {
 				cursor.visible = false;
@@ -459,6 +444,31 @@ var main = {
 
 			return chs[cursor.__chunk][z][y][x];
 		});
+	},
+
+	fireOne: function () {
+		var dir = this.player.controls.getDirection().clone();
+		var pos = this.player.controls.getObject().position.clone();
+		
+		dir.multiplyScalar(9);
+		pos.add(dir);
+
+		var chunks = {}
+
+		chunks[this.setBlockAt(pos.x, pos.y, pos.z, "sand")] = true;
+		chunks[this.setBlockAt(pos.x - 1, pos.y, pos.z, "sand")] = true;
+		chunks[this.setBlockAt(pos.x + 1, pos.y, pos.z, "sand")] = true;
+
+		chunks[this.setBlockAt(pos.x, pos.y + 1, pos.z, "sand")] = true;
+		chunks[this.setBlockAt(pos.x, pos.y - 1, pos.z, "sand")] = true;
+		
+		chunks[this.setBlockAt(pos.x, pos.y, pos.z + 1, "sand")] = true;
+		chunks[this.setBlockAt(pos.x, pos.y, pos.z - 1, "sand")] = true;
+
+		for (var ch in chunks) {
+			this.reMeshChunk(ch);
+		}
+
 	},
 
 	raycast: function (origin, direction, radius, callback) {
@@ -595,6 +605,28 @@ var main = {
 	  if (!calledBack) {
 	  	callback("miss");
 	  }
+	},
+
+	setBlockAt: function (x, y, z, type) {
+		var chunkX = Math.floor(x / this.chunkWidth),
+			chunkZ = Math.floor(z / this.chunkWidth),
+			chunk;
+		
+		x -= chunkX * this.chunkWidth;
+		z -= chunkZ * this.chunkWidth;
+
+		x = Math.round(x);
+		z = Math.round(z);
+		y = Math.round(y);
+		if (y < 0) y = 0;
+
+		chunk = this.chunks[chunkX + ":" + chunkZ];
+
+		if (chunk) {
+			chunk[z][y][x] = type;
+		}
+
+		return chunkX + ":" + chunkZ;
 	},
 
 	getBlockAt: function (x, y, z) {
