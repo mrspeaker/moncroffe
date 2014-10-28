@@ -27,6 +27,7 @@ var main = {
 		this.addLights();
 		this.createTextures();
 		this.createChunks();
+		this.addSkyBox();
 
 
 		/*var self = this;
@@ -154,6 +155,18 @@ var main = {
 
 	},
 
+	addSkyBox: function () {
+		var geometry = new THREE.BoxGeometry(490, 490, 490);
+		var skyMaterial = new THREE.MeshLambertMaterial({ 
+			map: this.textures.night,
+			fog: false,
+			ambient: new THREE.Color(0x999999)
+		});
+		var sky = new THREE.Mesh(geometry, skyMaterial);
+		sky.material.side = THREE.BackSide;
+		this.scene.add(sky);
+	},
+
 	addCursorObject: function () {
 		var cursor = this.cursor = new THREE.Mesh(
 			new THREE.BoxGeometry(1.01, 1.01, 1.01), 
@@ -169,10 +182,14 @@ var main = {
 
 	createTextures: function () {
 		this.textures = {
-			blocks: THREE.ImageUtils.loadTexture('res/images/terrain-orig.png')
+			blocks: THREE.ImageUtils.loadTexture('res/images/terrain-orig.png'),
+			night: THREE.ImageUtils.loadTexture('res/images/night.jpg')
 		}
 		this.textures.blocks.magFilter = THREE.NearestFilter;
 		this.textures.blocks.minFilter = THREE.NearestFilter;
+
+		this.textures.night.wrapS = this.textures.night.wrapT = THREE.RepeatWrapping;
+		this.textures.night.repeat.set(3, 3);
 	},
 
 	createChunk: function () {
@@ -358,7 +375,7 @@ var main = {
 
 	addLights: function () {
 
-		this.scene.fog = new THREE.Fog(this.day ? 0xD7EAF9 : 0x111111, 0.1, 80);
+		this.scene.fog = new THREE.Fog(this.day ? 0xD7EAF9 : 0x000000, 1, 80);
 		var ambientLight = new THREE.AmbientLight(this.day ? 0x888888 : 0x333333);
 		this.scene.add(ambientLight);
 
