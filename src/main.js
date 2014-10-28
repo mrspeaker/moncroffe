@@ -8,7 +8,7 @@ var main = {
 	chunkGeom: null,
 
 	blockSize: 1,
-	blocks: ["blank", "grass", "stone", "dirt", "tree", "wood", "sand", "cobble", "gold", "snow", "ice"],
+	blocks: ["blank", "grass", "stone", "dirt", "tree", "wood", "sand", "cobble", "gold", "snow"],
 	curTool: 1,
 	lastToolChange: Date.now(),
 
@@ -246,7 +246,7 @@ var main = {
 	    			sand: [[2, 14], [2, 14], [2, 14], [2, 14], [2, 14], [2, 14]],
 	    			cobble: [[0, 14], [0, 14], [0, 14], [0, 14], [0, 14], [0, 14]],
 	    			gold: [[0, 13], [0, 13], [0, 13], [0, 13], [0, 13], [0, 13]],
-	    			snow: [[2, 11], [2, 11], [2, 11], [2, 11], [2, 11], [2, 11]],
+	    			snow: [[4, 11], [4, 11], [2, 11], [2, 15], [4, 11], [4, 11]],
 	    			ice: [[3, 11], [3, 11], [3, 11], [3, 11], [3, 11], [3, 11]]
 	    		},
 	    		block = blocks[type];

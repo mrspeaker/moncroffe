@@ -3,6 +3,8 @@ body {
 	margin: 0;
 	padding: 0;
 	font-family: helvetica, arial, sans-serif;
+	color: #F4D2A3;
+	background-color: #222222;
 }
 html {
     overflow: hidden;
@@ -22,7 +24,6 @@ body {
 
 #cursor {
 	position: absolute;
-	color :#888;
 	margin-top: 15px;
 	left: 50%;
 	top: 50%;
@@ -35,7 +36,6 @@ body {
 	position:absolute;
 	top: 0;
 	left: 0;
-	color: #999;
 	font-family: monospace;
 }
 
@@ -47,7 +47,6 @@ body {
 	position:absolute;
 	left: 40%;
 	bottom: 0;
-	color: #999;
 	line-height: 40px;
 	text-align: center;
 	padding-top: 10px;
@@ -78,7 +77,6 @@ body {
 	-webkit-box-align: center;
 	-moz-box-align: center;
 	box-align: center;
-	color: #ffffff;
 	text-align: center;
 	cursor: pointer;
 }
