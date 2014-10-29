@@ -118,7 +118,7 @@
 
 						chunk[z][y][x] = {
 							type: type,
-							light: 1
+							light: {}
 						}
 					}
 				}
@@ -131,9 +131,9 @@
 			var geoms = {},
 				blockSize = this.blockSize;
 
-			function getGeometry(type, v) {
+			function getGeometry(block) {
 
-				var geometry = geoms[type];
+				var geometry = geoms[block.type];
 
 				if (!geometry) {
 
@@ -152,7 +152,7 @@
 							snow: [[4, 11], [4, 11], [2, 11], [2, 15], [4, 11], [4, 11]],
 							ice: [[3, 11], [3, 11], [3, 11], [3, 11], [3, 11], [3, 11]]
 						},
-						block = blocks[type];
+						tile = blocks[block.type];
 
 					function getBlock(x, y) {
 						return [
@@ -163,12 +163,12 @@
 						];
 					}
 
-					var front = getBlock(block[0][0], block[0][1]),
-						back = getBlock(block[1][0], block[1][1]),
-						top = getBlock(block[2][0], block[2][1]),
-						bottom = getBlock(block[3][0], block[3][1]),
-						right = getBlock(block[4][0], block[4][1]),
-						left = getBlock(block[5][0], block[5][1]),
+					var front = getBlock(tile[0][0], tile[0][1]),
+						back = getBlock(tile[1][0], tile[1][1]),
+						top = getBlock(tile[2][0], tile[2][1]),
+						bottom = getBlock(tile[3][0], tile[3][1]),
+						right = getBlock(tile[4][0], tile[4][1]),
+						left = getBlock(tile[5][0], tile[5][1]),
 						faceUVs = geometry.faceVertexUvs;
 
 					faceUVs[0] = [];
@@ -185,19 +185,19 @@
 					faceUVs[0][10] = [left[3], left[0], left[2]];
 					faceUVs[0][11] = [left[0], left[1], left[2]];
 
-					geoms[type] = geometry;
+					geoms[block.type] = geometry;
 
 				}
 
-				var faceIndices = [ 'a', 'b', 'c', 'd' ];
+				var faceIndices = [ 'a', 'b', 'c', 'd' ],
+					v = block.light;
 
 				for (var i = 0; i < geometry.faces.length; i++) {
 					geometry.faces[i].vertexColors = [];
 				}
 
 				var shadow = new THREE.Color(0xaaaaaa),
-					light = new THREE.Color(0xFFFfff),
-					lol = new THREE.Color(0x000fff);
+					light = new THREE.Color(0xFFFfff);
 
 				function setCol (face, p1, p2, p3) {
 					face = geometry.faces[face];
@@ -236,12 +236,14 @@
 			for (var i = 0; i < w; i++) {
 				for (var j = 0; j  < h; j++) {
 					for (var k = 0; k < w; k++) {
-						if (chunk[i][j][k].type !== "air") {
-							var geometry = getGeometry(chunk[i][j][k].type, {
-									x: this.getBlockAt(xo + k - 1, j + 1, zo + i),
-									z: this.getBlockAt(xo + k, j + 1, zo + i - 1),
-									xz: this.getBlockAt(xo + k - 1, j + 1, zo + i - 1)
-								}),
+						var block = chunk[i][j][k];
+						if (block.type !== "air") {
+							block.light = {
+								x: this.getBlockAt(xo + k - 1, j + 1, zo + i),
+								z: this.getBlockAt(xo + k, j + 1, zo + i - 1),
+								xz: this.getBlockAt(xo + k - 1, j + 1, zo + i - 1)
+							}
+							var geometry = getGeometry(block),
 								mesh = new THREE.Mesh(geometry, blockMaterial);
 
 							// Move up so bottom of cube is at 0, not -0.5
@@ -262,7 +264,6 @@
 
 			return new THREE.Mesh(totalGeom, blockMaterial);
 		}
-
 
 	};
 
