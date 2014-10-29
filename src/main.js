@@ -99,6 +99,7 @@ var main = {
 
 		this.scene.remove(this.lights.ambientLight);
 		this.lights.ambientLight = new THREE.AmbientLight(day ? 0x999999 : 0x2f2f2f);
+		this.lights.player.visible = !this.day;
 		this.scene.add(this.lights.ambientLight);
 		this.skybox.visible = !day;
 
@@ -144,7 +145,9 @@ var main = {
 		addChunk(0, 1);
 		addChunk(1, 0);
 		addChunk(1, 1);
-		
+		addChunk(1, -1);
+		addChunk(2, -1);
+
 		addChunk(-1, 0);
 		addChunk(0, -1); 
 		addChunk(2, 0);
@@ -334,8 +337,7 @@ var main = {
 						var geometry = getGeometry(chunk[i][j][k], {
 								x: this.getBlockAt(xo + k - 1, j + 1, zo + i), 
 								z: this.getBlockAt(xo + k, j + 1, zo + i - 1),
-								xz: this.getBlockAt(xo + k - 1, j + 1, zo + i - 1),
-
+								xz: this.getBlockAt(xo + k - 1, j + 1, zo + i - 1)
 							}),
 							mesh = new THREE.Mesh(geometry, blockMaterial);
 
@@ -423,7 +425,7 @@ var main = {
 		this.lights.ambientLight = new THREE.AmbientLight(0x999999);
 		this.scene.add(this.lights.ambientLight);
 
-		var light = new THREE.PointLight(0xF3AC44, 1, 8);
+		var light = this.lights.player = new THREE.PointLight(0xF3AC44, 1, 8);
 		this.camera.add(light); // light follows player
 
 		light = new THREE.PointLight(0xF4D2A3, 1, 10); 
