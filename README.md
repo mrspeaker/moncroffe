@@ -20,9 +20,10 @@ Minecraft style boxel demo... by Mr Speaker
 
 # todolol
 - chunk handling is super hacked in there... clean it up!
+	- separate "world logic" and "world data"
+	- separate "chunk logic" and "chunk data"
 - move world details out of main
 - move the cursor stuff out of main
 - clean up pointer lock and player controls
-- make block data objects, not strings
 - camera pitch/yaw not same as minecraft when looking up/down
 - add "horizon" to day time

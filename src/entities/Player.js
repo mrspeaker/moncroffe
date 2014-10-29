@@ -7,8 +7,8 @@ var Player = {
 		this.screen = screen;
 
 		this.bb = {
-			w: 0.7, 
-			d: 0.7, 
+			w: 0.7,
+			d: 0.7,
 			h: 1.9
 		};
 
@@ -17,16 +17,16 @@ var Player = {
 		var playerObj = this.playerObj = new THREE.Object3D();
 
 		playerObj.position.set(screen.world.chunkWidth * 0.1, 7 +  (this.bb.h / 2), screen.world.chunkWidth * 0.75);
-	    playerObj.add(
+		playerObj.add(
 			new THREE.Mesh(
-	    		new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d), 
-	    		new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: true})));
+				new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d),
+				new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: true})));
 
-	    if (this.thrd) {
-	    	this.screen.scene.add(playerObj);
-	    }
+		if (this.thrd) {
+			this.screen.scene.add(playerObj);
+		}
 
-	    this.addPlayerBase();
+		this.addPlayerBase();
 
 		var controls = this.controls = this.createControls();
 		this.screen.scene.add(controls.getObject());
@@ -36,20 +36,20 @@ var Player = {
 
 	addPlayerBase: function () {
 		this.edge = edge = new THREE.Mesh(
-			new THREE.BoxGeometry(0.1, 0.3, 0.1), 
+			new THREE.BoxGeometry(0.1, 0.3, 0.1),
 			new THREE.MeshLambertMaterial({ color: 0x0099ff }));
 			edge.position.x = -(this.bb.w / 2);
 			edge.position.z = -(this.bb.d / 2)
 
 		this.marker = new THREE.Object3D();
 		this.marker.add(new THREE.Mesh(
-			new THREE.BoxGeometry(this.bb.w, 0.1, this.bb.d), 
+			new THREE.BoxGeometry(this.bb.w, 0.1, this.bb.d),
 			new THREE.MeshLambertMaterial({ color: 0x0000ff })));
 		this.marker.add(new THREE.Mesh(
-			new THREE.BoxGeometry(0.05, 0.2, 0.5), 
+			new THREE.BoxGeometry(0.05, 0.2, 0.5),
 			new THREE.MeshLambertMaterial({ color: 0x00ffff })));
 		this.marker.add(new THREE.Mesh(
-			new THREE.BoxGeometry(0.5, 0.2, 0.05), 
+			new THREE.BoxGeometry(0.5, 0.2, 0.05),
 			new THREE.MeshLambertMaterial({ color: 0x00ffff })));
 		this.marker.add(edge);
 		this.screen.scene.add(this.marker);
@@ -127,7 +127,7 @@ var Player = {
 			bobbing = col.ground && (obj.position.x !== oldPos.x || obj.position.z !== oldPos.z),
 			bobX = bobbing ? Math.sin(Date.now() / speed) * size : 0;
 			bobY = bobbing ? - Math.abs(Math.cos(Date.now() / speed)) * size + (size/2) : 0;
-		
+
 		this.controls.setPos(obj.position.x + bobX, obj.position.y + bobY, obj.position.z);
 		this.marker.position.set(obj.position.x, obj.position.y - (this.bb.h / 2) + 0.05, obj.position.z);
 	},
@@ -136,7 +136,7 @@ var Player = {
 
 		var camera = this.screen.camera,
 			controls = new THREE.PointerLockControls(this.thrd ? new THREE.Object3D(): camera);
-		
+
 		if (this.thrd) {
 			camera.position.set(-5, 12, 10);
 			camera.rotation.set(0, -Math.PI / 2 , 0);
@@ -165,7 +165,7 @@ var Player = {
 			var pointerlockerror = function ( event ) {
 				instructions.style.display = "";
 			}
-		
+
 			// Hook pointer lock state change events
 			document.addEventListener("pointerlockchange", pointerlockchange, false );
 			document.addEventListener("mozpointerlockchange", pointerlockchange, false );

@@ -4,12 +4,9 @@
 
 	var Chunk = {
 
-		init: function (x, y) {
-			this.x = x;
-			this.z = z;
-			this.blocks = [];
-			return this;
-		}
+		x: 0,
+		z: 0,
+		blocks: []
 
 	};
 

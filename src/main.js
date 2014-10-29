@@ -23,7 +23,7 @@ var main = {
 		this.addCursorObject();
 		this.addLights();
 		this.createTextures();
-		
+
 		var chs = this.world.createChunks();
 		for (var ch in chs) {
 			this.scene.add(chs[ch]);
@@ -41,14 +41,14 @@ var main = {
 	initThree: function () {
 
 		this.scene = new THREE.Scene();
-		
+
 		this.renderer = new THREE.WebGLRenderer();
-	
+
 		this.camera = new THREE.PerspectiveCamera(75, 1, 0.01, 500);
 		this.setCameraDimensions();
-		
+
 		this.clock = new THREE.Clock();
-		
+
 		document.querySelector("#board").appendChild(this.renderer.domElement);
 
 	},
@@ -68,8 +68,8 @@ var main = {
 
 		// Stop right-click menu
 		document.addEventListener('contextmenu', function(e) {
-    		e.preventDefault();
-    		return false;
+			e.preventDefault();
+			return false;
 		}, false);
 
 		var onMouseWheel = (function (e) {
@@ -131,7 +131,7 @@ var main = {
 
 	addSkyBox: function () {
 		var geometry = new THREE.BoxGeometry(490, 490, 490);
-		var skyMaterial = new THREE.MeshLambertMaterial({ 
+		var skyMaterial = new THREE.MeshLambertMaterial({
 			map: this.textures.night,
 			fog: false,
 			ambient: new THREE.Color(0x999999)
@@ -143,7 +143,7 @@ var main = {
 
 	addCursorObject: function () {
 		var cursor = this.cursor = new THREE.Mesh(
-			new THREE.BoxGeometry(1.01, 1.01, 1.01), 
+			new THREE.BoxGeometry(1.01, 1.01, 1.01),
 			new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: false}));
 		cursor.position.set(1, 2, 8);
 		cursor.material.opacity = 0.2;
@@ -235,12 +235,12 @@ var main = {
 		var light = this.lights.player = new THREE.PointLight(0xF3AC44, 1, 8);
 		this.camera.add(light); // light follows player
 
-		light = new THREE.PointLight(0xF4D2A3, 1, 10); 
-		light.position.set(this.chunkWidth - 5, 5, this.chunkWidth - 5); 
+		light = new THREE.PointLight(0xF4D2A3, 1, 10);
+		light.position.set(this.chunkWidth - 5, 5, this.chunkWidth - 5);
 		this.scene.add(light);
 
-		light = new THREE.PointLight(0xF4D2A3, 1, 10); 
-		light.position.set(2 * this.chunkWidth - 5, 5, 2 * this.chunkWidth - 5); 
+		light = new THREE.PointLight(0xF4D2A3, 1, 10);
+		light.position.set(2 * this.chunkWidth - 5, 5, 2 * this.chunkWidth - 5);
 		this.scene.add(light);
 
 	},
@@ -286,7 +286,7 @@ var main = {
 				cursor.visible = false;
 				return false;
 			}
-			
+
 			cursor.visible = true;
 
 			if (y < 0) y = 0; // looking below ground breaks
@@ -318,7 +318,7 @@ var main = {
 	fireOne: function () {
 		var dir = this.player.controls.getDirection().clone();
 		var pos = this.player.controls.getObject().position.clone();
-		
+
 		dir.multiplyScalar(9);
 		pos.add(dir);
 
@@ -332,7 +332,7 @@ var main = {
 
 		chunks[this.world.setBlockAt(pos.x, pos.y + 1, pos.z, type)] = true;
 		chunks[this.world.setBlockAt(pos.x, pos.y - 1, pos.z, type)] = true;
-		
+
 		chunks[this.world.setBlockAt(pos.x, pos.y, pos.z + 1, type)] = true;
 		chunks[this.world.setBlockAt(pos.x, pos.y, pos.z - 1, type)] = true;
 
@@ -347,11 +347,11 @@ var main = {
 		function intbound(s, ds) {
 		  // Find the smallest positive t such that s+t*ds is an integer.
 		  if (ds < 0) {
-		    return intbound(-s, -ds);
+			return intbound(-s, -ds);
 		  } else {
-		    s = mod(s, 1);
-		    // problem is now s+t*ds = 1
-		    return (1-s)/ds;
+			s = mod(s, 1);
+			// problem is now s+t*ds = 1
+			return (1-s)/ds;
 		  }
 		}
 
@@ -371,7 +371,7 @@ var main = {
 	  //   • Imposed a distance limit.
 	  //   • The face passed through to reach the current cube is provided to
 	  //     the callback.
-	  
+
 	  // The foundation of this algorithm is a parameterized representation of
 	  // the provided ray,
 	  //                    origin + t * direction,
@@ -380,7 +380,7 @@ var main = {
 	  // if we took a step sufficient to cross a cube boundary along that axis
 	  // (i.e. change the integer part of the coordinate) in the variables
 	  // tMaxX, tMaxY, and tMaxZ.
-	  
+
 	  // Cube containing origin point.
 	  var x = Math.floor(origin.x);
 	  var y = Math.floor(origin.y);
@@ -405,79 +405,79 @@ var main = {
 	  var tDeltaZ = stepZ/dz;
 	  // Buffer for reporting faces to the callback.
 	  var face = new THREE.Vector3();
-	  
+
 	  // Avoids an infinite loop.
 	  if (dx === 0 && dy === 0 && dz === 0)
-	    throw new RangeError("Raycast in zero direction!");
-	  
+		throw new RangeError("Raycast in zero direction!");
+
 	  // Rescale from units of 1 cube-edge to units of 'direction' so we can
 	  // compare with 't'.
 	  radius /= Math.sqrt(dx*dx+dy*dy+dz*dz);
-	  
+
 	  var calledBack = false;
 	  //while (/* ray has not gone past bounds of world */
 	  //       (stepX > 0 ? x < wx : x >= 0) &&
 	  //       (stepY > 0 ? y < wy : y >= 0) &&
 	  //       (stepZ > 0 ? z < wz : z >= 0)) {
 		while(true) {
-	    
-	    // Invoke the callback, unless we are not *yet* within the bounds of the
-	    // world.
-	    //if (!(x < 0 || y < 0 || z < 0 || x >= wx || y >= wy || z >= wz))
-	      if (callback(x, y, z, face)) {
-	      	calledBack = true;
-	        break;
-	      }
-	   	
-	    
-	    // tMaxX stores the t-value at which we cross a cube boundary along the
-	    // X axis, and similarly for Y and Z. Therefore, choosing the least tMax
-	    // chooses the closest cube boundary. Only the first case of the four
-	    // has been commented in detail.
-	    if (tMaxX < tMaxY) {
-	      if (tMaxX < tMaxZ) {
-	        if (tMaxX > radius) break;
-	        // Update which cube we are now in.
-	        x += stepX;
-	        // Adjust tMaxX to the next X-oriented boundary crossing.
-	        tMaxX += tDeltaX;
-	        // Record the normal vector of the cube face we entered.
-	        face.x = -stepX;
-	        face.y = 0;
-	        face.z = 0;
-	      } else {
-	        if (tMaxZ > radius) break;
-	        z += stepZ;
-	        tMaxZ += tDeltaZ;
-	        face.x = 0;
-	        face.y = 0;
-	        face.z = -stepZ;
-	      }
-	    } else {
-	      if (tMaxY < tMaxZ) {
-	        if (tMaxY > radius) break;
-	        y += stepY;
-	        tMaxY += tDeltaY;
-	        face.x = 0;
-	        face.y = -stepY;
-	        face.z = 0;
-	      } else {
-	        // Identical to the second case, repeated for simplicity in
-	        // the conditionals.
-	        if (tMaxZ > radius) break;
-	        z += stepZ;
-	        tMaxZ += tDeltaZ;
-	        face.x = 0;
-	        face.y = 0;
-	        face.z = -stepZ;
-	      }
-	    }
+
+		// Invoke the callback, unless we are not *yet* within the bounds of the
+		// world.
+		//if (!(x < 0 || y < 0 || z < 0 || x >= wx || y >= wy || z >= wz))
+		  if (callback(x, y, z, face)) {
+			calledBack = true;
+			break;
+		  }
+
+
+		// tMaxX stores the t-value at which we cross a cube boundary along the
+		// X axis, and similarly for Y and Z. Therefore, choosing the least tMax
+		// chooses the closest cube boundary. Only the first case of the four
+		// has been commented in detail.
+		if (tMaxX < tMaxY) {
+		  if (tMaxX < tMaxZ) {
+			if (tMaxX > radius) break;
+			// Update which cube we are now in.
+			x += stepX;
+			// Adjust tMaxX to the next X-oriented boundary crossing.
+			tMaxX += tDeltaX;
+			// Record the normal vector of the cube face we entered.
+			face.x = -stepX;
+			face.y = 0;
+			face.z = 0;
+		  } else {
+			if (tMaxZ > radius) break;
+			z += stepZ;
+			tMaxZ += tDeltaZ;
+			face.x = 0;
+			face.y = 0;
+			face.z = -stepZ;
+		  }
+		} else {
+		  if (tMaxY < tMaxZ) {
+			if (tMaxY > radius) break;
+			y += stepY;
+			tMaxY += tDeltaY;
+			face.x = 0;
+			face.y = -stepY;
+			face.z = 0;
+		  } else {
+			// Identical to the second case, repeated for simplicity in
+			// the conditionals.
+			if (tMaxZ > radius) break;
+			z += stepZ;
+			tMaxZ += tDeltaZ;
+			face.x = 0;
+			face.y = 0;
+			face.z = -stepZ;
+		  }
+		}
 	  }
 	  if (!calledBack) {
-	  	callback("miss");
+		callback("miss");
 	  }
 	},
-	
+
 	tryMove: function (e, move) {
 
 		var p = e.playerObj.position.clone(),
@@ -534,7 +534,7 @@ var main = {
 			p.y = yb + (bb.h / 2);
 		}
 
-		// Check top: 
+		// Check top:
 		/*
 			TODO: this ain't quite right - "slide down" cubes
 			Always detects a head hit if you are jumping and pushing.
@@ -546,7 +546,7 @@ var main = {
 			//p.y = nyt - (bb.h / 2); // can't force down because it's detecting sides, not just top
 			hitGround = true;
 		}
-		
+
 		return {x: p.x, y: p.y, z: p.z, ground: hitGround};
 	},
 

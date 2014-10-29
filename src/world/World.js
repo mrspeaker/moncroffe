@@ -8,7 +8,7 @@
 		chunkHeight: 20,
 		blockSize: 1,
 		blocks: ["air", "grass", "stone", "dirt", "tree", "wood", "sand", "cobble", "gold", "snow"],
-	
+
 		init: function (screen) {
 			this.chunks = {};
 			this.chunkGeom = {};
@@ -36,7 +36,7 @@
 			addChunk(2, -1);
 
 			addChunk(-1, 0);
-			addChunk(0, -1); 
+			addChunk(0, -1);
 			addChunk(2, 0);
 			addChunk(1, 2);
 
@@ -48,7 +48,7 @@
 			var chunkX = Math.floor(x / this.chunkWidth),
 				chunkZ = Math.floor(z / this.chunkWidth),
 				chunk;
-			
+
 			x -= chunkX * this.chunkWidth;
 			z -= chunkZ * this.chunkWidth;
 
@@ -72,7 +72,7 @@
 			var chunkX = Math.floor(x / this.chunkWidth),
 				chunkZ = Math.floor(z / this.chunkWidth),
 				chunk;
-			
+
 			x -= chunkX * this.chunkWidth;
 			z -= chunkZ * this.chunkWidth;
 
@@ -93,7 +93,7 @@
 
 		createChunk: function () {
 
-		    // Create the chunk
+			// Create the chunk
 			var chunk = [];
 			for (var z = 0; z < this.chunkWidth; z++) {
 				chunk[z] = [];
@@ -128,73 +128,73 @@
 		},
 
 		createChunkGeom: function (x, z, chunk) {
-		    var geoms = {},
-		    	blockSize = this.blockSize;
+			var geoms = {},
+				blockSize = this.blockSize;
 
-		    function getGeometry(type, v) {
+			function getGeometry(type, v) {
 
-		    	var geometry = geoms[type];
+				var geometry = geoms[type];
 
-		    	if (!geometry) {
+				if (!geometry) {
 
-			    	geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
+					geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
 
-			    	// F, B, T, B, L, R
+					// F, B, T, B, L, R
 					var blocks = {
-			    			grass: [[3, 15], [3, 15], [0, 15], [2, 15], [3, 15], [3, 15]],
-			    			stone: [[1, 15], [1, 15], [1, 15], [1, 15], [1, 15], [1, 15]],
-			    			dirt: [[2, 15], [2, 15], [2, 15], [2, 15], [2, 15], [2, 15]],
-			    			tree: [[4, 14], [4, 14], [5, 14], [5, 14], [4, 14], [4, 14]],
-			    			wood: [[4, 15], [4, 15], [4, 15], [4, 15], [4, 15], [4, 15]],
-			    			sand: [[2, 14], [2, 14], [2, 14], [2, 14], [2, 14], [2, 14]],
-			    			cobble: [[0, 14], [0, 14], [0, 14], [0, 14], [0, 14], [0, 14]],
-			    			gold: [[0, 13], [0, 13], [0, 13], [0, 13], [0, 13], [0, 13]],
-			    			snow: [[4, 11], [4, 11], [2, 11], [2, 15], [4, 11], [4, 11]],
-			    			ice: [[3, 11], [3, 11], [3, 11], [3, 11], [3, 11], [3, 11]]
-			    		},
-			    		block = blocks[type];
-		    	    
-		    	    function getBlock(x, y) {
-		    	    	return [
-		    		    	new THREE.Vector2(x / 16, y / 16),
-		    		    	new THREE.Vector2((x + 1) / 16, y / 16),
-		    		    	new THREE.Vector2((x + 1) / 16, (y + 1) / 16), 
-		    		    	new THREE.Vector2(x / 16, (y + 1) / 16)
-		    	    	];
-		    	    }
+							grass: [[3, 15], [3, 15], [0, 15], [2, 15], [3, 15], [3, 15]],
+							stone: [[1, 15], [1, 15], [1, 15], [1, 15], [1, 15], [1, 15]],
+							dirt: [[2, 15], [2, 15], [2, 15], [2, 15], [2, 15], [2, 15]],
+							tree: [[4, 14], [4, 14], [5, 14], [5, 14], [4, 14], [4, 14]],
+							wood: [[4, 15], [4, 15], [4, 15], [4, 15], [4, 15], [4, 15]],
+							sand: [[2, 14], [2, 14], [2, 14], [2, 14], [2, 14], [2, 14]],
+							cobble: [[0, 14], [0, 14], [0, 14], [0, 14], [0, 14], [0, 14]],
+							gold: [[0, 13], [0, 13], [0, 13], [0, 13], [0, 13], [0, 13]],
+							snow: [[4, 11], [4, 11], [2, 11], [2, 15], [4, 11], [4, 11]],
+							ice: [[3, 11], [3, 11], [3, 11], [3, 11], [3, 11], [3, 11]]
+						},
+						block = blocks[type];
 
-		    	    var front = getBlock(block[0][0], block[0][1]),
-		    			back = getBlock(block[1][0], block[1][1]),
-		    			top = getBlock(block[2][0], block[2][1]),
-		    			bottom = getBlock(block[3][0], block[3][1]),
-		    			right = getBlock(block[4][0], block[4][1]),
-		    			left = getBlock(block[5][0], block[5][1]),
-		    			faceUVs = geometry.faceVertexUvs;
+					function getBlock(x, y) {
+						return [
+							new THREE.Vector2(x / 16, y / 16),
+							new THREE.Vector2((x + 1) / 16, y / 16),
+							new THREE.Vector2((x + 1) / 16, (y + 1) / 16),
+							new THREE.Vector2(x / 16, (y + 1) / 16)
+						];
+					}
 
-		    		faceUVs[0] = [];
-		    		faceUVs[0][0] = [front[3], front[0], front[2]];
-		    		faceUVs[0][1] = [front[0], front[1], front[2]];
-		    		faceUVs[0][2] = [back[3], back[0], back[2]];
-		    		faceUVs[0][3] = [back[0], back[1], back[2]];
-		    		faceUVs[0][4] = [top[3], top[0], top[2]];
-		    		faceUVs[0][5] = [top[0], top[1], top[2]];
-		    		faceUVs[0][6] = [bottom[3], bottom[0], bottom[2]];
-		    		faceUVs[0][7] = [bottom[0], bottom[1], bottom[2]];
-		    		faceUVs[0][8] = [right[3], right[0], right[2]];
-		    		faceUVs[0][9] = [right[0], right[1], right[2]];
-		    		faceUVs[0][10] = [left[3], left[0], left[2]];
-		    		faceUVs[0][11] = [left[0], left[1], left[2]];
+					var front = getBlock(block[0][0], block[0][1]),
+						back = getBlock(block[1][0], block[1][1]),
+						top = getBlock(block[2][0], block[2][1]),
+						bottom = getBlock(block[3][0], block[3][1]),
+						right = getBlock(block[4][0], block[4][1]),
+						left = getBlock(block[5][0], block[5][1]),
+						faceUVs = geometry.faceVertexUvs;
 
-		    		geoms[type] = geometry;
+					faceUVs[0] = [];
+					faceUVs[0][0] = [front[3], front[0], front[2]];
+					faceUVs[0][1] = [front[0], front[1], front[2]];
+					faceUVs[0][2] = [back[3], back[0], back[2]];
+					faceUVs[0][3] = [back[0], back[1], back[2]];
+					faceUVs[0][4] = [top[3], top[0], top[2]];
+					faceUVs[0][5] = [top[0], top[1], top[2]];
+					faceUVs[0][6] = [bottom[3], bottom[0], bottom[2]];
+					faceUVs[0][7] = [bottom[0], bottom[1], bottom[2]];
+					faceUVs[0][8] = [right[3], right[0], right[2]];
+					faceUVs[0][9] = [right[0], right[1], right[2]];
+					faceUVs[0][10] = [left[3], left[0], left[2]];
+					faceUVs[0][11] = [left[0], left[1], left[2]];
 
-	    		}
+					geoms[type] = geometry;
+
+				}
 
 				var faceIndices = [ 'a', 'b', 'c', 'd' ];
-				
+
 				for (var i = 0; i < geometry.faces.length; i++) {
 					geometry.faces[i].vertexColors = [];
 				}
-		
+
 				var shadow = new THREE.Color(0xaaaaaa),
 					light = new THREE.Color(0xFFFfff),
 					lol = new THREE.Color(0x000fff);
@@ -219,14 +219,14 @@
 					setCol(5, true, true, false);
 				} else  if (v.xz) {
 					setCol(4, false, true, true);
-					setCol(5, true, true, true);	
+					setCol(5, true, true, true);
 				}
 
-	    		return geometry;
-		    }
+				return geometry;
+			}
 
 
-		    // Create the chunk
+			// Create the chunk
 			var totalGeom = new THREE.Geometry(),
 				w = this.chunkWidth,
 				h = this.chunkHeight,
@@ -238,7 +238,7 @@
 					for (var k = 0; k < w; k++) {
 						if (chunk[i][j][k].type !== "air") {
 							var geometry = getGeometry(chunk[i][j][k].type, {
-									x: this.getBlockAt(xo + k - 1, j + 1, zo + i), 
+									x: this.getBlockAt(xo + k - 1, j + 1, zo + i),
 									z: this.getBlockAt(xo + k, j + 1, zo + i - 1),
 									xz: this.getBlockAt(xo + k - 1, j + 1, zo + i - 1)
 								}),
@@ -254,12 +254,12 @@
 				}
 			}
 
-			var blockMaterial = new THREE.MeshLambertMaterial({ 
+			var blockMaterial = new THREE.MeshLambertMaterial({
 				map: this.screen.textures.blocks,
 				wrapAround: true,
 				vertexColors: THREE.VertexColors
 			});
-		
+
 			return new THREE.Mesh(totalGeom, blockMaterial);
 		}
 
