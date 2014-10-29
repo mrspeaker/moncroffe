@@ -55,7 +55,7 @@ var Player = {
 		this.screen.scene.add(this.marker);
 	},
 
-	update: function (delta) {
+	tick: function (delta) {
 
 		if (!this.controls.enabled) {
 			delta = 0;

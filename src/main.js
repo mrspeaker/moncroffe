@@ -19,10 +19,12 @@ var main = {
 	doRemoveBlock: false,
 
 	lights: null,
+	world: null,
 
 	init: function () {
 
 		this.initThree();
+		this.world = Object.create(World).init();
 		this.player = Object.create(Player).init(this);
 
 		this.addCursorObject();
@@ -463,9 +465,10 @@ var main = {
 		delta = Math.min(60 / 1000, delta); // HACK: Limit for physics
 		var dt = delta * 1000 | 0;
 		if (dt < 15 || dt > 21) {
-			msg(dt);
+			msg(dt); // Track big/small updates
 		}
-		this.player.update(delta);
+		this.player.tick(delta);
+		this.world.tick(delta);
 	},
 
 	cast: function () {
