@@ -25,3 +25,4 @@ Minecraft style boxel demo... by Mr Speaker
 - clean up pointer lock and player controls
 - make block data objects, not strings
 - camera pitch/yaw not same as minecraft when looking up/down
+- add "horizon" to day time
