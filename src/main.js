@@ -8,7 +8,7 @@ var main = {
 	chunkGeom: null,
 
 	blockSize: 1,
-	blocks: ["blank", "grass", "stone", "dirt", "tree", "wood", "sand", "cobble", "gold", "snow"],
+	blocks: ["air", "grass", "stone", "dirt", "tree", "wood", "sand", "cobble", "gold", "snow"],
 	curTool: 1,
 	lastToolChange: Date.now(),
 
@@ -201,22 +201,25 @@ var main = {
 			for (var y = 0; y < this.chunkHeight; y++) {
 				chunk[z][y] = [];
 				for (var x = 0; x < this.chunkWidth; x++) {
+					var type = "air";
 					if (y === 0) {
 						// Ground
-						chunk[z][y][x] = ["grass", "dirt"][Math.random() * 2 | 0];
+						type = ["grass", "dirt"][Math.random() * 2 | 0];
 					} else if (
 						// Grass Sphere
 						Math.sqrt(x * x + y * y + (z * 5)) < 10 && Math.sqrt(x * x + y * y + (z *5)) > 7) {
-						chunk[z][y][x] =  "grass";
+						type =  "grass";
 					} else if (y === 4 && z > 9 && x > 8) {
 						// Platform
-						chunk[z][y][x] = ["tree", "stone"][Math.random() * 2 | 0];
+						type = ["tree", "stone"][Math.random() * 2 | 0];
 					} else if (Math.random() < 0.01) {
 						// Random block or air
-						chunk[z][y][x] = this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1];
-					} else {
-						// Air
-						chunk[z][y][x] = 0;
+						type = this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1];
+					}
+
+					chunk[z][y][x] = {
+						type: type,
+						light: 1
 					}
 				}
 			}
@@ -333,8 +336,8 @@ var main = {
 		for (var i = 0; i < w; i++) {
 			for (var j = 0; j  < h; j++) {
 				for (var k = 0; k < w; k++) {
-					if (chunk[i][j][k]) {
-						var geometry = getGeometry(chunk[i][j][k], {
+					if (chunk[i][j][k].type !== "air") {
+						var geometry = getGeometry(chunk[i][j][k].type, {
 								x: this.getBlockAt(xo + k - 1, j + 1, zo + i), 
 								z: this.getBlockAt(xo + k, j + 1, zo + i - 1),
 								xz: this.getBlockAt(xo + k - 1, j + 1, zo + i - 1)
@@ -406,7 +409,8 @@ var main = {
 		if (!chunk) {
 			return;
 		}
-		chunk[pos.z + face.z][pos.y + face.y][pos.x + face.x] = this.blocks[this.curTool];
+		chunk[pos.z + face.z][pos.y + face.y][pos.x + face.x].type = this.blocks[this.curTool];
+
 		this.reMeshChunk(chunkId);
 	},
 
@@ -415,7 +419,7 @@ var main = {
 			return;
 		}
 		var pos = this.cursor.__pos;
-		this.chunks[this.cursor.__chunk][pos.z][pos.y][pos.x] = 0;
+		this.chunks[this.cursor.__chunk][pos.z][pos.y][pos.x].type = "air";
 		this.reMeshChunk(this.cursor.__chunk);
 	},
 
@@ -503,7 +507,7 @@ var main = {
 
 			cursor.__pos = {x: x, y: y, z: z};
 
-			return chs[cursor.__chunk][z][y][x];
+			return chs[cursor.__chunk][z][y][x].type !== "air";
 		});
 	},
 
@@ -686,7 +690,7 @@ var main = {
 		chunk = this.chunks[chunkX + ":" + chunkZ];
 
 		if (chunk) {
-			chunk[z][y][x] = type;
+			chunk[z][y][x].type = type;
 		}
 
 		return chunkX + ":" + chunkZ;
@@ -710,11 +714,8 @@ var main = {
 		if (!chunk) {
 			return false;
 		}
-		if (!chunk[z] || !chunk[z][y]) {
-			console.log(chunkX + ":" + chunkZ, chunk, x, y, z);
-		}
 
-		return chunk[z][y][x];
+		return chunk[z][y][x].type !== "air";
 
 	},
 	
