@@ -223,170 +223,120 @@ var main = {
 	},
 
 	createChunkGeom: function (x, z, chunk) {
-	    var geoms = [],
+	    var geoms = {},
 	    	blockSize = this.blockSize;
 
-	    function getGeometry(type) {
+	    function getGeometry(type, v) {
 
-	    	if (geoms[type]) {
-	    		return geoms[type];
-	    	}
+	    	var geometry = geoms[type];
 
-	    	var geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize),
-	    		// F, B, T, B, L, R
-	    		blocks = {
-	    			grass: [[3, 15], [3, 15], [0, 15], [2, 15], [3, 15], [3, 15]],
-	    			stone: [[1, 15], [1, 15], [1, 15], [1, 15], [1, 15], [1, 15]],
-	    			dirt: [[2, 15], [2, 15], [2, 15], [2, 15], [2, 15], [2, 15]],
-	    			tree: [[4, 14], [4, 14], [5, 14], [5, 14], [4, 14], [4, 14]],
-	    			wood: [[4, 15], [4, 15], [4, 15], [4, 15], [4, 15], [4, 15]],
-	    			sand: [[2, 14], [2, 14], [2, 14], [2, 14], [2, 14], [2, 14]],
-	    			cobble: [[0, 14], [0, 14], [0, 14], [0, 14], [0, 14], [0, 14]],
-	    			gold: [[0, 13], [0, 13], [0, 13], [0, 13], [0, 13], [0, 13]],
-	    			snow: [[4, 11], [4, 11], [2, 11], [2, 15], [4, 11], [4, 11]],
-	    			ice: [[3, 11], [3, 11], [3, 11], [3, 11], [3, 11], [3, 11]]
-	    		},
-	    		block = blocks[type];
-    	    
-    	    function getBlock(x, y) {
-    	    	return [
-    		    	new THREE.Vector2(x / 16, y / 16),
-    		    	new THREE.Vector2((x + 1) / 16, y / 16),
-    		    	new THREE.Vector2((x + 1) / 16, (y + 1) / 16), 
-    		    	new THREE.Vector2(x / 16, (y + 1) / 16)
-    	    	];
-    	    }
+	    	if (!geometry) {
 
-    	    var front = getBlock(block[0][0], block[0][1]),
-    			back = getBlock(block[1][0], block[1][1]),
-    			top = getBlock(block[2][0], block[2][1]),
-    			bottom = getBlock(block[3][0], block[3][1]),
-    			right = getBlock(block[4][0], block[4][1]),
-    			left = getBlock(block[5][0], block[5][1]),
-    			faceUVs = geometry.faceVertexUvs;
+		    	geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize),
+		    		// F, B, T, B, L, R
+		    		blocks = {
+		    			grass: [[3, 15], [3, 15], [0, 15], [2, 15], [3, 15], [3, 15]],
+		    			stone: [[1, 15], [1, 15], [1, 15], [1, 15], [1, 15], [1, 15]],
+		    			dirt: [[2, 15], [2, 15], [2, 15], [2, 15], [2, 15], [2, 15]],
+		    			tree: [[4, 14], [4, 14], [5, 14], [5, 14], [4, 14], [4, 14]],
+		    			wood: [[4, 15], [4, 15], [4, 15], [4, 15], [4, 15], [4, 15]],
+		    			sand: [[2, 14], [2, 14], [2, 14], [2, 14], [2, 14], [2, 14]],
+		    			cobble: [[0, 14], [0, 14], [0, 14], [0, 14], [0, 14], [0, 14]],
+		    			gold: [[0, 13], [0, 13], [0, 13], [0, 13], [0, 13], [0, 13]],
+		    			snow: [[4, 11], [4, 11], [2, 11], [2, 15], [4, 11], [4, 11]],
+		    			ice: [[3, 11], [3, 11], [3, 11], [3, 11], [3, 11], [3, 11]]
+		    		},
+		    		block = blocks[type];
+	    	    
+	    	    function getBlock(x, y) {
+	    	    	return [
+	    		    	new THREE.Vector2(x / 16, y / 16),
+	    		    	new THREE.Vector2((x + 1) / 16, y / 16),
+	    		    	new THREE.Vector2((x + 1) / 16, (y + 1) / 16), 
+	    		    	new THREE.Vector2(x / 16, (y + 1) / 16)
+	    	    	];
+	    	    }
 
-    		faceUVs[0] = [];
-    		faceUVs[0][0] = [front[3], front[0], front[2]];
-    		faceUVs[0][1] = [front[0], front[1], front[2]];
-    		faceUVs[0][2] = [back[3], back[0], back[2]];
-    		faceUVs[0][3] = [back[0], back[1], back[2]];
-    		faceUVs[0][4] = [top[3], top[0], top[2]];
-    		faceUVs[0][5] = [top[0], top[1], top[2]];
-    		faceUVs[0][6] = [bottom[3], bottom[0], bottom[2]];
-    		faceUVs[0][7] = [bottom[0], bottom[1], bottom[2]];
-    		faceUVs[0][8] = [right[3], right[0], right[2]];
-    		faceUVs[0][9] = [right[0], right[1], right[2]];
-    		faceUVs[0][10] = [left[3], left[0], left[2]];
-    		faceUVs[0][11] = [left[0], left[1], left[2]];
+	    	    var front = getBlock(block[0][0], block[0][1]),
+	    			back = getBlock(block[1][0], block[1][1]),
+	    			top = getBlock(block[2][0], block[2][1]),
+	    			bottom = getBlock(block[3][0], block[3][1]),
+	    			right = getBlock(block[4][0], block[4][1]),
+	    			left = getBlock(block[5][0], block[5][1]),
+	    			faceUVs = geometry.faceVertexUvs;
 
+	    		faceUVs[0] = [];
+	    		faceUVs[0][0] = [front[3], front[0], front[2]];
+	    		faceUVs[0][1] = [front[0], front[1], front[2]];
+	    		faceUVs[0][2] = [back[3], back[0], back[2]];
+	    		faceUVs[0][3] = [back[0], back[1], back[2]];
+	    		faceUVs[0][4] = [top[3], top[0], top[2]];
+	    		faceUVs[0][5] = [top[0], top[1], top[2]];
+	    		faceUVs[0][6] = [bottom[3], bottom[0], bottom[2]];
+	    		faceUVs[0][7] = [bottom[0], bottom[1], bottom[2]];
+	    		faceUVs[0][8] = [right[3], right[0], right[2]];
+	    		faceUVs[0][9] = [right[0], right[1], right[2]];
+	    		faceUVs[0][10] = [left[3], left[0], left[2]];
+	    		faceUVs[0][11] = [left[0], left[1], left[2]];
+
+	    		geoms[type] = geometry;
+
+    		}
 
 			var faceIndices = [ 'a', 'b', 'c', 'd' ];
-			var c = []
-    		var size = 1;
-    		for (var i = 0; i < geometry.vertices.length; i++) {
-    			var point = geometry.vertices[ i ];
-    			var color = new THREE.Color( 0xffffff );
-    			color.setRGB( 0.5 + point.x / size, 0.5 + point.y / size, 0.5 + point.z / size );
-    			c[i] = color; // use this array for convenience
-			}
-    		
-    		// copy the colors to corresponding positions 
-			//     in each face's vertexColors array.
-			/*console.log(geometry.faces.length)
-			for (i = 0; i < geometry.faces.length; i++ ) {
-    			face = geometry.faces[ i ];
-    			numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
-    			for( var j = 0; j < numberOfSides; j++ ) {
-    				var color = new THREE.Color( 0xffffff );
-    				var r = Math.random();
-    				color.setRGB(r, r, r)
-        			vertexIndex = face[ faceIndices[ j ] ];
-        			face.vertexColors[ j ] = color// c[ vertexIndex ];
-    			}
-			}*/
-
-			var face = geometry.faces[0];
-			/*numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
-    			var r = Math.random();
-    			for( var j = 0; j < numberOfSides; j++ ) {
-    				var color = new THREE.Color( 0xffffff );
-    				
-    				color.setRGB(r, r, r)
-        			// vertexIndex = face[ faceIndices[ j ] ];
-        			face.vertexColors[ j ] = color// c[ vertexIndex ];
-    			}
-			*/
-			function lightitup (tri1, tri2) {
-
-				var shadow = 0x999999,
-					light = 0xffffff;
-				face = geometry.faces[tri1];
-				face.vertexColors[0] = new THREE.Color( light );
-				face.vertexColors[1] = new THREE.Color( shadow );
-				face.vertexColors[2] = new THREE.Color( light );
-
-				face = geometry.faces[tri2];
-				face.vertexColors[0] = new THREE.Color( shadow );
-				face.vertexColors[1] = new THREE.Color( shadow );    		
-				face.vertexColors[2] = new THREE.Color( light );
-
-			}
-
-			lightitup(0, 1);
-			lightitup(2, 3);
-			lightitup(8, 9);
-			lightitup(10, 11);
 			
-
-			/*var radius = 0.5;
-			for ( var i = 0; i < geometry.faces.length; i ++ ) {
-
-				f  = geometry.faces[ i ];
-				//f2 = geometry2.faces[ i ];
-				//f3 = geometry3.faces[ i ];
-
-				n = ( f instanceof THREE.Face3 ) ? 3 : 4;
-
-				for( var j = 0; j < n; j++ ) {
-
-					vertexIndex = f[ faceIndices[ j ] ];
-
-					p = geometry.vertices[ vertexIndex ];
-
-					color = new THREE.Color( 0xffffff );
-					color.setHSL( ( p.y / radius + 1 ) / 2, 1.0, 0.5 );
-
-					f.vertexColors[ j ] = color;
-
-					//color = new THREE.Color( 0xffffff );
-					//color.setHSL( 0.0, ( p.y / radius + 1 ) / 2, 0.5 );
-
-					//f2.vertexColors[ j ] = color;
-
-					//color = new THREE.Color( 0xffffff );
-					//color.setHSL( 0.125 * vertexIndex/geometry.vertices.length, 1.0, 0.5 );
-
-					//f3.vertexColors[ j ] = color;
-
-				}
-
+			for (var i = 0; i < geometry.faces.length; i++) {
+				geometry.faces[i].vertexColors = [];
 			}
-			*/
+	
+			var shadow = new THREE.Color(0xaaaaaa),
+				light = new THREE.Color(0xFFFfff),
+				lol = new THREE.Color(0x000fff);
 
-    		geoms[type] = geometry;
+			function setCol (face, p1, p2, p3) {
+				face = geometry.faces[face];
+				face.vertexColors[0] = p1 ? light : shadow;
+				face.vertexColors[1] = p2 ? light : shadow;
+				face.vertexColors[2] = p3 ? light : shadow;
+			}
+
+			if (v.x && v.z) {
+				setCol(4, false, false, false);
+				setCol(5, false, true, false);
+			}
+			else if (v.x) {
+				setCol(4, false, false, true);
+				setCol(5, false, true, true);
+			}
+			else if (v.z) {
+				setCol(4, false, true, false);
+				setCol(5, true, true, false);
+			} else  if (v.xz) {
+				setCol(4, false, true, true);
+				setCol(5, true, true, true);	
+			}
 
     		return geometry;
 	    }
 
 
 	    // Create the chunk
-		var totalGeom = new THREE.Geometry();
+		var totalGeom = new THREE.Geometry(),
+			w = this.chunkWidth,
+			h = this.chunkHeight,
+			xo = x * w,
+			zo = z * w;
 
-		for (var i = 0; i < this.chunkWidth; i++) {
-			for (var j = 0; j  < this.chunkHeight; j++) {
-				for (var k = 0; k < this.chunkWidth; k++) {
+		for (var i = 0; i < w; i++) {
+			for (var j = 0; j  < h; j++) {
+				for (var k = 0; k < w; k++) {
 					if (chunk[i][j][k]) {
-						var geometry = getGeometry(chunk[i][j][k]),
+						var geometry = getGeometry(chunk[i][j][k], {
+								x: this.getBlockAt(xo + k - 1, j + 1, zo + i), 
+								z: this.getBlockAt(xo + k, j + 1, zo + i - 1),
+								xz: this.getBlockAt(xo + k - 1, j + 1, zo + i - 1),
+
+							}),
 							mesh = new THREE.Mesh(geometry, blockMaterial);
 
 						// Move up so bottom of cube is at 0, not -0.5
@@ -394,7 +344,6 @@ var main = {
 						mesh.updateMatrix();
 
 						totalGeom.merge(mesh.geometry, mesh.matrix);
-
 					}
 				}
 			}
@@ -750,10 +699,17 @@ var main = {
 		x -= chunkX * this.chunkWidth;
 		z -= chunkZ * this.chunkWidth;
 
+		if (y > this.chunkHeight - 1) {
+			return false;
+		}
+
 		chunk = this.chunks[chunkX + ":" + chunkZ];
 
 		if (!chunk) {
-			return 1;
+			return false;
+		}
+		if (!chunk[z] || !chunk[z][y]) {
+			console.log(chunkX + ":" + chunkZ, chunk, x, y, z);
 		}
 
 		return chunk[z][y][x];
