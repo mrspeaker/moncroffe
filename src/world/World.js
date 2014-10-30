@@ -192,12 +192,21 @@
 				var faceIndices = [ 'a', 'b', 'c', 'd' ],
 					v = block.light;
 
+				// Clear old colors (if cached box)
 				for (var i = 0; i < geometry.faces.length; i++) {
 					geometry.faces[i].vertexColors = [];
 				}
 
-				var shadow = new THREE.Color(0xaaaaaa),
-					light = new THREE.Color(0xFFFfff);
+				var cv = block.vertLight;
+
+				var shadow = new THREE.Color(cv[0], cv[0], cv[0]),
+					light = new THREE.Color(cv[1], cv[1], cv[1]),
+					red = new THREE.Color(cv[2], cv[2], cv[2]),
+					bl = new THREE.Color(cv[3], cv[3], cv[3]),
+					pnk = new THREE.Color(cv[4], cv[4], cv[4]),
+					gry = new THREE.Color(cv[5], cv[5], cv[5]),
+					org = new THREE.Color(cv[6], cv[6], cv[6]),
+					bl2 = new THREE.Color(cv[7], cv[7], cv[7]);
 
 				function setCol (face, p1, p2, p3) {
 					face = geometry.faces[face];
@@ -206,7 +215,7 @@
 					face.vertexColors[2] = p3 ? light : shadow;
 				}
 
-				if (v.x && v.z) {
+				/*if (v.x && v.z) {
 					setCol(4, false, false, false);
 					setCol(5, false, true, false);
 				}
@@ -220,7 +229,32 @@
 				} else  if (v.xz) {
 					setCol(4, false, true, true);
 					setCol(5, true, true, true);
-				}
+				}*/
+				var v = [light, shadow, red, bl, pnk, gry, org, bl2];
+
+				// left
+				geometry.faces[0].vertexColors = [v[0], v[3], v[2]];
+				geometry.faces[1].vertexColors = [v[3], v[5], v[2]];
+
+				// right
+				geometry.faces[2].vertexColors = [v[4], v[6], v[1]];
+				geometry.faces[3].vertexColors = [v[6], v[7], v[1]];
+
+				// top
+				geometry.faces[4].vertexColors = [v[4], v[1], v[2]];
+				geometry.faces[5].vertexColors = [v[1], v[0], v[2]];
+
+				// bottom
+				geometry.faces[6].vertexColors = [v[7], v[6], v[3]];
+				geometry.faces[7].vertexColors = [v[6], v[5], v[3]];
+
+				// front
+				geometry.faces[8].vertexColors = [v[1], v[7], v[0]];
+				geometry.faces[9].vertexColors = [v[7], v[3], v[0]];
+
+				// back
+				geometry.faces[10].vertexColors = [v[2], v[7], v[4]];
+				geometry.faces[11].vertexColors = [v[7], v[6], v[4]];
 
 				return geometry;
 			}
@@ -243,6 +277,8 @@
 								z: this.getBlockAt(xo + k, j + 1, zo + i - 1),
 								xz: this.getBlockAt(xo + k - 1, j + 1, zo + i - 1)
 							}
+							block.vertLight = [0.4, 0.4, 1, 1, 1, 1, 1, 1];
+
 							var geometry = getGeometry(block),
 								mesh = new THREE.Mesh(geometry, blockMaterial);
 
