@@ -26,10 +26,7 @@ var main = {
 		this.addLights();
 		this.createTextures();
 
-		var chs = this.world.createChunks();
-		for (var ch in chs) {
-			this.scene.add(chs[ch]);
-		};
+		this.world.createChunks();
 
 		this.addSkyBox();
 		this.updateDayNight();
@@ -379,6 +376,17 @@ var main = {
 
 	},
 
+	/*
+
+		Could do this with three camera and figure out face pos,
+		but I want to do it on the voxel model itself so it
+		doesn't need the front-end. Maybe make a text adventure
+		out of it...
+
+		> GO WEST
+		> ... THERE ARE CUBES TO THE EAST, BOTTOM WEST, BOTTOM...
+
+	*/
 	raycast: function (origin, direction, radius, callback) {
 
 		function intbound(s, ds) {

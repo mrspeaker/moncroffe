@@ -22,25 +22,44 @@
 
 		createChunks: function () {
 
-			var addChunk = (function (x, z) {
-				var id = x + ":" + z;
-				this.chunks[id] = this.createChunk();
-				this.chunkGeom[id] = this.createChunkGeom(x, z, this.chunks[id]);
-			}).bind(this);
+			var w = 5,
+				d = 5,
+				chs = [];
 
-			addChunk(0, 0);
-			addChunk(0, 1);
-			addChunk(1, 0);
-			addChunk(1, 1);
-			addChunk(1, -1);
-			addChunk(2, -1);
+			for (var z = 0; z < d; z++) {
+				for (var x = 0; x < w; x++) {
+					chs.push([z - (d / 2 | 0), x - (w / 2 |0)]);
+				}
+			}
 
-			addChunk(-1, 0);
-			addChunk(0, -1);
-			addChunk(2, 0);
-			addChunk(1, 2);
+			var chunks = chs
+				// Create the chunks
+				.map(function (ch) {
+					var x = ch[0],
+						z = ch[1],
+						id = x + ":" + z,
+						chunk = this.chunks[id] = this.createChunk();
+					return {id: id, x: x, z: z, chunk: chunk};
+				}, this);
 
-			return this.chunkGeom;
+
+
+			// Todo: promise-ify (or at least callback-ify!)
+			var self = this;
+
+			function doChunkGeom(chunks) {
+				if (chunks.length) {
+					var ch = chunks[0];
+					self.chunkGeom[ch.id] = self.createChunkGeom(ch.x, ch.z, ch.chunk);
+					self.screen.scene.add(self.chunkGeom[ch.id]);
+
+					setTimeout(function () {
+						doChunkGeom(chunks.slice(1));
+					}, 100);
+				}
+			}
+
+			doChunkGeom(chunks);
 
 		},
 
@@ -87,7 +106,6 @@
 			return chunk[z][y][x].type !== "air";
 
 		},
-
 
 		createChunk: function () {
 
@@ -136,6 +154,15 @@
 
 			function getGeometry(block) {
 
+				function getBlock(x, y) {
+					return [
+						new THREE.Vector2(x / 16, y / 16),
+						new THREE.Vector2((x + 1) / 16, y / 16),
+						new THREE.Vector2((x + 1) / 16, (y + 1) / 16),
+						new THREE.Vector2(x / 16, (y + 1) / 16)
+					];
+				}
+
 				var geometry = geoms[block.type];
 
 				if (!geometry) {
@@ -156,15 +183,6 @@
 							ice: [[3, 11], [3, 11], [3, 11], [3, 11], [3, 11], [3, 11]]
 						},
 						tile = blocks[block.type];
-
-					function getBlock(x, y) {
-						return [
-							new THREE.Vector2(x / 16, y / 16),
-							new THREE.Vector2((x + 1) / 16, y / 16),
-							new THREE.Vector2((x + 1) / 16, (y + 1) / 16),
-							new THREE.Vector2(x / 16, (y + 1) / 16)
-						];
-					}
 
 					var front = getBlock(tile[0][0], tile[0][1]),
 						back = getBlock(tile[1][0], tile[1][1]),
