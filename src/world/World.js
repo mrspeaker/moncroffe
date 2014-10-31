@@ -91,6 +91,8 @@
 
 		createChunk: function () {
 
+			var st = Math.random() < 0.3;
+
 			// Create the chunk
 			var chunk = [];
 			for (var z = 0; z < this.chunkWidth; z++) {
@@ -102,16 +104,16 @@
 						if (y === 0) {
 							// Ground
 							type = ["grass", "dirt"][Math.random() * 2 | 0];
+						} else if (y === 1 && Math.random() < 0.02) {
+							// Random block or air
+							type = this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1];
 						} else if (
 							// Grass Sphere
 							Math.sqrt(x * x + y * y + (z * 5)) < 10 && Math.sqrt(x * x + y * y + (z *5)) > 7) {
-							type =  "grass";
+							type = st && y < 4? "stone" : "grass";
 						} else if (y === 4 && z > 9 && x > 8) {
 							// Platform
 							type = ["tree", "stone"][Math.random() * 2 | 0];
-						} else if (Math.random() < 0.01) {
-							// Random block or air
-							type = this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1];
 						}
 
 						chunk[z][y][x] = {
@@ -315,7 +317,8 @@
 			var blockMaterial = new THREE.MeshLambertMaterial({
 				map: this.screen.textures.blocks,
 				wrapAround: true,
-				vertexColors: THREE.VertexColors
+				vertexColors: THREE.VertexColors,
+				wireframe: false
 			});
 
 			return new THREE.Mesh(totalGeom, blockMaterial);

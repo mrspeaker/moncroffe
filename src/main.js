@@ -104,15 +104,50 @@ var main = {
 
 		this.renderer.setClearColor(day ? 0x88C4EC : 0x000000, 1);
 		this.scene.fog = day ?
-			new THREE.Fog(0xD7EAF9, 10, 120) :
+			new THREE.Fog(0xE8D998, 10, 120) :
 			new THREE.Fog(0x000000, 1, 80);
 
 		this.scene.remove(this.lights.ambientLight);
 		this.lights.ambientLight = new THREE.AmbientLight(day ? 0x999999 : 0x2f2f2f);
 		this.lights.player.visible = !this.day;
 		this.scene.add(this.lights.ambientLight);
-		this.skybox.visible = !day;
+		this.skybox.visible = day;
+		this.nightbox.visible = !day;
 
+	},
+
+	addSkyBox: function () {
+		// Stary night
+		var nightGeometry = new THREE.SphereGeometry(500, 32, 15),
+			nightMaterial = new THREE.MeshLambertMaterial({
+				map: this.textures.night,
+				fog: false,
+				ambient: new THREE.Color(0xaaaaaa),
+				side: THREE.BackSide
+			});
+		var night = this.nightbox = new THREE.Mesh(nightGeometry, nightMaterial);
+		this.scene.add(night);
+		night.visible = false;
+
+		// Horizon shader
+		var uniforms = {
+			topColor: { type: "c", value: new THREE.Color(0x88C4EC) },
+			bottomColor: { type: "c", value: new THREE.Color(0xE8D998) },
+			offset: { type: "f", value: 40 },
+			exponent: { type: "f", value: 0.6 }
+		};
+		//this.scene.fog.color.copy(uniforms.bottomColor.value);
+
+		var skyGeometry = new THREE.SphereGeometry(200, 32, 15),
+			skyMaterial = new THREE.ShaderMaterial({
+				uniforms: uniforms,
+				vertexShader:  document.getElementById("vHemisphere").textContent,
+				fragmentShader: document.getElementById("fHemisphere").textContent,
+				side: THREE.BackSide
+			});
+
+		var sky = this.skybox = new THREE.Mesh(skyGeometry, skyMaterial);
+		this.scene.add(sky);
 	},
 
 	setCameraDimensions: function () {
@@ -137,18 +172,6 @@ var main = {
 		}
 
 		document.querySelector("#gui").innerHTML = this.world.blocks[this.curTool];
-	},
-
-	addSkyBox: function () {
-		var geometry = new THREE.BoxGeometry(490, 490, 490);
-		var skyMaterial = new THREE.MeshLambertMaterial({
-			map: this.textures.night,
-			fog: false,
-			ambient: new THREE.Color(0x999999)
-		});
-		var sky = this.skybox = new THREE.Mesh(geometry, skyMaterial);
-		sky.material.side = THREE.BackSide;
-		this.scene.add(sky);
 	},
 
 	addCursorObject: function () {
@@ -252,6 +275,8 @@ var main = {
 		light = new THREE.PointLight(0xF4D2A3, 1, 10);
 		light.position.set(2 * this.chunkWidth - 5, 5, 2 * this.chunkWidth - 5);
 		this.scene.add(light);
+
+		this.scene.fog = new THREE.Fog(0xE8D998, 10, 120);
 
 	},
 
