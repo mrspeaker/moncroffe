@@ -91,7 +91,9 @@
 
 		createChunk: function () {
 
-			var st = Math.random() < 0.3;
+			var st = Math.random() < 0.3,
+				maxSphere = (Math.random() * 3 | 0) + 9,
+				minSphere = maxSphere - 2;
 
 			// Create the chunk
 			var chunk = [];
@@ -109,7 +111,7 @@
 							type = this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1];
 						} else if (
 							// Grass Sphere
-							Math.sqrt(x * x + y * y + (z * 5)) < 10 && Math.sqrt(x * x + y * y + (z *5)) > 7) {
+							Math.sqrt(x * x + y * y + (z * 5)) < maxSphere && Math.sqrt(x * x + y * y + (z *5)) > minSphere) {
 							type = st && y < 4? "stone" : "grass";
 						} else if (y === 4 && z > 9 && x > 8) {
 							// Platform
