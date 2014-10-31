@@ -54,6 +54,7 @@
 
 			x = Math.floor(x);
 			z = Math.floor(z);
+			y = Math.round(y);
 			if (y < 0) y = 0;
 
 			chunk = this.chunks[chunkX + ":" + chunkZ];

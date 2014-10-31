@@ -94,6 +94,7 @@ var main = {
 			if (e.keyCode === 81 /*q*/) {
 				var pos = this.player.playerObj.position;
 				this.useAO = !this.useAO;
+				console.log(this.useAO, (pos.x / this.world.chunkWidth | 0) + ":" + (pos.z / this.world.chunkWidth | 0))
 				this.reMeshChunk((pos.x / this.world.chunkWidth | 0) + ":" + (pos.z / this.world.chunkWidth | 0));
 			}
 		}).bind(this), false);
