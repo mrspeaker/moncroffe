@@ -76,7 +76,7 @@
 			x -= chunkX * this.chunkWidth;
 			z -= chunkZ * this.chunkWidth;
 
-			if (y > this.chunkHeight - 1) {
+			if (y > this.chunkHeight - 1 || y < 0) {
 				return false;
 			}
 
@@ -189,48 +189,24 @@
 
 				}
 
-				var faceIndices = [ 'a', 'b', 'c', 'd' ],
-					v = block.light;
+				var faceIndices = [ 'a', 'b', 'c', 'd' ];
 
 				// Clear old colors (if cached box)
 				for (var i = 0; i < geometry.faces.length; i++) {
 					geometry.faces[i].vertexColors = [];
 				}
 
-				var cv = block.vertLight;
-
-				var shadow = new THREE.Color(cv[0], cv[0], cv[0]),
-					light = new THREE.Color(cv[1], cv[1], cv[1]),
-					red = new THREE.Color(cv[2], cv[2], cv[2]),
-					bl = new THREE.Color(cv[3], cv[3], cv[3]),
-					pnk = new THREE.Color(cv[4], cv[4], cv[4]),
-					gry = new THREE.Color(cv[5], cv[5], cv[5]),
-					org = new THREE.Color(cv[6], cv[6], cv[6]),
-					bl2 = new THREE.Color(cv[7], cv[7], cv[7]);
-
-				function setCol (face, p1, p2, p3) {
-					face = geometry.faces[face];
-					face.vertexColors[0] = p1 ? light : shadow;
-					face.vertexColors[1] = p2 ? light : shadow;
-					face.vertexColors[2] = p3 ? light : shadow;
-				}
-
-				/*if (v.x && v.z) {
-					setCol(4, false, false, false);
-					setCol(5, false, true, false);
-				}
-				else if (v.x) {
-					setCol(4, false, false, true);
-					setCol(5, false, true, true);
-				}
-				else if (v.z) {
-					setCol(4, false, true, false);
-					setCol(5, true, true, false);
-				} else  if (v.xz) {
-					setCol(4, false, true, true);
-					setCol(5, true, true, true);
-				}*/
-				var v = [light, shadow, red, bl, pnk, gry, org, bl2];
+				var cv = block.vertLight,
+					v = [
+						new THREE.Color(cv[1], cv[1], cv[1]),
+						new THREE.Color(cv[0], cv[0], cv[0]),
+						new THREE.Color(cv[2], cv[2], cv[2]),
+						new THREE.Color(cv[3], cv[3], cv[3]),
+						new THREE.Color(cv[4], cv[4], cv[4]),
+						new THREE.Color(cv[5], cv[5], cv[5]),
+						new THREE.Color(cv[6], cv[6], cv[6]),
+						new THREE.Color(cv[7], cv[7], cv[7])
+					];
 
 				// left
 				geometry.faces[0].vertexColors = [v[0], v[3], v[2]];
@@ -253,8 +229,8 @@
 				geometry.faces[9].vertexColors = [v[7], v[3], v[0]];
 
 				// back
-				geometry.faces[10].vertexColors = [v[2], v[7], v[4]];
-				geometry.faces[11].vertexColors = [v[7], v[6], v[4]];
+				geometry.faces[10].vertexColors = [v[2], v[5], v[4]];
+				geometry.faces[11].vertexColors = [v[5], v[6], v[4]];
 
 				return geometry;
 			}
@@ -265,19 +241,60 @@
 				w = this.chunkWidth,
 				h = this.chunkHeight,
 				xo = x * w,
-				zo = z * w;
+				zo = z * w,
+				getBlockAt = this.getBlockAt.bind(this),
+				vertexAO = function (pos, n) {
+					var corner = getBlockAt(pos[0] + n[0][0], pos[1] + n[0][1], pos[2] + n[0][2]),
+						side1 = getBlockAt(pos[0] + n[1][0], pos[1] + n[1][1], pos[2] + n[1][2]),
+						side2 = getBlockAt(pos[0] + n[2][0], pos[1] + n[2][1], pos[2] + n[2][2]),
+						val = 0;
+
+					if (side1 && side2) {
+  						val = 0;
+  					} else {
+  						val = (3 - (side1 + side2 + corner)) / 3;
+  					}
+					return Math.min(1, val + 0.5);
+
+				}
+
+			var neigbours = {
+				"0, 0, 0": [[-1, -1, -1], [-1, -1, 0], [0, -1, -1]],
+				"1, 0, 0": [[1, -1, -1], [0, -1, -1], [1, -1, 0]],
+				"0, 1, 0": [[-1, 1, -1], [-1, 1, 0], [0, 1, -1]],
+				"0, 0, 1": [[-1, -1, 1], [-1, -1, 0], [0, -1, 1]],
+				"1, 1, 0": [[1, 1, -1], [0, 1, -1], [1, 1, 0]],
+				"0, 1, 1": [[-1, 1, 1], [-1, 1, 0], [0, 1, 1]],
+				"1, 0, 1": [[1, -1, 1], [1, -1, 0], [0, -1, 1]],
+				"1, 1, 1": [[1, 1, 1], [1, 1, 0], [0, 1, 1]]
+			}
 
 			for (var i = 0; i < w; i++) {
 				for (var j = 0; j  < h; j++) {
 					for (var k = 0; k < w; k++) {
 						var block = chunk[i][j][k];
 						if (block.type !== "air") {
-							block.light = {
-								x: this.getBlockAt(xo + k - 1, j + 1, zo + i),
-								z: this.getBlockAt(xo + k, j + 1, zo + i - 1),
-								xz: this.getBlockAt(xo + k - 1, j + 1, zo + i - 1)
-							}
-							block.vertLight = [0.4, 0.4, 1, 1, 1, 1, 1, 1];
+
+							var pos = [xo + k, j, zo + i];
+
+							block.vertLight = [
+								// left, top, front
+								vertexAO(pos, neigbours["0, 1, 1"]),
+								// right, top, front
+								vertexAO(pos, neigbours["1, 1, 1"]),
+								// right, top, back
+								vertexAO(pos, neigbours["1, 1, 0"]),
+								// right, bottom, front
+								vertexAO(pos, neigbours["1, 0, 1"]),
+								// left, top, back
+								vertexAO(pos, neigbours["0, 1, 0"]),
+								// right, bottom, back
+								vertexAO(pos, neigbours["1, 0, 0"]),
+								// left, bottom, back
+								vertexAO(pos, neigbours["0, 0, 0"]),
+								// left, bottom, front
+								vertexAO(pos, neigbours["0, 0, 1"]),
+							];
 
 							var geometry = getGeometry(block),
 								mesh = new THREE.Mesh(geometry, blockMaterial);
