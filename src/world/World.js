@@ -254,7 +254,7 @@
   					} else {
   						val = (3 - (side1 + side2 + corner)) / 3;
   					}
-					return Math.min(1, val + 0.5);
+					return (val * 0.5) + 0.5;
 
 				}
 
