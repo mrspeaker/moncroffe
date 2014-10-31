@@ -14,6 +14,8 @@ var main = {
 	lights: null,
 	world: null,
 
+	useAO: true,
+
 	init: function () {
 
 		this.initThree();
@@ -82,9 +84,17 @@ var main = {
 		window.addEventListener("resize", this.setCameraDimensions.bind(this), false );
 
 		document.addEventListener("keydown", (function(e){
-			if (e.keyCode === 69) {
+			// Toggle Day/Night
+			if (e.keyCode === 69 /*e*/) {
 				this.day = !this.day;
 				this.updateDayNight();
+			}
+
+			// Toggle AO
+			if (e.keyCode === 81 /*q*/) {
+				var pos = this.player.playerObj.position;
+				this.useAO = !this.useAO;
+				this.reMeshChunk((pos.x / this.world.chunkWidth | 0) + ":" + (pos.z / this.world.chunkWidth | 0));
 			}
 		}).bind(this), false);
 	},
@@ -319,12 +329,12 @@ var main = {
 		var dir = this.player.controls.getDirection().clone();
 		var pos = this.player.controls.getObject().position.clone();
 
-		dir.multiplyScalar(9);
+		dir.multiplyScalar(7);
 		pos.add(dir);
 
 		var chunks = {}
 
-		var type = "air";
+		var type = "sand";
 
 		chunks[this.world.setBlockAt(pos.x, pos.y, pos.z, type)] = true;
 		chunks[this.world.setBlockAt(pos.x - 1, pos.y, pos.z, type)] = true;

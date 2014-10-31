@@ -129,7 +129,8 @@
 
 		createChunkGeom: function (x, z, chunk) {
 			var geoms = {},
-				blockSize = this.blockSize;
+				blockSize = this.blockSize,
+				useAO = this.screen.useAO;
 
 			function getGeometry(block) {
 
@@ -196,6 +197,8 @@
 					geometry.faces[i].vertexColors = [];
 				}
 
+				if (useAO) {
+
 				var cv = block.vertLight,
 					v = [
 						new THREE.Color(cv[1], cv[1], cv[1]),
@@ -231,6 +234,8 @@
 				// back
 				geometry.faces[10].vertexColors = [v[2], v[5], v[4]];
 				geometry.faces[11].vertexColors = [v[5], v[6], v[4]];
+
+				}
 
 				return geometry;
 			}
