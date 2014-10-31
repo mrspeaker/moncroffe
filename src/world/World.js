@@ -52,13 +52,11 @@
 			x -= chunkX * this.chunkWidth;
 			z -= chunkZ * this.chunkWidth;
 
-			x = Math.round(x);
-			z = Math.round(z);
-			y = Math.round(y);
+			x = Math.floor(x);
+			z = Math.floor(z);
 			if (y < 0) y = 0;
 
 			chunk = this.chunks[chunkX + ":" + chunkZ];
-
 			if (chunk) {
 				chunk[z][y][x].type = type;
 			}
@@ -67,7 +65,6 @@
 		},
 
 		getBlockAt: function (x, y, z) {
-
 
 			var chunkX = Math.floor(x / this.chunkWidth),
 				chunkZ = Math.floor(z / this.chunkWidth),
@@ -199,41 +196,41 @@
 
 				if (useAO) {
 
-				var cv = block.vertLight,
-					v = [
-						new THREE.Color(cv[1], cv[1], cv[1]),
-						new THREE.Color(cv[0], cv[0], cv[0]),
-						new THREE.Color(cv[2], cv[2], cv[2]),
-						new THREE.Color(cv[3], cv[3], cv[3]),
-						new THREE.Color(cv[4], cv[4], cv[4]),
-						new THREE.Color(cv[5], cv[5], cv[5]),
-						new THREE.Color(cv[6], cv[6], cv[6]),
-						new THREE.Color(cv[7], cv[7], cv[7])
-					];
+					var cv = block.vertLight,
+						v = [
+							new THREE.Color(cv[1], cv[1], cv[1]),
+							new THREE.Color(cv[0], cv[0], cv[0]),
+							new THREE.Color(cv[2], cv[2], cv[2]),
+							new THREE.Color(cv[3], cv[3], cv[3]),
+							new THREE.Color(cv[4], cv[4], cv[4]),
+							new THREE.Color(cv[5], cv[5], cv[5]),
+							new THREE.Color(cv[6], cv[6], cv[6]),
+							new THREE.Color(cv[7], cv[7], cv[7])
+						];
 
-				// left
-				geometry.faces[0].vertexColors = [v[0], v[3], v[2]];
-				geometry.faces[1].vertexColors = [v[3], v[5], v[2]];
+					// left
+					geometry.faces[0].vertexColors = [v[0], v[3], v[2]];
+					geometry.faces[1].vertexColors = [v[3], v[5], v[2]];
 
-				// right
-				geometry.faces[2].vertexColors = [v[4], v[6], v[1]];
-				geometry.faces[3].vertexColors = [v[6], v[7], v[1]];
+					// right
+					geometry.faces[2].vertexColors = [v[4], v[6], v[1]];
+					geometry.faces[3].vertexColors = [v[6], v[7], v[1]];
 
-				// top
-				geometry.faces[4].vertexColors = [v[4], v[1], v[2]];
-				geometry.faces[5].vertexColors = [v[1], v[0], v[2]];
+					// top
+					geometry.faces[4].vertexColors = [v[4], v[1], v[2]];
+					geometry.faces[5].vertexColors = [v[1], v[0], v[2]];
 
-				// bottom
-				geometry.faces[6].vertexColors = [v[7], v[6], v[3]];
-				geometry.faces[7].vertexColors = [v[6], v[5], v[3]];
+					// bottom
+					geometry.faces[6].vertexColors = [v[7], v[6], v[3]];
+					geometry.faces[7].vertexColors = [v[6], v[5], v[3]];
 
-				// front
-				geometry.faces[8].vertexColors = [v[1], v[7], v[0]];
-				geometry.faces[9].vertexColors = [v[7], v[3], v[0]];
+					// front
+					geometry.faces[8].vertexColors = [v[1], v[7], v[0]];
+					geometry.faces[9].vertexColors = [v[7], v[3], v[0]];
 
-				// back
-				geometry.faces[10].vertexColors = [v[2], v[5], v[4]];
-				geometry.faces[11].vertexColors = [v[5], v[6], v[4]];
+					// back
+					geometry.faces[10].vertexColors = [v[2], v[5], v[4]];
+					geometry.faces[11].vertexColors = [v[5], v[6], v[4]];
 
 				}
 
