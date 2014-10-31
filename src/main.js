@@ -46,7 +46,7 @@ var main = {
 
 		this.renderer = new THREE.WebGLRenderer();
 
-		this.camera = new THREE.PerspectiveCamera(75, 1, 0.01, 500);
+		this.camera = new THREE.PerspectiveCamera(65, 1, 0.01, 500);
 		this.setCameraDimensions();
 
 		this.clock = new THREE.Clock();
@@ -273,7 +273,7 @@ var main = {
 		this.scene.add(light);
 
 		light = new THREE.PointLight(0xF4D2A3, 1, 10);
-		light.position.set(2 * this.world.chunkWidth - 5, 5, 2 * this.world.chunkWidth - 5);
+		light.position.set(2 * this.world.chunkWidth - 3, 5, 2 * this.world.chunkWidth - 3);
 		this.scene.add(light);
 
 		this.scene.fog = new THREE.Fog(0xE8D998, 10, 120);
@@ -312,7 +312,8 @@ var main = {
 			cursor = this.cursor,
 			chs = this.world.chunks,
 			origin = ob.getObject().position.clone(),
-			chW = this.world.chunkWidth;
+			chW = this.world.chunkWidth,
+			chH = this.world.chunkHeight;
 
 		origin.addScalar(0.5);
 
@@ -325,6 +326,7 @@ var main = {
 			cursor.visible = true;
 
 			if (y < 0) y = 0; // looking below ground breaks
+			if (y > chH - 1) y = chH - 1;
 
 			var chunkX = Math.floor(x / chW),
 				chunkZ = Math.floor(z / chW),
