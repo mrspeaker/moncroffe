@@ -22,17 +22,45 @@
 
 		createChunks: function () {
 
-			var w = 5,
-				d = 5,
-				chs = [];
+			var w = 0, wdir = 1,
+				h = 0, hdir = 1,
+				x = 0,
+				y = 0,
+				path = [[0, 0]],
+				radius = 2;
 
-			for (var z = 0; z < d; z++) {
-				for (var x = 0; x < w; x++) {
-					chs.push([z - (d / 2 | 0), x - (w / 2 |0)]);
+			// Spiral pattern
+			while (radius--) {
+				w++;
+				h++;
+
+				// Moving left/up
+				for (;x < w * wdir; x += wdir) {
+					path.push([x, y]);
 				}
-			}
 
-			var chunks = chs
+				for (;y < h * hdir; y += hdir) {
+					path.push([x, y]);
+				}
+
+				wdir = wdir * -1;
+				hdir = hdir * -1;
+
+				// Moving right/down
+				for (;x > w * wdir; x += wdir) {
+					path.push([x, y]);
+				}
+
+				for (;y > h * hdir; y += hdir) {
+					path.push([x, y]);
+				}
+
+				wdir = wdir * -1;
+				hdir = hdir * -1;
+
+			};
+
+			var chunks = path
 				// Create the chunks
 				.map(function (ch) {
 					var x = ch[0],
@@ -41,8 +69,6 @@
 						chunk = this.chunks[id] = this.createChunk();
 					return {id: id, x: x, z: z, chunk: chunk};
 				}, this);
-
-
 
 			// Todo: promise-ify (or at least callback-ify!)
 			var self = this;
@@ -55,7 +81,7 @@
 
 					setTimeout(function () {
 						doChunkGeom(chunks.slice(1));
-					}, 100);
+					}, 50);
 				}
 			}
 

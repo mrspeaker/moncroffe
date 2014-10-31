@@ -63,7 +63,7 @@ var Player = {
 
 		var obj = this.playerObj,
 			move = this.controls.update(delta),
-			power = 200 * delta,
+			power = 250 * delta,
 			jump = 23,
 			drag = 10 * delta;
 
