@@ -24,3 +24,35 @@ Minecraft style boxel demo... by Mr Speaker
 - clean up pointer lock and player controls
 - camera pitch/yaw not same as minecraft when looking up/down
 - add "horizon" to day time
+
+
+# cube geom
+
+  6---7
+ /|  /|
+2---3 |
+| 4-|-5
+|/  |/
+0---1
+
+Sides:
+2---3  3---7  7---6  6---2
+|   |  |   |  |   |  |   |
+|   |  |   |  |   |  |   |
+0---1  1---5  5---4  4---0
+
+Bottom/Top:
+0---1  6---7
+|   |  |   |
+|   |  |   |
+4---5  2---3
+
+Quads/Triangles (counter-clockwise) order:
+
+2---3                3         2---3
+|   |  becomes      /|   and   |  /
+|   |             /  |         |/
+0---1            0---1         0
+
+Triangles: 0-1-3 and 0-3-2
+Quad: 0-1-3-2
