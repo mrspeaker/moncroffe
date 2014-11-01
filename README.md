@@ -4,7 +4,6 @@ Minecraft style boxel demo... by Mr Speaker
 
 # bugz
 - lights need to be set to update when toggling day/night
-- there's some kind of "phantom chunk" - can walk through!
 - can add block in position currently standing
 - hit head slide down (and can get stuck in block)
 - camera looks through block when looking straight down

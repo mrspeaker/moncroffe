@@ -27,7 +27,7 @@
 				x = 0,
 				y = 0,
 				path = [[0, 0]],
-				radius = 1;
+				radius = 2;
 
 			// Spiral pattern
 			while (radius--) {
@@ -66,7 +66,14 @@
 					var x = ch[0],
 						z = ch[1],
 						id = x + ":" + z,
+						chunk;
+
+					if (this.chunks[id]) {
+						console.error("alread", id)
+						chunk = this.chunks[id]
+					} else {
 						chunk = this.chunks[id] = this.createChunk();
+					}
 					return {id: id, x: x, z: z, chunk: chunk};
 				}, this);
 
@@ -243,12 +250,12 @@
 					geometry.faces[i].vertexColors = [];
 				}
 
-				if (false && useAO) {
+				if (useAO) {
 
 					var cv = block.vertLight,
 						v = [
-							new THREE.Color(cv[1], cv[1], cv[1]),
 							new THREE.Color(cv[0], cv[0], cv[0]),
+							new THREE.Color(cv[1], cv[1], cv[1]),
 							new THREE.Color(cv[2], cv[2], cv[2]),
 							new THREE.Color(cv[3], cv[3], cv[3]),
 							new THREE.Color(cv[4], cv[4], cv[4]),
@@ -256,30 +263,32 @@
 							new THREE.Color(cv[6], cv[6], cv[6]),
 							new THREE.Color(cv[7], cv[7], cv[7])
 						];
+					var col = new THREE.Color(0xFF0000);
 
-					// left
-					geometry.faces[0].vertexColors = [v[0], v[3], v[2]];
-					geometry.faces[1].vertexColors = [v[3], v[5], v[2]];
-
-					// right
-					geometry.faces[2].vertexColors = [v[4], v[6], v[1]];
-					geometry.faces[3].vertexColors = [v[6], v[7], v[1]];
-
-					// top
-					geometry.faces[4].vertexColors = [v[4], v[1], v[2]];
-					geometry.faces[5].vertexColors = [v[1], v[0], v[2]];
-
-					// bottom
-					geometry.faces[6].vertexColors = [v[7], v[6], v[3]];
-					geometry.faces[7].vertexColors = [v[6], v[5], v[3]];
 
 					// front
-					geometry.faces[8].vertexColors = [v[1], v[7], v[0]];
-					geometry.faces[9].vertexColors = [v[7], v[3], v[0]];
+					geometry.faces[0].vertexColors = [v[0], v[1], v[3]];
+					geometry.faces[1].vertexColors = [v[0], v[3], v[2]];
+
+					// left
+					geometry.faces[2].vertexColors = [v[1], v[5], v[7]];
+					geometry.faces[3].vertexColors = [v[1], v[7], v[3]];
 
 					// back
-					geometry.faces[10].vertexColors = [v[2], v[5], v[4]];
-					geometry.faces[11].vertexColors = [v[5], v[6], v[4]];
+					geometry.faces[4].vertexColors = [v[5], v[4], v[6]];
+					geometry.faces[5].vertexColors = [v[5], v[6], v[7]];
+
+					// right
+					geometry.faces[6].vertexColors = [v[4], v[0], v[2]];
+					geometry.faces[7].vertexColors = [v[4], v[2], v[6]];
+
+					// bottom
+					geometry.faces[8].vertexColors = [v[4], v[5], v[1]];
+					geometry.faces[9].vertexColors = [v[4], v[1], v[0]];
+
+					// top
+					geometry.faces[10].vertexColors = [v[2], v[3], v[7]];
+					geometry.faces[11].vertexColors = [v[2], v[7], v[6]];
 
 				}
 
@@ -310,14 +319,15 @@
 				}
 
 			var neigbours = {
+				"0, 0, 1": [[-1, -1, 1], [-1, -1, 0], [0, -1, 1]],
+				"1, 0, 1": [[1, -1, 1], [1, -1, 0], [0, -1, 1]],
+				"0, 1, 1": [[-1, 1, 1], [-1, 1, 0], [0, 1, 1]],
+				"1, 1, 1": [[1, 1, 1], [1, 1, 0], [0, 1, 1]],
+
 				"0, 0, 0": [[-1, -1, -1], [-1, -1, 0], [0, -1, -1]],
 				"1, 0, 0": [[1, -1, -1], [0, -1, -1], [1, -1, 0]],
 				"0, 1, 0": [[-1, 1, -1], [-1, 1, 0], [0, 1, -1]],
-				"0, 0, 1": [[-1, -1, 1], [-1, -1, 0], [0, -1, 1]],
-				"1, 1, 0": [[1, 1, -1], [0, 1, -1], [1, 1, 0]],
-				"0, 1, 1": [[-1, 1, 1], [-1, 1, 0], [0, 1, 1]],
-				"1, 0, 1": [[1, -1, 1], [1, -1, 0], [0, -1, 1]],
-				"1, 1, 1": [[1, 1, 1], [1, 1, 0], [0, 1, 1]]
+				"1, 1, 0": [[1, 1, -1], [0, 1, -1], [1, 1, 0]]
 			}
 
 			for (var i = 0; i < w; i++) {
@@ -329,22 +339,15 @@
 							var pos = [xo + k, j, zo + i];
 
 							block.vertLight = [
-								// left, top, front
-								vertexAO(pos, neigbours["0, 1, 1"]),
-								// right, top, front
-								vertexAO(pos, neigbours["1, 1, 1"]),
-								// right, top, back
-								vertexAO(pos, neigbours["1, 1, 0"]),
-								// right, bottom, front
-								vertexAO(pos, neigbours["1, 0, 1"]),
-								// left, top, back
-								vertexAO(pos, neigbours["0, 1, 0"]),
-								// right, bottom, back
-								vertexAO(pos, neigbours["1, 0, 0"]),
-								// left, bottom, back
-								vertexAO(pos, neigbours["0, 0, 0"]),
-								// left, bottom, front
 								vertexAO(pos, neigbours["0, 0, 1"]),
+								vertexAO(pos, neigbours["1, 0, 1"]),
+								vertexAO(pos, neigbours["0, 1, 1"]),
+								vertexAO(pos, neigbours["1, 1, 1"]),
+
+								vertexAO(pos, neigbours["0, 0, 0"]),
+								vertexAO(pos, neigbours["1, 0, 0"]),
+								vertexAO(pos, neigbours["0, 1, 0"]),
+								vertexAO(pos, neigbours["1, 1, 0"])
 							];
 
 							var geometry = getGeometry(block),
