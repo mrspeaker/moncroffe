@@ -27,7 +27,7 @@
 				x = 0,
 				y = 0,
 				path = [[0, 0]],
-				radius = 2;
+				radius = 1;
 
 			// Spiral pattern
 			while (radius--) {
@@ -184,8 +184,8 @@
 					return [
 						new THREE.Vector2(x / 16, y / 16),
 						new THREE.Vector2((x + 1) / 16, y / 16),
-						new THREE.Vector2((x + 1) / 16, (y + 1) / 16),
-						new THREE.Vector2(x / 16, (y + 1) / 16)
+						new THREE.Vector2(x / 16, (y + 1) / 16),
+						new THREE.Vector2((x + 1) / 16, (y + 1) / 16)
 					];
 				}
 
@@ -193,44 +193,44 @@
 
 				if (!geometry) {
 
-					geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
+					geometry = new THREE.CubeGeometry(blockSize, blockSize, blockSize);
 
-					// F, B, T, B, L, R
+					// F, Bk, T, B, L, R.... f, l, bk, r, b, t
 					var blocks = {
-							grass: [[3, 15], [3, 15], [0, 15], [2, 15], [3, 15], [3, 15]],
+							grass: [[3, 15], [3, 15], [3, 15], [3, 15], [2, 15], [0, 15]],
 							stone: [[1, 15], [1, 15], [1, 15], [1, 15], [1, 15], [1, 15]],
 							dirt: [[2, 15], [2, 15], [2, 15], [2, 15], [2, 15], [2, 15]],
-							tree: [[4, 14], [4, 14], [5, 14], [5, 14], [4, 14], [4, 14]],
+							tree: [[4, 14], [4, 14], [4, 14], [4, 14], [5, 14], [5, 14]],
 							wood: [[4, 15], [4, 15], [4, 15], [4, 15], [4, 15], [4, 15]],
 							sand: [[2, 14], [2, 14], [2, 14], [2, 14], [2, 14], [2, 14]],
 							cobble: [[0, 14], [0, 14], [0, 14], [0, 14], [0, 14], [0, 14]],
 							gold: [[0, 13], [0, 13], [0, 13], [0, 13], [0, 13], [0, 13]],
-							snow: [[4, 11], [4, 11], [2, 11], [2, 15], [4, 11], [4, 11]],
+							snow: [[4, 11], [4, 11], [4, 11], [4, 11], [2, 15], [2, 11]],
 							ice: [[3, 11], [3, 11], [3, 11], [3, 11], [3, 11], [3, 11]]
 						},
 						tile = blocks[block.type];
 
 					var front = getBlock(tile[0][0], tile[0][1]),
-						back = getBlock(tile[1][0], tile[1][1]),
-						top = getBlock(tile[2][0], tile[2][1]),
-						bottom = getBlock(tile[3][0], tile[3][1]),
-						right = getBlock(tile[4][0], tile[4][1]),
-						left = getBlock(tile[5][0], tile[5][1]),
+						left = getBlock(tile[1][0], tile[1][1]),
+						back = getBlock(tile[2][0], tile[2][1]),
+						right = getBlock(tile[3][0], tile[3][1]),
+						bottom = getBlock(tile[4][0], tile[4][1]),
+						top = getBlock(tile[5][0], tile[5][1]),
 						faceUVs = geometry.faceVertexUvs;
 
-					faceUVs[0] = [];
-					faceUVs[0][0] = [front[3], front[0], front[2]];
-					faceUVs[0][1] = [front[0], front[1], front[2]];
-					faceUVs[0][2] = [back[3], back[0], back[2]];
-					faceUVs[0][3] = [back[0], back[1], back[2]];
-					faceUVs[0][4] = [top[3], top[0], top[2]];
-					faceUVs[0][5] = [top[0], top[1], top[2]];
-					faceUVs[0][6] = [bottom[3], bottom[0], bottom[2]];
-					faceUVs[0][7] = [bottom[0], bottom[1], bottom[2]];
-					faceUVs[0][8] = [right[3], right[0], right[2]];
-					faceUVs[0][9] = [right[0], right[1], right[2]];
-					faceUVs[0][10] = [left[3], left[0], left[2]];
-					faceUVs[0][11] = [left[0], left[1], left[2]];
+					//faceUVs[0] = [];
+					faceUVs[0][0] = [front[0], front[1], front[3]];
+					faceUVs[0][1] = [front[0], front[3], front[2]];
+					faceUVs[0][2] = [left[0], left[1], left[3]];
+					faceUVs[0][3] = [left[0], left[3], left[2]];
+					faceUVs[0][4] = [back[0], back[1], back[3]];
+					faceUVs[0][5] = [back[0], back[3], back[2]];
+					faceUVs[0][6] = [right[0], right[1], right[3]];
+					faceUVs[0][7] = [right[0], right[3], right[2]];
+					faceUVs[0][8] = [bottom[0], bottom[1], bottom[3]];
+					faceUVs[0][9] = [bottom[0], bottom[3], bottom[2]];
+					faceUVs[0][10] = [top[0], top[1], top[3]];
+					faceUVs[0][11] = [top[0], top[3], top[2]];
 
 					geoms[block.type] = geometry;
 
@@ -243,7 +243,7 @@
 					geometry.faces[i].vertexColors = [];
 				}
 
-				if (useAO) {
+				if (false && useAO) {
 
 					var cv = block.vertLight,
 						v = [
