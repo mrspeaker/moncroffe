@@ -26,7 +26,7 @@
 				h = 0, hdir = 1,
 				x = 0,
 				y = 0,
-				path = [[0, 0]],
+				path = [],
 				radius = 2;
 
 			// Spiral pattern
@@ -68,12 +68,7 @@
 						id = x + ":" + z,
 						chunk;
 
-					if (this.chunks[id]) {
-						console.error("alread", id)
-						chunk = this.chunks[id]
-					} else {
-						chunk = this.chunks[id] = this.createChunk();
-					}
+					chunk = this.chunks[id] = this.createChunk();
 					return {id: id, x: x, z: z, chunk: chunk};
 				}, this);
 
@@ -142,14 +137,14 @@
 
 		getSurrounding: function (x, y, z) {
 
-			return [
-				this.getBlockAt(x, y, z + 1),
-				this.getBlockAt(x + 1, y, z),
-				this.getBlockAt(x, y, z - 1),
-				this.getBlockAt(x - 1, y, z),
-				this.getBlockAt(x, y - 1, z),
-				this.getBlockAt(x, y + 1, z)
-			];
+			return {
+				"front": this.isBlockAt(x, y, z + 1),
+				"left": this.isBlockAt(x + 1, y, z),
+				"back": this.isBlockAt(x, y, z - 1),
+				"right": this.isBlockAt(x - 1, y, z),
+				"bottom": this.isBlockAt(x, y - 1, z),
+				"top": this.isBlockAt(x, y + 1, z)
+			};
 
 		},
 
@@ -350,6 +345,8 @@
 						if (block.type !== "air") {
 
 							var pos = [xo + k, j, zo + i];
+
+							//block.surround = this.getSurrounding(xo + k, j, zo + i);
 
 							block.vertLight = [
 								vertexAO(pos, neigbours["0, 0, 1"]),
