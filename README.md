@@ -56,3 +56,5 @@ Quads/Triangles (counter-clockwise) order:
 
 Triangles: 0-1-3 and 0-3-2
 Quad: 0-1-3-2
+
+Face order: Front, Left, Back, Right, Bottom, Top
