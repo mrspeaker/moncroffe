@@ -140,6 +140,19 @@
 
 		},
 
+		getSurrounding: function (x, y, z) {
+
+			return [
+				this.getBlockAt(x, y, z + 1),
+				this.getBlockAt(x + 1, y, z),
+				this.getBlockAt(x, y, z - 1),
+				this.getBlockAt(x - 1, y, z),
+				this.getBlockAt(x, y - 1, z),
+				this.getBlockAt(x, y + 1, z)
+			];
+
+		},
+
 		createChunk: function () {
 
 			var st = Math.random() < 0.3,
@@ -200,9 +213,9 @@
 
 				if (!geometry) {
 
-					geometry = new THREE.CubeGeometry(blockSize, blockSize, blockSize);
+					geometry = new THREE.CubeGeometry(blockSize);
 
-					// F, Bk, T, B, L, R.... f, l, bk, r, b, t
+					// f, l, bk, r, b, t
 					var blocks = {
 							grass: [[3, 15], [3, 15], [3, 15], [3, 15], [2, 15], [0, 15]],
 							stone: [[1, 15], [1, 15], [1, 15], [1, 15], [1, 15], [1, 15]],
@@ -225,19 +238,19 @@
 						top = getBlock(tile[5][0], tile[5][1]),
 						faceUVs = geometry.faceVertexUvs;
 
-					//faceUVs[0] = [];
-					faceUVs[0][0] = [front[0], front[1], front[3]];
-					faceUVs[0][1] = [front[0], front[3], front[2]];
-					faceUVs[0][2] = [left[0], left[1], left[3]];
-					faceUVs[0][3] = [left[0], left[3], left[2]];
-					faceUVs[0][4] = [back[0], back[1], back[3]];
-					faceUVs[0][5] = [back[0], back[3], back[2]];
-					faceUVs[0][6] = [right[0], right[1], right[3]];
-					faceUVs[0][7] = [right[0], right[3], right[2]];
-					faceUVs[0][8] = [bottom[0], bottom[1], bottom[3]];
-					faceUVs[0][9] = [bottom[0], bottom[3], bottom[2]];
-					faceUVs[0][10] = [top[0], top[1], top[3]];
-					faceUVs[0][11] = [top[0], top[3], top[2]];
+					faceUVs[0] = [];
+					faceUVs[0].push([front[0], front[1], front[3]]);
+					faceUVs[0].push([front[0], front[3], front[2]]);
+					faceUVs[0].push([left[0], left[1], left[3]]);
+					faceUVs[0].push([left[0], left[3], left[2]]);
+					faceUVs[0].push([back[0], back[1], back[3]]);
+					faceUVs[0].push([back[0], back[3], back[2]]);
+					faceUVs[0].push([right[0], right[1], right[3]]);
+					faceUVs[0].push([right[0], right[3], right[2]]);
+					faceUVs[0].push([bottom[0], bottom[1], bottom[3]]);
+					faceUVs[0].push([bottom[0], bottom[3], bottom[2]]);
+					faceUVs[0].push([top[0], top[1], top[3]]);
+					faceUVs[0].push([top[0], top[3], top[2]]);
 
 					geoms[block.type] = geometry;
 
@@ -263,32 +276,32 @@
 							new THREE.Color(cv[6], cv[6], cv[6]),
 							new THREE.Color(cv[7], cv[7], cv[7])
 						];
-					var col = new THREE.Color(0xFF0000);
-
+					var col = new THREE.Color(0xFF0000),
+						faceIdx = 0;
 
 					// front
-					geometry.faces[0].vertexColors = [v[0], v[1], v[3]];
-					geometry.faces[1].vertexColors = [v[0], v[3], v[2]];
+					geometry.faces[faceIdx++].vertexColors = [v[0], v[1], v[3]];
+					geometry.faces[faceIdx++].vertexColors = [v[0], v[3], v[2]];
 
 					// left
-					geometry.faces[2].vertexColors = [v[1], v[5], v[7]];
-					geometry.faces[3].vertexColors = [v[1], v[7], v[3]];
+					geometry.faces[faceIdx++].vertexColors = [v[1], v[5], v[7]];
+					geometry.faces[faceIdx++].vertexColors = [v[1], v[7], v[3]];
 
 					// back
-					geometry.faces[4].vertexColors = [v[5], v[4], v[6]];
-					geometry.faces[5].vertexColors = [v[5], v[6], v[7]];
+					geometry.faces[faceIdx++].vertexColors = [v[5], v[4], v[6]];
+					geometry.faces[faceIdx++].vertexColors = [v[5], v[6], v[7]];
 
 					// right
-					geometry.faces[6].vertexColors = [v[4], v[0], v[2]];
-					geometry.faces[7].vertexColors = [v[4], v[2], v[6]];
+					geometry.faces[faceIdx++].vertexColors = [v[4], v[0], v[2]];
+					geometry.faces[faceIdx++].vertexColors = [v[4], v[2], v[6]];
 
 					// bottom
-					geometry.faces[8].vertexColors = [v[4], v[5], v[1]];
-					geometry.faces[9].vertexColors = [v[4], v[1], v[0]];
+					geometry.faces[faceIdx++].vertexColors = [v[4], v[5], v[1]];
+					geometry.faces[faceIdx++].vertexColors = [v[4], v[1], v[0]];
 
 					// top
-					geometry.faces[10].vertexColors = [v[2], v[3], v[7]];
-					geometry.faces[11].vertexColors = [v[2], v[7], v[6]];
+					geometry.faces[faceIdx++].vertexColors = [v[2], v[3], v[7]];
+					geometry.faces[faceIdx++].vertexColors = [v[2], v[7], v[6]];
 
 				}
 
@@ -352,6 +365,8 @@
 
 							var geometry = getGeometry(block),
 								mesh = new THREE.Mesh(geometry, blockMaterial);
+
+
 
 							// Move up so bottom of cube is at 0, not -0.5
 							mesh.position.set(k + (x * this.chunkWidth), j + blockSize / 2, i + (z * this.chunkWidth));
