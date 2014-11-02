@@ -68,7 +68,7 @@
 						id = x + ":" + z,
 						chunk;
 
-					chunk = this.chunks[id] = this.createChunk();
+					chunk = this.chunks[id] = this.createChunk(x, z);
 					return {id: id, x: x, z: z, chunk: chunk};
 				}, this);
 
@@ -152,19 +152,21 @@
 
 		},
 
-		createChunk: function () {
+		createChunk: function (xo, zo) {
 
-			var st = Math.random() < 0.3,
+			var chW = this.chunkWidth,
+				chH = this.chunkHeight,
+				st = Math.random() < 0.3,
 				maxSphere = (Math.random() * 3 | 0) + 9,
 				minSphere = maxSphere - 2;
 
 			// Create the chunk
 			var chunk = [];
-			for (var z = 0; z < this.chunkWidth; z++) {
+			for (var z = 0; z < chW; z++) {
 				chunk[z] = [];
-				for (var y = 0; y < this.chunkHeight; y++) {
+				for (var y = 0; y < chH; y++) {
 					chunk[z][y] = [];
-					for (var x = 0; x < this.chunkWidth; x++) {
+					for (var x = 0; x < chW; x++) {
 						var type = "air";
 						/*if (y === 0) {
 							// Ground
@@ -180,9 +182,21 @@
 							// Platform
 							type = ["tree", "stone"][Math.random() * 2 | 0];
 						}*/
-
-						if (y<=2 || y >8) {
-							type = "stone";
+						// Arena chunk...
+						var val = noise.simplex3((x / 10) + (xo * chW), y / 10 , (z / 10) + (zo * chW));
+						var val2 = noise.simplex3((x / 20) + (xo * chW), y / 20 , (z / 20) + (zo * chW));
+						//val += 1;
+						if (y == 0) {
+							type = val2 < -0.1 ? "stone" : (Math.random() < 0.3 ? "dirt":"grass");
+						} else {
+							if (y < 16 && val > 0) {
+								type = y < 8 && val2 < -0.1 ? "stone" : "grass";
+							}
+						}
+						if (type === "stone") {
+							if (Math.random() < 0.01) {
+								type = "gold";
+							}
 						}
 
 						chunk[z][y][x] = {

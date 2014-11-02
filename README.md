@@ -3,7 +3,7 @@ Moncroffe
 Minecraft style boxel demo... by Mr Speaker
 
 # bugz
-- lights need to be set to update when toggling day/night
+- neighbour chunk needs to be re-meshed when exposed (face missing)
 - can add block in position currently standing
 - hit head slide down (and can get stuck in block)
 - camera looks through block when looking straight down
@@ -24,7 +24,6 @@ Minecraft style boxel demo... by Mr Speaker
 - clean up pointer lock and player controls
 - camera pitch/yaw not same as minecraft when looking up/down
 - add "horizon" to day time
-
 
 # cube geom
 

@@ -16,7 +16,11 @@ var main = {
 
 	useAO: true,
 
+	quality: 1, // (just divides the screen width/height ;)
+
 	init: function () {
+
+		noise.seed(Math.random());
 
 		this.initThree();
 		this.world = Object.create(World).init(this);
@@ -150,7 +154,7 @@ var main = {
 	setCameraDimensions: function () {
 		this.camera.aspect = window.innerWidth / window.innerHeight;
 		this.camera.updateProjectionMatrix();
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
+		this.renderer.setSize(window.innerWidth / this.quality, window.innerHeight / this.quality);
 	},
 
 	changeTool: function (dir) {
