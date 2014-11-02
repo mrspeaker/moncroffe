@@ -112,6 +112,10 @@
 			return chunkX + ":" + chunkZ;
 		},
 
+		isBlockAt: function (x, y, z) {
+			return this.getBlockAt(x, y, z).type !== "air";
+		},
+
 		getBlockAt: function (x, y, z) {
 
 			var chunkX = Math.floor(x / this.chunkWidth),
@@ -122,16 +126,16 @@
 			z -= chunkZ * this.chunkWidth;
 
 			if (y > this.chunkHeight - 1 || y < 0) {
-				return false;
+				return { type: "air" };
 			}
 
 			chunk = this.chunks[chunkX + ":" + chunkZ];
 
 			if (!chunk) {
-				return false;
+				return { type: "air" };
 			}
 
-			return chunk[z][y][x].type !== "air";
+			return chunk[z][y][x];//.type !== "air";
 
 		},
 
@@ -162,7 +166,7 @@
 					chunk[z][y] = [];
 					for (var x = 0; x < this.chunkWidth; x++) {
 						var type = "air";
-						if (y === 0) {
+						/*if (y === 0) {
 							// Ground
 							type = ["grass", "dirt"][Math.random() * 2 | 0];
 						} else if (y === 1 && Math.random() < 0.02) {
@@ -175,6 +179,10 @@
 						} else if (y === 4 && z > 9 && x > 8) {
 							// Platform
 							type = ["tree", "stone"][Math.random() * 2 | 0];
+						}*/
+
+						if (y<=2 || y >8) {
+							type = "stone";
 						}
 
 						chunk[z][y][x] = {
@@ -204,11 +212,12 @@
 					];
 				}
 
-				var geometry = geoms[block.type];
+				var geometry = null;// geoms[block.type];
 
 				if (!geometry) {
 
 					geometry = new THREE.CubeGeometry(blockSize);
+
 
 					// f, l, bk, r, b, t
 					var blocks = {
@@ -310,11 +319,11 @@
 				h = this.chunkHeight,
 				xo = x * w,
 				zo = z * w,
-				getBlockAt = this.getBlockAt.bind(this),
+				isBlockAt = this.isBlockAt.bind(this),
 				vertexAO = function (pos, n) {
-					var corner = getBlockAt(pos[0] + n[0][0], pos[1] + n[0][1], pos[2] + n[0][2]),
-						side1 = getBlockAt(pos[0] + n[1][0], pos[1] + n[1][1], pos[2] + n[1][2]),
-						side2 = getBlockAt(pos[0] + n[2][0], pos[1] + n[2][1], pos[2] + n[2][2]),
+					var corner = isBlockAt(pos[0] + n[0][0], pos[1] + n[0][1], pos[2] + n[0][2]),
+						side1 = isBlockAt(pos[0] + n[1][0], pos[1] + n[1][1], pos[2] + n[1][2]),
+						side2 = isBlockAt(pos[0] + n[2][0], pos[1] + n[2][1], pos[2] + n[2][2]),
 						val = 0;
 
 					if (side1 && side2) {
@@ -346,7 +355,7 @@
 
 							var pos = [xo + k, j, zo + i];
 
-							//block.surround = this.getSurrounding(xo + k, j, zo + i);
+							block.surround = this.getSurrounding(xo + k, j, zo + i);
 
 							block.vertLight = [
 								vertexAO(pos, neigbours["0, 0, 1"]),
@@ -362,8 +371,6 @@
 
 							var geometry = getGeometry(block),
 								mesh = new THREE.Mesh(geometry, blockMaterial);
-
-
 
 							// Move up so bottom of cube is at 0, not -0.5
 							mesh.position.set(k + (x * this.chunkWidth), j + blockSize / 2, i + (z * this.chunkWidth));

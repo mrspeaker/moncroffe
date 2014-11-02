@@ -527,7 +527,7 @@ var main = {
 
 		var p = e.playerObj.position.clone(),
 			bb = e.bb,
-			block = this.world.getBlockAt.bind(this.world);
+			block = this.world.isBlockAt.bind(this.world);
 
 		var xl = Math.round(p.x - (bb.w / 2)),
 			xr = Math.round(p.x + (bb.w / 2)),
