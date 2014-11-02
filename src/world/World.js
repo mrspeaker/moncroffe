@@ -212,11 +212,12 @@
 					];
 				}
 
-				var geometry = null;// geoms[block.type];
+				var geometry = null,// geoms[block.type];
+					surround = block.surround;
 
 				if (!geometry) {
 
-					geometry = new THREE.CubeGeometry(blockSize);
+					geometry = new THREE.CubeGeometry(blockSize, surround);
 
 
 					// f, l, bk, r, b, t
@@ -243,18 +244,30 @@
 						faceUVs = geometry.faceVertexUvs;
 
 					faceUVs[0] = [];
-					faceUVs[0].push([front[0], front[1], front[3]]);
-					faceUVs[0].push([front[0], front[3], front[2]]);
-					faceUVs[0].push([left[0], left[1], left[3]]);
-					faceUVs[0].push([left[0], left[3], left[2]]);
-					faceUVs[0].push([back[0], back[1], back[3]]);
-					faceUVs[0].push([back[0], back[3], back[2]]);
-					faceUVs[0].push([right[0], right[1], right[3]]);
-					faceUVs[0].push([right[0], right[3], right[2]]);
-					faceUVs[0].push([bottom[0], bottom[1], bottom[3]]);
-					faceUVs[0].push([bottom[0], bottom[3], bottom[2]]);
-					faceUVs[0].push([top[0], top[1], top[3]]);
-					faceUVs[0].push([top[0], top[3], top[2]]);
+					if (!surround.front) {
+						faceUVs[0].push([front[0], front[1], front[3]]);
+						faceUVs[0].push([front[0], front[3], front[2]]);
+					}
+					if (!surround.left) {
+						faceUVs[0].push([left[0], left[1], left[3]]);
+						faceUVs[0].push([left[0], left[3], left[2]]);
+					}
+					if (!surround.back) {
+						faceUVs[0].push([back[0], back[1], back[3]]);
+						faceUVs[0].push([back[0], back[3], back[2]]);
+					}
+					if (!surround.right) {
+						faceUVs[0].push([right[0], right[1], right[3]]);
+						faceUVs[0].push([right[0], right[3], right[2]]);
+					}
+					if (!surround.bottom) {
+						faceUVs[0].push([bottom[0], bottom[1], bottom[3]]);
+						faceUVs[0].push([bottom[0], bottom[3], bottom[2]]);
+					}
+					if (!surround.top) {
+						faceUVs[0].push([top[0], top[1], top[3]]);
+						faceUVs[0].push([top[0], top[3], top[2]]);
+					}
 
 					geoms[block.type] = geometry;
 
@@ -284,28 +297,40 @@
 						faceIdx = 0;
 
 					// front
-					geometry.faces[faceIdx++].vertexColors = [v[0], v[1], v[3]];
-					geometry.faces[faceIdx++].vertexColors = [v[0], v[3], v[2]];
+					if (!surround.front) {
+						geometry.faces[faceIdx++].vertexColors = [v[0], v[1], v[3]];
+						geometry.faces[faceIdx++].vertexColors = [v[0], v[3], v[2]];
+					}
 
 					// left
-					geometry.faces[faceIdx++].vertexColors = [v[1], v[5], v[7]];
-					geometry.faces[faceIdx++].vertexColors = [v[1], v[7], v[3]];
+					if (!surround.left) {
+						geometry.faces[faceIdx++].vertexColors = [v[1], v[5], v[7]];
+						geometry.faces[faceIdx++].vertexColors = [v[1], v[7], v[3]];
+					}
 
 					// back
-					geometry.faces[faceIdx++].vertexColors = [v[5], v[4], v[6]];
-					geometry.faces[faceIdx++].vertexColors = [v[5], v[6], v[7]];
+					if (!surround.back) {
+						geometry.faces[faceIdx++].vertexColors = [v[5], v[4], v[6]];
+						geometry.faces[faceIdx++].vertexColors = [v[5], v[6], v[7]];
+					}
 
 					// right
-					geometry.faces[faceIdx++].vertexColors = [v[4], v[0], v[2]];
-					geometry.faces[faceIdx++].vertexColors = [v[4], v[2], v[6]];
+					if (!surround.right) {
+						geometry.faces[faceIdx++].vertexColors = [v[4], v[0], v[2]];
+						geometry.faces[faceIdx++].vertexColors = [v[4], v[2], v[6]];
+					}
 
 					// bottom
-					geometry.faces[faceIdx++].vertexColors = [v[4], v[5], v[1]];
-					geometry.faces[faceIdx++].vertexColors = [v[4], v[1], v[0]];
+					if (!surround.bottom) {
+						geometry.faces[faceIdx++].vertexColors = [v[4], v[5], v[1]];
+						geometry.faces[faceIdx++].vertexColors = [v[4], v[1], v[0]];
+					}
 
 					// top
-					geometry.faces[faceIdx++].vertexColors = [v[2], v[3], v[7]];
-					geometry.faces[faceIdx++].vertexColors = [v[2], v[7], v[6]];
+					if (!surround.top) {
+						geometry.faces[faceIdx++].vertexColors = [v[2], v[3], v[7]];
+						geometry.faces[faceIdx++].vertexColors = [v[2], v[7], v[6]];
+					}
 
 				}
 
