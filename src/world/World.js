@@ -27,7 +27,7 @@
 				x = 0,
 				y = 0,
 				path = [],
-				radius = 2;
+				radius = 1;
 
 			// Spiral pattern
 			while (radius--) {

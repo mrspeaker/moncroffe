@@ -212,7 +212,7 @@ var main = {
 
 	addBlockAtCursor: function () {
 		if (!this.cursor.visible) {
-			this.fireOne();
+			this.fire();
 			return;
 		}
 		var face = this.cursor.__face,
@@ -349,9 +349,92 @@ var main = {
 
 			cursor.__pos = {x: x, y: y, z: z};
 
-			return chs[cursor.__chunk][z][y][x].type !== "air";
+			return chunk[z][y][x].type !== "air";
 		});
 	},
+
+	fire: function () {
+		var ob = this.player.controls,
+			chs = this.world.chunks,
+			origin = ob.getObject().position.clone(),
+			direction = ob.getDirection().clone(),
+			chW = this.world.chunkWidth,
+			chH = this.world.chunkHeight,
+			self = this;
+
+		origin.addScalar(0.5);
+
+		this.raycast(origin, direction, 40, function (x, y, z, face) {
+			if (x === "miss") {
+				// console.log("hit nothing!");
+				return false;
+			}
+
+			if (y < 0 || y > chH - 1) {
+				// console.log("shootin' outta height")
+				return false;
+			}
+			var chunkX = Math.floor(x / chW),
+				chunkZ = Math.floor(z / chW),
+				chunk = chs[chunkX + ":" + chunkZ];
+
+			if (!chunk) {
+				// console.log("chuk errr")
+				return false;
+			}
+
+			var cx = x - chunkX * chW,
+				cz = z - chunkZ * chW;
+
+			if (chunk[cz][y][cx].type !== "air") {
+				self.splode(x, y, z);
+
+				var p = new THREE.PlaneGeometry(1, 0.1);
+				var material	= new THREE.MeshBasicMaterial({
+					blending	: THREE.AdditiveBlending,
+					color		: 0x4444aa,
+					side		: THREE.DoubleSide,
+					depthWrite	: false,
+					transparent	: true
+				});
+
+				var focalPoint = origin.clone().add(direction);
+
+				var m = new THREE.Mesh(p, material);
+				//m.rotation.order = 'YZX';
+				m.position.copy(origin);
+				m.lookAt(focalPoint);
+				m.rotation.z = m.rotation.y + Math.PI / 2;
+
+				self.scene.add(m);
+				return true;
+			}
+
+			return false;
+
+		});
+	},
+
+	// Make a hole
+	splode: function (x, y, z) {
+		var chunks = {}
+		var type = "air";
+		var hr = 2;
+		for (var k = -hr; k <= hr; k++) {
+			for (var j = -hr; j <= hr; j++) {
+				for (var i = -hr; i <= hr; i++) {
+					if (Math.sqrt(k * k + j * j + i * i) <= hr) {
+						chunks[this.world.setBlockAt(i + x, j + y, k + z, type)] = true;
+					}
+				}
+			}
+		}
+
+		for (var ch in chunks) {
+			this.reMeshChunk(ch);
+		}
+	},
+
 
 	fireOne: function () {
 		var dir = this.player.controls.getDirection().clone();
