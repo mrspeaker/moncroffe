@@ -16,7 +16,6 @@ var Bullet = {
 		var material = new THREE.MeshBasicMaterial({
 			blending	: THREE.AdditiveBlending,
 			color		: 0x4444aa,
-			side		: THREE.DoubleSide,
 			depthWrite	: false,
 			transparent	: true
 		});
@@ -41,7 +40,7 @@ var Bullet = {
 
 		m.translateZ(pow);
 
-		if (this.count++ < 40) {
+		if (this.count++ < 30) {
 			return true;
 		}
 		return false;

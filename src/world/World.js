@@ -27,7 +27,7 @@
 				x = 0,
 				y = 0,
 				path = [],
-				radius = 1;
+				radius = 2;
 
 			// Spiral pattern
 			while (radius--) {
@@ -168,20 +168,6 @@
 					chunk[z][y] = [];
 					for (var x = 0; x < chW; x++) {
 						var type = "air";
-						/*if (y === 0) {
-							// Ground
-							type = ["grass", "dirt"][Math.random() * 2 | 0];
-						} else if (y === 1 && Math.random() < 0.02) {
-							// Random block or air
-							type = this.blocks[(Math.random() * this.blocks.length - 1 | 0) + 1];
-						} else if (
-							// Grass Sphere
-							Math.sqrt(x * x + y * y + (z * 5)) < maxSphere && Math.sqrt(x * x + y * y + (z *5)) > minSphere) {
-							type = st && y < 4? "stone" : "grass";
-						} else if (y === 4 && z > 9 && x > 8) {
-							// Platform
-							type = ["tree", "stone"][Math.random() * 2 | 0];
-						}*/
 						// Arena chunk...
 						var val = noise.simplex3((x / 10) + (xo * chW), y / 10 , (z / 10) + (zo * chW));
 						var val2 = noise.simplex3((x / 20) + (xo * chW), y / 20 , (z / 20) + (zo * chW));

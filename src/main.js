@@ -47,12 +47,9 @@ var main = {
 	initThree: function () {
 
 		this.scene = new THREE.Scene();
-
 		this.renderer = new THREE.WebGLRenderer();
-
 		this.camera = new THREE.PerspectiveCamera(65, 1, 0.01, 500);
 		this.setCameraDimensions();
-
 		this.clock = new THREE.Clock();
 
 		document.querySelector("#board").appendChild(this.renderer.domElement);
@@ -104,19 +101,25 @@ var main = {
 	},
 
 	updateDayNight: function () {
-		var day = this.day;
 
-		this.renderer.setClearColor(day ? 0x88C4EC : 0x000000, 1);
-		this.scene.fog = day ?
-			new THREE.Fog(0xE8D998, 10, 120) :
-			new THREE.Fog(0x000000, 1, 80);
+		var day = this.day,// = !this.day,
+			time = (this.frame % 8000) / 4000;
+
+		if (time > 1) {
+			time = 1 + (1 - time);
+		}
+		//this.renderer.setClearColor(day ? 0x88C4EC : 0x000000, 1);
+		this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
 
 		this.scene.remove(this.lights.ambientLight);
-		this.lights.ambientLight = new THREE.AmbientLight(day ? 0x999999 : 0x2f2f2f);
-		this.lights.player.visible = !this.day;
+		this.lights.ambientLight = new THREE.AmbientLight((new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time));
+		//this.lights.ambientLight = new THREE.AmbientLight(new THREE.Color(day ? 0x999999 : 0x2f2f2f);
 		this.scene.add(this.lights.ambientLight);
-		this.skybox.visible = day;
-		this.nightbox.visible = !day;
+		this.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
+		this.uniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);
+		this.lights.player.visible = time > 0.5;//!this.day;
+		this.skybox.visible = time < 0.875;//day;
+		this.nightbox.visible = time >= 0.875;//!day;
 
 	},
 
@@ -149,6 +152,7 @@ var main = {
 				fragmentShader: document.getElementById("fHemisphere").textContent,
 				side: THREE.BackSide
 			});
+		this.uniforms = skyMaterial.uniforms;
 
 		var sky = this.skybox = new THREE.Mesh(skyGeometry, skyMaterial);
 		this.scene.add(sky);
@@ -280,7 +284,7 @@ var main = {
 		light.position.set(2 * this.world.chunkWidth - 3, 5, 2 * this.world.chunkWidth - 3);
 		this.scene.add(light);
 
-		this.scene.fog = new THREE.Fog(0xE8D998, 10, 120);
+		this.scene.fog = new THREE.Fog(0xE8D998, 10, 80);
 
 	},
 
@@ -288,6 +292,9 @@ var main = {
 		if (this.frame++ % this.oneFrameEvery === 0) {
 			this.tick();
 			this.render();
+		}
+		if (this.frame % 50 === 0) {
+			this.updateDayNight();
 		}
 		requestAnimationFrame(function () { main.run() });
 	},
@@ -305,7 +312,7 @@ var main = {
 		delta = Math.min(60 / 1000, delta); // HACK: Limit for physics
 		var dt = delta * 1000 | 0;
 		if (dt < 15 || dt > 21) {
-			msg(dt); // Track big/small updates
+			//msg(dt); // Track big/small updates
 		}
 		this.player.tick(delta);
 		this.bullets = this.bullets.filter(function (b) {

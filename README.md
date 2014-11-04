@@ -11,7 +11,6 @@ Minecraft style boxel demo... by Mr Speaker
 
 # perf
 - no meshing - all blocks added, remesh is super slow
-- load meshes in webworker? At least "staggered"
 
 # needs
 - block-based lighting
@@ -23,7 +22,6 @@ Minecraft style boxel demo... by Mr Speaker
 - move the cursor stuff out of main
 - clean up pointer lock and player controls
 - camera pitch/yaw not same as minecraft when looking up/down
-- add "horizon" to day time
 
 # cube geom
 
