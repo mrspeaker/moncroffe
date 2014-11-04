@@ -9,7 +9,7 @@ var Bullet = {
 
 		this.bb = {
 			w: 0.15,
-			d: 1.1,
+			d: 1.15,
 			h: 0.1
 		};
 
@@ -38,8 +38,7 @@ var Bullet = {
 	tick: function (dt) {
 		var m = this.mesh,
 			pow = dt * 30;
-		//m.translateX(pow);
-		//m.translateY(pow);
+
 		m.translateZ(pow);
 
 		if (this.count++ < 40) {
