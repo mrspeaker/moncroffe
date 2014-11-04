@@ -16,6 +16,8 @@ var main = {
 
 	useAO: true,
 
+	bullets: null,
+
 	quality: 1, // (just divides the screen width/height ;)
 
 	init: function () {
@@ -25,6 +27,7 @@ var main = {
 		this.initThree();
 		this.world = Object.create(World).init(this);
 		this.player = Object.create(Player).init(this);
+		this.bullets = [];
 
 		this.addCursorObject();
 		this.addLights();
@@ -305,6 +308,9 @@ var main = {
 			msg(dt); // Track big/small updates
 		}
 		this.player.tick(delta);
+		this.bullets = this.bullets.filter(function (b) {
+			return b.tick(delta);
+		});
 		this.world.tick(delta);
 	},
 
@@ -362,6 +368,13 @@ var main = {
 			chH = this.world.chunkHeight,
 			self = this;
 
+
+		var b = Object.create(Bullet).init(origin, direction);
+		this.bullets.push(b);
+		this.scene.add(b.mesh);
+
+
+		return;
 		origin.addScalar(0.5);
 
 		this.raycast(origin, direction, 40, function (x, y, z, face) {
@@ -423,6 +436,7 @@ var main = {
 		for (var k = -hr; k <= hr; k++) {
 			for (var j = -hr; j <= hr; j++) {
 				for (var i = -hr; i <= hr; i++) {
+					if (j + y <= 1) continue; // don't blow up ground
 					if (Math.sqrt(k * k + j * j + i * i) <= hr) {
 						chunks[this.world.setBlockAt(i + x, j + y, k + z, type)] = true;
 					}
