@@ -49,6 +49,11 @@ var main = {
 		this.scene = new THREE.Scene();
 		this.renderer = new THREE.WebGLRenderer();
 		this.camera = new THREE.PerspectiveCamera(65, 1, 0.01, 500);
+				// Here is the effect for the Oculus Rift
+		// worldScale 100 means that 100 Units == 1m
+
+		this.effect = new THREE.OculusRiftEffect(this.renderer, {worldScale: 100});
+
 		this.setCameraDimensions();
 		this.clock = new THREE.Clock();
 
@@ -103,11 +108,14 @@ var main = {
 	updateDayNight: function () {
 
 		var day = this.day,// = !this.day,
-			time = (this.frame % 8000) / 4000;
+			time = (this.frame % 8000) / 8000;
 
 		if (time > 1) {
 			time = 1 + (1 - time);
 		}
+
+		//time = Math.sin(Math.PI/2 * Math.cos(time * 2 * Math.PI)) * 0.5 + 0.5;
+
 		//this.renderer.setClearColor(day ? 0x88C4EC : 0x000000, 1);
 		this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
 
@@ -162,6 +170,7 @@ var main = {
 		this.camera.aspect = window.innerWidth / window.innerHeight;
 		this.camera.updateProjectionMatrix();
 		this.renderer.setSize(window.innerWidth / this.quality, window.innerHeight / this.quality);
+		this.effect.setSize(window.innerWidth / this.quality, window.innerHeight / this.quality);
 	},
 
 	changeTool: function (dir) {
@@ -705,5 +714,7 @@ var main = {
 
 	render: function () {
 		this.renderer.render(this.scene, this.camera);
+		//console.log(this.camera.rotation.x)
+		this.effect.render(this.scene, this.player.controls.getObject(), this.player.controls.getObject().children[0]);
 	}
 };
