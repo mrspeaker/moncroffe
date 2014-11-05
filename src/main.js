@@ -20,6 +20,8 @@ var main = {
 
 	quality: 1, // (just divides the screen width/height ;)
 
+	isOculus: false,
+
 	init: function () {
 
 		noise.seed(Math.random());
@@ -90,10 +92,9 @@ var main = {
 		window.addEventListener("resize", this.setCameraDimensions.bind(this), false );
 
 		document.addEventListener("keydown", (function(e){
-			// Toggle Day/Night
+			// Toggle Oculus
 			if (e.keyCode === 69 /*e*/) {
-				this.day = !this.day;
-				this.updateDayNight();
+				this.toggleOculus();
 			}
 
 			// Toggle AO
@@ -103,6 +104,11 @@ var main = {
 				this.reMeshChunk((pos.x / this.world.chunkWidth | 0) + ":" + (pos.z / this.world.chunkWidth | 0));
 			}
 		}).bind(this), false);
+	},
+
+	toggleOculus: function () {
+		this.isOculus = !this.isOculus;
+		this.setCameraDimensions();
 	},
 
 	updateDayNight: function () {
@@ -713,8 +719,10 @@ var main = {
 	},
 
 	render: function () {
-		this.renderer.render(this.scene, this.camera);
-		//console.log(this.camera.rotation.x)
-		this.effect.render(this.scene, this.player.controls.getObject(), this.player.controls.getObject().children[0]);
+		if (!this.isOculus) {
+			this.renderer.render(this.scene, this.camera);
+		} else {
+			this.effect.render(this.scene, this.player.controls.getObject(), this.player.controls.getObject().children[0]);
+		}
 	}
 };
