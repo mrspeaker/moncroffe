@@ -421,7 +421,25 @@
 			msg("Cubes:" + stats.cubes, " F:" + stats.faces, " V:" + stats.verts);
 
 			return new THREE.Mesh(totalGeom, this.blockMaterial);
-		}
+		},
+
+		reMeshChunk: function (chunk) {
+			if (!this.chunks[chunk]) {
+				return;
+			}
+			var screen = this.screen,
+				scene = screen.scene,
+				start = screen.clock.getElapsedTime();
+
+			var split = chunk.split(":"); // TODO: ha... c'mon now.
+			scene.remove(this.chunkGeom[chunk]);
+			this.chunkGeom[chunk] = this.createChunkGeom(split[0], split[1], this.chunks[chunk]);
+			scene.add(this.chunkGeom[chunk]);
+
+			var end = this.screen.clock.getElapsedTime();
+			msgln("Remesh Chunk[" + chunk + "]:", ((end - start) * 1000 | 0) + "ms");
+		},
+
 
 	};
 

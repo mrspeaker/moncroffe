@@ -102,7 +102,7 @@ var main = {
 			if (e.keyCode === 81 /*q*/) {
 				var pos = this.player.playerObj.position;
 				this.useAO = !this.useAO;
-				this.reMeshChunk((pos.x / this.world.chunkWidth | 0) + ":" + (pos.z / this.world.chunkWidth | 0));
+				this.world.reMeshChunk((pos.x / this.world.chunkWidth | 0) + ":" + (pos.z / this.world.chunkWidth | 0));
 			}
 		}).bind(this), false);
 	},
@@ -222,22 +222,6 @@ var main = {
 		this.textures.night.repeat.set(3, 3);
 	},
 
-	// TODO: move this to World
-	reMeshChunk: function (chunk) {
-		if (!this.world.chunks[chunk]) {
-			return;
-		}
-		var start = this.clock.getElapsedTime();
-
-		var split = chunk.split(":"); // TODO: ha... c'mon now.
-		this.scene.remove(this.world.chunkGeom[chunk]);
-		this.world.chunkGeom[chunk] = this.world.createChunkGeom(split[0], split[1], this.world.chunks[chunk]);
-		this.scene.add(this.world.chunkGeom[chunk]);
-
-		var end = this.clock.getElapsedTime();
-		msgln("Remesh Chunk[" + chunk + "]:", ((end - start) * 1000 | 0) + "ms");
-	},
-
 	addBlockAtCursor: function () {
 		if (!this.cursor.visible) {
 			this.fire();
@@ -276,7 +260,7 @@ var main = {
 		}
 		chunk[pos.z + face.z][pos.y + face.y][pos.x + face.x].type = this.world.blocks[this.curTool];
 
-		this.reMeshChunk(chunkId);
+		this.world.reMeshChunk(chunkId);
 	},
 
 	removeBlockAtCursor: function () {
@@ -285,7 +269,7 @@ var main = {
 		}
 		var pos = this.cursor.__pos;
 		this.world.chunks[this.cursor.__chunk][pos.z][pos.y][pos.x].type = "air";
-		this.reMeshChunk(this.cursor.__chunk);
+		this.world.reMeshChunk(this.cursor.__chunk);
 	},
 
 	addLights: function () {
@@ -400,109 +384,6 @@ var main = {
 		var b = Object.create(Bullet).init(origin, direction);
 		this.bullets.push(b);
 		this.scene.add(b.mesh);
-
-
-		return;
-		origin.addScalar(0.5);
-
-		this.raycast(origin, direction, 40, function (x, y, z, face) {
-			if (x === "miss") {
-				// console.log("hit nothing!");
-				return false;
-			}
-
-			if (y < 0 || y > chH - 1) {
-				// console.log("shootin' outta height")
-				return false;
-			}
-			var chunkX = Math.floor(x / chW),
-				chunkZ = Math.floor(z / chW),
-				chunk = chs[chunkX + ":" + chunkZ];
-
-			if (!chunk) {
-				// console.log("chuk errr")
-				return false;
-			}
-
-			var cx = x - chunkX * chW,
-				cz = z - chunkZ * chW;
-
-			if (chunk[cz][y][cx].type !== "air") {
-				self.splode(x, y, z);
-
-				var p = new THREE.PlaneGeometry(1, 0.1);
-				var material	= new THREE.MeshBasicMaterial({
-					blending	: THREE.AdditiveBlending,
-					color		: 0x4444aa,
-					side		: THREE.DoubleSide,
-					depthWrite	: false,
-					transparent	: true
-				});
-
-				var focalPoint = origin.clone().add(direction);
-
-				var m = new THREE.Mesh(p, material);
-				//m.rotation.order = 'YZX';
-				m.position.copy(origin);
-				m.lookAt(focalPoint);
-				m.rotation.z = m.rotation.y + Math.PI / 2;
-
-				self.scene.add(m);
-				return true;
-			}
-
-			return false;
-
-		});
-	},
-
-	// Make a hole
-	splode: function (x, y, z) {
-		var chunks = {}
-		var type = "air";
-		var hr = 2;
-		for (var k = -hr; k <= hr; k++) {
-			for (var j = -hr; j <= hr; j++) {
-				for (var i = -hr; i <= hr; i++) {
-					if (j + y <= 1) continue; // don't blow up ground
-					if (Math.sqrt(k * k + j * j + i * i) <= hr) {
-						chunks[this.world.setBlockAt(i + x, j + y, k + z, type)] = true;
-					}
-				}
-			}
-		}
-
-		for (var ch in chunks) {
-			this.reMeshChunk(ch);
-		}
-	},
-
-
-	fireOne: function () {
-		var dir = this.player.controls.getDirection().clone();
-		var pos = this.player.controls.getObject().position.clone();
-
-		dir.multiplyScalar(7);
-		pos.add(dir);
-
-		var chunks = {}
-
-		var type = "sand";
-
-		chunks[this.world.setBlockAt(pos.x, pos.y, pos.z, type)] = true;
-		chunks[this.world.setBlockAt(pos.x - 1, pos.y, pos.z, type)] = true;
-		chunks[this.world.setBlockAt(pos.x + 1, pos.y, pos.z, type)] = true;
-
-		chunks[this.world.setBlockAt(pos.x, pos.y + 1, pos.z, type)] = true;
-		chunks[this.world.setBlockAt(pos.x, pos.y - 1, pos.z, type)] = true;
-
-		chunks[this.world.setBlockAt(pos.x, pos.y, pos.z + 1, type)] = true;
-		chunks[this.world.setBlockAt(pos.x, pos.y, pos.z - 1, type)] = true;
-
-		for (var ch in chunks) {
-			this.reMeshChunk(ch);
-		}
-
 	},
 
 	/*
