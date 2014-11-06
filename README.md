@@ -1,29 +1,40 @@
-Moncroffe
+# Moncroffe
 
-Minecraft style boxel demo... by Mr Speaker
+[Minecraft style boxel demo](http://www.mrspeaker.net/dev/game/moncroff]) by [Mr Speaker](http://twitter.com/mrspeaker).
 
-# bugz
+Now with Oculus Rift support!
+
+Mouse: look
+Keys/WSAD: move
+Left click: add block if close, else shoot
+Right click: remove block
+Scroll wheel: change block
+
+'e': toggle Oculus Rift mode
+'q': toggle Ambient Occlusion
+
+## bugz
 - neighbour chunk needs to be re-meshed when exposed (face missing)
 - can add block in position currently standing
 - hit head slide down (and can get stuck in block)
 - camera looks through block when looking straight down
 - block & face selection wrong when close to blocks
 
-# perf
-- no meshing - all blocks added, remesh is super slow
+## perf
+- no meshing - naive face-culling only.
 
-# needs
+## needs
 - block-based lighting
 - shift-walk for overhang picking
 
-# todolol
+## todolol
 - separate data and logic
 - move world details out of main
 - move the cursor stuff out of main
 - clean up pointer lock and player controls
 - camera pitch/yaw not same as minecraft when looking up/down
 
-# cube geom
+## Cube geometry notes
 
   6---7
  /|  /|
