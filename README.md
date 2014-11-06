@@ -1,6 +1,6 @@
 # Moncroffe
 
-[Minecraft style boxel demo](http://www.mrspeaker.net/dev/game/moncroff) by [Mr Speaker](http://twitter.com/mrspeaker).
+[Minecraft style boxel demo](http://www.mrspeaker.net/dev/game/moncroffe) by [Mr Speaker](http://twitter.com/mrspeaker).
 
 Now with Oculus Rift support!
 
