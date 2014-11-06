@@ -34,12 +34,12 @@ body {
 }
 
 #watch {
-	width: 120px;
+	width: 300px;
 	height: 180px;
-	font-size: 14pt;
+	font-size: 9pt;
 	position:absolute;
-	top: 0;
-	left: 0;
+	top: 5px;
+	left: 5px;
 	font-family: monospace;
 }
 

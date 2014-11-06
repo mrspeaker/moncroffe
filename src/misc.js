@@ -13,6 +13,15 @@ function msg(m) {
 	});
 }
 
+function msgln(m) {
+	var dom = document.querySelector("#watch"),
+		args = Array.prototype.slice.call(arguments);
+	dom.innerHTML += "<br/>";
+	args.forEach(function (m, i) {
+		dom.innerHTML += m + (i < args.length - 1 ? " : " : "");
+	});
+}
+
 var urlParams = (function () {
 	if (!window.location && !window.location.search) {
 		return {};

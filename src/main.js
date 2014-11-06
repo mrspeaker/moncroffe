@@ -27,13 +27,14 @@ var main = {
 		noise.seed(Math.random());
 
 		this.initThree();
+		this.createTextures();
+
+		this.bullets = [];
 		this.world = Object.create(World).init(this);
 		this.player = Object.create(Player).init(this);
-		this.bullets = [];
 
 		this.addCursorObject();
 		this.addLights();
-		this.createTextures();
 
 		this.world.createChunks();
 
@@ -127,13 +128,13 @@ var main = {
 
 		this.scene.remove(this.lights.ambientLight);
 		this.lights.ambientLight = new THREE.AmbientLight((new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time));
-		//this.lights.ambientLight = new THREE.AmbientLight(new THREE.Color(day ? 0x999999 : 0x2f2f2f);
 		this.scene.add(this.lights.ambientLight);
+
 		this.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
 		this.uniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);
-		this.lights.player.visible = time > 0.5;//!this.day;
-		this.skybox.visible = time < 0.875;//day;
-		this.nightbox.visible = time >= 0.875;//!day;
+		this.lights.player.visible = time > 0.5;
+		this.skybox.visible = time < 0.875;
+		this.nightbox.visible = time >= 0.875;
 
 	},
 
@@ -157,7 +158,6 @@ var main = {
 			offset: { type: "f", value: 40 },
 			exponent: { type: "f", value: 0.6 }
 		};
-		//this.scene.fog.color.copy(uniforms.bottomColor.value);
 
 		var skyGeometry = new THREE.SphereGeometry(200, 32, 15),
 			skyMaterial = new THREE.ShaderMaterial({
@@ -221,15 +221,21 @@ var main = {
 		this.textures.night.wrapS = this.textures.night.wrapT = THREE.RepeatWrapping;
 		this.textures.night.repeat.set(3, 3);
 	},
+
+	// TODO: move this to World
 	reMeshChunk: function (chunk) {
-		// This just deletes & recreates the whole chunk. THis way is verrryy... wrong? Slow at least.
 		if (!this.world.chunks[chunk]) {
 			return;
 		}
+		var start = this.clock.getElapsedTime();
+
 		var split = chunk.split(":"); // TODO: ha... c'mon now.
 		this.scene.remove(this.world.chunkGeom[chunk]);
 		this.world.chunkGeom[chunk] = this.world.createChunkGeom(split[0], split[1], this.world.chunks[chunk]);
 		this.scene.add(this.world.chunkGeom[chunk]);
+
+		var end = this.clock.getElapsedTime();
+		msgln("Remesh Chunk[" + chunk + "]:", ((end - start) * 1000 | 0) + "ms");
 	},
 
 	addBlockAtCursor: function () {

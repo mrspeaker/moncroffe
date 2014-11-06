@@ -13,6 +13,14 @@
 			this.chunks = {};
 			this.chunkGeom = {};
 			this.screen = screen;
+
+			this.blockMaterial = new THREE.MeshLambertMaterial({
+				map: screen.textures.blocks,
+				wrapAround: true,
+				vertexColors: THREE.VertexColors,
+				wireframe: false
+			});
+
 			return this;
 		},
 
@@ -83,7 +91,7 @@
 
 					setTimeout(function () {
 						doChunkGeom(chunks.slice(1));
-					}, 50);
+					}, 20);
 				}
 			}
 
@@ -152,6 +160,7 @@
 
 		},
 
+		// Todo: move me to Chunk
 		createChunk: function (xo, zo) {
 
 			var chW = this.chunkWidth,
@@ -196,90 +205,92 @@
 			return chunk;
 		},
 
+		// TODO: refactor this with a "createQuad" function,
+		// so it can be fed to a greedy mesher.
 		createChunkGeom: function (x, z, chunk) {
-			var geoms = {},
-				blockSize = this.blockSize,
-				useAO = this.screen.useAO;
+			var blockSize = this.blockSize,
+				useAO = this.screen.useAO,
+				w = this.chunkWidth,
+				h = this.chunkHeight,
+				xo = x * w,
+				zo = z * w,
+				stats = {
+					verts: 0,
+					faces: 0,
+					cubes: 0
+				};
+
+			// f, l, bk, r, b, t
+			var blocks = {
+				grass: [[3, 15], [3, 15], [3, 15], [3, 15], [2, 15], [0, 15]],
+				stone: [[1, 15], [1, 15], [1, 15], [1, 15], [1, 15], [1, 15]],
+				dirt: [[2, 15], [2, 15], [2, 15], [2, 15], [2, 15], [2, 15]],
+				tree: [[4, 14], [4, 14], [4, 14], [4, 14], [5, 14], [5, 14]],
+				wood: [[4, 15], [4, 15], [4, 15], [4, 15], [4, 15], [4, 15]],
+				sand: [[2, 14], [2, 14], [2, 14], [2, 14], [2, 14], [2, 14]],
+				cobble: [[0, 14], [0, 14], [0, 14], [0, 14], [0, 14], [0, 14]],
+				gold: [[0, 13], [0, 13], [0, 13], [0, 13], [0, 13], [0, 13]],
+				snow: [[4, 11], [4, 11], [4, 11], [4, 11], [2, 15], [2, 11]],
+				ice: [[3, 11], [3, 11], [3, 11], [3, 11], [3, 11], [3, 11]]
+			};
+
+			function getBlock(x, y) {
+				return [
+					new THREE.Vector2(x / 16, y / 16),
+					new THREE.Vector2((x + 1) / 16, y / 16),
+					new THREE.Vector2(x / 16, (y + 1) / 16),
+					new THREE.Vector2((x + 1) / 16, (y + 1) / 16)
+				];
+			}
 
 			function getGeometry(block) {
 
-				function getBlock(x, y) {
-					return [
-						new THREE.Vector2(x / 16, y / 16),
-						new THREE.Vector2((x + 1) / 16, y / 16),
-						new THREE.Vector2(x / 16, (y + 1) / 16),
-						new THREE.Vector2((x + 1) / 16, (y + 1) / 16)
-					];
-				}
-
-				var geometry = null,// geoms[block.type];
-					surround = block.surround;
-
-				if (!geometry) {
-
+				var surround = block.surround,
 					geometry = new THREE.CubeGeometry(blockSize, surround);
 
+				stats.cubes++;
+				stats.verts += geometry.vertices.length;
+				stats.faces += geometry.faces.length;
 
-					// f, l, bk, r, b, t
-					var blocks = {
-							grass: [[3, 15], [3, 15], [3, 15], [3, 15], [2, 15], [0, 15]],
-							stone: [[1, 15], [1, 15], [1, 15], [1, 15], [1, 15], [1, 15]],
-							dirt: [[2, 15], [2, 15], [2, 15], [2, 15], [2, 15], [2, 15]],
-							tree: [[4, 14], [4, 14], [4, 14], [4, 14], [5, 14], [5, 14]],
-							wood: [[4, 15], [4, 15], [4, 15], [4, 15], [4, 15], [4, 15]],
-							sand: [[2, 14], [2, 14], [2, 14], [2, 14], [2, 14], [2, 14]],
-							cobble: [[0, 14], [0, 14], [0, 14], [0, 14], [0, 14], [0, 14]],
-							gold: [[0, 13], [0, 13], [0, 13], [0, 13], [0, 13], [0, 13]],
-							snow: [[4, 11], [4, 11], [4, 11], [4, 11], [2, 15], [2, 11]],
-							ice: [[3, 11], [3, 11], [3, 11], [3, 11], [3, 11], [3, 11]]
-						},
-						tile = blocks[block.type];
 
-					var front = getBlock(tile[0][0], tile[0][1]),
-						left = getBlock(tile[1][0], tile[1][1]),
-						back = getBlock(tile[2][0], tile[2][1]),
-						right = getBlock(tile[3][0], tile[3][1]),
-						bottom = getBlock(tile[4][0], tile[4][1]),
-						top = getBlock(tile[5][0], tile[5][1]),
-						faceUVs = geometry.faceVertexUvs;
+				var tile = blocks[block.type];
 
-					faceUVs[0] = [];
-					if (!surround.front) {
-						faceUVs[0].push([front[0], front[1], front[3]]);
-						faceUVs[0].push([front[0], front[3], front[2]]);
-					}
-					if (!surround.left) {
-						faceUVs[0].push([left[0], left[1], left[3]]);
-						faceUVs[0].push([left[0], left[3], left[2]]);
-					}
-					if (!surround.back) {
-						faceUVs[0].push([back[0], back[1], back[3]]);
-						faceUVs[0].push([back[0], back[3], back[2]]);
-					}
-					if (!surround.right) {
-						faceUVs[0].push([right[0], right[1], right[3]]);
-						faceUVs[0].push([right[0], right[3], right[2]]);
-					}
-					if (!surround.bottom) {
-						faceUVs[0].push([bottom[0], bottom[1], bottom[3]]);
-						faceUVs[0].push([bottom[0], bottom[3], bottom[2]]);
-					}
-					if (!surround.top) {
-						faceUVs[0].push([top[0], top[1], top[3]]);
-						faceUVs[0].push([top[0], top[3], top[2]]);
-					}
+				var front = getBlock(tile[0][0], tile[0][1]),
+					left = getBlock(tile[1][0], tile[1][1]),
+					back = getBlock(tile[2][0], tile[2][1]),
+					right = getBlock(tile[3][0], tile[3][1]),
+					bottom = getBlock(tile[4][0], tile[4][1]),
+					top = getBlock(tile[5][0], tile[5][1]),
+					faceUVs = geometry.faceVertexUvs;
 
-					geoms[block.type] = geometry;
-
+				// Set UV texture coords for the cube
+				faceUVs[0] = [];
+				if (!surround.front) {
+					faceUVs[0].push([front[0], front[1], front[3]]);
+					faceUVs[0].push([front[0], front[3], front[2]]);
+				}
+				if (!surround.left) {
+					faceUVs[0].push([left[0], left[1], left[3]]);
+					faceUVs[0].push([left[0], left[3], left[2]]);
+				}
+				if (!surround.back) {
+					faceUVs[0].push([back[0], back[1], back[3]]);
+					faceUVs[0].push([back[0], back[3], back[2]]);
+				}
+				if (!surround.right) {
+					faceUVs[0].push([right[0], right[1], right[3]]);
+					faceUVs[0].push([right[0], right[3], right[2]]);
+				}
+				if (!surround.bottom) {
+					faceUVs[0].push([bottom[0], bottom[1], bottom[3]]);
+					faceUVs[0].push([bottom[0], bottom[3], bottom[2]]);
+				}
+				if (!surround.top) {
+					faceUVs[0].push([top[0], top[1], top[3]]);
+					faceUVs[0].push([top[0], top[3], top[2]]);
 				}
 
-				var faceIndices = [ 'a', 'b', 'c', 'd' ];
-
-				// Clear old colors (if cached box)
-				for (var i = 0; i < geometry.faces.length; i++) {
-					geometry.faces[i].vertexColors = [];
-				}
-
+				// Do Ambient occlusion calcs
 				if (useAO) {
 
 					var cv = block.vertLight,
@@ -292,8 +303,7 @@
 							new THREE.Color(cv[5], cv[5], cv[5]),
 							new THREE.Color(cv[6], cv[6], cv[6]),
 							new THREE.Color(cv[7], cv[7], cv[7])
-						];
-					var col = new THREE.Color(0xFF0000),
+						],
 						faceIdx = 0;
 
 					// front
@@ -340,10 +350,6 @@
 
 			// Create the chunk
 			var totalGeom = new THREE.Geometry(),
-				w = this.chunkWidth,
-				h = this.chunkHeight,
-				xo = x * w,
-				zo = z * w,
 				isBlockAt = this.isBlockAt.bind(this),
 				vertexAO = function (pos, n) {
 					var corner = isBlockAt(pos[0] + n[0][0], pos[1] + n[0][1], pos[2] + n[0][2]),
@@ -360,6 +366,7 @@
 
 				}
 
+			// For AO calcs
 			var neigbours = {
 				"0, 0, 1": [[-1, -1, 1], [-1, -1, 0], [0, -1, 1]],
 				"1, 0, 1": [[1, -1, 1], [1, -1, 0], [0, -1, 1]],
@@ -372,16 +379,20 @@
 				"1, 1, 0": [[1, 1, -1], [0, 1, -1], [1, 1, 0]]
 			}
 
-			for (var i = 0; i < w; i++) {
-				for (var j = 0; j  < h; j++) {
-					for (var k = 0; k < w; k++) {
-						var block = chunk[i][j][k];
+			var mesh = new THREE.Mesh(),
+				i, j, k, block, pos;
+			for (i = 0; i < w; i++) {
+				for (j = 0; j  < h; j++) {
+					for (k = 0; k < w; k++) {
+						block = chunk[i][j][k];
 						if (block.type !== "air") {
 
-							var pos = [xo + k, j, zo + i];
+							pos = [xo + k, j, zo + i];
 
-							block.surround = this.getSurrounding(xo + k, j, zo + i);
+							// For culling
+							block.surround = this.getSurrounding(pos[0], j, pos[2]);
 
+							// For AO calcs
 							block.vertLight = [
 								vertexAO(pos, neigbours["0, 0, 1"]),
 								vertexAO(pos, neigbours["1, 0, 1"]),
@@ -394,27 +405,22 @@
 								vertexAO(pos, neigbours["1, 1, 0"])
 							];
 
-							var geometry = getGeometry(block),
-								mesh = new THREE.Mesh(geometry, blockMaterial);
-
+							// Make a cube
+							mesh.geometry = getGeometry(block);
 							// Move up so bottom of cube is at 0, not -0.5
-							mesh.position.set(k + (x * this.chunkWidth), j + blockSize / 2, i + (z * this.chunkWidth));
+							mesh.position.set(pos[0], j + blockSize / 2, pos[2]);
 							mesh.updateMatrix();
 
+							// Merge it
 							totalGeom.merge(mesh.geometry, mesh.matrix);
 						}
 					}
 				}
 			}
 
-			var blockMaterial = new THREE.MeshLambertMaterial({
-				map: this.screen.textures.blocks,
-				wrapAround: true,
-				vertexColors: THREE.VertexColors,
-				wireframe: false
-			});
+			msg("Cubes:" + stats.cubes, " F:" + stats.faces, " V:" + stats.verts);
 
-			return new THREE.Mesh(totalGeom, blockMaterial);
+			return new THREE.Mesh(totalGeom, this.blockMaterial);
 		}
 
 	};
