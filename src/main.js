@@ -50,7 +50,7 @@ var main = {
 
 		this.scene = new THREE.Scene();
 		this.renderer = new THREE.WebGLRenderer();
-		this.camera = new THREE.PerspectiveCamera(65, 1, 0.01, 500);
+		this.camera = new THREE.PerspectiveCamera(70, 1, 0.01, 500);
 				// Here is the effect for the Oculus Rift
 		// worldScale 100 means that 100 Units == 1m
 
