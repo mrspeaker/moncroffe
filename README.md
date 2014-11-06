@@ -4,14 +4,14 @@
 
 Now with Oculus Rift support!
 
-Mouse: look
-Keys/WSAD: move
-Left click: add block if close, else shoot
-Right click: remove block
-Scroll wheel: change block
+	*Mouse*: look
+	*Keys/WSAD*: move
+	*Left click*: add block if close, else shoot
+	*Right click*: remove block
+	*Scroll wheel*: change block
 
-'e': toggle Oculus Rift mode
-'q': toggle Ambient Occlusion
+	*'e'*: toggle Oculus Rift mode
+	*'q'*: toggle Ambient Occlusion
 
 ## bugz
 - neighbour chunk needs to be re-meshed when exposed (face missing)
