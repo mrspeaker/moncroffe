@@ -12,7 +12,7 @@ var Cursor = {
 		var cursor = this.mesh = new THREE.Mesh(
 			new THREE.BoxGeometry(1.01, 1.01, 1.01),
 			new THREE.MeshBasicMaterial({
-				color: 0xee0066,
+				color: 0xdddddd,
 				wireframe: false,
 				opacity: 0.15,
 				transparent: true
