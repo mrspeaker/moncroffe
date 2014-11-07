@@ -44,7 +44,7 @@ var main = {
 
 		this.run();
 
-		msg("");
+		utils.msg("");
 	},
 
 	initThree: function () {
@@ -105,6 +105,8 @@ var main = {
 				this.world.reMeshChunk((pos.x / this.world.chunkWidth | 0) + ":" + (pos.z / this.world.chunkWidth | 0));
 			}
 		}).bind(this), false);
+
+		utils.bindPointerLock(this.setPoinerLock.bind(this));
 	},
 
 	toggleOculus: function () {
@@ -115,7 +117,7 @@ var main = {
 	updateDayNight: function () {
 
 		var day = this.day,// = !this.day,
-			time = (this.frame % 8000) / 8000;
+			time = (this.frame % 8000) / 4000;
 
 		if (time > 1) {
 			time = 1 + (1 - time);
@@ -177,6 +179,10 @@ var main = {
 		this.camera.updateProjectionMatrix();
 		this.renderer.setSize(window.innerWidth / this.quality, window.innerHeight / this.quality);
 		this.effect.setSize(window.innerWidth / this.quality, window.innerHeight / this.quality);
+	},
+
+	setPoinerLock: function (state) {
+		this.player.controls.enabled = state;
 	},
 
 	changeTool: function (dir) {
@@ -317,7 +323,7 @@ var main = {
 		delta = Math.min(60 / 1000, delta); // HACK: Limit for physics
 		var dt = delta * 1000 | 0;
 		if (dt < 15 || dt > 21) {
-			//msg(dt); // Track big/small updates
+			//utils.msg(dt); // Track big/small updates
 		}
 		this.player.tick(delta);
 		this.bullets = this.bullets.filter(function (b) {

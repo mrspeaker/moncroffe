@@ -24,52 +24,12 @@
 			return this;
 		},
 
-		tick: function (dt) {
-
-		},
+		tick: function (dt) { },
 
 		createChunks: function () {
 
-			var w = 0, wdir = 1,
-				h = 0, hdir = 1,
-				x = 0,
-				y = 0,
-				path = [],
-				radius = 2;
-
-			// Spiral pattern
-			while (radius--) {
-				w++;
-				h++;
-
-				// Moving left/up
-				for (;x < w * wdir; x += wdir) {
-					path.push([x, y]);
-				}
-
-				for (;y < h * hdir; y += hdir) {
-					path.push([x, y]);
-				}
-
-				wdir = wdir * -1;
-				hdir = hdir * -1;
-
-				// Moving right/down
-				for (;x > w * wdir; x += wdir) {
-					path.push([x, y]);
-				}
-
-				for (;y > h * hdir; y += hdir) {
-					path.push([x, y]);
-				}
-
-				wdir = wdir * -1;
-				hdir = hdir * -1;
-
-			};
-
-			var chunks = path
-				// Create the chunks
+			var chunks = utils.spiral2D(2)
+				// Create the chunk data
 				.map(function (ch) {
 					var x = ch[0],
 						z = ch[1],
@@ -82,20 +42,17 @@
 
 			// Todo: promise-ify (or at least callback-ify!)
 			var self = this;
+			(function createChunksGeom(chunks) {
+				if (!chunks.length) return;
 
-			function doChunkGeom(chunks) {
-				if (chunks.length) {
-					var ch = chunks[0];
-					self.chunkGeom[ch.id] = self.createChunkGeom(ch.x, ch.z, ch.chunk);
-					self.screen.scene.add(self.chunkGeom[ch.id]);
+				var ch = chunks[0];
+				self.chunkGeom[ch.id] = self.createChunkGeom(ch.x, ch.z, ch.chunk);
+				self.screen.scene.add(self.chunkGeom[ch.id]);
 
-					setTimeout(function () {
-						doChunkGeom(chunks.slice(1));
-					}, 20);
-				}
-			}
-
-			doChunkGeom(chunks);
+				setTimeout(function () {
+					createChunksGeom(chunks.slice(1));
+				}, 20);
+			}(chunks));
 
 		},
 
@@ -143,7 +100,7 @@
 				return { type: "air" };
 			}
 
-			return chunk[z][y][x];//.type !== "air";
+			return chunk[z][y][x];
 
 		},
 
@@ -177,10 +134,11 @@
 					chunk[z][y] = [];
 					for (var x = 0; x < chW; x++) {
 						var type = "air";
+
 						// Arena chunk...
 						var val = noise.simplex3((x / 10) + (xo * chW), y / 10 , (z / 10) + (zo * chW));
 						var val2 = noise.simplex3((x / 20) + (xo * chW), y / 20 , (z / 20) + (zo * chW));
-						//val += 1;
+
 						if (y == 0) {
 							type = val2 < -0.1 ? "stone" : (Math.random() < 0.3 ? "dirt":"grass");
 						} else {
@@ -188,6 +146,8 @@
 								type = y < 8 && val2 < -0.1 ? "stone" : "grass";
 							}
 						}
+
+						// Lil bit of gold
 						if (type === "stone") {
 							if (Math.random() < 0.01) {
 								type = "gold";
@@ -389,7 +349,7 @@
 
 							pos = [xo + k, j, zo + i];
 
-							// For culling
+							// For face culling
 							block.surround = this.getSurrounding(pos[0], j, pos[2]);
 
 							// For AO calcs
@@ -418,7 +378,7 @@
 				}
 			}
 
-			msg("Cubes:" + stats.cubes, " F:" + stats.faces, " V:" + stats.verts);
+			utils.msg("Cubes:" + stats.cubes, " F:" + stats.faces, " V:" + stats.verts);
 
 			return new THREE.Mesh(totalGeom, this.blockMaterial);
 		},
@@ -437,7 +397,7 @@
 			scene.add(this.chunkGeom[chunk]);
 
 			var end = this.screen.clock.getElapsedTime();
-			msgln("Remesh Chunk[" + chunk + "]:", ((end - start) * 1000 | 0) + "ms");
+			utils.msgln("Remesh Chunk[" + chunk + "]:", ((end - start) * 1000 | 0) + "ms");
 		},
 
 
