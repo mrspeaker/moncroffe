@@ -9,7 +9,12 @@
 		blockSize: 1,
 		blocks: ["air", "grass", "stone", "dirt", "tree", "wood", "sand", "cobble", "gold", "snow"],
 
+		seed: utils.urlParams.seed || (Math.random() * 99999999 | 0),
+
 		init: function (screen) {
+
+			window.noise.seed(this.seed);
+
 			this.chunks = {};
 			this.chunkGeom = {};
 			this.screen = screen;
@@ -119,6 +124,61 @@
 				"bottom": this.isBlockAt(x, y - 1, z),
 				"top": this.isBlockAt(x, y + 1, z)
 			};
+
+		},
+
+		addBlockAtCursor: function (cursor, blockId) {
+
+			if (!cursor.visible) {
+				return false;
+			}
+			var face = cursor.face,
+				pos = cursor.pos;
+
+			// Allow for pos + face == could change chunks
+			// (eg, if you attach to a face in an ajacent chunk)
+			var chunkX = cursor.chunkX,
+				chunkZ = cursor.chunkZ,
+				chW = this.chunkWidth;
+
+			if (pos.z + face.z >= chW) {
+				chunkZ++;
+				pos.z -= chW;
+			}
+			if (pos.z + face.z < 0) {
+				chunkZ--;
+				pos.z += chW;
+			}
+			if (pos.x + face.x >= chW) {
+				chunkX++;
+				pos.x -= chW;
+			}
+			if (pos.x + face.x < 0) {
+				chunkX--;
+				pos.x += chW;
+			}
+
+			var chunk = this.chunks[chunkX + ":" + chunkZ];
+			if (!chunk) {
+				return false;
+			}
+			chunk[pos.z + face.z][pos.y + face.y][pos.x + face.x].type = this.blocks[blockId];
+
+			this.reMeshChunk(chunkX, chunkZ);
+
+			return true;
+		},
+
+		removeBlockAtCursor: function (cursor) {
+
+			var pos = cursor.pos;
+
+			if (!cursor.visible) {
+				return;
+			}
+
+			this.chunks[cursor.chunkId][pos.z][pos.y][pos.x].type = "air";
+			this.reMeshChunk(cursor.chunkX, cursor.chunkZ);
 
 		},
 

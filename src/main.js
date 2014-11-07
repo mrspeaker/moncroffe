@@ -13,8 +13,8 @@
 		cursor: null,
 
 		frame: 0,
-		oneFrameEvery: 1, // Slow down time
-		quality: 1, // just divides the screen width/height ;)
+		oneFrameEvery: 1, // Slow down time, for testing
+		quality: 1, // Divides the screen width/height and streches the canvas
 
 		doAddBlock: false,
 		doRemoveBlock: false,
@@ -34,11 +34,7 @@
 		lights: {},
 		textures: {},
 
-		seed: utils.urlParams.seed || (Math.random() * 99999999 | 0),
-
 		init: function () {
-
-			window.noise.seed(this.seed);
 
 			this.initScene();
 			this.loadTextures();
@@ -220,64 +216,6 @@
 
 		},
 
-		addBlockAtCursor: function () {
-
-			var cursor = this.cursor;
-
-			if (!cursor.visible) {
-				this.fire();
-				return;
-			}
-			var face = cursor.face,
-				pos = cursor.pos;
-
-			// This is a fix because pos + face could change chunks
-			// (eg, if you attach to a face in an ajacent chunk)
-			var chunkX = cursor.chunkX,
-				chunkZ = cursor.chunkZ,
-				chW = this.world.chunkWidth;
-
-			if (pos.z + face.z >= chW) {
-				chunkZ++;
-				pos.z -= chW;
-			}
-			if (pos.z + face.z < 0) {
-				chunkZ--;
-				pos.z += chW;
-			}
-			if (pos.x + face.x >= chW) {
-				chunkX++;
-				pos.x -= chW;
-			}
-			if (pos.x + face.x < 0) {
-				chunkX--;
-				pos.x += chW;
-			}
-
-			var chunk = this.world.chunks[chunkX + ":" + chunkZ];
-			if (!chunk) {
-				return;
-			}
-			chunk[pos.z + face.z][pos.y + face.y][pos.x + face.x].type = this.world.blocks[this.player.curTool];
-
-			this.world.reMeshChunk(chunkX, chunkZ);
-
-		},
-
-		removeBlockAtCursor: function () {
-
-			var cursor = this.cursor,
-				pos = cursor.pos;
-
-			if (!cursor.visible) {
-				return;
-			}
-
-			this.world.chunks[cursor.chunkId][pos.z][pos.y][pos.x].type = "air";
-			this.world.reMeshChunk(cursor.chunkX, cursor.chunkZ);
-
-		},
-
 		toggleOculus: function () {
 
 			this.isOculus = !this.isOculus;
@@ -303,12 +241,15 @@
 		tick: function () {
 
 			if (this.doAddBlock) {
-				this.addBlockAtCursor();
+				var added = this.world.addBlockAtCursor(this.cursor, this.player.curTool);
+				if (!added) {
+					this.fire();
+				}
 				this.doAddBlock = false;
 			}
 
 			if (this.doRemoveBlock) {
-				this.removeBlockAtCursor();
+				this.world.removeBlockAtCursor(this.cursor);
 				this.doRemoveBlock = false;
 			}
 
@@ -337,7 +278,6 @@
 
 			//time = Math.sin(Math.PI/2 * Math.cos(time * 2 * Math.PI)) * 0.5 + 0.5;
 
-			//this.renderer.setClearColor(day ? 0x88C4EC : 0x000000, 1);
 			this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
 
 			this.scene.remove(this.lights.ambientLight);
@@ -440,32 +380,28 @@
 			  return (value % modulus + modulus) % modulus;
 			}
 
-		  // From "A Fast Voxel Traversal Algorithm for Ray Tracing"
-		  // by John Amanatides and Andrew Woo, 1987
-		  // <http://www.cse.yorku.ca/~amana/research/grid.pdf>
-		  // <http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.42.3443>
-		  // Extensions to the described algorithm:
-		  //   • Imposed a distance limit.
-		  //   • The face passed through to reach the current cube is provided to
-		  //     the callback.
+			// From "A Fast Voxel Traversal Algorithm for Ray Tracing"
+			// by John Amanatides and Andrew Woo, 1987
+			// <http://www.cse.yorku.ca/~amana/research/grid.pdf>
+			// <http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.42.3443>
+			// The foundation of this algorithm is a parameterized representation of
+			// the provided ray,
+			//                    origin + t * direction,
+			// except that t is not actually stored; rather, at any given point in the
+			// traversal, we keep track of the *greater* t values which we would have
+			// if we took a step sufficient to cross a cube boundary along that axis
+			// (i.e. change the integer part of the coordinate) in the variables
+			// tMaxX, tMaxY, and tMaxZ.
 
-		  // The foundation of this algorithm is a parameterized representation of
-		  // the provided ray,
-		  //                    origin + t * direction,
-		  // except that t is not actually stored; rather, at any given point in the
-		  // traversal, we keep track of the *greater* t values which we would have
-		  // if we took a step sufficient to cross a cube boundary along that axis
-		  // (i.e. change the integer part of the coordinate) in the variables
-		  // tMaxX, tMaxY, and tMaxZ.
+		  	// Cube containing origin point.
+		  	var x = Math.floor(origin.x),
+		  		y = Math.floor(origin.y),
+		  		z = Math.floor(origin.z);
 
-		  // Cube containing origin point.
-		  var x = Math.floor(origin.x);
-		  var y = Math.floor(origin.y);
-		  var z = Math.floor(origin.z);
-		  // Break out direction vector.
-		  var dx = direction.x;
-		  var dy = direction.y;
-		  var dz = direction.z;
+		  	// Break out direction vector.
+		  	var dx = direction.x,
+		  		dy = direction.y,
+		  		dz = direction.z;
 
 		  // Direction to increment x,y,z when stepping.
 		  var stepX = signum(dx);
@@ -492,20 +428,13 @@
 		  radius /= Math.sqrt(dx*dx+dy*dy+dz*dz);
 
 		  var calledBack = false;
-		  //while (/* ray has not gone past bounds of world */
-		  //       (stepX > 0 ? x < wx : x >= 0) &&
-		  //       (stepY > 0 ? y < wy : y >= 0) &&
-		  //       (stepZ > 0 ? z < wz : z >= 0)) {
 			while(true) {
 
-			// Invoke the callback, unless we are not *yet* within the bounds of the
-			// world.
-			//if (!(x < 0 || y < 0 || z < 0 || x >= wx || y >= wy || z >= wz))
+			// Invoke the callback
 			  if (callback(x, y, z, face)) {
 				calledBack = true;
 				break;
 			  }
-
 
 			// tMaxX stores the t-value at which we cross a cube boundary along the
 			// X axis, and similarly for Y and Z. Therefore, choosing the least tMax

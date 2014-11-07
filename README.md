@@ -18,7 +18,7 @@ Query params:
 	seed=1234 : use 1234 as generation seed
 	third=true : use third person camera (static at the moment)
 
-	> console.log(main.seed) : see current seed
+	> console.log(main.world.seed) : see current seed
 
 ## Bugz
 
@@ -37,11 +37,7 @@ Query params:
 - Block-based lighting
 - Shift-walk for overhang picking
 - Camera pitch/yaw not same as minecraft when looking up/down
-
-## Todolol
-
-- Move assorted stuff out of main
-- Add seeded random
+- Seeded random for block types
 
 ## Cube geometry notes
 
