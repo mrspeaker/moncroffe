@@ -13,6 +13,13 @@ Now with Oculus Rift support!
 	'e': toggle Oculus Rift mode
 	'q': toggle Ambient Occlusion
 
+Query params:
+
+	seed=1234 : use 1234 as generation seed
+	third=true : use third person camera (static at the moment)
+
+	> console.log(main.seed) : see current seed
+
 ## bugz
 
 - neighbour chunk needs to be re-meshed when exposed (face missing)
