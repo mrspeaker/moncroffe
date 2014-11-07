@@ -10,7 +10,7 @@ Now with Oculus Rift support!
 	Right click: remove block
 	Wheel: change block
 
-	'e': toggle Oculus Rift mode
+	'e': toggle Oculus Rift mode (no head tracking yet)
 	'q': toggle Ambient Occlusion
 
 Query params:
@@ -20,30 +20,28 @@ Query params:
 
 	> console.log(main.seed) : see current seed
 
-## bugz
+## Bugz
 
-- neighbour chunk needs to be re-meshed when exposed (face missing)
-- can add block in position currently standing
-- hit head slide down (and can get stuck in block)
-- camera looks through block when looking straight down
-- block & face selection wrong when close to blocks
+- Neighbour chunks needs to be re-meshed when exposed (face missing)
+- Can add block in position currently standing
+- Hit head slide down (and can get stuck in block)
+- Camera goes through block when close, looking on angle
+- Block & face selection wrong when close to blocks
 
-## perf
+## Performance
 
-- no meshing - naive face-culling only.
+- Add greedy meshing. Currently had basic face-culling only.
 
-## needs
+## Needs
 
-- block-based lighting
-- shift-walk for overhang picking
+- Block-based lighting
+- Shift-walk for overhang picking
+- Camera pitch/yaw not same as minecraft when looking up/down
 
-## todolol
+## Todolol
 
-- separate data and logic
-- move world details out of main
-- move the cursor stuff out of main
-- clean up pointer lock and player controls
-- camera pitch/yaw not same as minecraft when looking up/down
+- Move assorted stuff out of main
+- Add seeded random
 
 ## Cube geometry notes
 

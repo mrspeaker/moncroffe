@@ -389,26 +389,26 @@
 			return new THREE.Mesh(totalGeom, this.blockMaterial);
 		},
 
-		reMeshChunk: function (chunk) {
+		reMeshChunk: function (x, z) {
 
-			if (!this.chunks[chunk]) {
+			var chId = x + ":" + z;
+
+			if (!this.chunks[chId]) {
 				return;
 			}
 
 			var screen = this.screen,
 				scene = screen.scene,
-				chId,
 				start = screen.clock.getElapsedTime(),
 				end;
 
-			var chId = chunk.split(":"); // TODO: ha... c'mon now.
-			scene.remove(this.chunkGeom[chunk]);
-			this.chunkGeom[chunk] = this.createChunkGeom(chId[0], chId[1], this.chunks[chunk]);
-			scene.add(this.chunkGeom[chunk]);
+			scene.remove(this.chunkGeom[chId]);
+			this.chunkGeom[chId] = this.createChunkGeom(x, z, this.chunks[chId]);
+			scene.add(this.chunkGeom[chId]);
 
 			var end = this.screen.clock.getElapsedTime();
 
-			utils.msgln("Remesh Chunk[" + chunk + "]:", ((end - start) * 1000 | 0) + "ms");
+			utils.msgln("Remesh Chunk[" + chId + "]:", ((end - start) * 1000 | 0) + "ms");
 
 		},
 

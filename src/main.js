@@ -25,9 +25,11 @@
 		oculusRenderer: null,
 		clock: null,
 
-		skybox: null,
-		nightbox: null,
-		hemisphereUniforms: null,
+		stratosphere: {
+			skybox: null,
+			nightbox: null,
+			uniforms: null,
+		},
 
 		lights: {},
 		textures: {},
@@ -44,10 +46,10 @@
 			this.bullets = [];
 			this.world = Object.create(World).init(this);
 			this.player = Object.create(Player).init(this);
+			this.cursor = Object.create(Cursor).init(this);
 
-			this.addCursorObject();
 			this.addLights();
-			this.addSkyBox();
+			this.addStratosphere();
 
 			this.bindHandlers();
 
@@ -75,8 +77,11 @@
 
 		bindHandlers: function () {
 
+			var player = this.player;
+
 			document.addEventListener("mousedown", (function(e){
-				if (!this.player.controls.enabled) {
+
+				if (!player.controls.enabled) {
 					return;
 				}
 
@@ -85,24 +90,26 @@
 				} else {
 					this.doAddBlock = true;
 				}
+
 			}).bind(this), false);
 
 			// Stop right-click menu
 			document.addEventListener("contextmenu", function(e) {
+
 				e.preventDefault();
 				return false;
+
 			}, false);
 
-			var onMouseWheel = (function (e) {
+			var onMouseWheel = function (e) {
 
 				var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-				this.player.changeTool(-delta);
+				player.changeTool(-delta);
 
-			}).bind(this);
+			};
 
 			document.addEventListener("mousewheel", onMouseWheel, false);
 			document.addEventListener("DOMMouseScroll", onMouseWheel, false);
-
 			document.addEventListener("keydown", (function(e){
 
 				// Toggle Oculus
@@ -112,44 +119,47 @@
 
 				// Toggle AO
 				if (e.keyCode === 81 /*q*/) {
-					var pos = this.player.playerObj.position;
+					var pos = player.playerObj.position;
 					this.useAO = !this.useAO;
-					this.world.reMeshChunk((pos.x / this.world.chunkWidth | 0) + ":" + (pos.z / this.world.chunkWidth | 0));
+					this.world.reMeshChunk(pos.x / this.world.chunkWidth | 0, pos.z / this.world.chunkWidth | 0);
 				}
 
 			}).bind(this), false);
 
-			utils.bindPointerLock(this.setPoinerLock.bind(this));
+			utils.bindPointerLock(function (state) {
+
+				player.controls.enabled = state;
+
+			});
+
 			window.addEventListener("resize", this.setCameraDimensions.bind(this), false );
-		},
-
-		setPoinerLock: function (state) {
-
-			this.player.controls.enabled = state;
-
 		},
 
 		setCameraDimensions: function () {
 
-			this.camera.aspect = window.innerWidth / window.innerHeight;
+			var w = window.innerWidth,
+				h = window.innerHeight,
+				quality = this.quality;
+
+			this.camera.aspect = w / h;
 			this.camera.updateProjectionMatrix();
-			this.renderer.setSize(window.innerWidth / this.quality, window.innerHeight / this.quality);
-			this.oculusRenderer.setSize(window.innerWidth / this.quality, window.innerHeight / this.quality);
+			this.renderer.setSize(w / quality, h / quality);
+			this.oculusRenderer.setSize(w / quality, h / quality);
 
 		},
 
 		loadTextures: function () {
 
-			this.textures = {
+			var t = this.textures = {
 				blocks: THREE.ImageUtils.loadTexture("res/images/terrain.png"),
 				night: THREE.ImageUtils.loadTexture("res/images/night.jpg")
 			};
 
-			this.textures.blocks.magFilter = THREE.NearestFilter;
-			this.textures.blocks.minFilter = THREE.NearestFilter;
+			t.blocks.magFilter = THREE.NearestFilter;
+			t.blocks.minFilter = THREE.NearestFilter;
 
-			this.textures.night.wrapS = this.textures.night.wrapT = THREE.RepeatWrapping;
-			this.textures.night.repeat.set(3, 3);
+			t.night.wrapS = t.night.wrapT = THREE.RepeatWrapping;
+			t.night.repeat.set(3, 3);
 
 		},
 
@@ -173,22 +183,22 @@
 
 		},
 
-		addSkyBox: function () {
+		addStratosphere: function () {
 
 			// Stary night
-			var nightGeometry = new THREE.SphereGeometry(500, 32, 15),
+			var nightGeometry = new THREE.SphereGeometry(200, 32, 15),
 				nightMaterial = new THREE.MeshLambertMaterial({
 					map: this.textures.night,
 					fog: false,
 					ambient: new THREE.Color(0xaaaaaa),
 					side: THREE.BackSide
 				});
-			var night = this.nightbox = new THREE.Mesh(nightGeometry, nightMaterial);
-			this.scene.add(night);
+
+			var night = this.stratosphere.nightbox = new THREE.Mesh(nightGeometry, nightMaterial);
 			night.visible = false;
 
-			// Horizon shader
-			var uniforms = {
+			// Horizon day shader
+			var uniforms = this.stratosphere.uniforms = {
 				topColor: { type: "c", value: new THREE.Color(0x88C4EC) },
 				bottomColor: { type: "c", value: new THREE.Color(0xE8D998) },
 				offset: { type: "f", value: 40 },
@@ -202,41 +212,29 @@
 					fragmentShader: document.getElementById("fHemisphere").textContent,
 					side: THREE.BackSide
 				});
-			this.hemisphereUniforms = skyMaterial.uniforms;
 
-			var sky = this.skybox = new THREE.Mesh(skyGeometry, skyMaterial);
+			var sky = this.stratosphere.skybox = new THREE.Mesh(skyGeometry, skyMaterial);
+
 			this.scene.add(sky);
-
-		},
-
-		addCursorObject: function () {
-
-			var cursor = this.cursor = new THREE.Mesh(
-				new THREE.BoxGeometry(1.01, 1.01, 1.01),
-				new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: false}));
-			cursor.position.set(1, 2, 8);
-			cursor.material.opacity = 0.2;
-			cursor.material.transparent = true;
-
-			cursor.__face = null;
-
-			this.scene.add(cursor);
+			this.scene.add(night);
 
 		},
 
 		addBlockAtCursor: function () {
 
-			if (!this.cursor.visible) {
+			var cursor = this.cursor;
+
+			if (!cursor.visible) {
 				this.fire();
 				return;
 			}
-			var face = this.cursor.__face,
-				pos = this.cursor.__pos;
+			var face = cursor.face,
+				pos = cursor.pos;
 
-			// THis is a fix because pos + face could change chunks
+			// This is a fix because pos + face could change chunks
 			// (eg, if you attach to a face in an ajacent chunk)
-			var chunkX = this.cursor.__chunkX,
-				chunkZ = this.cursor.__chunkZ,
+			var chunkX = cursor.chunkX,
+				chunkZ = cursor.chunkZ,
 				chW = this.world.chunkWidth;
 
 			if (pos.z + face.z >= chW) {
@@ -256,25 +254,27 @@
 				pos.x += chW;
 			}
 
-			var chunkId = chunkX + ":" + chunkZ,
-				chunk = this.world.chunks[chunkId];
+			var chunk = this.world.chunks[chunkX + ":" + chunkZ];
 			if (!chunk) {
 				return;
 			}
 			chunk[pos.z + face.z][pos.y + face.y][pos.x + face.x].type = this.world.blocks[this.player.curTool];
 
-			this.world.reMeshChunk(chunkId);
+			this.world.reMeshChunk(chunkX, chunkZ);
 
 		},
 
 		removeBlockAtCursor: function () {
 
-			if (!this.cursor.visible) {
+			var cursor = this.cursor,
+				pos = cursor.pos;
+
+			if (!cursor.visible) {
 				return;
 			}
-			var pos = this.cursor.__pos;
-			this.world.chunks[this.cursor.__chunk][pos.z][pos.y][pos.x].type = "air";
-			this.world.reMeshChunk(this.cursor.__chunk);
+
+			this.world.chunks[cursor.chunkId][pos.z][pos.y][pos.x].type = "air";
+			this.world.reMeshChunk(cursor.chunkX, cursor.chunkZ);
 
 		},
 
@@ -344,11 +344,12 @@
 			this.lights.ambientLight = new THREE.AmbientLight((new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time));
 			this.scene.add(this.lights.ambientLight);
 
-			this.hemisphereUniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
-			this.hemisphereUniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);
 			this.lights.player.visible = time > 0.5;
-			this.skybox.visible = time < 0.875;
-			this.nightbox.visible = time >= 0.875;
+
+			this.stratosphere.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
+			this.stratosphere.uniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);
+			this.stratosphere.skybox.visible = time < 0.875;
+			this.stratosphere.nightbox.visible = time >= 0.875;
 
 		},
 
@@ -366,11 +367,11 @@
 			this.raycast(origin, ob.getDirection(), 5, function (x, y, z, face) {
 
 				if (x === "miss") {
-					cursor.visible = false;
+					cursor.hide();
 					return false;
 				}
 
-				cursor.visible = true;
+				cursor.show();
 
 				if (y < 0) y = 0; // looking below ground breaks
 				if (y > chH - 1) y = chH - 1;
@@ -383,18 +384,13 @@
 					return false;
 				}
 
-				cursor.position.set(x, y + 0.5, z);
+				// Set mesh to original position
+				cursor.mesh.position.set(x, y + 0.5, z);
 
 				x -= chunkX * chW;
 				z -= chunkZ * chW;
 
-				// TODO: clean this up! no __'s.
-				cursor.__face = face;
-				cursor.__chunk = chunkX + ":" + chunkZ;
-				cursor.__chunkX = chunkX;
-				cursor.__chunkZ = chunkZ;
-
-				cursor.__pos = {x: x, y: y, z: z};
+				cursor.set({x: x, y: y, z: z}, {x: chunkX, z: chunkZ}, face);
 
 				return chunk[z][y][x].type !== "air";
 			});
