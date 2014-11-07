@@ -17,16 +17,8 @@ var Player = {
 		var playerObj = this.playerObj = new THREE.Object3D();
 
 		playerObj.position.set(screen.world.chunkWidth * 0.1, 17 +  (this.bb.h / 2), screen.world.chunkWidth * 0.75);
-		playerObj.add(
-			new THREE.Mesh(
-				new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d),
-				new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: true})));
 
-		if (this.thrd) {
-			this.screen.scene.add(playerObj);
-		}
-
-		this.addPlayerBase();
+		this.addPlayerMesh();
 
 		var controls = this.controls = this.createControls();
 		this.screen.scene.add(controls.getObject());
@@ -34,7 +26,8 @@ var Player = {
 		return this;
 	},
 
-	addPlayerBase: function () {
+	addPlayerMesh: function () {
+
 		this.edge = edge = new THREE.Mesh(
 			new THREE.BoxGeometry(0.1, 0.3, 0.1),
 			new THREE.MeshLambertMaterial({ color: 0x0099ff }));
@@ -53,6 +46,17 @@ var Player = {
 			new THREE.MeshLambertMaterial({ color: 0x00ffff })));
 		this.marker.add(edge);
 		this.screen.scene.add(this.marker);
+
+		// Mesh bounding box for the player in third person mode
+		if (this.thrd) {
+			this.playerObj.add(
+				new THREE.Mesh(
+					new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d),
+					new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: true})));
+
+			this.screen.scene.add(this.playerObj);
+		}
+
 	},
 
 	tick: function (delta) {
@@ -78,10 +82,7 @@ var Player = {
 
 		xo += move.x * power;
 		zo += move.z * power;
-
-		//xo -= xo * drag;
-		//zo -= zo * drag;
-		yo -= 9.8 * drag;
+		yo -= 9.8 * drag; // Gravity
 
 		// TODO: translate without doing the actual translate, please.
 		obj.translateX(xo * delta);
@@ -117,20 +118,18 @@ var Player = {
 			yo += jump;
 		}
 
-		this.screen.cast();
+		this.screen.cast(); // see what we're looking at
 
+		// Carry over gravity velocity to next frame
+		// x/z stops dead - no drag.
 		this.velocity.set(0, yo, 0);
 
 		// bobbing
 		var size = 0.12,
 			speed = 200,
-			bobbing = col.ground && (obj.position.x !== oldPos.x || obj.position.z !== oldPos.z),
+			bobbing = !this.screen.isOculus && col.ground && (obj.position.x !== oldPos.x || obj.position.z !== oldPos.z),
 			bobX = bobbing ? Math.sin(Date.now() / speed) * size : 0;
 			bobY = bobbing ? - Math.abs(Math.cos(Date.now() / speed)) * size + (size/2) : 0;
-
-		// Turn off bobbing for oculus
-		bobX = this.screen.isOculus ? 0 : bobX;
-		bobY = this.screen.isOculus ? 0 : bobY;
 
 		this.controls.setPos(obj.position.x + bobX, obj.position.y + bobY, obj.position.z);
 		this.marker.position.set(obj.position.x, obj.position.y - (this.bb.h / 2) + 0.05, obj.position.z);
