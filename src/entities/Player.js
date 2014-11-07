@@ -2,6 +2,9 @@ var Player = {
 
 	thrd: utils.urlParams.third || false,
 
+	curTool: 1,
+	lastToolChange: Date.now(),
+
 	init: function (screen) {
 
 		this.screen = screen;
@@ -148,6 +151,27 @@ var Player = {
 		}
 
 		return controls;
+	},
+
+	changeTool: function (dir) {
+
+		if (Date.now() - this.lastToolChange < 200) {
+			return;
+		}
+
+		var blocks = this.screen.world.blocks;
+
+		this.lastToolChange = Date.now();
+
+		this.curTool += dir;
+		if (dir > 0 && this.curTool > blocks.length - 1) {
+			this.curTool = 1;
+		}
+		if (dir < 0 && this.curTool === 0) {
+			this.curTool = blocks.length - 1;
+		}
+
+		document.querySelector("#gui").innerHTML = blocks[this.curTool];
 	}
 
 };

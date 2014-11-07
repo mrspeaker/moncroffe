@@ -29,6 +29,7 @@
 		createChunks: function () {
 
 			var chunks = utils.spiral2D(2)
+
 				// Create the chunk data
 				.map(function (ch) {
 					var x = ch[0],
@@ -37,7 +38,7 @@
 						chunk;
 
 					chunk = this.chunks[id] = this.createChunk(x, z);
-					return {id: id, x: x, z: z, chunk: chunk};
+					return { id: id, x: x, z: z, chunk: chunk };
 				}, this);
 
 			// Todo: promise-ify (or at least callback-ify!)
@@ -57,6 +58,7 @@
 		},
 
 		setBlockAt: function (x, y, z, type) {
+
 			var chunkX = Math.floor(x / this.chunkWidth),
 				chunkZ = Math.floor(z / this.chunkWidth),
 				chunk;
@@ -75,10 +77,13 @@
 			}
 
 			return chunkX + ":" + chunkZ;
+
 		},
 
 		isBlockAt: function (x, y, z) {
+
 			return this.getBlockAt(x, y, z).type !== "air";
+
 		},
 
 		getBlockAt: function (x, y, z) {
@@ -367,6 +372,7 @@
 
 							// Make a cube
 							mesh.geometry = getGeometry(block);
+
 							// Move up so bottom of cube is at 0, not -0.5
 							mesh.position.set(pos[0], j + blockSize / 2, pos[2]);
 							mesh.updateMatrix();
@@ -384,20 +390,26 @@
 		},
 
 		reMeshChunk: function (chunk) {
+
 			if (!this.chunks[chunk]) {
 				return;
 			}
+
 			var screen = this.screen,
 				scene = screen.scene,
-				start = screen.clock.getElapsedTime();
+				chId,
+				start = screen.clock.getElapsedTime(),
+				end;
 
-			var split = chunk.split(":"); // TODO: ha... c'mon now.
+			var chId = chunk.split(":"); // TODO: ha... c'mon now.
 			scene.remove(this.chunkGeom[chunk]);
-			this.chunkGeom[chunk] = this.createChunkGeom(split[0], split[1], this.chunks[chunk]);
+			this.chunkGeom[chunk] = this.createChunkGeom(chId[0], chId[1], this.chunks[chunk]);
 			scene.add(this.chunkGeom[chunk]);
 
 			var end = this.screen.clock.getElapsedTime();
+
 			utils.msgln("Remesh Chunk[" + chunk + "]:", ((end - start) * 1000 | 0) + "ms");
+
 		},
 
 

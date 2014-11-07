@@ -1,24 +1,18 @@
 var main = {
 
-	day: true,
-
-	curTool: 1,
-	lastToolChange: Date.now(),
+	player: null,
+	world: null,
+	bullets: null,
 
 	frame: 0,
-	oneFrameEvery: 1,
+	oneFrameEvery: 1, // Slow down time
+	quality: 1, // (just divides the screen width/height ;)
 
 	doAddBlock: false,
 	doRemoveBlock: false,
 
 	lights: null,
-	world: null,
-
 	useAO: true,
-
-	bullets: null,
-
-	quality: 1, // (just divides the screen width/height ;)
 
 	isOculus: false,
 
@@ -52,10 +46,9 @@ var main = {
 		this.scene = new THREE.Scene();
 		this.renderer = new THREE.WebGLRenderer();
 		this.camera = new THREE.PerspectiveCamera(70, 1, 0.01, 500);
-				// Here is the effect for the Oculus Rift
-		// worldScale 100 means that 100 Units == 1m
 
-		this.effect = new THREE.OculusRiftEffect(this.renderer, {worldScale: 100});
+		// worldScale 100 means that 100 Units == 1m
+		this.effect = new THREE.OculusRiftEffect(this.renderer, { worldScale: 100 });
 
 		this.setCameraDimensions();
 		this.clock = new THREE.Clock();
@@ -65,6 +58,7 @@ var main = {
 	},
 
 	bindHandlers: function () {
+
 		document.addEventListener("mousedown", (function(e){
 			if (!this.player.controls.enabled) {
 				return;
@@ -85,7 +79,7 @@ var main = {
 
 		var onMouseWheel = (function (e) {
 			var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-			this.changeTool(-delta);
+			this.player.changeTool(-delta);
 		}).bind(this);
 		document.addEventListener("mousewheel", onMouseWheel, false);
 		document.addEventListener("DOMMouseScroll", onMouseWheel, false);
@@ -109,38 +103,58 @@ var main = {
 		utils.bindPointerLock(this.setPoinerLock.bind(this));
 	},
 
-	toggleOculus: function () {
-		this.isOculus = !this.isOculus;
-		this.setCameraDimensions();
+	setPoinerLock: function (state) {
+
+		this.player.controls.enabled = state;
+
 	},
 
-	updateDayNight: function () {
+	setCameraDimensions: function () {
 
-		var day = this.day,// = !this.day,
-			time = (this.frame % 8000) / 4000;
+		this.camera.aspect = window.innerWidth / window.innerHeight;
+		this.camera.updateProjectionMatrix();
+		this.renderer.setSize(window.innerWidth / this.quality, window.innerHeight / this.quality);
+		this.effect.setSize(window.innerWidth / this.quality, window.innerHeight / this.quality);
 
-		if (time > 1) {
-			time = 1 + (1 - time);
+	},
+
+	createTextures: function () {
+
+		this.textures = {
+			blocks: THREE.ImageUtils.loadTexture("res/images/terrain.png"),
+			night: THREE.ImageUtils.loadTexture("res/images/night.jpg")
 		}
+		this.textures.blocks.magFilter = THREE.NearestFilter;
+		this.textures.blocks.minFilter = THREE.NearestFilter;
 
-		//time = Math.sin(Math.PI/2 * Math.cos(time * 2 * Math.PI)) * 0.5 + 0.5;
+		this.textures.night.wrapS = this.textures.night.wrapT = THREE.RepeatWrapping;
+		this.textures.night.repeat.set(3, 3);
 
-		//this.renderer.setClearColor(day ? 0x88C4EC : 0x000000, 1);
-		this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
+	},
 
-		this.scene.remove(this.lights.ambientLight);
-		this.lights.ambientLight = new THREE.AmbientLight((new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time));
+	addLights: function () {
+
+		this.lights = {};
+		this.lights.ambientLight = new THREE.AmbientLight(0x999999);
 		this.scene.add(this.lights.ambientLight);
 
-		this.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
-		this.uniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);
-		this.lights.player.visible = time > 0.5;
-		this.skybox.visible = time < 0.875;
-		this.nightbox.visible = time >= 0.875;
+		var light = this.lights.player = new THREE.PointLight(0xF3AC44, 1, 8);
+		this.camera.add(light); // light follows player
+
+		light = new THREE.PointLight(0xF4D2A3, 1, 10);
+		light.position.set(this.world.chunkWidth - 5, 5, this.world.chunkWidth - 5);
+		this.scene.add(light);
+
+		light = new THREE.PointLight(0xF4D2A3, 1, 10);
+		light.position.set(2 * this.world.chunkWidth - 3, 5, 2 * this.world.chunkWidth - 3);
+		this.scene.add(light);
+
+		this.scene.fog = new THREE.Fog(0xE8D998, 10, 80);
 
 	},
 
 	addSkyBox: function () {
+
 		// Stary night
 		var nightGeometry = new THREE.SphereGeometry(500, 32, 15),
 			nightMaterial = new THREE.MeshLambertMaterial({
@@ -172,38 +186,11 @@ var main = {
 
 		var sky = this.skybox = new THREE.Mesh(skyGeometry, skyMaterial);
 		this.scene.add(sky);
-	},
 
-	setCameraDimensions: function () {
-		this.camera.aspect = window.innerWidth / window.innerHeight;
-		this.camera.updateProjectionMatrix();
-		this.renderer.setSize(window.innerWidth / this.quality, window.innerHeight / this.quality);
-		this.effect.setSize(window.innerWidth / this.quality, window.innerHeight / this.quality);
-	},
-
-	setPoinerLock: function (state) {
-		this.player.controls.enabled = state;
-	},
-
-	changeTool: function (dir) {
-
-		if (Date.now() - this.lastToolChange < 200) {
-			return;
-		}
-		this.lastToolChange = Date.now();
-
-		this.curTool += dir;
-		if (dir > 0 && this.curTool > this.world.blocks.length - 1) {
-			this.curTool = 1;
-		}
-		if (dir < 0 && this.curTool === 0) {
-			this.curTool = this.world.blocks.length - 1;
-		}
-
-		document.querySelector("#gui").innerHTML = this.world.blocks[this.curTool];
 	},
 
 	addCursorObject: function () {
+
 		var cursor = this.cursor = new THREE.Mesh(
 			new THREE.BoxGeometry(1.01, 1.01, 1.01),
 			new THREE.MeshBasicMaterial({ color: 0xff00ff, wireframe: false}));
@@ -214,21 +201,11 @@ var main = {
 		cursor.__face = null;
 
 		this.scene.add(cursor);
-	},
 
-	createTextures: function () {
-		this.textures = {
-			blocks: THREE.ImageUtils.loadTexture("res/images/terrain.png"),
-			night: THREE.ImageUtils.loadTexture("res/images/night.jpg")
-		}
-		this.textures.blocks.magFilter = THREE.NearestFilter;
-		this.textures.blocks.minFilter = THREE.NearestFilter;
-
-		this.textures.night.wrapS = this.textures.night.wrapT = THREE.RepeatWrapping;
-		this.textures.night.repeat.set(3, 3);
 	},
 
 	addBlockAtCursor: function () {
+
 		if (!this.cursor.visible) {
 			this.fire();
 			return;
@@ -264,38 +241,27 @@ var main = {
 		if (!chunk) {
 			return;
 		}
-		chunk[pos.z + face.z][pos.y + face.y][pos.x + face.x].type = this.world.blocks[this.curTool];
+		chunk[pos.z + face.z][pos.y + face.y][pos.x + face.x].type = this.world.blocks[this.player.curTool];
 
 		this.world.reMeshChunk(chunkId);
+
 	},
 
 	removeBlockAtCursor: function () {
+
 		if (!this.cursor.visible) {
 			return;
 		}
 		var pos = this.cursor.__pos;
 		this.world.chunks[this.cursor.__chunk][pos.z][pos.y][pos.x].type = "air";
 		this.world.reMeshChunk(this.cursor.__chunk);
+
 	},
 
-	addLights: function () {
+	toggleOculus: function () {
 
-		this.lights = {};
-		this.lights.ambientLight = new THREE.AmbientLight(0x999999);
-		this.scene.add(this.lights.ambientLight);
-
-		var light = this.lights.player = new THREE.PointLight(0xF3AC44, 1, 8);
-		this.camera.add(light); // light follows player
-
-		light = new THREE.PointLight(0xF4D2A3, 1, 10);
-		light.position.set(this.world.chunkWidth - 5, 5, this.world.chunkWidth - 5);
-		this.scene.add(light);
-
-		light = new THREE.PointLight(0xF4D2A3, 1, 10);
-		light.position.set(2 * this.world.chunkWidth - 3, 5, 2 * this.world.chunkWidth - 3);
-		this.scene.add(light);
-
-		this.scene.fog = new THREE.Fog(0xE8D998, 10, 80);
+		this.isOculus = !this.isOculus;
+		this.setCameraDimensions();
 
 	},
 
@@ -330,6 +296,32 @@ var main = {
 			return b.tick(delta);
 		});
 		this.world.tick(delta);
+	},
+
+	updateDayNight: function () {
+
+		var day = this.day,// = !this.day,
+			time = (this.frame % 8000) / 4000;
+
+		if (time > 1) {
+			time = 1 + (1 - time);
+		}
+
+		//time = Math.sin(Math.PI/2 * Math.cos(time * 2 * Math.PI)) * 0.5 + 0.5;
+
+		//this.renderer.setClearColor(day ? 0x88C4EC : 0x000000, 1);
+		this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
+
+		this.scene.remove(this.lights.ambientLight);
+		this.lights.ambientLight = new THREE.AmbientLight((new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time));
+		this.scene.add(this.lights.ambientLight);
+
+		this.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
+		this.uniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);
+		this.lights.player.visible = time > 0.5;
+		this.skybox.visible = time < 0.875;
+		this.nightbox.visible = time >= 0.875;
+
 	},
 
 	cast: function () {
