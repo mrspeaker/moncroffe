@@ -5,6 +5,8 @@ var Target = {
 
 	count: 0,
 
+	remove: false,
+
 	init: function (pos, direction) {
 
 		this.bb = {
@@ -47,10 +49,10 @@ var Target = {
 		this.pos = m.position;
 
 		if (this.count++ > 2000) {
-			return false;
+			this.remove = true;
 		}
 
-		return true;
+		return !(this.remove);
 	}
 
 };

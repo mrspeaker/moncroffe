@@ -280,6 +280,15 @@
 				var ret = t.tick(delta);
 				if (!ret) {
 					this.scene.remove(t.mesh);
+				} else {
+					var hit = this.bullets.some(function (b) {
+						return utils.dist(b.pos, t.pos) < 2;
+					});
+					if (hit) {
+						console.log("hte!")
+						ret = false;
+						this.scene.remove(t.mesh);
+					}
 				}
 				return ret;
 			}, this);
