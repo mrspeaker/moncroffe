@@ -268,11 +268,7 @@
 				if (ret) {
 					var block = this.world.getBlockAtPos(b.pos);
 					if (block.type !== "air") {
-						//ret = false;
 						b.stop();
-						//var ch = this.world.setBlockAtPos(b.pos, "air");
-						//this.world.reMeshChunk(ch.x, ch.z);
-						//this.scene.remove(b.mesh);
 					}
 				} else {
 					this.scene.remove(b.mesh);
@@ -295,12 +291,12 @@
 				var target = Object.create(Target).init(
 					new THREE.Vector3(
 						(Math.random() * 40) - 20,
-						Math.random() * 13 | 0 + 1.5,
+						(Math.random() * 13 | 0) + 0.75,
 						(Math.random() * 40) - 20),
 					new THREE.Vector3(
-						Math.random() - 0.5, //Math.random() * 2 * Math.PI,
-						0,//Math.random() * 2 * Math.PI,
-						Math.random() - 0.5 //Math.random() * 2 * Math.PI
+						Math.random() - 0.5,
+						0,
+						Math.random() - 0.5
 					));
 				this.targets.push(target);
 				this.scene.add(target.mesh);
