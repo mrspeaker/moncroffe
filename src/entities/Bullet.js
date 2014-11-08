@@ -6,20 +6,13 @@ var Bullet = {
 
 	count: 0,
 
-	init: function (pos, direction) {
+	init: function (pos, direction, material) {
 
 		this.bb = {
 			w: 0.15,
 			d: 1.15,
 			h: 0.1
 		};
-
-		var material = new THREE.MeshBasicMaterial({
-			blending	: THREE.AdditiveBlending,
-			color		: 0x4444aa,
-			depthWrite	: false,
-			transparent	: true
-		});
 
 		this.mesh = new THREE.Mesh(
 			new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d),

@@ -7,7 +7,7 @@ var Target = {
 
 	remove: false,
 
-	init: function (pos, direction) {
+	init: function (pos, direction, material) {
 
 		this.bb = {
 			w: 1.5,
@@ -16,14 +16,6 @@ var Target = {
 		};
 
 		this.speed = (Math.random() * 4) + 1;
-
-		var material = new THREE.MeshBasicMaterial({
-			//blending	: THREE.AdditiveBlending,
-			color		: 0xff44aa,
-			depthWrite	: false,
-			transparent	: true,
-			opacity: 0.5
-		});
 
 		this.mesh = new THREE.Mesh(
 			new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d),

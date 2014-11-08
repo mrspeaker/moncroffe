@@ -11,6 +11,7 @@
 		world: null,
 		bullets: null,
 		targets: null,
+		particles: null,
 		cursor: null,
 
 		frame: 0,
@@ -34,6 +35,7 @@
 
 		lights: {},
 		textures: {},
+		materials: {},
 
 		init: function () {
 
@@ -42,10 +44,12 @@
 
 			this.bullets = [];
 			this.targets = [];
+			this.particles = [];
 			this.world = Object.create(World).init(this);
 			this.player = Object.create(Player).init(this);
 			this.cursor = Object.create(Cursor).init(this);
 
+			this.addMaterials();
 			this.addLights();
 			this.addStratosphere();
 
@@ -181,6 +185,24 @@
 
 		},
 
+		addMaterials: function () {
+
+			this.materials.bullet = new THREE.MeshBasicMaterial({
+				blending	: THREE.AdditiveBlending,
+				color		: 0x4444aa,
+				depthWrite	: false,
+				transparent	: true
+			});
+
+			this.materials.target = new THREE.MeshBasicMaterial({
+				color		: 0xff44aa,
+				depthWrite	: false,
+				transparent	: true,
+				opacity: 0.5
+			});
+
+		},
+
 		addStratosphere: function () {
 
 			// Stary night
@@ -281,22 +303,33 @@
 				if (!ret) {
 					this.scene.remove(t.mesh);
 				} else {
-					var hit = this.bullets.some(function (b) {
-						return utils.dist(b.pos, t.pos) < 2;
-					});
-					if (hit) {
-						console.log("hte!")
-						ret = false;
-						this.scene.remove(t.mesh);
+					// If not to far out into space...
+					if (Math.abs(t.pos.x) < 50 && Math.abs(t.pos.z) < 50) {
+						var hit = this.bullets.some(function (b) {
+							return !b.stopped && utils.dist(b.pos, t.pos) < 2;
+						});
+						if (hit) {
+							ret = false;
+							this.scene.remove(t.mesh);
+							this.explodeParticles(t.pos);
+						}
 					}
 				}
 				return ret;
 			}, this);
 
+			this.particles = this.particles.filter(function (p) {
+				var t = p.tick(delta);
+				if (!t) {
+					this.scene.remove(p.mesh);
+				}
+				return t;
+			}, this);
+
 			this.world.tick(delta);
 
 
-			if (Math.random() < 0.01) {
+			if (Math.random() < 0.03) {
 				var target = Object.create(Target).init(
 					new THREE.Vector3(
 						(Math.random() * 40) - 20,
@@ -306,7 +339,8 @@
 						Math.random() - 0.5,
 						0,
 						Math.random() - 0.5
-					));
+					),
+					this.materials.target);
 				this.targets.push(target);
 				this.scene.add(target.mesh);
 			}
@@ -335,6 +369,22 @@
 			this.stratosphere.uniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);
 			this.stratosphere.skybox.visible = time < 0.875;
 			this.stratosphere.nightbox.visible = time >= 0.875;
+
+		},
+
+		explodeParticles: function (pos) {
+
+			for (var i = 0; i < 10; i++) {
+				var p = Object.create(Particle).init(
+					0.3,
+					new THREE.Vector3(
+						pos.x + ((Math.random() * 3) - 1.5),
+						pos.y + ((Math.random() * 3) - 1.5),
+						pos.z + ((Math.random() * 3) - 1.5)),
+					this.materials.target);
+				this.scene.add(p.mesh);
+				this.particles.push(p);
+			}
 
 		},
 
@@ -391,7 +441,7 @@
 			// to translate, then re-do getDirection logic
 			origin.y += 0.4;
 
-			var bullet = Object.create(Bullet).init(origin, direction);
+			var bullet = Object.create(Bullet).init(origin, direction, this.materials.bullet);
 			this.bullets.push(bullet);
 			this.scene.add(bullet.mesh);
 
