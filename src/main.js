@@ -10,6 +10,7 @@
 		player: null,
 		world: null,
 		bullets: null,
+		targets: null,
 		cursor: null,
 
 		frame: 0,
@@ -40,6 +41,7 @@
 			this.loadTextures();
 
 			this.bullets = [];
+			this.targets = [];
 			this.world = Object.create(World).init(this);
 			this.player = Object.create(Player).init(this);
 			this.cursor = Object.create(Cursor).init(this);
@@ -266,15 +268,43 @@
 				if (ret) {
 					var block = this.world.getBlockAtPos(b.pos);
 					if (block.type !== "air") {
-						ret = false;
-						var ch = this.world.setBlockAtPos(b.pos, "air");
-						this.world.reMeshChunk(ch.x, ch.z);
-						this.scene.remove(b.mesh);
+						//ret = false;
+						b.stop();
+						//var ch = this.world.setBlockAtPos(b.pos, "air");
+						//this.world.reMeshChunk(ch.x, ch.z);
+						//this.scene.remove(b.mesh);
 					}
+				} else {
+					this.scene.remove(b.mesh);
 				}
 				return ret;
 			}, this);
+
+			this.targets = this.targets.filter(function (t) {
+				var ret = t.tick(delta);
+				if (!ret) {
+					this.scene.remove(t.mesh);
+				}
+				return ret;
+			}, this);
+
 			this.world.tick(delta);
+
+
+			if (Math.random() < 0.01) {
+				var target = Object.create(Target).init(
+					new THREE.Vector3(
+						(Math.random() * 40) - 20,
+						Math.random() * 13 | 0 + 1.5,
+						(Math.random() * 40) - 20),
+					new THREE.Vector3(
+						Math.random() - 0.5, //Math.random() * 2 * Math.PI,
+						0,//Math.random() * 2 * Math.PI,
+						Math.random() - 0.5 //Math.random() * 2 * Math.PI
+					));
+				this.targets.push(target);
+				this.scene.add(target.mesh);
+			}
 
 		},
 

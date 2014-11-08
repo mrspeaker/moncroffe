@@ -1,24 +1,26 @@
-var Bullet = {
+var Target = {
 
 	pos: null,
 	bb: null,
-	stopped: false,
 
 	count: 0,
 
 	init: function (pos, direction) {
 
 		this.bb = {
-			w: 0.15,
-			d: 1.15,
-			h: 0.1
+			w: 1.5,
+			d: 1.5,
+			h: 1.5
 		};
 
+		this.speed = (Math.random() * 4) + 1;
+
 		var material = new THREE.MeshBasicMaterial({
-			blending	: THREE.AdditiveBlending,
-			color		: 0x4444aa,
+			//blending	: THREE.AdditiveBlending,
+			color		: 0xff44aa,
 			depthWrite	: false,
-			transparent	: true
+			transparent	: true,
+			opacity: 0.5
 		});
 
 		this.mesh = new THREE.Mesh(
@@ -30,29 +32,25 @@ var Bullet = {
 		this.mesh.position.copy(pos);
 		this.mesh.lookAt(pos.add(direction));
 
-		this.direction = direction
+		this.direction = direction;
 
 		return this;
 
 	},
 
-	stop: function () {
-		this.stopped = true;
-	},
-
 	tick: function (dt) {
 		var m = this.mesh,
-			pow = dt * 40;
+			pow = dt * this.speed;
 
-		if (!this.stopped && this.count++ < 30)
-			m.translateZ(pow);
+		m.translateZ(pow);
 
 		this.pos = m.position;
 
-		if (this.count < 800) {
-			return true;
+		if (this.count++ > 2000) {
+			return false;
 		}
-		return false;
+
+		return true;
 	}
 
 };

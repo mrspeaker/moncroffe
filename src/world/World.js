@@ -21,7 +21,7 @@
 
 			this.blockMaterial = new THREE.MeshLambertMaterial({
 				map: screen.textures.blocks,
-				wrapAround: true,
+				//wrapAround: true,
 				vertexColors: THREE.VertexColors,
 				wireframe: false
 			});
