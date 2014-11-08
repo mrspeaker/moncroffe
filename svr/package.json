@@ -1,0 +1,8 @@
+{
+  "name": "moncroffe",
+  "version": "0.0.1",
+  "description": "moncroffe server",
+  "dependencies": {
+    "express": "^4.10.1"
+  }
+}
