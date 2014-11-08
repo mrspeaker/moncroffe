@@ -37,7 +37,11 @@
 		textures: {},
 		materials: {},
 
+		socket: null,
+
 		init: function () {
+
+			this.socket = io();
 
 			this.initScene();
 			this.loadTextures();
@@ -309,6 +313,7 @@
 							return !b.stopped && utils.dist(b.pos, t.pos) < 2;
 						});
 						if (hit) {
+							this.socket.emit("hit", t.pos);
 							ret = false;
 							this.scene.remove(t.mesh);
 							this.explodeParticles(t.pos);
