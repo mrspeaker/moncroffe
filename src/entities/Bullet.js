@@ -25,6 +25,7 @@ var Bullet = {
 			material
 		);
 
+		this.pos = pos;
 		this.mesh.position.copy(pos);
 		this.mesh.lookAt(pos.add(direction));
 
@@ -36,9 +37,11 @@ var Bullet = {
 
 	tick: function (dt) {
 		var m = this.mesh,
-			pow = dt * 30;
+			pow = dt * 40;
 
 		m.translateZ(pow);
+
+		this.pos = m.position;
 
 		if (this.count++ < 30) {
 			return true;

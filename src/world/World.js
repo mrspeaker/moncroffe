@@ -81,13 +81,25 @@
 				chunk[z][y][x].type = type;
 			}
 
-			return chunkX + ":" + chunkZ;
+			return {x: chunkX, z:chunkZ };
+
+		},
+
+		setBlockAtPos: function (pos, type) {
+
+			return this.setBlockAt(Math.round(pos.x), Math.round(pos.y), Math.round(pos.z), type);
 
 		},
 
 		isBlockAt: function (x, y, z) {
 
 			return this.getBlockAt(x, y, z).type !== "air";
+
+		},
+
+		getBlockAtPos: function (pos) {
+
+			return this.getBlockAt(Math.round(pos.x), Math.round(pos.y), Math.round(pos.z));
 
 		},
 

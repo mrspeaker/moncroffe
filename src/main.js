@@ -262,8 +262,18 @@
 
 			this.player.tick(delta);
 			this.bullets = this.bullets.filter(function (b) {
-				return b.tick(delta);
-			});
+				var ret = b.tick(delta);
+				if (ret) {
+					var block = this.world.getBlockAtPos(b.pos);
+					if (block.type !== "air") {
+						ret = false;
+						var ch = this.world.setBlockAtPos(b.pos, "air");
+						this.world.reMeshChunk(ch.x, ch.z);
+						this.scene.remove(b.mesh);
+					}
+				}
+				return ret;
+			}, this);
 			this.world.tick(delta);
 
 		},
@@ -339,8 +349,12 @@
 		fire: function () {
 
 			var ob = this.player.controls,
-				origin = ob.getObject().position,
+				origin = ob.getObject().position.clone(),
 				direction = ob.getDirection().clone();
+
+			// Eh, to fire from another location need
+			// to translate, then re-do getDirection logic
+			origin.y += 0.4;
 
 			var bullet = Object.create(Bullet).init(origin, direction);
 			this.bullets.push(bullet);
