@@ -20,7 +20,7 @@
 		<div id="instructions">
 			<span style="font-size:40px">Mr Speaker Craft</span>
 			<br /><br/>
-			WASD = Move, SPACE = Jump, MOUSE = Look<br/>
+			WASD/keys = Move, SPACE = Jump, MOUSE = Look<br/>
 			CLICK = Add block, right-click (or shft-click) = remove<br/>
 			Mouse wheel up/down to change blocks<br/>
 			<br/>
@@ -37,6 +37,7 @@
 
 	<script src="/socket.io/socket.io.js"></script>
 
+	<script src="src/default_settings.js"></script>
 	<script src="src/utils.js"></script>
 	<script src="src/world/Chunk.js"></script>
 	<script src="src/world/World.js"></script>
@@ -45,7 +46,7 @@
 	<script src="src/entities/Target.js"></script>
 	<script src="src/entities/Bullet.js"></script>
 	<script src="src/entities/Cursor.js"></script>
-	<script src="src/default_settings.js"></script>
+	<script src="src/screens/TitleScreen.js"></script>
 	<script src="src/main.js"></script>
 
 	<script type="x-shader/x-vertex" id="vHemisphere">
@@ -80,8 +81,10 @@
 		}
 
 	</script>
+
 	<script>
 		main.init();
 	</script>
+
 </body>
 </html>

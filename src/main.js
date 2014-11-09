@@ -44,6 +44,8 @@
 
 		settings: null,
 
+		screen: null,
+
 		init: function () {
 
 			this.initUserSettings();
@@ -80,6 +82,9 @@
 
 			this.world.createChunks();
 			this.updateDayNight();
+
+			this.screen = Object.create(TitleScreen).init(this);
+
 			this.run();
 
 			utils.msg("");
@@ -341,6 +346,8 @@
 			if (dt < 15 || dt > 21) {
 				//utils.msg(dt); // Track big/small updates
 			}
+
+			this.screen.tick(delta);
 
 			this.player.tick(delta);
 			this.bullets = this.bullets.filter(function (b) {

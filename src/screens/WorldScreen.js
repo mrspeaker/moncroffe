@@ -1,4 +1,4 @@
-var TitleScreen = {
+var WorldScreen = {
 
 	init: function () {
 		return this;

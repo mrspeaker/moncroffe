@@ -7,9 +7,10 @@ Now with Oculus Rift support!
 	Mouse: look
 	Keys/WSAD: move
 	Left click: add block if close, else shoot
-	Right click: remove block
+	Right click (or shift left): remove block
 	Wheel: change block
 
+	'1/2': adjust mouse sensitivity
 	'e': toggle Oculus Rift mode (no head tracking yet)
 	'q': toggle Ambient Occlusion
 
@@ -27,6 +28,7 @@ Query params:
 - Hit head slide down (and can get stuck in block)
 - Camera goes through block when close, looking on angle
 - Block & face selection wrong when close to blocks
+- Bullet gets stuck when firing close to block
 
 ## Performance
 
