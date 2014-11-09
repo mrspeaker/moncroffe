@@ -30,21 +30,27 @@ var Bullet = {
 	},
 
 	stop: function () {
+
 		this.stopped = true;
+
 	},
 
 	tick: function (dt) {
 		var m = this.mesh,
 			pow = dt * 40;
 
-		if (!this.stopped && this.count++ < 30)
+		if (this.count++ < 30 && !this.stopped) {
 			m.translateZ(pow);
+			this.pos = m.position;
+			if (this.count === 30) {
+				this.stopped = true;
+			}
+		}
 
-		this.pos = m.position;
-
-		if (this.count < 800) {
+		if (this.count < 4000) {
 			return true;
 		}
+
 		return false;
 	}
 

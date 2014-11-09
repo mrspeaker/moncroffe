@@ -7,7 +7,7 @@
 
 		init: function (size, pos, material) {
 
-			this.life = 80 + (Math.random() * 30 | 0);
+			this.life = 100 + (Math.random() * 50 | 0);
 
 			this.mesh = new THREE.Mesh(
 				new THREE.BoxGeometry(size, size, size),

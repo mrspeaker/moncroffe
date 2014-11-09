@@ -727,7 +727,7 @@
 		render: function () {
 
 			if (!this.isOculus) {
-				this.renderer.render(this.scene, this.camera);
+				this.renderer.render(this.screen.scene, this.camera);
 			} else {
 				// TODO: figure out how to get final matrix, without having
 				// to pass both the yaw and pitch and multiplying
