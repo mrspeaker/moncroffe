@@ -8,6 +8,8 @@
 		isOculus: false,
 
 		player: null,
+		clientId: null,
+		players: null,
 		world: null,
 		bullets: null,
 		targets: null,
@@ -37,11 +39,27 @@
 		textures: {},
 		materials: {},
 
+		useNetwork: false,
 		socket: null,
+
+		settings: null,
 
 		init: function () {
 
-			this.socket = io();
+			this.initUserSettings();
+
+			if (this.useNetwork) {
+				this.socket = io();
+				this.socket.on('onconnected', function( data ) {
+					this.clientId = data.id;
+					console.log("joined as ", data.id);
+				});
+
+				this.socket.on("update", function (data) {
+
+				});
+				this.socket.emit("join", this.networkId);
+			}
 
 			this.initScene();
 			this.loadTextures();
@@ -51,6 +69,7 @@
 			this.particles = [];
 			this.world = Object.create(World).init(this);
 			this.player = Object.create(Player).init(this);
+			this.players = [];
 			this.cursor = Object.create(Cursor).init(this);
 
 			this.addMaterials();
@@ -64,6 +83,24 @@
 			this.run();
 
 			utils.msg("");
+		},
+
+		initUserSettings: function () {
+
+			this.settings = utils.extend({}, default_settings);
+
+			var stored = window.localStorage.getItem("settings");
+			if (stored !== null) {
+				this.settings = JSON.parse(stored);
+			}
+
+		},
+
+		saveSettings: function () {
+
+			var s = this.settings;
+			window.localStorage.setItem("settings", JSON.stringify(s));
+
 		},
 
 		initScene: function () {
@@ -128,6 +165,23 @@
 					var pos = player.playerObj.position;
 					this.useAO = !this.useAO;
 					this.world.reMeshChunk(pos.x / this.world.chunkWidth | 0, pos.z / this.world.chunkWidth | 0);
+				}
+
+				if (e.keyCode === 49 /*1*/) {
+					var s = this.settings.mouse_sensitivity - 0.05;
+					this.settings.mouse_sensitivity = s;
+					player.controls.setSensitivity(s);
+					utils.msg("Sensitivity", s.toFixed(2));
+
+					this.saveSettings();
+				}
+				if (e.keyCode === 50 /*2*/) {
+					var s = this.settings.mouse_sensitivity + 0.05;
+					this.settings.mouse_sensitivity = s;
+					player.controls.setSensitivity(s);
+					utils.msg("Sensitivity", s.toFixed(2));
+
+					this.saveSettings();
 				}
 
 			}).bind(this), false);
@@ -313,7 +367,10 @@
 							return !b.stopped && utils.dist(b.pos, t.pos) < 2;
 						});
 						if (hit) {
-							this.socket.emit("hit", t.pos);
+							// Messin' round with networking
+							if (this.useNetwork) {
+								this.socket.emit("hit", t.pos);
+							}
 							ret = false;
 							this.scene.remove(t.mesh);
 							this.explodeParticles(t.pos);
