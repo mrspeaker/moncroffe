@@ -740,7 +740,7 @@
 			} else {
 				this.oculusRenderer.render(
 					this.scene,
-					this.player.controls.getObject().children[0].matrixWorld);
+					this.player.controls.getObject().children[0].children[0].matrixWorld);
 			}
 
 		}
