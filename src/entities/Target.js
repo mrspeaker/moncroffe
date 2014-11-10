@@ -17,8 +17,12 @@ var Target = {
 
 		this.speed = (Math.random() * 4) + 1;
 
+		var geom = utils.texturify(
+			new THREE.CubeGeometry(this.bb.w),
+			[[7, 8], [6, 8], [6, 8], [6, 8], [6, 9], [6, 9]]);
+
 		this.mesh = new THREE.Mesh(
-			new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d),
+			geom,
 			material
 		);
 

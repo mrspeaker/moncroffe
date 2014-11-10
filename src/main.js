@@ -65,6 +65,8 @@
 
 			this.initScene();
 			this.loadTextures();
+			this.addMaterials();
+
 
 			this.bullets = [];
 			this.targets = [];
@@ -74,7 +76,6 @@
 			this.players = [];
 			this.cursor = Object.create(Cursor).init(this);
 
-			this.addMaterials();
 			this.addLights();
 			this.addStratosphere();
 
@@ -258,10 +259,18 @@
 			});
 
 			this.materials.target = new THREE.MeshBasicMaterial({
-				color		: 0xff44aa,
+				map: this.textures.blocks,
+				//color		: 0xff44aa,
 				depthWrite	: false,
 				transparent	: true,
 				opacity: 0.5
+			});
+
+			this.materials.blocks = new THREE.MeshLambertMaterial({
+				map: this.textures.blocks,
+				wrapAround: true,
+				vertexColors: THREE.VertexColors,
+				wireframe: false
 			});
 
 		},
@@ -328,7 +337,8 @@
 		tick: function () {
 
 			if (this.doAddBlock) {
-				var added = this.world.addBlockAtCursor(this.cursor, this.player.curTool);
+				this.world.getBlocksFromBB(this.player.bb);
+				var added = this.world.addBlockAtCursor(this.cursor, this.player.curTool, []);
 				if (!added) {
 					this.fire();
 				}
@@ -729,9 +739,9 @@
 			if (!this.isOculus) {
 				this.renderer.render(this.screen.scene, this.camera);
 			} else {
-				// TODO: figure out how to get final matrix, without having
-				// to pass both the yaw and pitch and multiplying
-				this.oculusRenderer.render(this.scene, this.player.controls.getObject(), this.player.controls.getObject().children[0]);
+				this.oculusRenderer.render(
+					this.scene,
+					this.player.controls.getObject().children[0].matrixWorld);
 			}
 
 		}

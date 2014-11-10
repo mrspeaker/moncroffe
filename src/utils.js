@@ -155,6 +155,67 @@
 	    return to;
 	}
 
+	utils.texturify = function (cube, tile, surround) {
+
+		if (!surround) {
+			surround = {
+				front: false,
+				right: false,
+				back: false,
+				left: false,
+				top: false,
+				bottom: false
+			}
+		}
+
+		function getBlock(x, y) {
+			return [
+				new THREE.Vector2(x / 16, y / 16),
+				new THREE.Vector2((x + 1) / 16, y / 16),
+				new THREE.Vector2(x / 16, (y + 1) / 16),
+				new THREE.Vector2((x + 1) / 16, (y + 1) / 16)
+			];
+		}
+
+		var front = getBlock(tile[0][0], tile[0][1]),
+			left = getBlock(tile[1][0], tile[1][1]),
+			back = getBlock(tile[2][0], tile[2][1]),
+			right = getBlock(tile[3][0], tile[3][1]),
+			bottom = getBlock(tile[4][0], tile[4][1]),
+			top = getBlock(tile[5][0], tile[5][1]),
+			faceUVs = cube.faceVertexUvs;
+
+		// Set UV texture coords for the cube
+		faceUVs[0] = [];
+		if (!surround.front) {
+			faceUVs[0].push([front[0], front[1], front[3]]);
+			faceUVs[0].push([front[0], front[3], front[2]]);
+		}
+		if (!surround.left) {
+			faceUVs[0].push([left[0], left[1], left[3]]);
+			faceUVs[0].push([left[0], left[3], left[2]]);
+		}
+		if (!surround.back) {
+			faceUVs[0].push([back[0], back[1], back[3]]);
+			faceUVs[0].push([back[0], back[3], back[2]]);
+		}
+		if (!surround.right) {
+			faceUVs[0].push([right[0], right[1], right[3]]);
+			faceUVs[0].push([right[0], right[3], right[2]]);
+		}
+		if (!surround.bottom) {
+			faceUVs[0].push([bottom[0], bottom[1], bottom[3]]);
+			faceUVs[0].push([bottom[0], bottom[3], bottom[2]]);
+		}
+		if (!surround.top) {
+			faceUVs[0].push([top[0], top[1], top[3]]);
+			faceUVs[0].push([top[0], top[3], top[2]]);
+		}
+
+		return cube;
+
+	}
+
 	window.utils = utils;
 
 }());

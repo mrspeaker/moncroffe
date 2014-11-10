@@ -19,12 +19,7 @@
 			this.chunkGeom = {};
 			this.screen = screen;
 
-			this.blockMaterial = new THREE.MeshLambertMaterial({
-				map: screen.textures.blocks,
-				//wrapAround: true,
-				vertexColors: THREE.VertexColors,
-				wireframe: false
-			});
+			this.blockMaterial = screen.materials.blocks;
 
 			return this;
 		},
@@ -139,7 +134,18 @@
 
 		},
 
-		addBlockAtCursor: function (cursor, blockId) {
+		isBlocksAtEntityBB: function (e) {
+			// TODO: move along bb, not just points!
+			var pos = e.pos,
+				bb = e.bb;
+
+			return [
+				this.isBlockAt(pos.x - (bb.w / 2), pos.y
+			]
+
+		},
+
+		addBlockAtCursor: function (cursor, blockId, playerBlocks) {
 
 			if (!cursor.visible) {
 				return false;
@@ -174,6 +180,16 @@
 			if (!chunk) {
 				return false;
 			}
+
+			if (playerBlocks.some(function (pb) {
+				if (pb.x === pos.x + face.x && pb.y == pos.y + face.y && pb.z == pos.z + face.z) {
+					return true;
+				}
+				return false;
+			})) {
+				return false;
+			}
+
 			chunk[pos.z + face.z][pos.y + face.y][pos.x + face.x].type = this.blocks[blockId];
 
 			this.reMeshChunk(chunkX, chunkZ);
@@ -423,6 +439,7 @@
 
 			var mesh = new THREE.Mesh(),
 				i, j, k, block, pos;
+			mesh.matrixAutoUpdate = false;
 			for (i = 0; i < w; i++) {
 				for (j = 0; j  < h; j++) {
 					for (k = 0; k < w; k++) {
@@ -463,7 +480,9 @@
 
 			utils.msg("Cubes:" + stats.cubes, " F:" + stats.faces, " V:" + stats.verts);
 
-			return new THREE.Mesh(totalGeom, this.blockMaterial);
+			var totalMesh = new THREE.Mesh(totalGeom, this.blockMaterial);
+			totalMesh.matrixAutoUpdate = false;
+			return totalMesh;
 		},
 
 		reMeshChunk: function (x, z) {

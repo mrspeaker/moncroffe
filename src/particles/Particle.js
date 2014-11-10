@@ -10,7 +10,10 @@
 			this.life = 100 + (Math.random() * 50 | 0);
 
 			this.mesh = new THREE.Mesh(
-				new THREE.BoxGeometry(size, size, size),
+				utils.texturify(
+					new THREE.CubeGeometry(size),
+					[[7, 8], [6, 8], [6, 8], [6, 8], [6, 9], [6, 9]]
+				),
 				material
 			);
 
