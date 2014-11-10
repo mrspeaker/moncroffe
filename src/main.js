@@ -337,7 +337,6 @@
 		tick: function () {
 
 			if (this.doAddBlock) {
-				this.world.getBlocksFromBB(this.player.bb);
 				var added = this.world.addBlockAtCursor(this.cursor, this.player.curTool, []);
 				if (!added) {
 					this.fire();
