@@ -134,17 +134,6 @@
 
 		},
 
-		isBlocksAtEntityBB: function (e) {
-			// TODO: move along bb, not just points!
-			var pos = e.pos,
-				bb = e.bb;
-
-			return [
-				this.isBlockAt(pos.x - (bb.w / 2), pos.y
-			]
-
-		},
-
 		addBlockAtCursor: function (cursor, blockId, playerBlocks) {
 
 			if (!cursor.visible) {
