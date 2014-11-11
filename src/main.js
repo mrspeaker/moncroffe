@@ -27,6 +27,7 @@
 		camera: null,
 		renderer: null,
 		oculusRenderer: null,
+		vrControls: null,
 		clock: null,
 
 		stratosphere: {
@@ -113,10 +114,17 @@
 
 			this.scene = new THREE.Scene();
 			this.renderer = new THREE.WebGLRenderer();
-			this.oculusRenderer = new THREE.OculusRiftEffect(this.renderer, { worldScale: 100 }); // 100 Units == 1m
 
-			this.camera = new THREE.PerspectiveCamera(70, 1, 0.01, 500);
+			// this.oculusRenderer = new THREE.OculusRiftEffect(this.renderer, { worldScale: 100 }); // 100 Units == 1m
+			this.oculusRenderer = new THREE.VREffect(this.renderer, function (err) {
+				if (err) {
+					console.error("vr error:", err);
+				}
+			});
+			this.camera = new THREE.PerspectiveCamera(85, 1, 0.01, 500);
 			this.setCameraDimensions();
+			this.vrControls = new THREE.VRControls(this.camera);
+
 
 			this.clock = new THREE.Clock();
 
@@ -188,6 +196,10 @@
 					utils.msg("Sensitivity", s.toFixed(2));
 
 					this.saveSettings();
+				}
+
+				if (e.keyCode === 51 /*3*/) {
+					this.vrControls.zeroSensor();
 				}
 
 			}).bind(this), false);
@@ -316,6 +328,7 @@
 
 			this.isOculus = !this.isOculus;
 			this.setCameraDimensions();
+			document.querySelector("#cursor").className = this.isOculus ? "oculus" : "";
 
 		},
 
@@ -514,6 +527,14 @@
 			var ob = this.player.controls,
 				origin = ob.getObject().position.clone(),
 				direction = ob.getDirection().clone();
+
+				/*
+			var vector = new THREE.Vector3( 0, 0, -1 );
+
+			vector.applyQuaternion( this.camera.quaternion );
+
+			direction = vector.angleTo( origin );
+*/
 
 			// Eh, to fire from another location need
 			// to translate, then re-do getDirection logic
@@ -738,9 +759,10 @@
 			if (!this.isOculus) {
 				this.renderer.render(this.screen.scene, this.camera);
 			} else {
+				this.vrControls.update();
 				this.oculusRenderer.render(
 					this.scene,
-					this.player.controls.getObject().children[0].children[0].matrixWorld);
+					this.camera); //this.player.controls.getObject().children[0].children[0].matrixWorld);
 			}
 
 		}

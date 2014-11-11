@@ -50,6 +50,17 @@ var Player = {
 		this.marker.add(edge);
 		this.screen.scene.add(this.marker);
 
+		/*this.crossHair = new THREE.Mesh(
+			new THREE.BoxGeometry(0.1, 0.1, 0.01),
+			new THREE.MeshLambertMaterial({
+				color: 0xffffff,
+				transparent: true,
+				opacity: 0.8 ,
+				side: THREE.DoubleSide
+			}))
+
+		this.screen.scene.add(this.crossHair);*/
+
 		// Mesh bounding box for the player in third person mode
 		if (this.thrd) {
 			this.playerObj.add(
@@ -136,6 +147,13 @@ var Player = {
 
 		this.controls.setPos(obj.position.x + bobX, obj.position.y + bobY, obj.position.z);
 		this.marker.position.set(obj.position.x, obj.position.y - (this.bb.h / 2) + 0.05, obj.position.z);
+
+		/*
+		this.crossHair.position.copy(obj.position);
+		//this.crossHair.rotation.copy(obj.rotation);
+		this.crossHair.matrix.copy(this.controls.getObject().children[0].children[0].matrixWorld);
+		this.crossHair.matrixWorldNeedsUpdate = true;
+		this.crossHair.translateZ(-1);*/
 	},
 
 	createControls: function () {

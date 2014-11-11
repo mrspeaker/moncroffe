@@ -33,6 +33,10 @@ body {
 	top: 50%;
 }
 
+#cursor.oculus {
+	left: 25%;
+}
+
 #watch {
 	width: 300px;
 	height: 180px;
