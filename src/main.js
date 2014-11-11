@@ -525,20 +525,22 @@
 		fire: function () {
 
 			var ob = this.player.controls,
-				origin = ob.getObject().position.clone(),
+				origin = this.player.playerObj.position.clone(),
 				direction = ob.getDirection().clone();
 
-				/*
-			var vector = new THREE.Vector3( 0, 0, -1 );
-
-			vector.applyQuaternion( this.camera.quaternion );
-
-			direction = vector.angleTo( origin );
-*/
+			if (this.isOculus) {
+				// var vector = new THREE.Vector3( 0, 0, 1 );
+				// var camMatrix = ob.getObject().children[0].children[0].matrixWorld;
+				// vector.applyQuaternion(new THREE.Vector3().setFromRotationMatrix(camMatrix));
+				// //vector.applyMatrix3(camMatrix);
+				// //vector.matrix.multiply(camMatrix);
+				// //direction.add(vector);// vector.angleTo( origin );
+				// direction.copy(vector);
+			}
 
 			// Eh, to fire from another location need
 			// to translate, then re-do getDirection logic
-			origin.y += 0.4;
+			if (!this.isOculus) origin.y += 0.4;
 
 			var bullet = Object.create(Bullet).init(origin, direction, this.materials.bullet);
 			this.bullets.push(bullet);
