@@ -29,6 +29,7 @@ Query params:
 - Camera goes through block when close, looking on angle
 - Block & face selection wrong when close to blocks
 - Bullet gets stuck when firing close to block
+* vr
 - VR head tracking doesn't aim gun
 - Should walk in direction looking
 
