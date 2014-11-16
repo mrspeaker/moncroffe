@@ -40,7 +40,7 @@
 		textures: {},
 		materials: {},
 
-		useNetwork: false,
+		useNetwork: true,
 		socket: null,
 
 		settings: null,
@@ -421,11 +421,15 @@
 
 
 			if (Math.random() < 0.03) {
+				var chW = this.world.chunkWidth,
+					w = this.world.radius * chW * 2,
+					h = this.world.chunkHeight;
+
 				var target = Object.create(Target).init(
 					new THREE.Vector3(
-						(Math.random() * 40) - 20,
+						(Math.random() * w) - (w/2) + (chW / 2),
 						(Math.random() * 13 | 0) + 0.75,
-						(Math.random() * 40) - 20),
+						(Math.random() * w) - (w/2) + (chW / 2)),
 					new THREE.Vector3(
 						Math.random() - 0.5,
 						0,

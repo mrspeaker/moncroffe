@@ -10,6 +10,7 @@
 		blocks: ["air", "grass", "stone", "dirt", "tree", "wood", "sand", "cobble", "gold", "snow"],
 
 		seed: utils.urlParams.seed || (Math.random() * 99999999 | 0),
+		radius: 2,
 
 		init: function (screen) {
 
@@ -28,7 +29,7 @@
 
 		createChunks: function () {
 
-			var chunks = utils.spiral2D(2)
+			var chunks = utils.spiral2D(this.radius)
 
 				// Create the chunk data
 				.map(function (ch) {
@@ -36,6 +37,8 @@
 						z = ch[1],
 						id = x + ":" + z,
 						chunk;
+
+					console.log(x, z)
 
 					chunk = this.chunks[id] = this.createChunk(x, z);
 					return { id: id, x: x, z: z, chunk: chunk };
