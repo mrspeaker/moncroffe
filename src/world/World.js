@@ -22,6 +22,12 @@
 
 			this.blockMaterial = screen.materials.blocks;
 
+			var chW = this.chunkWidth;
+			this.xo = chW / 2;
+			this.zo = chW;
+			this.maxX = chW * this.radius + (chW / 2);
+			this.maxZ = chW * this.radius;
+
 			return this;
 		},
 
@@ -37,8 +43,6 @@
 						z = ch[1],
 						id = x + ":" + z,
 						chunk;
-
-					console.log(x, z)
 
 					chunk = this.chunks[id] = this.createChunk(x, z);
 					return { id: id, x: x, z: z, chunk: chunk };

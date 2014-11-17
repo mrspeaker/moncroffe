@@ -385,13 +385,19 @@
 				return ret;
 			}, this);
 
+			var maxX = this.world.maxX,
+				maxZ = this.world.maxZ,
+				xo = this.world.xo,
+				zo = this.world.zo;
+
 			this.targets = this.targets.filter(function (t) {
 				var ret = t.tick(delta);
 				if (!ret) {
 					this.scene.remove(t.mesh);
 				} else {
 					// If not to far out into space...
-					if (Math.abs(t.pos.x) < 50 && Math.abs(t.pos.z) < 50) {
+
+					if (Math.abs(t.pos.x - xo) < maxX * 1.3 && Math.abs(t.pos.z - zo) < maxZ * 1.3) {
 						var hit = this.bullets.some(function (b) {
 							return !b.stopped && utils.dist(b.pos, t.pos) < 2;
 						});
@@ -419,17 +425,14 @@
 
 			this.world.tick(delta);
 
-
-			if (Math.random() < 0.03) {
-				var chW = this.world.chunkWidth,
-					w = this.world.radius * chW * 2,
-					h = this.world.chunkHeight;
-
+			// Add a pumpkin
+			if (Math.random() < 0.01) {
 				var target = Object.create(Target).init(
 					new THREE.Vector3(
-						(Math.random() * w) - (w/2) + (chW / 2),
+						xo + (Math.random() * (maxX * 0.3) * 2) - (maxX * 0.3),
 						(Math.random() * 13 | 0) + 0.75,
-						(Math.random() * w) - (w/2) + (chW / 2)),
+						zo + (Math.random() * (maxZ * 0.3) * 2) - (maxZ * 0.3)
+					),
 					new THREE.Vector3(
 						Math.random() - 0.5,
 						0,
