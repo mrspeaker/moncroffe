@@ -9,7 +9,7 @@
 
 		player: null,
 		clientId: null,
-		players: null,
+		players: {},
 		world: null,
 		bullets: null,
 		targets: null,
@@ -46,35 +46,60 @@
 		settings: null,
 
 		screen: null,
+		lastPing: Date.now(),
+		pingTime: 200,
 
 		init: function () {
+
+			var self = this;
 
 			this.initUserSettings();
 
 			if (this.useNetwork) {
 				this.socket = io();
-				this.socket.on('onconnected', function( data ) {
-					this.clientId = data.id;
-					console.log("joined as ", data.id);
+				this.socket.on("ping", function (data) {
+					if (!self.clientId) {
+						return;
+					}
+					JSON.parse(data).forEach(function (p) {
+						if (p.id === self.clientId) {
+							return;
+						}
+						var playa = self.players[p.id];
+						if (!self.players[p.id]) {
+							// add it
+							console.log("Player joined:", p.id);
+							playa = self.players[p.id] = Object.create(PlayerProxy).init(p.id);
+							self.scene.add(playa.mesh);
+						}
+
+						// Update it
+						playa.mesh.position.set(
+							p.position.x,
+							p.position.y,
+							p.position.z
+						);
+					});
 				});
 
-				this.socket.on("update", function (data) {
-
+				this.socket.on("dropped", function (id) {
+					console.log("Player left:", id);
+					var p = self.players[id];
+					self.scene.remove(p.mesh);
+					delete self.players[id];
 				});
-				this.socket.emit("join", this.networkId);
 			}
 
 			this.initScene();
 			this.loadTextures();
 			this.addMaterials();
 
-
 			this.bullets = [];
 			this.targets = [];
 			this.particles = [];
+
 			this.world = Object.create(World).init(this);
 			this.player = Object.create(Player).init(this);
-			this.players = [];
 			this.cursor = Object.create(Cursor).init(this);
 
 			this.addLights();
@@ -441,6 +466,21 @@
 					this.materials.target);
 				this.targets.push(target);
 				this.scene.add(target.mesh);
+			}
+
+			// Do update ping
+			var now = Date.now(),
+				player = this.player.playerObj;
+			if (this.clientId && now - this.lastPing > this.pingTime) {
+				this.lastPing = now;
+				this.socket.emit("ping", {
+					clientId: this.clientId,
+					pos: {
+						x: player.position.x,
+						y: player.position.y,
+						z: player.position.z
+					}
+				});
 			}
 
 		},

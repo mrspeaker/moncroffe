@@ -10,25 +10,28 @@ var TitleScreen = {
 		this.screen = screen;
 		this.scene = new THREE.Scene();
 
-		var target = Object.create(Target).init(
-					new THREE.Vector3(0, 0, -7),
+		// Spinny intro
+		var target = Object
+			.create(Target)
+			.init(
+				new THREE.Vector3(0, 0, -7),
 
-					new THREE.Vector3(
-						0.5,
-						0.2,
-						0.1
-					),
-					this.screen.materials.target);
+				new THREE.Vector3(
+					0.5,
+					0.2,
+					0.1
+				),
+
+				this.screen.materials.target);
 		this.target = target;
 		this.scene.add(target.mesh);
 
 		var self = this;
-		/*document.addEventListener("keydown", function a (e) {
-			if (e.keyCode === 32) {
-				document.removeEventListener("keydown", a, false);
-				self.next();
-			}
-		}, false);*/
+		// Join up the game
+		screen.network = Object.create(Network).init(function () {
+			self.next();
+		});
+
 		return this;
 	},
 
@@ -37,10 +40,6 @@ var TitleScreen = {
 	},
 
 	tick: function (dt) {
-		if (this.count++ > 35) {
-			this.next();
-		}
-
 		this.target.mesh.rotation.x += 0.05;
 		this.target.mesh.rotation.y += 0.055;
 		this.target.mesh.rotation.z += 0.060;

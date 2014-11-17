@@ -9,12 +9,12 @@
 		blockSize: 1,
 		blocks: ["air", "grass", "stone", "dirt", "tree", "wood", "sand", "cobble", "gold", "snow"],
 
-		seed: utils.urlParams.seed || (Math.random() * 99999999 | 0),
+		seed: 1234, //utils.urlParams.seed || (Math.random() * 99999999 | 0),
 		radius: 2,
 
-		init: function (screen) {
+		init: function (screen, seed) {
 
-			window.noise.seed(this.seed);
+			window.noise.seed(seed || this.seed);
 
 			this.chunks = {};
 			this.chunkGeom = {};
