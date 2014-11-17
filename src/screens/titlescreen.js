@@ -36,6 +36,7 @@ var TitleScreen = {
 	},
 
 	next: function () {
+		this.screen.initNetwork();
 		this.screen.screen = Object.create(WorldScreen).init(this.screen);
 	},
 

@@ -40,8 +40,7 @@
 		textures: {},
 		materials: {},
 
-		useNetwork: true,
-		socket: null,
+		network: null,
 
 		settings: null,
 
@@ -54,41 +53,6 @@
 			var self = this;
 
 			this.initUserSettings();
-
-			if (this.useNetwork) {
-				this.socket = io();
-				this.socket.on("ping", function (data) {
-					if (!self.clientId) {
-						return;
-					}
-					JSON.parse(data).forEach(function (p) {
-						if (p.id === self.clientId) {
-							return;
-						}
-						var playa = self.players[p.id];
-						if (!self.players[p.id]) {
-							// add it
-							console.log("Player joined:", p.id);
-							playa = self.players[p.id] = Object.create(PlayerProxy).init(p.id);
-							self.scene.add(playa.mesh);
-						}
-
-						// Update it
-						playa.mesh.position.set(
-							p.position.x,
-							p.position.y,
-							p.position.z
-						);
-					});
-				});
-
-				this.socket.on("dropped", function (id) {
-					console.log("Player left:", id);
-					var p = self.players[id];
-					self.scene.remove(p.mesh);
-					delete self.players[id];
-				});
-			}
 
 			this.initScene();
 			this.loadTextures();
@@ -115,6 +79,42 @@
 			this.run();
 
 			utils.msg("");
+		},
+
+		initNetwork: function () {
+			var self = this;
+			this.network.socket.on("ping", function (data) {
+				if (!self.network.clientId) {
+					return;
+				}
+				JSON.parse(data).forEach(function (p) {
+					if (p.id === self.network.clientId) {
+						return;
+					}
+					var playa = self.players[p.id];
+					if (!self.players[p.id]) {
+						// add it
+						console.log("Player joined:", p.id);
+						playa = self.players[p.id] = Object.create(PlayerProxy).init(p.id);
+						self.scene.add(playa.mesh);
+					}
+
+					// Update it
+					playa.mesh.position.set(
+						p.position.x,
+						p.position.y,
+						p.position.z
+					);
+				});
+			});
+
+			this.network.socket.on("dropped", function (id) {
+				console.log("Player left:", id);
+				var p = self.players[id];
+				self.scene.remove(p.mesh);
+				delete self.players[id];
+			});
+
 		},
 
 		initUserSettings: function () {
@@ -427,10 +427,6 @@
 							return !b.stopped && utils.dist(b.pos, t.pos) < 2;
 						});
 						if (hit) {
-							// Messin' round with networking
-							if (this.useNetwork) {
-								this.socket.emit("hit", t.pos);
-							}
 							ret = false;
 							this.scene.remove(t.mesh);
 							this.explodeParticles(t.pos);
@@ -469,19 +465,7 @@
 			}
 
 			// Do update ping
-			var now = Date.now(),
-				player = this.player.playerObj;
-			if (this.clientId && now - this.lastPing > this.pingTime) {
-				this.lastPing = now;
-				this.socket.emit("ping", {
-					clientId: this.clientId,
-					pos: {
-						x: player.position.x,
-						y: player.position.y,
-						z: player.position.z
-					}
-				});
-			}
+			this.network.tick(this.player.playerObj);
 
 		},
 
