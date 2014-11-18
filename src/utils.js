@@ -22,6 +22,30 @@
 		});
 	}
 
+	utils.rnd = {
+
+		seed: 42,
+
+		rand: function(max, min) {
+
+			max = max || 1;
+			min = min || 0;
+
+			this.seed = (this.seed * 9301 + 49297) % 233280;
+
+			return ((this.seed / 233280) * (max - min) + min) | 0;
+		},
+
+		randf: function() {
+
+			this.seed = (this.seed * 9301 + 49297) % 233280;
+
+			return this.seed / 233280;
+
+		}
+
+	},
+
 	utils.dist = function (v1, v2) {
     	var dx = v1.x - v2.x,
     		dy = v1.y - v2.y,
