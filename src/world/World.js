@@ -9,14 +9,12 @@
 		blockSize: 1,
 		blocks: ["air", "grass", "stone", "dirt", "tree", "wood", "sand", "cobble", "gold", "snow"],
 
-		seed: 1234, //utils.urlParams.seed || (Math.random() * 99999999 | 0),
+		seed: utils.urlParams.seed || (Math.random() * 99999999 | 0),
 		radius: 2,
 
 		elapsed: 0,
 
 		init: function (screen, seed) {
-
-			console.log(seed, "seed");
 
 			window.noise.seed(seed || this.seed);
 

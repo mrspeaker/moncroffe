@@ -219,16 +219,17 @@
 			this.lights.ambientLight = new THREE.AmbientLight(0x999999);
 			this.scene.add(this.lights.ambientLight);
 
-			var light = this.lights.player = new THREE.PointLight(0xF3AC44, 1, 8);
-			this.camera.add(light); // light follows player
+			this.lights.player = new THREE.PointLight(0xF3AC44, 1, 8);
+			this.camera.add(this.lights.player); // light follows player
 
-			/*light = new THREE.PointLight(0xF4D2A3, 1, 10);
+			// One of these guys turns out when player turns on!
+			var light = new THREE.PointLight(0xF4D2A3, 1, 10);
 			light.position.set(this.world.chunkWidth - 5, 5, this.world.chunkWidth - 5);
 			this.scene.add(light);
 
-			light = new THREE.PointLight(0xF4D2A3, 1, 10);
-			light.position.set(2 * this.world.chunkWidth - 3, 5, 2 * this.world.chunkWidth - 3);
-			this.scene.add(light); */
+			var light2 = new THREE.PointLight(0xF4D2A3, 1, 10);
+			light2.position.set(2 * this.world.chunkWidth - 3, 5, 2 * this.world.chunkWidth - 3);
+			this.scene.add(light2);
 
 			this.scene.fog = new THREE.Fog(0xE8D998, 10, 80);
 

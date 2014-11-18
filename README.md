@@ -21,6 +21,13 @@ Query params:
 
 	> console.log(main.world.seed) : see current seed
 
+Running:
+
+	> cd svr
+	> node index.js
+
+	game served on port 3001
+
 ## Bugz
 
 - Neighbour chunks needs to be re-meshed when exposed (face missing)
