@@ -12,8 +12,8 @@ var PlayerProxy = {
 
 		this.mesh = new THREE.Mesh(
 			new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d),
-			new THREE.MeshBasicMaterial({
-   				color: 0x99000,
+			new THREE.MeshLambertMaterial({
+   				color: 0x770000,
 			}));
 
 		return this;

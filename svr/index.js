@@ -14,7 +14,12 @@ app.use("/src", express.static(__dirname + '/../src/'));
 app.use("/res", express.static(__dirname + '/../res/'));
 app.use("/lib", express.static(__dirname + '/../lib/'));
 
-var seed = Math.random() * 99999999 | 0;
+
+var World = {
+	seed: Math.random() * 99999999 | 0,
+	startTime: Date.now(),
+	elapsed: 0,
+};
 
 io.on('connection', function(client){
 
@@ -53,7 +58,8 @@ io.on('connection', function(client){
 	client.on("join", function () {
 		client.emit('onconnected', {
 			id: client.userid,
-			seed: seed
+			seed: World.seed,
+			elapsed: World.elapsed
 		});
 
 	});
@@ -63,10 +69,17 @@ io.on('connection', function(client){
 function run () {
 
 	setTimeout(function () {
-		var p = JSON.stringify(players);
+		var now = Date.now();
+//		p = JSON.stringify(),
+
+
+		World.elapsed = (now - World.startTime) / 1000;
 
 		clients.forEach(function (c) {
-			c.emit("ping", p);
+			c.emit("ping", {
+				players: players,
+				elapsed: World.elapsed
+			});
 		});
 
 		run();

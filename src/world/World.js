@@ -12,6 +12,8 @@
 		seed: 1234, //utils.urlParams.seed || (Math.random() * 99999999 | 0),
 		radius: 2,
 
+		elapsed: 0,
+
 		init: function (screen, seed) {
 
 			window.noise.seed(seed || this.seed);

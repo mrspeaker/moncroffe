@@ -87,7 +87,9 @@
 				if (!self.network.clientId) {
 					return;
 				}
-				JSON.parse(data).forEach(function (p) {
+				//console.log(data, "datatat");
+				//data = JSON.parse(data);
+				data.players.forEach(function (p) {
 					if (p.id === self.network.clientId) {
 						return;
 					}
@@ -106,6 +108,7 @@
 						p.position.z
 					);
 				});
+				self.world.elapsed = data.elapsed;
 			});
 
 			this.network.socket.on("dropped", function (id) {
@@ -471,7 +474,7 @@
 
 		updateDayNight: function () {
 
-			var time = (this.frame % 8000) / 4000;
+			var time = (this.world.elapsed % 160) / 80; // 1x day/night cycle / 0.5 (in seconds)
 
 			if (time > 1) {
 				time = 1 + (1 - time);

@@ -20,7 +20,7 @@ var Network = {
 		this.socket.on("onconnected", (function (data) {
 			this.connectedRecieved(data, joinCb);
 		}).bind(this));
-		//this.socket.on("ping", this.pingRecieved.bind(this));
+		this.socket.on("ping", this.pingRecieved.bind(this));
 		//this.socket.on("dropped", this.disconnectReceived(this));
 
 		// Let's go!
@@ -47,7 +47,9 @@ var Network = {
 
 	dropReceived: function () {},
 
-	pingRecieved: function () {},
+	pingRecieved: function (data) {
+
+	},
 
 	pingSend: function (pos) {
 		this.socket.emit("ping", {
