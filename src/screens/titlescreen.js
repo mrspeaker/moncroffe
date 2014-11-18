@@ -26,17 +26,10 @@ var TitleScreen = {
 		this.target = target;
 		this.scene.add(target.mesh);
 
-		var self = this;
-		// Join up the game
-		screen.network = Object.create(Network).init(function () {
-			self.next();
-		});
-
 		return this;
 	},
 
 	next: function () {
-		this.screen.initNetwork();
 		this.screen.screen = Object.create(WorldScreen).init(this.screen);
 	},
 
@@ -44,6 +37,14 @@ var TitleScreen = {
 		this.target.mesh.rotation.x += 0.05;
 		this.target.mesh.rotation.y += 0.055;
 		this.target.mesh.rotation.z += 0.060;
+
+		if (this.count++ === 250) {
+			var self = this;
+			// Join up the game
+			this.screen.network = Object.create(Network).init(function () {
+				self.next();
+			});
+		}
 	}
 
 };

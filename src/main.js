@@ -45,8 +45,6 @@
 		settings: null,
 
 		screen: null,
-		lastPing: Date.now(),
-		pingTime: 200,
 
 		init: function () {
 
@@ -79,45 +77,6 @@
 			this.run();
 
 			utils.msg("");
-		},
-
-		initNetwork: function () {
-			var self = this;
-			this.network.socket.on("ping", function (data) {
-				if (!self.network.clientId) {
-					return;
-				}
-				//console.log(data, "datatat");
-				//data = JSON.parse(data);
-				data.players.forEach(function (p) {
-					if (p.id === self.network.clientId) {
-						return;
-					}
-					var playa = self.players[p.id];
-					if (!self.players[p.id]) {
-						// add it
-						console.log("Player joined:", p.id);
-						playa = self.players[p.id] = Object.create(PlayerProxy).init(p.id);
-						self.scene.add(playa.mesh);
-					}
-
-					// Update it
-					playa.mesh.position.set(
-						p.position.x,
-						p.position.y,
-						p.position.z
-					);
-				});
-				self.world.elapsed = data.elapsed;
-			});
-
-			this.network.socket.on("dropped", function (id) {
-				console.log("Player left:", id);
-				var p = self.players[id];
-				self.scene.remove(p.mesh);
-				delete self.players[id];
-			});
-
 		},
 
 		initUserSettings: function () {
@@ -467,20 +426,15 @@
 				this.scene.add(target.mesh);
 			}
 
-			// Do update ping
-			this.network.tick(this.player.playerObj);
-
 		},
 
 		updateDayNight: function () {
 
-			var time = (this.world.elapsed % 160) / 80; // 1x day/night cycle / 0.5 (in seconds)
+			var time = (this.world.elapsed % 160) / 80; // (% 1x day/night cycle) / 0.5x; (in seconds)
 
 			if (time > 1) {
 				time = 1 + (1 - time);
 			}
-
-			//time = Math.sin(Math.PI/2 * Math.cos(time * 2 * Math.PI)) * 0.5 + 0.5;
 
 			this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
 

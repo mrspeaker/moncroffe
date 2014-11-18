@@ -2,9 +2,10 @@ var Network = {
 
 	clientId: null,
 	socket: null,
-	connected: false,
 	lastPing: null,
-	pingEvery: 200,
+	pingEvery: 40,
+
+	players: {},
 
 	world: null,
 
@@ -21,7 +22,7 @@ var Network = {
 			this.connectedRecieved(data, joinCb);
 		}).bind(this));
 		this.socket.on("ping", this.pingRecieved.bind(this));
-		//this.socket.on("dropped", this.disconnectReceived(this));
+		this.socket.on("dropped", this.dropReceived.bind(this));
 
 		// Let's go!
 		this.socket.emit("join");
@@ -45,10 +46,44 @@ var Network = {
 		cb && cb();
 	},
 
-	dropReceived: function () {},
+	dropReceived: function (id) {
+		console.log("Player left:", id);
+		var p = this.players[id];
 
-	pingRecieved: function (data) {
+		// TODO: derp, global ref
+		main.screen.scene.remove(p.mesh);
+		delete this.players[id];
+	},
 
+	pingRecieved: function (ping) {
+		if (!this.clientId) {
+			return;
+		}
+
+		ping.players.forEach(function (p) {
+			if (p.id === this.clientId) {
+				return;
+			}
+			var player = this.players[p.id];
+
+			if (!this.players[p.id]) {
+				console.log("Player joined:", p.id);
+				player = this.players[p.id] = Object.create(PlayerProxy).init(p.id);
+
+				// TODO: derp, global ref
+				main.screen.scene.add(player.mesh);
+			}
+
+			// Update it
+			player.mesh.position.set(
+				p.position.x,
+				p.position.y,
+				p.position.z
+			);
+		}, this);
+
+		// TODO: derp, global ref
+		main.world.elapsed = ping.elapsed;
 	},
 
 	pingSend: function (pos) {

@@ -69,11 +69,7 @@ io.on('connection', function(client){
 function run () {
 
 	setTimeout(function () {
-		var now = Date.now();
-//		p = JSON.stringify(),
-
-
-		World.elapsed = (now - World.startTime) / 1000;
+		World.elapsed = (Date.now() - World.startTime) / 1000;
 
 		clients.forEach(function (c) {
 			c.emit("ping", {
@@ -83,7 +79,7 @@ function run () {
 		});
 
 		run();
-	}, 200);
+	}, 40);
 }
 
 http.listen(3001, function(){
