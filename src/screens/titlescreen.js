@@ -38,7 +38,7 @@ var TitleScreen = {
 		this.target.mesh.rotation.y += 0.055;
 		this.target.mesh.rotation.z += 0.060;
 
-		if (this.count++ === 250) {
+		if (this.count++ === 60) {
 			var self = this;
 			// Join up the game
 			this.screen.network = Object.create(Network).init(function () {

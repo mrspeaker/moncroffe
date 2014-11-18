@@ -16,6 +16,8 @@
 
 		init: function (screen, seed) {
 
+			console.log(seed, "seed");
+
 			window.noise.seed(seed || this.seed);
 
 			this.chunks = {};

@@ -31,14 +31,11 @@ Query params:
 - Bullet gets stuck when firing close to block
 - VR head tracking doesn't aim gun
 - Should walk in direction looking
-- Move world logic to worldscreen
-
-## Performance
-
-- Add greedy meshing. Currently had basic face-culling only.
+- Move world logic from main to worldscreen
 
 ## Needs
 
+- Freedy meshing. Currently had basic face-culling only.
 - Block-based lighting
 - Shift-walk for overhang picking
 - Camera pitch/yaw not same as minecraft when looking up/down

@@ -1,10 +1,7 @@
-var express = require("express");
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-
-var players = [],
-	clients = [];
+var express = require("express"),
+	app = express(),
+	http = require('http').Server(app),
+	io = require('socket.io')(http);
 
 app.get('/', function(req, res){
 	res.sendFile('index.html', {'root': '../'});
@@ -16,12 +13,27 @@ app.use("/lib", express.static(__dirname + '/../lib/'));
 
 
 var World = {
-	seed: Math.random() * 99999999 | 0,
-	startTime: Date.now(),
+	seed: 42,
+	startTime: 0,
 	elapsed: 0,
+	players: [],
+	clients: [],
+	reset: function () {
+		this.startTime = Date.now();
+		this.elapsed = 0;
+		this.seed = Math.random() * 99999999 | 0;
+		console.log("Reset:", this.seed);
+	}
 };
 
 io.on('connection', function(client){
+
+	var clients = World.clients,
+		players = World.players;
+
+	if (!clients.length) {
+		World.reset();
+	}
 
 	client.userid = Math.random() * 99999999 | 0;
 	console.log("Network:: " + client.userid + " connected");
@@ -34,10 +46,10 @@ io.on('connection', function(client){
 
 	client.on("disconnect", function () {
 		console.log("Network:: " + client.userid + " disconnected");
-		players = players.filter(function (p) {
+		World.players = World.players.filter(function (p) {
 			return p.id !== client.userid;
 		});
-		clients = clients.filter(function (c) {
+		World.clients = World.clients.filter(function (c) {
 			if (c !== client) {
 				c.emit("dropped", client.userid);
 			}
@@ -61,7 +73,6 @@ io.on('connection', function(client){
 			seed: World.seed,
 			elapsed: World.elapsed
 		});
-
 	});
 
 });
@@ -71,9 +82,9 @@ function run () {
 	setTimeout(function () {
 		World.elapsed = (Date.now() - World.startTime) / 1000;
 
-		clients.forEach(function (c) {
+		World.clients.forEach(function (c) {
 			c.emit("ping", {
-				players: players,
+				players: World.players,
 				elapsed: World.elapsed
 			});
 		});

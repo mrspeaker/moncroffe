@@ -9,7 +9,6 @@
 
 		player: null,
 		clientId: null,
-		players: {},
 		world: null,
 		bullets: null,
 		targets: null,
@@ -26,7 +25,7 @@
 		scene: null,
 		camera: null,
 		renderer: null,
-		oculusRenderer: null,
+		vrRenderer: null,
 		vrControls: null,
 		clock: null,
 
@@ -60,18 +59,6 @@
 			this.targets = [];
 			this.particles = [];
 
-			this.world = Object.create(World).init(this);
-			this.player = Object.create(Player).init(this);
-			this.cursor = Object.create(Cursor).init(this);
-
-			this.addLights();
-			this.addStratosphere();
-
-			this.bindHandlers();
-
-			this.world.createChunks();
-			this.updateDayNight();
-
 			this.screen = Object.create(TitleScreen).init(this);
 
 			this.run();
@@ -102,8 +89,7 @@
 			this.scene = new THREE.Scene();
 			this.renderer = new THREE.WebGLRenderer();
 
-			// this.oculusRenderer = new THREE.OculusRiftEffect(this.renderer, { worldScale: 100 }); // 100 Units == 1m
-			this.oculusRenderer = new THREE.VREffect(this.renderer, function (err) {
+			this.vrRenderer = new THREE.VREffect(this.renderer, function (err) {
 				if (err) {
 					console.error("vr error:", err);
 				}
@@ -209,7 +195,7 @@
 			this.camera.aspect = w / h;
 			this.camera.updateProjectionMatrix();
 			this.renderer.setSize(w / quality, h / quality);
-			this.oculusRenderer.setSize(w / quality, h / quality);
+			this.vrRenderer.setSize(w / quality, h / quality);
 
 		},
 
@@ -236,13 +222,13 @@
 			var light = this.lights.player = new THREE.PointLight(0xF3AC44, 1, 8);
 			this.camera.add(light); // light follows player
 
-			light = new THREE.PointLight(0xF4D2A3, 1, 10);
+			/*light = new THREE.PointLight(0xF4D2A3, 1, 10);
 			light.position.set(this.world.chunkWidth - 5, 5, this.world.chunkWidth - 5);
 			this.scene.add(light);
 
 			light = new THREE.PointLight(0xF4D2A3, 1, 10);
 			light.position.set(2 * this.world.chunkWidth - 3, 5, 2 * this.world.chunkWidth - 3);
-			this.scene.add(light);
+			this.scene.add(light); */
 
 			this.scene.fog = new THREE.Fog(0xE8D998, 10, 80);
 
@@ -326,10 +312,6 @@
 				this.render();
 			}
 
-			if (this.frame % 50 === 0) {
-				this.updateDayNight();
-			}
-
 			requestAnimationFrame(function () { main.run(); });
 
 		},
@@ -357,74 +339,6 @@
 			}
 
 			this.screen.tick(delta);
-
-			this.player.tick(delta);
-			this.bullets = this.bullets.filter(function (b) {
-				var ret = b.tick(delta);
-				if (ret) {
-					var block = this.world.getBlockAtPos(b.pos);
-					if (block.type !== "air") {
-						b.stop();
-					}
-				} else {
-					this.scene.remove(b.mesh);
-				}
-				return ret;
-			}, this);
-
-			var maxX = this.world.maxX,
-				maxZ = this.world.maxZ,
-				xo = this.world.xo,
-				zo = this.world.zo;
-
-			this.targets = this.targets.filter(function (t) {
-				var ret = t.tick(delta);
-				if (!ret) {
-					this.scene.remove(t.mesh);
-				} else {
-					// If not to far out into space...
-
-					if (Math.abs(t.pos.x - xo) < maxX * 1.3 && Math.abs(t.pos.z - zo) < maxZ * 1.3) {
-						var hit = this.bullets.some(function (b) {
-							return !b.stopped && utils.dist(b.pos, t.pos) < 2;
-						});
-						if (hit) {
-							ret = false;
-							this.scene.remove(t.mesh);
-							this.explodeParticles(t.pos);
-						}
-					}
-				}
-				return ret;
-			}, this);
-
-			this.particles = this.particles.filter(function (p) {
-				var t = p.tick(delta);
-				if (!t) {
-					this.scene.remove(p.mesh);
-				}
-				return t;
-			}, this);
-
-			this.world.tick(delta);
-
-			// Add a pumpkin
-			if (Math.random() < 0.01) {
-				var target = Object.create(Target).init(
-					new THREE.Vector3(
-						xo + (Math.random() * (maxX * 0.3) * 2) - (maxX * 0.3),
-						(Math.random() * 13 | 0) + 0.75,
-						zo + (Math.random() * (maxZ * 0.3) * 2) - (maxZ * 0.3)
-					),
-					new THREE.Vector3(
-						Math.random() - 0.5,
-						0,
-						Math.random() - 0.5
-					),
-					this.materials.target);
-				this.targets.push(target);
-				this.scene.add(target.mesh);
-			}
 
 		},
 
@@ -750,7 +664,7 @@
 				this.renderer.render(this.screen.scene, this.camera);
 			} else {
 				this.vrControls.update();
-				this.oculusRenderer.render(
+				this.vrRenderer.render(
 					this.scene,
 					this.camera); //this.player.controls.getObject().children[0].children[0].matrixWorld);
 			}
