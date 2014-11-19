@@ -6,6 +6,8 @@ var WorldScreen = {
 	doRemoveBlock: false,
 
 	cursor: null,
+	player: null,
+
 
 	lights: {},
 
@@ -21,10 +23,10 @@ var WorldScreen = {
 		this.screen = screen;
 
 		screen.world = Object.create(World).init(screen, this.scene, screen.network.world.seed);
-		screen.player = Object.create(Player).init(screen, this.scene);
+		this.player = Object.create(Player).init(this, this.scene);
 		this.cursor = Object.create(Cursor).init(this, this.scene);
 
-		screen.bindHandlers();
+		screen.bindHandlers(this.player);
 
 		this.addLights();
 		this.addStratosphere();
@@ -120,7 +122,7 @@ var WorldScreen = {
 
 		var scr = this.screen;
 
-		scr.player.tick(dt);
+		this.player.tick(dt);
 		scr.bullets = scr.bullets.filter(function (b) {
 			var ret = b.tick(dt);
 			if (ret) {
@@ -193,7 +195,7 @@ var WorldScreen = {
 		}
 
 		if (this.doAddBlock) {
-			var added = scr.world.addBlockAtCursor(this.cursor, scr.player.curTool, []);
+			var added = scr.world.addBlockAtCursor(this.cursor, this.player.curTool, []);
 			if (!added) {
 				this.screen.fire();
 			}
@@ -206,7 +208,7 @@ var WorldScreen = {
 		}
 
 		// Do update ping
-		scr.network.tick(scr.player.playerObj);
+		scr.network.tick(this.player.playerObj);
 
 	}
 

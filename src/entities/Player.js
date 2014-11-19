@@ -20,7 +20,7 @@ var Player = {
 
 		var playerObj = this.playerObj = new THREE.Object3D();
 
-		playerObj.position.set(screen.world.chunkWidth * 0.1, 17 +  (this.bb.h / 2), screen.world.chunkWidth * 0.75);
+		playerObj.position.set(screen.screen.world.chunkWidth * 0.1, 17 +  (this.bb.h / 2), screen.screen.world.chunkWidth * 0.75);
 
 		this.addPlayerMesh();
 
@@ -101,7 +101,7 @@ var Player = {
 		obj.translateZ(-zo * delta);
 
 		// Check if ok...
-		var col = this.screen.tryMove(this, newPos);
+		var col = this.screen.screen.tryMove(this, newPos);
 
 		obj.position.x = col.x;
 		obj.position.y = col.y;
@@ -122,7 +122,7 @@ var Player = {
 			yo += jump;
 		}
 
-		this.screen.cast(); // see what we're looking at
+		this.screen.screen.cast(); // see what we're looking at
 
 		// Carry over gravity velocity to next frame
 		// x/z stops dead - no drag.
@@ -131,7 +131,7 @@ var Player = {
 		// bobbing
 		var size = 0.12,
 			speed = 200,
-			bobbing = !this.screen.isOculus && col.ground && (obj.position.x !== oldPos.x || obj.position.z !== oldPos.z),
+			bobbing = !this.screen.screen.isOculus && col.ground && (obj.position.x !== oldPos.x || obj.position.z !== oldPos.z),
 			bobX = bobbing ? Math.sin(Date.now() / speed) * size : 0;
 			bobY = bobbing ? - Math.abs(Math.cos(Date.now() / speed)) * size + (size/2) : 0;
 
@@ -142,10 +142,10 @@ var Player = {
 
 	createControls: function () {
 
-		var camera = this.screen.camera,
+		var camera = this.screen.screen.camera,
 			controls = new THREE.PointerLockControls(
 				this.thrd ? new THREE.Object3D(): camera,
-				this.screen.settings.mouse_sensitivity);
+				this.screen.screen.settings.mouse_sensitivity);
 
 		if (this.thrd) {
 			camera.position.set(-5, 12, 10);
@@ -163,7 +163,7 @@ var Player = {
 			return;
 		}
 
-		var blocks = this.screen.world.blocks;
+		var blocks = this.screen.screen.world.blocks;
 
 		this.lastToolChange = Date.now();
 

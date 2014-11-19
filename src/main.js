@@ -7,8 +7,6 @@
 		useAO: true,
 		isOculus: false,
 
-		player: null,
-		clientId: null,
 		world: null,
 		bullets: null,
 		targets: null,
@@ -92,9 +90,7 @@
 
 		},
 
-		bindHandlers: function () {
-
-			var player = this.player;
+		bindHandlers: function (player) {
 
 			document.addEventListener("mousedown", (function(e){
 
@@ -277,7 +273,7 @@
 
 		cast: function () {
 
-			var ob = this.player.controls,
+			var ob = this.screen.player.controls,
 				cursor = this.screen.cursor,
 				chs = this.world.chunks,
 				origin = ob.getObject().position.clone(),
@@ -320,8 +316,8 @@
 
 		fire: function () {
 
-			var ob = this.player.controls,
-				origin = this.player.playerObj.position.clone(),
+			var ob = this.screen.player.controls,
+				origin = this.screen.player.playerObj.position.clone(),
 				direction = ob.getDirection().clone();
 
 			if (this.isOculus) {
