@@ -5,6 +5,8 @@ var WorldScreen = {
 	doAddBlock: false,
 	doRemoveBlock: false,
 
+	cursor: null,
+
 	lights: {},
 
 	stratosphere: {
@@ -20,7 +22,7 @@ var WorldScreen = {
 
 		screen.world = Object.create(World).init(screen, this.scene, screen.network.world.seed);
 		screen.player = Object.create(Player).init(screen, this.scene);
-		screen.cursor = Object.create(Cursor).init(screen, this.scene);
+		this.cursor = Object.create(Cursor).init(this, this.scene);
 
 		screen.bindHandlers();
 
@@ -191,7 +193,7 @@ var WorldScreen = {
 		}
 
 		if (this.doAddBlock) {
-			var added = scr.world.addBlockAtCursor(scr.cursor, scr.player.curTool, []);
+			var added = scr.world.addBlockAtCursor(this.cursor, scr.player.curTool, []);
 			if (!added) {
 				this.screen.fire();
 			}
@@ -199,7 +201,7 @@ var WorldScreen = {
 		}
 
 		if (this.doRemoveBlock) {
-			scr.world.removeBlockAtCursor(scr.cursor);
+			scr.world.removeBlockAtCursor(this.cursor);
 			this.doRemoveBlock = false;
 		}
 

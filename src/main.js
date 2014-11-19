@@ -13,7 +13,6 @@
 		bullets: null,
 		targets: null,
 		particles: null,
-		cursor: null,
 
 		frame: 0,
 		oneFrameEvery: 1, // Slow down time, for testing
@@ -279,7 +278,7 @@
 		cast: function () {
 
 			var ob = this.player.controls,
-				cursor = this.cursor,
+				cursor = this.screen.cursor,
 				chs = this.world.chunks,
 				origin = ob.getObject().position.clone(),
 				chW = this.world.chunkWidth,
