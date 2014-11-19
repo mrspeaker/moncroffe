@@ -10,7 +10,6 @@
 		world: null,
 		bullets: null,
 		targets: null,
-		particles: null,
 
 		frame: 0,
 		oneFrameEvery: 1, // Slow down time, for testing
@@ -43,7 +42,6 @@
 
 			this.bullets = [];
 			this.targets = [];
-			this.particles = [];
 
 			this.screen = Object.create(TitleScreen).init(this);
 
@@ -251,22 +249,6 @@
 			}
 
 			this.screen.tick(delta);
-
-		},
-
-		explodeParticles: function (pos) {
-
-			for (var i = 0; i < 10; i++) {
-				var p = Object.create(Particle).init(
-					0.3,
-					new THREE.Vector3(
-						pos.x + ((Math.random() * 3) - 1.5),
-						pos.y + ((Math.random() * 3) - 1.5),
-						pos.z + ((Math.random() * 3) - 1.5)),
-					this.materials.target);
-				this.screen.scene.add(p.mesh);
-				this.particles.push(p);
-			}
 
 		},
 

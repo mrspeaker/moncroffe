@@ -7,6 +7,7 @@ var WorldScreen = {
 
 	cursor: null,
 	player: null,
+	particles: null,
 
 
 	lights: {},
@@ -25,6 +26,8 @@ var WorldScreen = {
 		screen.world = Object.create(World).init(screen, this.scene, screen.network.world.seed);
 		this.player = Object.create(Player).init(this);
 		this.cursor = Object.create(Cursor).init(this);
+		this.particles = [];
+
 
 		screen.bindHandlers(this.player);
 
@@ -118,6 +121,22 @@ var WorldScreen = {
 
 	},
 
+	explodeParticles: function (pos) {
+
+		for (var i = 0; i < 10; i++) {
+			var p = Object.create(Particle).init(
+				0.3,
+				new THREE.Vector3(
+					pos.x + ((Math.random() * 3) - 1.5),
+					pos.y + ((Math.random() * 3) - 1.5),
+					pos.z + ((Math.random() * 3) - 1.5)),
+				this.screen.materials.target);
+			this.scene.add(p.mesh);
+			this.particles.push(p);
+		}
+
+	},
+
 	tick: function (dt) {
 
 		var scr = this.screen;
@@ -155,14 +174,14 @@ var WorldScreen = {
 					if (hit) {
 						ret = false;
 						this.scene.remove(t.mesh);
-						scr.explodeParticles(t.pos);
+						this.explodeParticles(t.pos);
 					}
 				}
 			}
 			return ret;
 		}, this);
 
-		scr.particles = scr.particles.filter(function (p) {
+		this.particles = this.particles.filter(function (p) {
 			var t = p.tick(dt);
 			if (!t) {
 				this.scene.remove(p.mesh);
