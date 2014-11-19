@@ -15,13 +15,12 @@ var WorldScreen = {
 
 	init: function (screen) {
 
-		//this.scene = new THREE.Scene();
-		this.scene = screen.scene;
+		this.scene = new THREE.Scene();
 		this.screen = screen;
 
-		screen.world = Object.create(World).init(screen, screen.network.world.seed);
-		screen.player = Object.create(Player).init(screen);
-		screen.cursor = Object.create(Cursor).init(screen);
+		screen.world = Object.create(World).init(screen, this.scene, screen.network.world.seed);
+		screen.player = Object.create(Player).init(screen, this.scene);
+		screen.cursor = Object.create(Cursor).init(screen, this.scene);
 
 		screen.bindHandlers();
 
@@ -37,7 +36,7 @@ var WorldScreen = {
 	addLights: function () {
 
 		this.lights.ambientLight = new THREE.AmbientLight(0x999999);
-		this.screen.scene.add(this.lights.ambientLight);
+		this.scene.add(this.lights.ambientLight);
 
 		this.lights.player = new THREE.PointLight(0xF3AC44, 1, 8);
 		this.screen.camera.add(this.lights.player); // light follows player
@@ -45,13 +44,13 @@ var WorldScreen = {
 		// One of these guys turns out when player turns on!
 		var light = new THREE.PointLight(0xF4D2A3, 1, 10);
 		light.position.set(this.screen.world.chunkWidth - 5, 5, this.screen.world.chunkWidth - 5);
-		this.screen.scene.add(light);
+		this.scene.add(light);
 
 		var light2 = new THREE.PointLight(0xF4D2A3, 1, 10);
 		light2.position.set(2 * this.screen.world.chunkWidth - 3, 5, 2 * this.screen.world.chunkWidth - 3);
-		this.screen.scene.add(light2);
+		this.scene.add(light2);
 
-		this.screen.scene.fog = new THREE.Fog(0xE8D998, 10, 80);
+		this.scene.fog = new THREE.Fog(0xE8D998, 10, 80);
 
 	},
 
@@ -87,8 +86,8 @@ var WorldScreen = {
 
 		var sky = this.stratosphere.skybox = new THREE.Mesh(skyGeometry, skyMaterial);
 
-		this.screen.scene.add(sky);
-		this.screen.scene.add(night);
+		this.scene.add(sky);
+		this.scene.add(night);
 
 	},
 
@@ -100,11 +99,11 @@ var WorldScreen = {
 			time = 1 + (1 - time);
 		}
 
-		this.screen.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
+		this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
 
-		this.screen.scene.remove(this.lights.ambientLight);
+		this.scene.remove(this.lights.ambientLight);
 		this.lights.ambientLight = new THREE.AmbientLight((new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time));
-		this.screen.scene.add(this.lights.ambientLight);
+		this.scene.add(this.lights.ambientLight);
 
 		this.lights.player.visible = time > 0.5;
 
@@ -128,7 +127,7 @@ var WorldScreen = {
 					b.stop();
 				}
 			} else {
-				scr.scene.remove(b.mesh);
+				this.scene.remove(b.mesh);
 			}
 			return ret;
 		}, this);
@@ -141,7 +140,7 @@ var WorldScreen = {
 		scr.targets = scr.targets.filter(function (t) {
 			var ret = t.tick(dt);
 			if (!ret) {
-				scr.scene.remove(t.mesh);
+				this.scene.remove(t.mesh);
 			} else {
 				// If not to far out into space...
 
@@ -151,7 +150,7 @@ var WorldScreen = {
 					});
 					if (hit) {
 						ret = false;
-						scr.scene.remove(t.mesh);
+						this.scene.remove(t.mesh);
 						scr.explodeParticles(t.pos);
 					}
 				}
@@ -162,7 +161,7 @@ var WorldScreen = {
 		scr.particles = scr.particles.filter(function (p) {
 			var t = p.tick(dt);
 			if (!t) {
-				scr.scene.remove(p.mesh);
+				this.scene.remove(p.mesh);
 			}
 			return t;
 		}, this);
@@ -184,7 +183,7 @@ var WorldScreen = {
 				),
 				scr.materials.target);
 			scr.targets.push(target);
-			scr.scene.add(target.mesh);
+			this.scene.add(target.mesh);
 		}
 
 		if (scr.frame % 50 === 0) {

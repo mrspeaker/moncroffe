@@ -14,13 +14,14 @@
 
 		elapsed: 0,
 
-		init: function (screen, seed) {
+		init: function (screen, scene, seed) {
 
 			window.noise.seed(seed || this.seed);
 
 			this.chunks = {};
 			this.chunkGeom = {};
 			this.screen = screen;
+			this.scene = scene;
 
 			this.blockMaterial = screen.materials.blocks;
 
@@ -57,7 +58,7 @@
 
 				var ch = chunks[0];
 				self.chunkGeom[ch.id] = self.createChunkGeom(ch.x, ch.z, ch.chunk);
-				self.screen.scene.add(self.chunkGeom[ch.id]);
+				self.scene.add(self.chunkGeom[ch.id]);
 
 				setTimeout(function () {
 					createChunksGeom(chunks.slice(1));
@@ -492,7 +493,7 @@
 			}
 
 			var screen = this.screen,
-				scene = screen.scene,
+				scene = this.scene,
 				start = screen.clock.getElapsedTime(),
 				end;
 

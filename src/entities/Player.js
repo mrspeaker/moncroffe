@@ -5,9 +5,10 @@ var Player = {
 	curTool: 1,
 	lastToolChange: Date.now(),
 
-	init: function (screen) {
+	init: function (screen, scene) {
 
 		this.screen = screen;
+		this.scene = scene;
 
 		this.bb = {
 			w: 0.7,
@@ -24,7 +25,7 @@ var Player = {
 		this.addPlayerMesh();
 
 		var controls = this.controls = this.createControls();
-		this.screen.scene.add(controls.getObject());
+		this.scene.add(controls.getObject());
 
 		return this;
 	},
@@ -48,7 +49,7 @@ var Player = {
 			new THREE.BoxGeometry(0.5, 0.2, 0.05),
 			new THREE.MeshLambertMaterial({ color: 0x00ffff })));
 		this.marker.add(edge);
-		this.screen.scene.add(this.marker);
+		this.scene.add(this.marker);
 
 		// Mesh bounding box for the player in third person mode
 		if (this.thrd) {
@@ -57,7 +58,7 @@ var Player = {
 					new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d),
 					new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: true})));
 
-			this.screen.scene.add(this.playerObj);
+			this.scene.add(this.playerObj);
 		}
 
 	},

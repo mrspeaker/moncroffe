@@ -7,7 +7,7 @@ var Cursor = {
 	chunkId: "0:0",
 	visible: true,
 
-	init: function (screen) {
+	init: function (screen, scene) {
 
 		var cursor = this.mesh = new THREE.Mesh(
 			new THREE.BoxGeometry(1.01, 1.01, 1.01),
@@ -23,7 +23,7 @@ var Cursor = {
 
 		this.screen = screen;
 
-		screen.scene.add(cursor);
+		scene.add(cursor);
 
 		return this;
 

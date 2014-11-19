@@ -19,7 +19,6 @@
 		oneFrameEvery: 1, // Slow down time, for testing
 		quality: 1, // Divides the screen width/height and streches the canvas
 
-		scene: null,
 		camera: null,
 		renderer: null,
 		vrRenderer: null,
@@ -76,7 +75,6 @@
 
 		initScene: function () {
 
-			this.scene = new THREE.Scene();
 			this.renderer = new THREE.WebGLRenderer();
 
 			this.vrRenderer = new THREE.VREffect(this.renderer, function (err) {
@@ -272,7 +270,7 @@
 						pos.y + ((Math.random() * 3) - 1.5),
 						pos.z + ((Math.random() * 3) - 1.5)),
 					this.materials.target);
-				this.scene.add(p.mesh);
+				this.screen.scene.add(p.mesh);
 				this.particles.push(p);
 			}
 
@@ -343,7 +341,7 @@
 
 			var bullet = Object.create(Bullet).init(origin, direction, this.materials.bullet);
 			this.bullets.push(bullet);
-			this.scene.add(bullet.mesh);
+			this.screen.scene.add(bullet.mesh);
 
 		},
 
@@ -562,7 +560,7 @@
 			} else {
 				this.vrControls.update();
 				this.vrRenderer.render(
-					this.scene,
+					this.screen.scene,
 					this.camera); //this.player.controls.getObject().children[0].children[0].matrixWorld);
 			}
 
