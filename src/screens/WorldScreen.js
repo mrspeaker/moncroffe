@@ -7,6 +7,12 @@ var WorldScreen = {
 
 	lights: {},
 
+	stratosphere: {
+		skybox: null,
+		nightbox: null,
+		uniforms: null,
+	},
+
 	init: function (screen) {
 
 		//this.scene = new THREE.Scene();
@@ -20,7 +26,7 @@ var WorldScreen = {
 		screen.bindHandlers();
 
 		this.addLights();
-		screen.addStratosphere();
+		this.addStratosphere();
 		this.updateDayNight();
 
 		screen.world.createChunks();
@@ -49,6 +55,43 @@ var WorldScreen = {
 
 	},
 
+	addStratosphere: function () {
+
+		// Stary night
+		var nightGeometry = new THREE.SphereGeometry(200, 32, 15),
+			nightMaterial = new THREE.MeshLambertMaterial({
+				map: this.screen.textures.night,
+				fog: false,
+				ambient: new THREE.Color(0xaaaaaa),
+				side: THREE.BackSide
+			});
+
+		var night = this.stratosphere.nightbox = new THREE.Mesh(nightGeometry, nightMaterial);
+		night.visible = false;
+
+		// Horizon day shader
+		var uniforms = this.stratosphere.uniforms = {
+			topColor: { type: "c", value: new THREE.Color(0x88C4EC) },
+			bottomColor: { type: "c", value: new THREE.Color(0xE8D998) },
+			offset: { type: "f", value: 40 },
+			exponent: { type: "f", value: 0.6 }
+		};
+
+		var skyGeometry = new THREE.SphereGeometry(200, 32, 15),
+			skyMaterial = new THREE.ShaderMaterial({
+				uniforms: uniforms,
+				vertexShader:  document.getElementById("vHemisphere").textContent,
+				fragmentShader: document.getElementById("fHemisphere").textContent,
+				side: THREE.BackSide
+			});
+
+		var sky = this.stratosphere.skybox = new THREE.Mesh(skyGeometry, skyMaterial);
+
+		this.screen.scene.add(sky);
+		this.screen.scene.add(night);
+
+	},
+
 	updateDayNight: function () {
 
 		var time = (this.screen.world.elapsed % 160) / 80; // (% 1x day/night cycle) / 0.5x; (in seconds)
@@ -65,10 +108,10 @@ var WorldScreen = {
 
 		this.lights.player.visible = time > 0.5;
 
-		this.screen.stratosphere.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
-		this.screen.stratosphere.uniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);
-		this.screen.stratosphere.skybox.visible = time < 0.875;
-		this.screen.stratosphere.nightbox.visible = time >= 0.875;
+		this.stratosphere.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
+		this.stratosphere.uniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);
+		this.stratosphere.skybox.visible = time < 0.875;
+		this.stratosphere.nightbox.visible = time >= 0.875;
 
 	},
 

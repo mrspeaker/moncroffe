@@ -26,12 +26,6 @@
 		vrControls: null,
 		clock: null,
 
-		stratosphere: {
-			skybox: null,
-			nightbox: null,
-			uniforms: null,
-		},
-
 		textures: {},
 		materials: {},
 
@@ -233,43 +227,6 @@
 				vertexColors: THREE.VertexColors,
 				wireframe: false
 			});
-
-		},
-
-		addStratosphere: function () {
-
-			// Stary night
-			var nightGeometry = new THREE.SphereGeometry(200, 32, 15),
-				nightMaterial = new THREE.MeshLambertMaterial({
-					map: this.textures.night,
-					fog: false,
-					ambient: new THREE.Color(0xaaaaaa),
-					side: THREE.BackSide
-				});
-
-			var night = this.stratosphere.nightbox = new THREE.Mesh(nightGeometry, nightMaterial);
-			night.visible = false;
-
-			// Horizon day shader
-			var uniforms = this.stratosphere.uniforms = {
-				topColor: { type: "c", value: new THREE.Color(0x88C4EC) },
-				bottomColor: { type: "c", value: new THREE.Color(0xE8D998) },
-				offset: { type: "f", value: 40 },
-				exponent: { type: "f", value: 0.6 }
-			};
-
-			var skyGeometry = new THREE.SphereGeometry(200, 32, 15),
-				skyMaterial = new THREE.ShaderMaterial({
-					uniforms: uniforms,
-					vertexShader:  document.getElementById("vHemisphere").textContent,
-					fragmentShader: document.getElementById("fHemisphere").textContent,
-					side: THREE.BackSide
-				});
-
-			var sky = this.stratosphere.skybox = new THREE.Mesh(skyGeometry, skyMaterial);
-
-			this.scene.add(sky);
-			this.scene.add(night);
 
 		},
 
