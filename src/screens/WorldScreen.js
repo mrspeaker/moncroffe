@@ -23,8 +23,8 @@ var WorldScreen = {
 		this.screen = screen;
 
 		screen.world = Object.create(World).init(screen, this.scene, screen.network.world.seed);
-		this.player = Object.create(Player).init(this, this.scene);
-		this.cursor = Object.create(Cursor).init(this, this.scene);
+		this.player = Object.create(Player).init(this);
+		this.cursor = Object.create(Cursor).init(this);
 
 		screen.bindHandlers(this.player);
 

@@ -37,7 +37,7 @@
 
 			this.initUserSettings();
 
-			this.initScene();
+			this.init3d();
 			this.loadTextures();
 			this.addMaterials();
 
@@ -70,7 +70,7 @@
 
 		},
 
-		initScene: function () {
+		init3d: function () {
 
 			this.renderer = new THREE.WebGLRenderer();
 
@@ -82,7 +82,6 @@
 			this.camera = new THREE.PerspectiveCamera(85, 1, 0.01, 500);
 			this.setCameraDimensions();
 			this.vrControls = new THREE.VRControls(this.camera);
-
 
 			this.clock = new THREE.Clock();
 
