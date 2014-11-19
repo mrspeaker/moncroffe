@@ -5,6 +5,8 @@ var WorldScreen = {
 	doAddBlock: false,
 	doRemoveBlock: false,
 
+	lights: {},
+
 	init: function (screen) {
 
 		//this.scene = new THREE.Scene();
@@ -17,13 +19,57 @@ var WorldScreen = {
 
 		screen.bindHandlers();
 
-		screen.addLights();
+		this.addLights();
 		screen.addStratosphere();
-		screen.updateDayNight();
+		this.updateDayNight();
 
 		screen.world.createChunks();
 
 		return this;
+	},
+
+	addLights: function () {
+
+		this.lights.ambientLight = new THREE.AmbientLight(0x999999);
+		this.screen.scene.add(this.lights.ambientLight);
+
+		this.lights.player = new THREE.PointLight(0xF3AC44, 1, 8);
+		this.screen.camera.add(this.lights.player); // light follows player
+
+		// One of these guys turns out when player turns on!
+		var light = new THREE.PointLight(0xF4D2A3, 1, 10);
+		light.position.set(this.screen.world.chunkWidth - 5, 5, this.screen.world.chunkWidth - 5);
+		this.screen.scene.add(light);
+
+		var light2 = new THREE.PointLight(0xF4D2A3, 1, 10);
+		light2.position.set(2 * this.screen.world.chunkWidth - 3, 5, 2 * this.screen.world.chunkWidth - 3);
+		this.screen.scene.add(light2);
+
+		this.screen.scene.fog = new THREE.Fog(0xE8D998, 10, 80);
+
+	},
+
+	updateDayNight: function () {
+
+		var time = (this.screen.world.elapsed % 160) / 80; // (% 1x day/night cycle) / 0.5x; (in seconds)
+
+		if (time > 1) {
+			time = 1 + (1 - time);
+		}
+
+		this.screen.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
+
+		this.screen.scene.remove(this.lights.ambientLight);
+		this.lights.ambientLight = new THREE.AmbientLight((new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time));
+		this.screen.scene.add(this.lights.ambientLight);
+
+		this.lights.player.visible = time > 0.5;
+
+		this.screen.stratosphere.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
+		this.screen.stratosphere.uniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);
+		this.screen.stratosphere.skybox.visible = time < 0.875;
+		this.screen.stratosphere.nightbox.visible = time >= 0.875;
+
 	},
 
 	tick: function (dt) {
@@ -99,7 +145,7 @@ var WorldScreen = {
 		}
 
 		if (scr.frame % 50 === 0) {
-			scr.updateDayNight();
+			this.updateDayNight();
 		}
 
 		if (this.doAddBlock) {
