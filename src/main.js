@@ -19,9 +19,6 @@
 		oneFrameEvery: 1, // Slow down time, for testing
 		quality: 1, // Divides the screen width/height and streches the canvas
 
-		doAddBlock: false,
-		doRemoveBlock: false,
-
 		scene: null,
 		camera: null,
 		renderer: null,
@@ -116,9 +113,9 @@
 				}
 
 				if (e.shiftKey || e.button !== 0) {
-					this.doRemoveBlock = true;
+					this.screen.doRemoveBlock = true;
 				} else {
-					this.doAddBlock = true;
+					this.screen.doAddBlock = true;
 				}
 
 			}).bind(this), false);
@@ -318,19 +315,6 @@
 		},
 
 		tick: function () {
-
-			if (this.doAddBlock) {
-				var added = this.world.addBlockAtCursor(this.cursor, this.player.curTool, []);
-				if (!added) {
-					this.fire();
-				}
-				this.doAddBlock = false;
-			}
-
-			if (this.doRemoveBlock) {
-				this.world.removeBlockAtCursor(this.cursor);
-				this.doRemoveBlock = false;
-			}
 
 			var delta = this.clock.getDelta() / this.oneFrameEvery;
 			delta = Math.min(60 / 1000, delta); // HACK: Limit for physics

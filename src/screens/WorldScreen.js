@@ -2,6 +2,9 @@ var WorldScreen = {
 
 	scene: null,
 
+	doAddBlock: false,
+	doRemoveBlock: false,
+
 	init: function (screen) {
 
 		//this.scene = new THREE.Scene();
@@ -95,8 +98,21 @@ var WorldScreen = {
 			scr.scene.add(target.mesh);
 		}
 
-		if (this.screen.frame % 50 === 0) {
-			this.screen.updateDayNight();
+		if (scr.frame % 50 === 0) {
+			scr.updateDayNight();
+		}
+
+		if (this.doAddBlock) {
+			var added = scr.world.addBlockAtCursor(scr.cursor, scr.player.curTool, []);
+			if (!added) {
+				this.screen.fire();
+			}
+			this.doAddBlock = false;
+		}
+
+		if (this.doRemoveBlock) {
+			scr.world.removeBlockAtCursor(scr.cursor);
+			this.doRemoveBlock = false;
 		}
 
 		// Do update ping
