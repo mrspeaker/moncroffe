@@ -35,7 +35,7 @@ var Network = {
 		var now = Date.now();
 		if (this.clientId && now - this.lastPing > this.pingEvery) {
 			this.lastPing = now;
-			this.pingSend(mesh.position);
+			this.pingSend(mesh.position, mesh.rotation.y);
 		}
 	},
 
@@ -76,24 +76,26 @@ var Network = {
 
 			// Update it
 			player.mesh.position.set(
-				p.position.x,
-				p.position.y,
-				p.position.z
+				p.pos.x,
+				p.pos.y,
+				p.pos.z
 			);
+			player.mesh.rotation.set(0, p.rot, 0);
 		}, this);
 
 		// TODO: derp, global ref
 		main.screen.elapsed = ping.elapsed;
 	},
 
-	pingSend: function (pos) {
+	pingSend: function (pos, rot) {
 		this.socket.emit("ping", {
 			clientId: this.clientId,
 			pos: {
 				x: pos.x,
 				y: pos.y,
 				z: pos.z
-			}
+			},
+			rot: rot
 		});
 	}
 

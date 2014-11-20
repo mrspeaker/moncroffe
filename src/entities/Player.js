@@ -134,6 +134,8 @@ var Player = {
 			bobX = bobbing ? Math.sin(Date.now() / speed) * size : 0;
 			bobY = bobbing ? - Math.abs(Math.cos(Date.now() / speed)) * size + (size/2) : 0;
 
+		this.playerObj.rotation.y = this.controls.getObject().rotation.y;
+
 		this.controls.setPos(obj.position.x + bobX, obj.position.y + bobY, obj.position.z);
 		this.marker.position.set(obj.position.x, obj.position.y - (this.bb.h / 2) + 0.05, obj.position.z);
 

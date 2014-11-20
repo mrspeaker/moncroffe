@@ -28,7 +28,8 @@ io.on('connection', function(client){
 	clients.push(client);
 	players.push({
 		id: client.userid,
-		position: { x: 0, y: 0, z: 0 }
+		pos: { x: 0, y: 0, z: 0 },
+		rot: {x: 0, z: 0}
 	});
 
 	client.on("disconnect", function () {
@@ -47,9 +48,11 @@ io.on('connection', function(client){
 	client.on("ping", function(ping) {
 		players.forEach(function (p) {
 			if (ping.clientId === p.id) {
-				p.position.x = ping.pos.x;
-				p.position.y = ping.pos.y;
-				p.position.z = ping.pos.z;
+				p.pos.x = ping.pos.x;
+				p.pos.y = ping.pos.y;
+				p.pos.z = ping.pos.z;
+
+				p.rot = ping.rot;
 			}
 		});
 	});
