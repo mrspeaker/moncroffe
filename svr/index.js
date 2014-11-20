@@ -72,6 +72,7 @@ function run () {
 		World.clients.forEach(function (c) {
 			c.emit("ping", {
 				players: World.players,
+				bullets: World.bullets,
 				elapsed: World.elapsed
 			});
 		});

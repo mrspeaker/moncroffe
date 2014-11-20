@@ -5,6 +5,11 @@ var Bullet = {
 	stopped: false,
 
 	count: 0,
+	life: 30,
+	hangAroundFor: 4000,
+
+	direction: null,
+	velocity: 40,
 
 	init: function (pos, direction, material) {
 
@@ -23,7 +28,7 @@ var Bullet = {
 		this.mesh.position.copy(pos);
 		this.mesh.lookAt(pos.add(direction));
 
-		this.direction = direction
+		this.direction = direction;
 
 		return this;
 
@@ -37,17 +42,17 @@ var Bullet = {
 
 	tick: function (dt) {
 		var m = this.mesh,
-			pow = dt * 40;
+			pow = dt * this.velocity;
 
-		if (this.count++ < 30 && !this.stopped) {
+		if (this.count++ < this.life && !this.stopped) {
 			m.translateZ(pow);
 			this.pos = m.position;
-			if (this.count === 30) {
+			if (this.count === this.life) {
 				this.stopped = true;
 			}
 		}
 
-		if (this.count < 4000) {
+		if (this.count < this.hangAroundFor) {
 			return true;
 		}
 
