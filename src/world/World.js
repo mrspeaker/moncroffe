@@ -14,16 +14,16 @@
 
 		elapsed: 0,
 
-		init: function (screen, scene, seed) {
+		init: function (screen, seed) {
 
 			window.noise.seed(seed || this.seed);
 
 			this.chunks = {};
 			this.chunkGeom = {};
 			this.screen = screen;
-			this.scene = scene;
+			this.scene = screen.scene;
 
-			this.blockMaterial = screen.materials.blocks;
+			this.blockMaterial = screen.screen.materials.blocks;
 
 			var chW = this.chunkWidth;
 			this.xo = chW / 2;
@@ -492,7 +492,7 @@
 				return;
 			}
 
-			var screen = this.screen,
+			var screen = this.screen.screen,
 				scene = this.scene,
 				start = screen.clock.getElapsedTime(),
 				end;
@@ -501,7 +501,7 @@
 			this.chunkGeom[chId] = this.createChunkGeom(x, z, this.chunks[chId]);
 			scene.add(this.chunkGeom[chId]);
 
-			var end = this.screen.clock.getElapsedTime();
+			var end = screen.clock.getElapsedTime();
 
 			utils.msgln("Remesh Chunk[" + chId + "]:", ((end - start) * 1000 | 0) + "ms");
 

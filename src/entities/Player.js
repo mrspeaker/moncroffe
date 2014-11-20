@@ -19,7 +19,7 @@ var Player = {
 
 		var playerObj = this.playerObj = new THREE.Object3D();
 
-		playerObj.position.set(screen.screen.world.chunkWidth * 0.1, 17 +  (this.bb.h / 2), screen.screen.world.chunkWidth * 0.75);
+		playerObj.position.set(screen.world.chunkWidth * 0.1, 17 +  (this.bb.h / 2), screen.world.chunkWidth * 0.75);
 
 		this.addPlayerMesh();
 
@@ -162,7 +162,7 @@ var Player = {
 			return;
 		}
 
-		var blocks = this.screen.screen.world.blocks;
+		var blocks = this.screen.world.blocks;
 
 		this.lastToolChange = Date.now();
 

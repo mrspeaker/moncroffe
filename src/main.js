@@ -4,11 +4,7 @@
 
 	var main = {
 
-		useAO: true,
 		isOculus: false,
-
-		world: null,
-		targets: null,
 
 		frame: 0,
 		oneFrameEvery: 1, // Slow down time, for testing
@@ -24,22 +20,16 @@
 		materials: {},
 
 		network: null,
-
 		settings: null,
-
 		screen: null,
 
 		init: function () {
-
-			var self = this;
 
 			this.initUserSettings();
 
 			this.init3d();
 			this.loadTextures();
 			this.addMaterials();
-
-			this.targets = [];
 
 			this.screen = Object.create(TitleScreen).init(this);
 
@@ -128,7 +118,7 @@
 				// Toggle AO
 				if (e.keyCode === 81 /*q*/) {
 					var pos = player.playerObj.position;
-					this.useAO = !this.useAO;
+					this.screen.useAO = !this.screen.useAO;
 					this.world.reMeshChunk(pos.x / this.world.chunkWidth | 0, pos.z / this.world.chunkWidth | 0);
 				}
 
@@ -254,10 +244,10 @@
 
 			var ob = this.screen.player.controls,
 				cursor = this.screen.cursor,
-				chs = this.world.chunks,
+				chs = this.screen.world.chunks,
 				origin = ob.getObject().position.clone(),
-				chW = this.world.chunkWidth,
-				chH = this.world.chunkHeight;
+				chW = this.screen.world.chunkWidth,
+				chH = this.screen.world.chunkHeight;
 
 			origin.addScalar(0.5);
 
@@ -433,7 +423,7 @@
 
 			var p = e.playerObj.position.clone(),
 				bb = e.bb,
-				block = this.world.isBlockAt.bind(this.world);
+				block = this.screen.world.isBlockAt.bind(this.screen.world);
 
 			var xl = Math.round(p.x - (bb.w / 2)),
 				xr = Math.round(p.x + (bb.w / 2)),

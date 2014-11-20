@@ -5,11 +5,15 @@ var WorldScreen = {
 	doAddBlock: false,
 	doRemoveBlock: false,
 
+	useAO: true,
+
+
 	cursor: null,
 	player: null,
 	particles: null,
 	bullets: null,
 	targets: null,
+	world: null,
 
 	lights: {},
 
@@ -24,7 +28,7 @@ var WorldScreen = {
 		this.scene = new THREE.Scene();
 		this.screen = screen;
 
-		screen.world = Object.create(World).init(screen, this.scene, screen.network.world.seed);
+		this.world = Object.create(World).init(this, screen.network.world.seed);
 		this.player = Object.create(Player).init(this);
 		this.cursor = Object.create(Cursor).init(this);
 		this.bullets = [];
@@ -39,7 +43,7 @@ var WorldScreen = {
 		this.addStratosphere();
 		this.updateDayNight();
 
-		screen.world.createChunks();
+		this.world.createChunks();
 
 		return this;
 	},
@@ -54,11 +58,11 @@ var WorldScreen = {
 
 		// One of these guys turns out when player turns on!
 		var light = new THREE.PointLight(0xF4D2A3, 1, 10);
-		light.position.set(this.screen.world.chunkWidth - 5, 5, this.screen.world.chunkWidth - 5);
+		light.position.set(this.world.chunkWidth - 5, 5, this.world.chunkWidth - 5);
 		this.scene.add(light);
 
 		var light2 = new THREE.PointLight(0xF4D2A3, 1, 10);
-		light2.position.set(2 * this.screen.world.chunkWidth - 3, 5, 2 * this.screen.world.chunkWidth - 3);
+		light2.position.set(2 * this.world.chunkWidth - 3, 5, 2 * this.world.chunkWidth - 3);
 		this.scene.add(light2);
 
 		this.scene.fog = new THREE.Fog(0xE8D998, 10, 80);
@@ -104,7 +108,7 @@ var WorldScreen = {
 
 	updateDayNight: function () {
 
-		var time = (this.screen.world.elapsed % 160) / 80; // (% 1x day/night cycle) / 0.5x; (in seconds)
+		var time = (this.world.elapsed % 160) / 80; // (% 1x day/night cycle) / 0.5x; (in seconds)
 
 		if (time > 1) {
 			time = 1 + (1 - time);
@@ -175,7 +179,7 @@ var WorldScreen = {
 		this.bullets = this.bullets.filter(function (b) {
 			var ret = b.tick(dt);
 			if (ret) {
-				var block = scr.world.getBlockAtPos(b.pos);
+				var block = this.world.getBlockAtPos(b.pos);
 				if (block.type !== "air") {
 					b.stop();
 				}
@@ -185,12 +189,12 @@ var WorldScreen = {
 			return ret;
 		}, this);
 
-		var maxX = scr.world.maxX,
-			maxZ = scr.world.maxZ,
-			xo = scr.world.xo,
-			zo = scr.world.zo;
+		var maxX = this.world.maxX,
+			maxZ = this.world.maxZ,
+			xo = this.world.xo,
+			zo = this.world.zo;
 
-		scr.targets = scr.targets.filter(function (t) {
+		this.targets = this.targets.filter(function (t) {
 			var ret = t.tick(dt);
 			if (!ret) {
 				this.scene.remove(t.mesh);
@@ -219,7 +223,7 @@ var WorldScreen = {
 			return t;
 		}, this);
 
-		scr.world.tick(dt);
+		this.world.tick(dt);
 
 		// Add a pumpkin
 		if (Math.random() < 0.01) {
@@ -235,7 +239,7 @@ var WorldScreen = {
 					Math.random() - 0.5
 				),
 				scr.materials.target);
-			scr.targets.push(target);
+			this.targets.push(target);
 			this.scene.add(target.mesh);
 		}
 
@@ -244,7 +248,7 @@ var WorldScreen = {
 		}
 
 		if (this.doAddBlock) {
-			var added = scr.world.addBlockAtCursor(this.cursor, this.player.curTool, []);
+			var added = this.world.addBlockAtCursor(this.cursor, this.player.curTool, []);
 			if (!added) {
 				this.fire();
 			}
@@ -252,7 +256,7 @@ var WorldScreen = {
 		}
 
 		if (this.doRemoveBlock) {
-			scr.world.removeBlockAtCursor(this.cursor);
+			this.world.removeBlockAtCursor(this.cursor);
 			this.doRemoveBlock = false;
 		}
 
