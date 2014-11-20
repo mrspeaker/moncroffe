@@ -1,4 +1,4 @@
-(function (World, Player, Bullet, utils, THREE) {
+(function (World, utils, THREE) {
 
 	"use strict";
 
@@ -8,7 +8,6 @@
 		isOculus: false,
 
 		world: null,
-		bullets: null,
 		targets: null,
 
 		frame: 0,
@@ -40,7 +39,6 @@
 			this.loadTextures();
 			this.addMaterials();
 
-			this.bullets = [];
 			this.targets = [];
 
 			this.screen = Object.create(TitleScreen).init(this);
@@ -295,32 +293,6 @@
 			});
 		},
 
-		fire: function () {
-
-			var ob = this.screen.player.controls,
-				origin = this.screen.player.playerObj.position.clone(),
-				direction = ob.getDirection().clone();
-
-			if (this.isOculus) {
-				// var vector = new THREE.Vector3( 0, 0, 1 );
-				// var camMatrix = ob.getObject().children[0].children[0].matrixWorld;
-				// vector.applyQuaternion(new THREE.Vector3().setFromRotationMatrix(camMatrix));
-				// //vector.applyMatrix3(camMatrix);
-				// //vector.matrix.multiply(camMatrix);
-				// //direction.add(vector);// vector.angleTo( origin );
-				// direction.copy(vector);
-			}
-
-			// Eh, to fire from another location need
-			// to translate, then re-do getDirection logic
-			if (!this.isOculus) origin.y += 0.4;
-
-			var bullet = Object.create(Bullet).init(origin, direction, this.materials.bullet);
-			this.bullets.push(bullet);
-			this.screen.scene.add(bullet.mesh);
-
-		},
-
 		/*
 
 			Could do this with three camera and figure out face pos,
@@ -547,8 +519,6 @@
 
 }(
 	window.World,
-	window.Player,
-	window.Bullet,
 	window.utils,
 	window.THREE
 ));

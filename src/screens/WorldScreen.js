@@ -8,7 +8,8 @@ var WorldScreen = {
 	cursor: null,
 	player: null,
 	particles: null,
-
+	bullets: null,
+	targets: null,
 
 	lights: {},
 
@@ -26,6 +27,9 @@ var WorldScreen = {
 		screen.world = Object.create(World).init(screen, this.scene, screen.network.world.seed);
 		this.player = Object.create(Player).init(this);
 		this.cursor = Object.create(Cursor).init(this);
+		this.bullets = [];
+		this.targets = [];
+
 		this.particles = [];
 
 
@@ -137,12 +141,38 @@ var WorldScreen = {
 
 	},
 
+	fire: function () {
+
+		var ob = this.player.controls,
+			origin = this.player.playerObj.position.clone(),
+			direction = ob.getDirection().clone();
+
+		if (this.screen.isOculus) {
+			// var vector = new THREE.Vector3( 0, 0, 1 );
+			// var camMatrix = ob.getObject().children[0].children[0].matrixWorld;
+			// vector.applyQuaternion(new THREE.Vector3().setFromRotationMatrix(camMatrix));
+			// //vector.applyMatrix3(camMatrix);
+			// //vector.matrix.multiply(camMatrix);
+			// //direction.add(vector);// vector.angleTo( origin );
+			// direction.copy(vector);
+		}
+
+		// Eh, to fire from another location need
+		// to translate, then re-do getDirection logic
+		if (!this.screen.isOculus) origin.y += 0.4;
+
+		var bullet = Object.create(Bullet).init(origin, direction, this.screen.materials.bullet);
+		this.bullets.push(bullet);
+		this.scene.add(bullet.mesh);
+
+	},
+
 	tick: function (dt) {
 
 		var scr = this.screen;
 
 		this.player.tick(dt);
-		scr.bullets = scr.bullets.filter(function (b) {
+		this.bullets = this.bullets.filter(function (b) {
 			var ret = b.tick(dt);
 			if (ret) {
 				var block = scr.world.getBlockAtPos(b.pos);
@@ -168,7 +198,7 @@ var WorldScreen = {
 				// If not to far out into space...
 
 				if (Math.abs(t.pos.x - xo) < maxX * 1.3 && Math.abs(t.pos.z - zo) < maxZ * 1.3) {
-					var hit = scr.bullets.some(function (b) {
+					var hit = this.bullets.some(function (b) {
 						return !b.stopped && utils.dist(b.pos, t.pos) < 2;
 					});
 					if (hit) {
@@ -216,7 +246,7 @@ var WorldScreen = {
 		if (this.doAddBlock) {
 			var added = scr.world.addBlockAtCursor(this.cursor, this.player.curTool, []);
 			if (!added) {
-				this.screen.fire();
+				this.fire();
 			}
 			this.doAddBlock = false;
 		}
