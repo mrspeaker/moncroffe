@@ -5,7 +5,7 @@ var Network = {
 	lastPing: null,
 	pingEvery: 40,
 
-	players: {},
+	clients: {},
 
 	world: null,
 
@@ -47,12 +47,12 @@ var Network = {
 	},
 
 	dropReceived: function (id) {
-		console.log("Player left:", id);
-		var p = this.players[id];
+		console.log("Client left:", id);
+		var c = this.clients[id];
 
 		// TODO: derp, global ref
 		main.screen.scene.remove(p.mesh);
-		delete this.players[id];
+		delete this.clients[id];
 	},
 
 	pingRecieved: function (ping) {
@@ -64,11 +64,11 @@ var Network = {
 			if (p.id === this.clientId) {
 				return;
 			}
-			var player = this.players[p.id];
+			var player = this.clients[p.id];
 
-			if (!this.players[p.id]) {
+			if (!player) {
 				console.log("Player joined:", p.id);
-				player = this.players[p.id] = Object.create(PlayerProxy).init(p.id);
+				player = this.clients[p.id] = Object.create(PlayerProxy).init(p.id);
 
 				// TODO: derp, global ref
 				main.screen.scene.add(player.mesh);

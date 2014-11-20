@@ -1,7 +1,8 @@
 var express = require("express"),
 	app = express(),
 	http = require('http').Server(app),
-	io = require('socket.io')(http);
+	io = require('socket.io')(http),
+	World = require("./World.js");
 
 app.get('/', function(req, res){
 	res.sendFile('index.html', {'root': '../'});
@@ -11,20 +12,6 @@ app.use("/src", express.static(__dirname + '/../src/'));
 app.use("/res", express.static(__dirname + '/../res/'));
 app.use("/lib", express.static(__dirname + '/../lib/'));
 
-
-var World = {
-	seed: 42,
-	startTime: 0,
-	elapsed: 0,
-	players: [],
-	clients: [],
-	reset: function () {
-		this.startTime = Date.now();
-		this.elapsed = 0;
-		this.seed = Math.random() * 99999999 | 0;
-		console.log("Reset:", this.seed);
-	}
-};
 
 io.on('connection', function(client){
 
