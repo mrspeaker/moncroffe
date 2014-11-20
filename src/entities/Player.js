@@ -121,7 +121,7 @@ var Player = {
 			yo += jump;
 		}
 
-		this.screen.screen.cast(); // see what we're looking at
+		this.screen.cast(); // see what we're looking at
 
 		// Carry over gravity velocity to next frame
 		// x/z stops dead - no drag.

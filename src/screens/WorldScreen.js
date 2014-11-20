@@ -7,7 +7,6 @@ var WorldScreen = {
 
 	useAO: true,
 
-
 	cursor: null,
 	player: null,
 	particles: null,
@@ -25,17 +24,15 @@ var WorldScreen = {
 
 	init: function (screen) {
 
-		this.scene = new THREE.Scene();
 		this.screen = screen;
+		this.scene = new THREE.Scene();
 
 		this.world = Object.create(World).init(this, screen.network.world.seed);
 		this.player = Object.create(Player).init(this);
 		this.cursor = Object.create(Cursor).init(this);
 		this.bullets = [];
 		this.targets = [];
-
 		this.particles = [];
-
 
 		screen.bindHandlers(this.player);
 
@@ -108,7 +105,7 @@ var WorldScreen = {
 
 	updateDayNight: function () {
 
-		var time = (this.world.elapsed % 160) / 80; // (% 1x day/night cycle) / 0.5x; (in seconds)
+		var time = (this.elapsed % 160) / 80; // (% 1x day/night cycle) / 0.5x; (in seconds)
 
 		if (time > 1) {
 			time = 1 + (1 - time);
@@ -171,9 +168,53 @@ var WorldScreen = {
 
 	},
 
+	cast: function () {
+
+		var ob = this.player.controls,
+			origin = ob.getObject().position.clone(),
+			cursor = this.cursor,
+			chs = this.world.chunks,
+			chW = this.world.chunkWidth,
+			chH = this.world.chunkHeight;
+
+		origin.addScalar(0.5);
+
+		utils.raycast(origin, ob.getDirection(), 5, function (x, y, z, face) {
+
+			if (x === "miss") {
+				cursor.hide();
+				return false;
+			}
+
+			cursor.show();
+
+			if (y < 0) y = 0; // looking below ground breaks
+			if (y > chH - 1) y = chH - 1;
+
+			var chunkX = Math.floor(x / chW),
+				chunkZ = Math.floor(z / chW),
+				chunk = chs[chunkX + ":" + chunkZ];
+
+			if (!chunk) {
+				return false;
+			}
+
+			// Set mesh to original position
+			cursor.mesh.position.set(x, y + 0.5, z);
+
+			x -= chunkX * chW;
+			z -= chunkZ * chW;
+
+			cursor.set({x: x, y: y, z: z}, {x: chunkX, z: chunkZ}, face);
+
+			return chunk[z][y][x].type !== "air";
+		});
+	},
+
 	tick: function (dt) {
 
-		var scr = this.screen;
+		var scr = this.screen,
+			world = this.world;
 
 		this.player.tick(dt);
 		this.bullets = this.bullets.filter(function (b) {
@@ -189,10 +230,10 @@ var WorldScreen = {
 			return ret;
 		}, this);
 
-		var maxX = this.world.maxX,
-			maxZ = this.world.maxZ,
-			xo = this.world.xo,
-			zo = this.world.zo;
+		var maxX = world.maxX,
+			maxZ = world.maxZ,
+			xo = world.xo,
+			zo = world.zo;
 
 		this.targets = this.targets.filter(function (t) {
 			var ret = t.tick(dt);
@@ -223,7 +264,7 @@ var WorldScreen = {
 			return t;
 		}, this);
 
-		this.world.tick(dt);
+		world.tick(dt);
 
 		// Add a pumpkin
 		if (Math.random() < 0.01) {
@@ -248,7 +289,7 @@ var WorldScreen = {
 		}
 
 		if (this.doAddBlock) {
-			var added = this.world.addBlockAtCursor(this.cursor, this.player.curTool, []);
+			var added = world.addBlockAtCursor(this.cursor, this.player.curTool, []);
 			if (!added) {
 				this.fire();
 			}
@@ -256,7 +297,7 @@ var WorldScreen = {
 		}
 
 		if (this.doRemoveBlock) {
-			this.world.removeBlockAtCursor(this.cursor);
+			world.removeBlockAtCursor(this.cursor);
 			this.doRemoveBlock = false;
 		}
 

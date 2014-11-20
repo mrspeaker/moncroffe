@@ -83,7 +83,7 @@ var Network = {
 		}, this);
 
 		// TODO: derp, global ref
-		main.screen.world.elapsed = ping.elapsed;
+		main.screen.elapsed = ping.elapsed;
 	},
 
 	pingSend: function (pos) {
