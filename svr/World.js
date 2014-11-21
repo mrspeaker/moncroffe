@@ -26,6 +26,7 @@ var World = {
 				maxZ = 10;
 
 			this.targets.push({
+				id: Math.random() * 99999999 | 0,
 				pos: {
 					x: xo + (Math.random() * (maxX * 0.3) * 2) - (maxX * 0.3),
 					y: (Math.random() * 13 | 0) + 0.75,

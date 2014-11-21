@@ -27,6 +27,8 @@ var Network = {
 		this.socket.on("ping", this.pingRecieved.bind(this));
 		this.socket.on("dropped", this.dropReceived.bind(this));
 
+		this.socket.on("pumpkinDestroyed", this.pumpkinDestroyed.bind(this));
+
 		// Let's go!
 		this.socket.emit("join");
 
@@ -67,7 +69,9 @@ var Network = {
 		this.delta = (ping.elapsed - this.lastPingRec) * 1000;
 		this.lastPingRec = ping.elapsed;
 
-		main.screen.pingReceived && main.screen.pingReceived(ping, ping.elapsed, this.delta);
+		if (main.screen.pingReceived) {
+			main.screen.pingReceived(ping, ping.elapsed, this.delta);
+		}
 
 	},
 
@@ -81,6 +85,14 @@ var Network = {
 			},
 			rot: rot
 		});
+	},
+
+	targetHit: function (tid) {
+		this.socket.emit("pumpkinHit", tid);
+	},
+
+	pumpkinDestroyed : function (tid) {
+		main.screen.pumpkinDestroyed(tid);
 	}
 
 }

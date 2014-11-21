@@ -144,6 +144,17 @@ var WorldScreen = {
 
 	},
 
+	pumpkinDestroyed: function (id) {
+		this.targets = this.targets.filter(function (t) {
+			var deadPump = t.id === id;
+			if (deadPump) {
+				this.scene.remove(t.mesh);
+				this.explodeParticles(t.pos);
+			}
+			return !deadPump;
+		}, this);
+	},
+
 	pingReceived: function (ping) {
 
 		var network = this.screen.network;
@@ -158,7 +169,6 @@ var WorldScreen = {
 				console.log("Player joined:", p.id);
 				player = network.clients[p.id] = Object.create(PlayerProxy).init(p.id);
 
-				// TODO: derp, global ref
 				this.scene.add(player.mesh);
 			}
 
@@ -174,6 +184,7 @@ var WorldScreen = {
 		// Add new pumpkins
 		ping.targets.forEach(function (t) {
 			var target = Object.create(Target).init(
+				t.id,
 				new THREE.Vector3(
 					t.pos.x,
 					t.pos.y,
@@ -301,6 +312,7 @@ var WorldScreen = {
 						ret = false;
 						this.scene.remove(t.mesh);
 						this.explodeParticles(t.pos);
+						this.screen.network.targetHit(t.id);
 					}
 				}
 			}

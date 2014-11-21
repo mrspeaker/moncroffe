@@ -65,6 +65,13 @@ io.on('connection', function(client){
 		});
 	});
 
+	client.on("pumpkinHit", function(id) {
+		World.clients.forEach(function (c) {
+			if (c === client) return;
+			c.emit("pumpkinDestroyed", id);
+		});
+	});
+
 });
 
 function runPingLoop () {

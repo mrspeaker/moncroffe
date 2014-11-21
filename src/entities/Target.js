@@ -8,7 +8,9 @@ var Target = {
 	remove: false,
 	speed: 0,
 
-	init: function (pos, direction, speed, material) {
+	init: function (id, pos, direction, speed, material) {
+
+		this.id = id;
 
 		this.bb = {
 			w: 1.5,
