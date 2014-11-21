@@ -1,5 +1,7 @@
 var TitleScreen = {
 
+	name: "TitleScreen",
+
 	scene: null,
 	screen: null,
 
@@ -21,7 +23,7 @@ var TitleScreen = {
 					0.2,
 					0.1
 				),
-
+				0,
 				this.screen.materials.target);
 		this.target = target;
 		this.scene.add(target.mesh);

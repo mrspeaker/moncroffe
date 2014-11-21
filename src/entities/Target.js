@@ -6,8 +6,9 @@ var Target = {
 	count: 0,
 
 	remove: false,
+	speed: 0,
 
-	init: function (pos, direction, material) {
+	init: function (pos, direction, speed, material) {
 
 		this.bb = {
 			w: 1.5,
@@ -15,7 +16,7 @@ var Target = {
 			h: 1.5
 		};
 
-		this.speed = (Math.random() * 4) + 1;
+		this.speed = speed;
 
 		var geom = utils.texturify(
 			new THREE.CubeGeometry(this.bb.w),

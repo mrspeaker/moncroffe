@@ -76,9 +76,12 @@ function runPingLoop () {
 			c.emit("ping", {
 				players: World.players,
 				bullets: World.bullets,
+				targets: World.targets,
 				elapsed: World.elapsed
 			});
 		});
+
+		World.targets = [];
 
 		runPingLoop();
 	}, 40);

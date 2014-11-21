@@ -67,31 +67,8 @@ var Network = {
 		this.delta = (ping.elapsed - this.lastPingRec) * 1000;
 		this.lastPingRec = ping.elapsed;
 
-		ping.players.forEach(function (p) {
-			if (p.id === this.clientId) {
-				return;
-			}
-			var player = this.clients[p.id];
+		main.screen.pingReceived && main.screen.pingReceived(ping, ping.elapsed, this.delta);
 
-			if (!player) {
-				console.log("Player joined:", p.id);
-				player = this.clients[p.id] = Object.create(PlayerProxy).init(p.id);
-
-				// TODO: derp, global ref
-				main.screen.scene.add(player.mesh);
-			}
-
-			// Update it
-			player.mesh.position.set(
-				p.pos.x,
-				p.pos.y,
-				p.pos.z
-			);
-			player.mesh.rotation.set(0, p.rot, 0);
-		}, this);
-
-		// TODO: derp, global ref
-		main.screen.elapsed = ping.elapsed;
 	},
 
 	pingSend: function (pos, rot) {

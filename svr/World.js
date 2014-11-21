@@ -1,24 +1,29 @@
+// var Three = require("../lib/three.min.js");
+
 var World = {
 	seed: 42,
 	startTime: 0,
 	elapsed: 0,
+
 	clients: [],
 	players: [],
 	targets: [],
+
 	reset: function () {
 		this.startTime = Date.now();
 		this.elapsed = 0;
 		this.seed = Math.random() * 99999999 | 0;
 		console.log("Reset:", this.seed);
 	},
+
 	tick: function () {
 
 		// Add a target.
 		if (Math.random() < 0.01) {
 			var xo = 0,
 				zo = 0,
-				maxX = 500,
-				maxZ = 500;
+				maxX = 10,
+				maxZ = 10;
 
 			this.targets.push({
 				pos: {

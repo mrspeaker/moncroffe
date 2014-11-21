@@ -2,6 +2,8 @@ var WorldScreen = {
 
 	scene: null,
 
+	name: "WorldScreen",
+
 	doAddBlock: false,
 	doRemoveBlock: false,
 
@@ -142,6 +144,55 @@ var WorldScreen = {
 
 	},
 
+	pingReceived: function (ping) {
+
+		var network = this.screen.network;
+
+		ping.players.forEach(function (p) {
+			if (p.id === network.clientId) {
+				return;
+			}
+			var player = network.clients[p.id];
+
+			if (!player) {
+				console.log("Player joined:", p.id);
+				player = network.clients[p.id] = Object.create(PlayerProxy).init(p.id);
+
+				// TODO: derp, global ref
+				this.scene.add(player.mesh);
+			}
+
+			// Update it
+			player.mesh.position.set(
+				p.pos.x,
+				p.pos.y,
+				p.pos.z
+			);
+			player.mesh.rotation.set(0, p.rot, 0);
+		}, this);
+
+		// Add new pumpkins
+		ping.targets.forEach(function (t) {
+			var target = Object.create(Target).init(
+				new THREE.Vector3(
+					t.pos.x,
+					t.pos.y,
+					t.pos.z
+				),
+				new THREE.Vector3(
+					t.rot.x,
+					t.rot.y,
+					t.rot.z
+				),
+				t.speed,
+				this.screen.materials.target);
+			this.targets.push(target);
+			this.scene.add(target.mesh);
+		}, this);
+
+		this.elapsed = ping.elapsed;
+	},
+
 	fire: function () {
 
 		var ob = this.player.controls,
@@ -266,7 +317,7 @@ var WorldScreen = {
 
 		world.tick(dt);
 
-		// Add a pumpkin
+		/*// Add a pumpkin
 		if (Math.random() < 0.01) {
 			var target = Object.create(Target).init(
 				new THREE.Vector3(
@@ -282,7 +333,7 @@ var WorldScreen = {
 				scr.materials.target);
 			this.targets.push(target);
 			this.scene.add(target.mesh);
-		}
+		}*/
 
 		if (scr.frame % 50 === 0) {
 			this.updateDayNight();
