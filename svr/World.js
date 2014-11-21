@@ -4,7 +4,7 @@ var World = {
 	elapsed: 0,
 	clients: [],
 	players: [],
-	bullets: [],
+	targets: [],
 	reset: function () {
 		this.startTime = Date.now();
 		this.elapsed = 0;
@@ -13,6 +13,27 @@ var World = {
 	},
 	tick: function () {
 
+		// Add a target.
+		if (Math.random() < 0.01) {
+			var xo = 0,
+				zo = 0,
+				maxX = 500,
+				maxZ = 500;
+
+			this.targets.push({
+				pos: {
+					x: xo + (Math.random() * (maxX * 0.3) * 2) - (maxX * 0.3),
+					y: (Math.random() * 13 | 0) + 0.75,
+					z: zo + (Math.random() * (maxZ * 0.3) * 2) - (maxZ * 0.3)
+				},
+				rot: {
+					x: Math.random() - 0.5,
+					y: 0,
+					z: Math.random() - 0.5
+				},
+				speed: (Math.random() * 4) + 1
+			});
+		}
 	}
 };
 

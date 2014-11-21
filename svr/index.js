@@ -67,7 +67,7 @@ io.on('connection', function(client){
 
 });
 
-function run () {
+function runPingLoop () {
 
 	setTimeout(function () {
 		World.elapsed = (Date.now() - World.startTime) / 1000;
@@ -80,13 +80,19 @@ function run () {
 			});
 		});
 
-		run();
+		runPingLoop();
 	}, 40);
+}
+
+function runRenderLoop () {
+	World.tick();
+	setTimeout(runRenderLoop, 16);
 }
 
 http.listen(3001, function(){
 	console.log('listening on *:3001');
-	run();
+	runPingLoop();
+	runRenderLoop();
 });
 
 

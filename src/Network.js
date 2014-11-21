@@ -2,15 +2,18 @@ var Network = {
 
 	clientId: null,
 	socket: null,
-	lastPing: null,
+
 	pingEvery: 40,
+	lastPingSent: null,
+	lastPingRec: null,
 
 	clients: {},
 
 	world: null,
 
 	init: function (joinCb) {
-		this.lastPing = Date.now();
+		this.lastPingSent = Date.now();
+		this.lastPingRec = Date.now();
 		this.world = {
 			seed: null
 		};
@@ -33,8 +36,8 @@ var Network = {
 	tick: function (mesh) {
 		// Do update ping
 		var now = Date.now();
-		if (this.clientId && now - this.lastPing > this.pingEvery) {
-			this.lastPing = now;
+		if (this.clientId && now - this.lastPingSent > this.pingEvery) {
+			this.lastPingSent = now;
 			this.pingSend(mesh.position, mesh.rotation.y);
 		}
 	},
@@ -59,6 +62,10 @@ var Network = {
 		if (!this.clientId) {
 			return;
 		}
+
+		// Get delta since last ping
+		this.delta = (ping.elapsed - this.lastPingRec) * 1000;
+		this.lastPingRec = ping.elapsed;
 
 		ping.players.forEach(function (p) {
 			if (p.id === this.clientId) {
