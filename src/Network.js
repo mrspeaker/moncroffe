@@ -87,10 +87,12 @@ var Network = {
 		});
 	},
 
+	// tmp: should be calced on server
 	targetHit: function (tid) {
 		this.socket.emit("pumpkinHit", tid);
 	},
 
+	// tmp: should be calced on server
 	pumpkinDestroyed : function (tid) {
 		main.screen.pumpkinDestroyed(tid);
 	}

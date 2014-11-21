@@ -29,7 +29,7 @@ io.on('connection', function(client){
 	players.push({
 		id: client.userid,
 		pos: { x: 0, y: 0, z: 0 },
-		rot: {x: 0, z: 0}
+		rot: { x: 0, z: 0}
 	});
 
 	client.on("disconnect", function () {
@@ -65,6 +65,7 @@ io.on('connection', function(client){
 		});
 	});
 
+	// tmp: should be calced on server
 	client.on("pumpkinHit", function(id) {
 		World.clients.forEach(function (c) {
 			if (c === client) return;

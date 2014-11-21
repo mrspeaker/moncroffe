@@ -24,6 +24,8 @@ var WorldScreen = {
 		uniforms: null,
 	},
 
+	elapsed: 0,
+
 	init: function (screen) {
 
 		this.screen = screen;
