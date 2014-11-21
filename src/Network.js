@@ -28,6 +28,7 @@ var Network = {
 		this.socket.on("dropped", this.dropReceived.bind(this));
 
 		this.socket.on("pumpkinDestroyed", this.pumpkinDestroyed.bind(this));
+		this.socket.on("otherFiredBullet", this.otherFiredBullet.bind(this));
 
 		// Let's go!
 		this.socket.emit("join");
@@ -95,6 +96,14 @@ var Network = {
 	// tmp: should be calced on server
 	pumpkinDestroyed : function (tid) {
 		main.screen.pumpkinDestroyed(tid);
+	},
+
+	fireBullet: function (bullet) {
+		this.socket.emit("fireBullet", bullet);
+	},
+
+	otherFiredBullet: function (bullet) {
+		main.screen.otherFiredBullet(bullet);
 	}
 
 }

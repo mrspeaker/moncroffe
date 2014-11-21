@@ -157,6 +157,17 @@ var WorldScreen = {
 		}, this);
 	},
 
+	otherFiredBullet: function (bullet) {
+		var bullet = Object.create(Bullet).init(
+			new THREE.Vector3(bullet.pos.x, bullet.pos.y, bullet.pos.z),
+			new THREE.Vector3(bullet.dir.x, bullet.dir.y, bullet.dir.z),
+			this.screen.materials.bullet
+		);
+		this.bullets.push(bullet);
+		this.scene.add(bullet.mesh);
+
+	},
+
 	pingReceived: function (ping) {
 
 		var network = this.screen.network;
@@ -229,6 +240,19 @@ var WorldScreen = {
 		var bullet = Object.create(Bullet).init(origin, direction, this.screen.materials.bullet);
 		this.bullets.push(bullet);
 		this.scene.add(bullet.mesh);
+
+		this.screen.network.fireBullet({
+			pos: {
+				x: origin.x,
+				y: origin.y,
+				z: origin.z
+			},
+			dir:  {
+				x: direction.x,
+				y: direction.y,
+				z: direction.z
+			}
+		});
 
 	},
 

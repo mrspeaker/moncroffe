@@ -8,6 +8,7 @@ var World = {
 	clients: [],
 	players: [],
 	targets: [],
+	bullets: [],
 
 	reset: function () {
 		this.startTime = Date.now();

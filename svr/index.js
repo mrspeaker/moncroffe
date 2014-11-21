@@ -73,6 +73,13 @@ io.on('connection', function(client){
 		});
 	});
 
+	client.on("fireBullet", function(bullet) {
+		World.clients.forEach(function (c) {
+			if (c === client) return;
+			c.emit("otherFiredBullet", bullet);
+		});
+	});
+
 });
 
 function runPingLoop () {
