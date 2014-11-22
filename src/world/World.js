@@ -144,6 +144,28 @@
 
 		},
 
+		reMeshChunkAndSurrounds: function (chX, chZ, x, z) {
+			var rechunks = [[chX, chZ]];
+
+			// Check if surrounding chunks need re-meshing
+			if (z === 0) {
+				rechunks.push([chX, chZ - 1]);
+			}
+			if (z === this.chunkWidth - 1) {
+				rechunks.push([chX, chZ + 1]);
+			}
+			if (x === 0) {
+				rechunks.push([chX - 1, chZ]);
+			}
+			if (x === this.chunkWidth - 1) {
+				rechunks.push([chX + 1, chZ]);
+			}
+
+			rechunks.forEach(function (ch) {
+				this.reMeshChunk(ch[0], ch[1]);
+			}, this);
+		},
+
 		addBlockAtCursor: function (cursor, blockId, playerBlocks) {
 
 			if (!cursor.visible) {
@@ -191,7 +213,7 @@
 
 			chunk[pos.z + face.z][pos.y + face.y][pos.x + face.x].type = this.blocks[blockId];
 
-			this.reMeshChunk(chunkX, chunkZ);
+			this.reMeshChunkAndSurrounds(chunkX, chunkZ, pos.x, pos.z);
 
 			return true;
 		},
@@ -205,8 +227,8 @@
 			}
 
 			this.chunks[cursor.chunkId][pos.z][pos.y][pos.x].type = "air";
-			this.reMeshChunk(cursor.chunkX, cursor.chunkZ);
 
+			this.reMeshChunkAndSurrounds(cursor.chunkX, cursor.chunkZ, pos.x, pos.z);
 		},
 
 		// Todo: move me to Chunk
