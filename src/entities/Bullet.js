@@ -3,6 +3,7 @@ var Bullet = {
 	pos: null,
 	bb: null,
 	stopped: false,
+	ownShot: true,
 
 	count: 0,
 	life: 30,

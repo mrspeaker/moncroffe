@@ -163,9 +163,16 @@ var WorldScreen = {
 			new THREE.Vector3(bullet.dir.x, bullet.dir.y, bullet.dir.z),
 			this.screen.materials.bullet
 		);
+		bullet.ownShot = false;
 		this.bullets.push(bullet);
 		this.scene.add(bullet.mesh);
 
+	},
+
+	shotThePlayer: function (pid) {
+		if (pid === this.screen.network.clientId) {
+			this.player.playerObj.position.copy(this.player.origPos);
+		}
 	},
 
 	pingReceived: function (ping) {
@@ -240,6 +247,7 @@ var WorldScreen = {
 		var bullet = Object.create(Bullet).init(origin, direction, this.screen.materials.bullet);
 		this.bullets.push(bullet);
 		this.scene.add(bullet.mesh);
+		bullet.ownShot = true;
 
 		this.screen.network.fireBullet({
 			pos: {
@@ -253,6 +261,8 @@ var WorldScreen = {
 				z: direction.z
 			}
 		});
+
+
 
 	},
 
@@ -332,7 +342,7 @@ var WorldScreen = {
 
 				if (Math.abs(t.pos.x - xo) < maxX * 1.3 && Math.abs(t.pos.z - zo) < maxZ * 1.3) {
 					var hit = this.bullets.some(function (b) {
-						return !b.stopped && utils.dist(b.pos, t.pos) < 2;
+						return b.ownShot && !b.stopped && utils.dist(b.pos, t.pos) < 2;
 					});
 					if (hit) {
 						ret = false;
@@ -344,6 +354,17 @@ var WorldScreen = {
 			}
 			return ret;
 		}, this);
+
+		for (var p in this.screen.network.clients) {
+			var player = this.screen.network.clients[p],
+				hit = this.bullets.some(function (b) {
+					return b.ownShot && !b.stopped && utils.dist(b.pos, player.mesh.position) < 2;
+				});
+
+			if (hit) {
+				this.screen.network.shotPlayer(player.id);
+			}
+		}
 
 		this.particles = this.particles.filter(function (p) {
 			var t = p.tick(dt);

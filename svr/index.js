@@ -80,6 +80,12 @@ io.on('connection', function(client){
 		});
 	});
 
+	client.on("shotPlayer", function(player) {
+		World.clients.forEach(function (c) {
+			c.emit("shotThePlayer", player);
+		});
+	});
+
 });
 
 function runPingLoop () {

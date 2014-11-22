@@ -29,6 +29,7 @@ var Network = {
 
 		this.socket.on("pumpkinDestroyed", this.pumpkinDestroyed.bind(this));
 		this.socket.on("otherFiredBullet", this.otherFiredBullet.bind(this));
+		this.socket.on("shotThePlayer", this.shotThePlayer.bind(this));
 
 		// Let's go!
 		this.socket.emit("join");
@@ -104,6 +105,15 @@ var Network = {
 
 	otherFiredBullet: function (bullet) {
 		main.screen.otherFiredBullet(bullet);
+	},
+
+	shotPlayer: function (pid) {
+		this.socket.emit("shotPlayer", pid);
+	},
+
+	shotThePlayer: function (pid) {
+		console.log("a player shot:: ", pid);
+		main.screen.shotThePlayer(pid);
 	}
 
 }

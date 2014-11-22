@@ -21,6 +21,8 @@ var Player = {
 
 		playerObj.position.set(screen.world.chunkWidth * 0.1, 17 +  (this.bb.h / 2), screen.world.chunkWidth * 0.75);
 
+		this.origPos = playerObj.position.clone();
+
 		this.addPlayerMesh();
 
 		var controls = this.controls = this.createControls();
