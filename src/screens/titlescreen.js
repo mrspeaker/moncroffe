@@ -24,7 +24,23 @@ var TitleScreen = {
 		this.target = target;
 		this.scene.add(target.mesh);
 
+		this.button = document.querySelector("#lezgo");
+		this.button.addEventListener("click", (function joinit (e) {
+			this.join();
+			this.button.removeEventListener("click", joinit);
+		}).bind(this), false);
+
 		return this;
+	},
+
+	join: function () {
+		var self = this,
+			name = document.querySelector("#playerName").value,
+			lobby = document.querySelector("#lobby");
+		lobby.style.display = "none";
+		this.screen.network = Object.create(Network).init(name, function () {
+			self.next();
+		});
 	},
 
 	next: function () {
@@ -35,14 +51,6 @@ var TitleScreen = {
 		this.target.mesh.rotation.x += 0.05;
 		this.target.mesh.rotation.y += 0.055;
 		this.target.mesh.rotation.z += 0.060;
-
-		if (this.count++ === 60) {
-			var self = this;
-			// Join up the game
-			this.screen.network = Object.create(Network).init(function () {
-				self.next();
-			});
-		}
 	}
 
 };

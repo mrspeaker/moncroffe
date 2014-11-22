@@ -32,7 +32,7 @@ io.on('connection', function(client){
 	});
 
 	client.on("disconnect", function () {
-		console.log("Network:: " + client.userid + " disconnected");
+		console.log("Network:: " + client.userid + " (" + client.name + ") disconnected");
 		World.players = World.players.filter(function (p) {
 			return p.id !== client.userid;
 		});
@@ -56,12 +56,22 @@ io.on('connection', function(client){
 		});
 	});
 
-	client.on("join", function () {
+	client.on("join", function (name) {
+
+		// Update name
+		players.forEach(function (p) {
+			if (client.userid === p.id) {
+				p.name = name;
+			}
+		});
+
 		client.emit('onconnected', {
 			id: client.userid,
+			name: client.name,
 			seed: World.seed,
 			elapsed: World.elapsed
 		});
+
 	});
 
 	// tmp: should be calced on server

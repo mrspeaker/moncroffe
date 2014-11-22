@@ -320,7 +320,7 @@
 				this.vrControls.update();
 				this.vrRenderer.render(
 					this.screen.scene,
-					this.camera); //this.player.controls.getObject().children[0].children[0].matrixWorld);
+					this.camera);
 			}
 
 		}

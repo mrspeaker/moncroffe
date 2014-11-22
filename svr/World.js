@@ -21,17 +21,17 @@ var World = {
 
 		// Add a target.
 		if (Math.random() < 0.01) {
-			var xo = 0,
-				zo = 0,
-				maxX = 10,
-				maxZ = 10;
+			var xo = 8,
+				zo = 8,
+				maxX = 20,
+				maxZ = 20;
 
 			this.targets.push({
 				id: Math.random() * 99999999 | 0,
 				pos: {
-					x: xo + (Math.random() * (maxX * 0.3) * 2) - (maxX * 0.3),
+					x: xo + (Math.random() * (maxX * 2) - maxX),
 					y: (Math.random() * 13 | 0) + 0.75,
-					z: zo + (Math.random() * (maxZ * 0.3) * 2) - (maxZ * 0.3)
+					z: zo + (Math.random() * (maxZ * 2) - maxZ)
 				},
 				rot: {
 					x: Math.random() - 0.5,

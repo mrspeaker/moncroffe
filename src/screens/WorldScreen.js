@@ -186,8 +186,8 @@ var WorldScreen = {
 			var player = network.clients[p.id];
 
 			if (!player) {
-				console.log("Player joined:", p.id);
-				player = network.clients[p.id] = Object.create(PlayerProxy).init(p.id);
+				console.log("Player joined:", p.id, p.name);
+				player = network.clients[p.id] = Object.create(PlayerProxy).init(p.id, p.name);
 
 				this.scene.add(player.mesh);
 			}

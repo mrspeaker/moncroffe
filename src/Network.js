@@ -11,13 +11,14 @@ var Network = {
 
 	world: null,
 
-	init: function (joinCb) {
+	init: function (name, joinCb) {
 		this.lastPingSent = Date.now();
 		this.lastPingRec = Date.now();
 		this.world = {
 			seed: null
 		};
 
+		this.name = name;
 		this.socket = io();
 
 		// Listeners
@@ -32,7 +33,7 @@ var Network = {
 		this.socket.on("shotThePlayer", this.shotThePlayer.bind(this));
 
 		// Let's go!
-		this.socket.emit("join");
+		this.socket.emit("join", name);
 
 		return this;
 	},

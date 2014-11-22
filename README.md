@@ -30,7 +30,6 @@ Running:
 
 ## Bugz
 
-- Neighbour chunks needs to be re-meshed when exposed (face missing)
 - Can add block in position currently standing
 - Hit head slide down (and can get stuck in block)
 - Camera goes through block when close, looking on angle
@@ -82,3 +81,7 @@ Triangles: 0-1-3 and 0-3-2
 Quad: 0-1-3-2
 
 Face order: Front, Left, Back, Right, Bottom, Top
+
+## Good seeds
+
+9696309

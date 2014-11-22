@@ -6,9 +6,10 @@ var PlayerProxy = {
 		h: 1.9
 	},
 
-	init: function (id) {
+	init: function (id, name) {
 
 		this.id = id;
+		this.name = name;
 
 		this.mesh = new THREE.Mesh(
 			new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d),
