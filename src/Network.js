@@ -57,9 +57,11 @@ var Network = {
 		console.log("Client left:", id);
 		var c = this.clients[id];
 
-		// TODO: derp, global ref
-		main.screen.scene.remove(p.mesh);
-		delete this.clients[id];
+		if (c) {
+			// TODO: derp, global ref
+			main.screen.scene.remove(c.mesh);
+			delete this.clients[id];
+		}
 	},
 
 	pingRecieved: function (ping) {
