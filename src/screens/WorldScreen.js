@@ -145,7 +145,7 @@ var WorldScreen = {
 					pos.x + ((Math.random() * 3) - 1.5),
 					pos.y + ((Math.random() * 3) - 1.5),
 					pos.z + ((Math.random() * 3) - 1.5)),
-				Data.materials.target,
+				isPumpkin ? Data.materials.target : Data.materials.blocks,
 				isPumpkin,
 				dir);
 			this.scene.add(p.mesh);
