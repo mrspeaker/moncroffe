@@ -110,7 +110,7 @@ io.on('connection', function(client){
 		}
 
 		shotPlayer = shotPlayer[0];
-		if (now - shotPlayer.lastHit < data.safeTime) {
+		if (now - shotPlayer.lastHit < World.data.safeTime) {
 			return;
 		}
 		shotPlayer.lastHit = now;

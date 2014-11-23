@@ -19,6 +19,7 @@ var World = {
 	init: function () {
 
 		data.init();
+		this.data = data;
 
 	},
 

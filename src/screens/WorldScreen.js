@@ -198,10 +198,14 @@ var WorldScreen = {
 
 		if (ping.players.length) utils.msg("");
 		ping.players.forEach(function (p) {
+
+			// Just update your score
 			if (p.id === Network.clientId) {
 				utils.msgln(p.name + ":" + p.score);
 				return;
 			}
+
+			// Update other players
 			var player = Network.clients[p.id];
 
 			if (!player) {
