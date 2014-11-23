@@ -26,6 +26,7 @@ var WorldScreen = {
 	},
 
 	flashTime: 0,
+	flashType: "",
 
 	elapsed: 0,
 
@@ -178,6 +179,8 @@ var WorldScreen = {
 	shotThePlayer: function (pid) {
 		if (pid === this.screen.network.clientId) {
 			this.player.playerObj.position.copy(this.player.origPos);
+			this.flashType = "dead";
+			this.flashTime = 100;
 		}
 	},
 
@@ -245,6 +248,7 @@ var WorldScreen = {
 
 		if (ping.flash) {
 			this.flashTime = 100;
+			this.flashType = "get";
 		}
 
 		this.elapsed = ping.elapsed;
@@ -412,7 +416,8 @@ var WorldScreen = {
 		world.tick(dt);
 
 		if (this.flashTime-- > 0) {
-			this.lights.ambientLight.color = new THREE.Color(this.flashTime % 10 < 5 ? 0xffffff : 0x000000);
+			this.lights.ambientLight.color = new THREE.Color(this.flashTime % 10 < 5 ?
+				(this.flashType === "dead" ? 0xff0000 : 0xffffff) : 0x000000);
 		}
 
 		/*// Add a pumpkin

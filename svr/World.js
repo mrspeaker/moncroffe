@@ -70,7 +70,6 @@ var World = {
 
 		if (!this.bouy) {
 			this.bouy = this.getSafePos();
-			console.log(this.bouy)
 		}
 	},
 
@@ -84,16 +83,10 @@ var World = {
 
 		while (!safe) {
 
-			var pos = { x: Math.floor(xo + (Math.random() * (maxX * 0.9) * 2) - (maxX * 0.9)),
-				y: Math.floor(Math.random() * 17 | 0) + 1,
-				z: Math.floor(zo + (Math.random() * (maxZ * 0.9) * 2) - (maxZ * 0.9))
+			var pos = { x: Math.floor(xo + (Math.random() * (maxX * 0.97) * 2) - (maxX * 0.97)),
+				y: Math.floor(Math.random() * 18 | 0) + 1,
+				z: Math.floor(zo + (Math.random() * (maxZ * 0.97) * 2) - (maxZ * 0.97))
 			}
-
-			/*var chunkX = Math.floor(pos.x / this.chW),
-				chunkZ = Math.floor(pos.z / this.chW);
-
-			pos.x -= (chunkX * this.chW);
-			pos.z -= (chunkZ * this.chW);*/
 
 			var val = Perlin.noise.simplex3(pos.x / 15, pos.y / 10, pos.z / 15);
 

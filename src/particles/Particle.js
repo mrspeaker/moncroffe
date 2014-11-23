@@ -32,18 +32,18 @@
 		tick: function (dt) {
 
 			var m = this.mesh,
-				pow = dt * 1;
+				pow = dt * 2;
 
 			m.translateX(pow);
 			m.translateY(pow);
 			m.translateZ(pow);
 
-			if (this.dir && (this.count / this.life) > 0.5) {
+			if (this.dir && (this.count / this.life) > 0.1) {
 				this.mesh.lookAt(this.dir);
 				this.dir = null;
 			}
 
-			if ((this.count / this.life) > 0.5) {
+			if ((this.count / this.life) > 0.1) {
 				this.vy += 0.001;
 				m.position.y -= this.vy;
 			}
