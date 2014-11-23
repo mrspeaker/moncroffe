@@ -26,6 +26,7 @@ io.on('connection', function(client){
 
 	client.userid = UUID();
 	client.lastHit = Date.now();
+	client.lastGetBouy = Date.now();
 
 	console.log("Network:: " + client.userid + " connected");
 
@@ -122,8 +123,13 @@ io.on('connection', function(client){
 	});
 
 	client.on("gotBouy", function(pid) {
+		var now = Date.now();
+		if (now - client.lastGetBouy < 1000) {
+			console.log("Too early for antohter boouyy");
+			return;
+		}
+		client.lastGetBouy = now;
 		World.players = World.players.map(function (p) {
-			console.log(p.id, pid === p.id);
 			if (p.id === pid) {
 				p.score++;
 			}

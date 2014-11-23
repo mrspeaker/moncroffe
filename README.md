@@ -37,7 +37,6 @@ Running:
 
 ## Next todos
 
-- Add Safe time after being hit
 - Add "arena mode" - 5 mins, then reset to new level
 
 ## Bugz
