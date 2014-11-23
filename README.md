@@ -25,7 +25,7 @@ Query params /:
 
 	> main.makeAzerty(); // If you want ZQSD instead of WASD
 
-	> main.screen.network or main.screen.world... if you feelin' cheat-y
+	> window.Network or main.screen.world... if you feelin' cheat-y
 	(Next version will be driven by server, but this is just hacked together for fun)
 
 Running:

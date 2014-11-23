@@ -38,13 +38,13 @@ var TitleScreen = {
 			name = document.querySelector("#playerName").value,
 			lobby = document.querySelector("#lobby");
 		lobby.style.display = "none";
-		this.screen.network = Object.create(Network).init(name, function () {
+		Network.init(name, function () {
 			self.next();
 		});
 	},
 
 	next: function () {
-		this.screen.screen = Object.create(WorldScreen).init(this.screen);
+		this.screen.startGame();
 	},
 
 	tick: function (dt) {

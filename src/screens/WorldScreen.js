@@ -35,7 +35,7 @@ var WorldScreen = {
 		this.screen = screen;
 		this.scene = new THREE.Scene();
 
-		this.world = Object.create(World).init(this, screen.network.world.seed);
+		this.world = Object.create(World).init(this, Network.world.seed);
 		this.player = Object.create(Player).init(this);
 		this.cursor = Object.create(Cursor).init(this);
 		this.bullets = [];
@@ -136,7 +136,7 @@ var WorldScreen = {
 
 	},
 
-	explodeParticles: function (pos, dir) {
+	explodeParticles: function (pos, isPumpkin, dir) {
 
 		for (var i = 0; i < 10; i++) {
 			var p = Object.create(Particle).init(
@@ -146,6 +146,7 @@ var WorldScreen = {
 					pos.y + ((Math.random() * 3) - 1.5),
 					pos.z + ((Math.random() * 3) - 1.5)),
 				Data.materials.target,
+				isPumpkin,
 				dir);
 			this.scene.add(p.mesh);
 			this.particles.push(p);
@@ -158,7 +159,7 @@ var WorldScreen = {
 			var deadPump = t.id === id;
 			if (deadPump) {
 				this.scene.remove(t.mesh);
-				this.explodeParticles(t.pos);
+				this.explodeParticles(t.pos, true);
 			}
 			return !deadPump;
 		}, this);
@@ -177,7 +178,7 @@ var WorldScreen = {
 	},
 
 	shotThePlayer: function (pid) {
-		if (pid === this.screen.network.clientId) {
+		if (pid === Network.clientId) {
 			this.player.playerObj.position.copy(this.player.origPos);
 			this.flashType = "dead";
 			this.flashTime = 100;
@@ -186,20 +187,19 @@ var WorldScreen = {
 
 	pingReceived: function (ping) {
 
-		var network = this.screen.network,
-			bouy = this.bouy;
+		var bouy = this.bouy;
 
 		if (ping.players.length) utils.msg("");
 		ping.players.forEach(function (p) {
-			if (p.id === network.clientId) {
+			if (p.id === Network.clientId) {
 				utils.msgln(p.name + ":" + p.score);
 				return;
 			}
-			var player = network.clients[p.id];
+			var player = Network.clients[p.id];
 
 			if (!player) {
 				console.log("Player joined:", p.id, p.name);
-				player = network.clients[p.id] = Object.create(PlayerProxy).init(p.id, p.name);
+				player = Network.clients[p.id] = Object.create(PlayerProxy).init(p.id, p.name);
 
 				this.scene.add(player.mesh);
 			}
@@ -279,7 +279,7 @@ var WorldScreen = {
 		this.scene.add(bullet.mesh);
 		bullet.ownShot = true;
 
-		this.screen.network.fireBullet({
+		Network.fireBullet({
 			pos: {
 				x: origin.x,
 				y: origin.y,
@@ -341,8 +341,7 @@ var WorldScreen = {
 
 	tick: function (dt) {
 
-		var scr = this.screen,
-			scene = this.scene,
+		var scene = this.scene,
 			world = this.world;
 
 		this.player.tick(dt);
@@ -377,22 +376,23 @@ var WorldScreen = {
 					if (hit) {
 						ret = false;
 						scene.remove(t.mesh);
-						this.explodeParticles(t.pos, t.bouyDir);
-						scr.network.targetHit(t.id);
+						this.explodeParticles(t.pos, true, t.bouyDir);
+						Network.targetHit(t.id);
 					}
 				}
 			}
 			return ret;
 		}, this);
 
-		for (var p in scr.network.clients) {
-			var player = scr.network.clients[p],
+		for (var p in Network.clients) {
+			var player = Network.clients[p],
 				hit = this.bullets.some(function (b) {
 					return b.ownShot && !b.stopped && utils.dist(b.pos, player.mesh.position) < 1;
 				});
 
 			if (hit) {
-				scr.network.shotPlayer(player.id);
+				Network.shotPlayer(player.id);
+				this.explodeParticles(player.mesh.position, false);
 			}
 		}
 
@@ -400,7 +400,7 @@ var WorldScreen = {
 			this.bouy.tick(dt);
 			var dist = utils.dist(this.player.playerObj.position, this.bouy.mesh.position);
 			if (dist < 2) {
-				scr.network.gotBouy();
+				Network.gotBouy();
 				this.bouy.mesh.position.set(0, -1, 0);
 			}
 		}
@@ -420,7 +420,7 @@ var WorldScreen = {
 				(this.flashType === "dead" ? 0xff0000 : 0xffffff) : 0x000000);
 		}
 
-		if (scr.frame % 50 === 0) {
+		if (this.screen.frame % 50 === 0) {
 			this.updateDayNight();
 		}
 
@@ -438,7 +438,7 @@ var WorldScreen = {
 		}
 
 		// Do update ping
-		scr.network.tick(this.player.playerObj);
+		Network.tick(this.player.playerObj);
 
 	}
 

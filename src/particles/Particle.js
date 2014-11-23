@@ -5,14 +5,16 @@
 		count: 0,
 		vy: 0,
 
-		init: function (size, pos, material, dir) {
+		init: function (size, pos, material, isPumpkin, dir) {
 
 			this.life = 100 + (Math.random() * 50 | 0);
 
 			this.mesh = new THREE.Mesh(
 				utils.texturify(
 					new THREE.CubeGeometry(size),
-					[[7, 8], [6, 8], [6, 8], [6, 8], [6, 9], [6, 9]]
+					isPumpkin ?
+						[[7, 8], [6, 8], [6, 8], [6, 8], [6, 9], [6, 9]] :
+						[[4, 8], [4, 8], [4, 8], [4, 8], [4, 9], [4, 9]]
 				),
 				material
 			);

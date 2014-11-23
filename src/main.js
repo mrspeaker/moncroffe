@@ -254,6 +254,10 @@
 
 		},
 
+		startGame: function () {
+			this.screen = Object.create(WorldScreen).init(this);
+		},
+
 		tick: function () {
 
 			var delta = this.clock.getDelta() / this.oneFrameEvery;
