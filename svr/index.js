@@ -2,6 +2,7 @@ var express = require("express"),
 	app = express(),
 	http = require('http').Server(app),
 	io = require('socket.io')(http),
+	UUID = require('uuid'),
 	World = require("./World.js");
 
 app.get('/', function(req, res){
@@ -23,7 +24,7 @@ io.on('connection', function(client){
 		World.reset();
 	}
 
-	client.userid = Math.random() * 99999999 | 0;
+	client.userid = UUID();
 	console.log("Network:: " + client.userid + " connected");
 
 	clients.push(client);

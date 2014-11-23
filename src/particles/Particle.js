@@ -38,12 +38,12 @@
 			m.translateY(pow);
 			m.translateZ(pow);
 
-			if (this.dir && (this.count / this.life) > 0.1) {
+			if (this.dir && (this.count / this.life) > 0.25) {
 				this.mesh.lookAt(this.dir);
 				this.dir = null;
 			}
 
-			if ((this.count / this.life) > 0.1) {
+			if ((this.count / this.life) > 0.25) {
 				this.vy += 0.001;
 				m.position.y -= this.vy;
 			}

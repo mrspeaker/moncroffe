@@ -4,6 +4,7 @@
   "description": "moncroffe server",
   "dependencies": {
     "express": "^4.10.1",
-    "socket.io": "^1.2.0"
+    "socket.io": "^1.2.0",
+    "uuid": "^2.0.1"
   }
 }
