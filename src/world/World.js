@@ -4,9 +4,6 @@
 
 	var World = {
 
-		chunkWidth: 16,
-		chunkHeight: 20,
-		blockSize: 1,
 		blocks: ["air", "grass", "stone", "dirt", "tree", "wood", "sand", "cobble", "gold", "snow"],
 
 		seed: utils.urlParams.seed || (Math.random() * 99999999 | 0),
@@ -25,7 +22,7 @@
 
 			this.blockMaterial = screen.screen.materials.blocks;
 
-			var chW = this.chunkWidth;
+			var chW = Data.chunk.w;
 			this.xo = chW / 2;
 			this.zo = chW;
 			this.maxX = chW * this.radius + (chW / 2);
@@ -69,12 +66,13 @@
 
 		setBlockAt: function (x, y, z, type) {
 
-			var chunkX = Math.floor(x / this.chunkWidth),
-				chunkZ = Math.floor(z / this.chunkWidth),
+			var chW = Data.chunk.w,
+				chunkX = Math.floor(x / chW),
+				chunkZ = Math.floor(z / chW),
 				chunk;
 
-			x -= chunkX * this.chunkWidth;
-			z -= chunkZ * this.chunkWidth;
+			x -= chunkX * chW;
+			z -= chunkZ * chW;
 
 			x = Math.floor(x);
 			z = Math.floor(z);
@@ -86,7 +84,7 @@
 				chunk[z][y][x].type = type;
 			}
 
-			return {x: chunkX, z:chunkZ };
+			return { x: chunkX, z:chunkZ };
 
 		},
 
@@ -110,14 +108,16 @@
 
 		getBlockAt: function (x, y, z) {
 
-			var chunkX = Math.floor(x / this.chunkWidth),
-				chunkZ = Math.floor(z / this.chunkWidth),
+			var chW = Data.chunk.w,
+				chH = Data.chunk.h,
+				chunkX = Math.floor(x / chW),
+				chunkZ = Math.floor(z / chW),
 				chunk;
 
-			x -= chunkX * this.chunkWidth;
-			z -= chunkZ * this.chunkWidth;
+			x -= chunkX * chW;
+			z -= chunkZ * chW;
 
-			if (y > this.chunkHeight - 1 || y < 0) {
+			if (y > chH - 1 || y < 0) {
 				return { type: "air" };
 			}
 
@@ -145,19 +145,20 @@
 		},
 
 		reMeshChunkAndSurrounds: function (chX, chZ, x, z) {
-			var rechunks = [[chX, chZ]];
+			var chW = Data.chunk.w,
+				rechunks = [[chX, chZ]];
 
 			// Check if surrounding chunks need re-meshing
 			if (z === 0) {
 				rechunks.push([chX, chZ - 1]);
 			}
-			if (z === this.chunkWidth - 1) {
+			if (z === chW - 1) {
 				rechunks.push([chX, chZ + 1]);
 			}
 			if (x === 0) {
 				rechunks.push([chX - 1, chZ]);
 			}
-			if (x === this.chunkWidth - 1) {
+			if (x === chW - 1) {
 				rechunks.push([chX + 1, chZ]);
 			}
 
@@ -178,7 +179,7 @@
 			// (eg, if you attach to a face in an ajacent chunk)
 			var chunkX = cursor.chunkX,
 				chunkZ = cursor.chunkZ,
-				chW = this.chunkWidth;
+				chW = Data.chunk.w;
 
 			if (pos.z + face.z >= chW) {
 				chunkZ++;
@@ -234,8 +235,8 @@
 		// Todo: move me to Chunk
 		createChunk: function (xo, zo) {
 
-			var chW = this.chunkWidth,
-				chH = this.chunkHeight,
+			var chW = Data.chunk.w,
+				chH = Data.chunk.h,
 				st = Math.random() < 0.3,
 				maxSphere = (Math.random() * 3 | 0) + 9,
 				minSphere = maxSphere - 2;
@@ -288,10 +289,10 @@
 		// TODO: refactor this with a "createQuad" function,
 		// so it can be fed to a greedy mesher.
 		createChunkGeom: function (x, z, chunk) {
-			var blockSize = this.blockSize,
+			var blockSize = Data.block.size,
 				useAO = this.screen.useAO,
-				w = this.chunkWidth,
-				h = this.chunkHeight,
+				w = Data.chunk.w,
+				h = Data.chunk.h,
 				xo = x * w,
 				zo = z * w,
 				stats = {

@@ -25,6 +25,8 @@
 
 		init: function () {
 
+			Data.init();
+
 			this.initUserSettings();
 
 			this.init3d();
@@ -119,7 +121,7 @@
 				if (e.keyCode === 81 /*q*/) {
 					var pos = player.playerObj.position;
 					this.screen.useAO = !this.screen.useAO;
-					this.world.reMeshChunk(pos.x / this.world.chunkWidth | 0, pos.z / this.world.chunkWidth | 0);
+					this.world.reMeshChunk(pos.x / Data.chunk.w | 0, pos.z / Data.chunk.w | 0);
 				}
 
 				if (e.keyCode === 49 /*1*/) {
@@ -264,7 +266,7 @@
 			// Ensure not out of bounds: down or up.
 			if (nyb < 0) nyb = 0;
 			if (nyt < 1) nyt = 1;
-			if (nyt > this.chunkHeight - 1) nyt = this.chunkHeight - 1;
+			if (nyt > Data.chunk.h - 1) nyt = Data.chunk.h - 1;
 
 			// Check forward/backward
 			if (!(
