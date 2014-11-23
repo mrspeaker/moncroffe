@@ -5,7 +5,7 @@
 		count: 0,
 		vy: 0,
 
-		init: function (size, pos, material) {
+		init: function (size, pos, material, dir) {
 
 			this.life = 100 + (Math.random() * 50 | 0);
 
@@ -24,6 +24,8 @@
 				pos.z + ((Math.random ()) - 0.5)
 			));
 
+			this.dir = dir;
+
 			return this;
 		},
 
@@ -36,9 +38,16 @@
 			m.translateY(pow);
 			m.translateZ(pow);
 
-			this.vy += 0.001;
+			if (this.dir && (this.count / this.life) > 0.5) {
+				this.mesh.lookAt(this.dir);
+				this.dir = null;
+			}
 
-			m.position.y -= this.vy;
+			if ((this.count / this.life) > 0.5) {
+				this.vy += 0.001;
+				m.position.y -= this.vy;
+			}
+
 
 			return this.count++ < this.life;
 

@@ -117,6 +117,10 @@ var Network = {
 	shotThePlayer: function (pid) {
 		console.log("a player shot:: ", pid);
 		main.screen.shotThePlayer(pid);
+	},
+
+	gotBouy: function() {
+		this.socket.emit("gotBouy", this.clientId);
 	}
 
 }

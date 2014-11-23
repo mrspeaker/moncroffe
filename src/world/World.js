@@ -257,6 +257,7 @@
 						var val = noise.simplex3((x + (xo * chW)) / 15, y / 10, (z + (zo* chW)) / 15);
 						var val2 = noise.simplex3((x + (xo * chW)) / 20, y / 20, (z + (zo* chW)) / 22);
 
+						//if (xo == 0 && zo == 0) { console.log(val)}
 
 						if (y == 0) {
 							type = val2 < -0.1 ? "stone" : (Math.random() < 0.3 ? "dirt":"grass");
@@ -525,7 +526,7 @@
 
 			var end = screen.clock.getElapsedTime();
 
-			utils.msgln("Remesh Chunk[" + chId + "]:", ((end - start) * 1000 | 0) + "ms");
+			//utils.msgln("Remesh Chunk[" + chId + "]:", ((end - start) * 1000 | 0) + "ms");
 
 		},
 

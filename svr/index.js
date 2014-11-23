@@ -8,6 +8,8 @@ app.get('/', function(req, res){
 	res.sendFile('index.html', {'root': '../'});
 });
 
+World.init();
+
 app.use("/src", express.static(__dirname + '/../src/'));
 app.use("/res", express.static(__dirname + '/../res/'));
 app.use("/lib", express.static(__dirname + '/../lib/'));
@@ -27,6 +29,7 @@ io.on('connection', function(client){
 	clients.push(client);
 	players.push({
 		id: client.userid,
+		score: 0,
 		pos: { x: 0, y: 0, z: 0 },
 		rot: { x: 0, z: 0}
 	});
@@ -95,6 +98,16 @@ io.on('connection', function(client){
 		});
 	});
 
+	client.on("gotBouy", function(pid) {
+		World.players = World.players.map(function (p) {
+			if (p.id === pid) {
+				p.score++;
+			}
+			return p;
+		});
+		World.gotBouy();
+	});
+
 });
 
 function runPingLoop () {
@@ -104,13 +117,15 @@ function runPingLoop () {
 
 		World.clients.forEach(function (c) {
 			c.emit("ping", {
+				elapsed: World.elapsed,
 				players: World.players,
 				bullets: World.bullets,
 				targets: World.targets,
-				elapsed: World.elapsed
+				bouy: World.bouy,
+				flash: World.flash
 			});
 		});
-
+		World.flash = false;
 		World.targets = [];
 
 		runPingLoop();

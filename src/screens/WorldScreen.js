@@ -14,6 +14,7 @@ var WorldScreen = {
 	particles: null,
 	bullets: null,
 	targets: null,
+	bouy: null,
 	world: null,
 
 	lights: {},
@@ -23,6 +24,8 @@ var WorldScreen = {
 		nightbox: null,
 		uniforms: null,
 	},
+
+	flashTime: 0,
 
 	elapsed: 0,
 
@@ -37,6 +40,12 @@ var WorldScreen = {
 		this.bullets = [];
 		this.targets = [];
 		this.particles = [];
+
+		this.bouy = Object.create(Bouy).init(
+			-1,
+			new THREE.Vector3(0, 0, 0),
+			screen.materials.blocks);
+		this.scene.add(this.bouy.mesh);
 
 		screen.bindHandlers(this.player);
 
@@ -116,11 +125,7 @@ var WorldScreen = {
 		}
 
 		this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
-
-		this.scene.remove(this.lights.ambientLight);
-		this.lights.ambientLight = new THREE.AmbientLight((new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time));
-		this.scene.add(this.lights.ambientLight);
-
+		this.lights.ambientLight.color = (new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time);
 		this.lights.player.visible = time > 0.5;
 
 		this.stratosphere.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
@@ -130,7 +135,7 @@ var WorldScreen = {
 
 	},
 
-	explodeParticles: function (pos) {
+	explodeParticles: function (pos, dir) {
 
 		for (var i = 0; i < 10; i++) {
 			var p = Object.create(Particle).init(
@@ -139,7 +144,8 @@ var WorldScreen = {
 					pos.x + ((Math.random() * 3) - 1.5),
 					pos.y + ((Math.random() * 3) - 1.5),
 					pos.z + ((Math.random() * 3) - 1.5)),
-				this.screen.materials.target);
+				this.screen.materials.target,
+				dir);
 			this.scene.add(p.mesh);
 			this.particles.push(p);
 		}
@@ -177,10 +183,13 @@ var WorldScreen = {
 
 	pingReceived: function (ping) {
 
-		var network = this.screen.network;
+		var network = this.screen.network,
+			bouy = this.bouy;
 
+		if (ping.players.length) utils.msg("");
 		ping.players.forEach(function (p) {
 			if (p.id === network.clientId) {
+				utils.msgln(p.name + ":" + p.score);
 				return;
 			}
 			var player = network.clients[p.id];
@@ -199,6 +208,8 @@ var WorldScreen = {
 				p.pos.z
 			);
 			player.mesh.rotation.set(0, p.rot, 0);
+
+			utils.msgln(p.name + ":" + p.score);
 		}, this);
 
 		// Add new pumpkins
@@ -218,8 +229,23 @@ var WorldScreen = {
 				t.speed,
 				this.screen.materials.target);
 			this.targets.push(target);
+			if (bouy) {
+				target.bouyDir = bouy.mesh.position.clone();
+			}
 			this.scene.add(target.mesh);
 		}, this);
+
+		if (ping.bouy) {
+			this.bouy.mesh.position.set(
+				ping.bouy.x,
+				ping.bouy.y,
+				ping.bouy.z
+			);
+		}
+
+		if (ping.flash) {
+			this.flashTime = 100;
+		}
 
 		this.elapsed = ping.elapsed;
 	},
@@ -347,7 +373,7 @@ var WorldScreen = {
 					if (hit) {
 						ret = false;
 						this.scene.remove(t.mesh);
-						this.explodeParticles(t.pos);
+						this.explodeParticles(t.pos, t.bouyDir);
 						this.screen.network.targetHit(t.id);
 					}
 				}
@@ -358,11 +384,20 @@ var WorldScreen = {
 		for (var p in this.screen.network.clients) {
 			var player = this.screen.network.clients[p],
 				hit = this.bullets.some(function (b) {
-					return b.ownShot && !b.stopped && utils.dist(b.pos, player.mesh.position) < 2;
+					return b.ownShot && !b.stopped && utils.dist(b.pos, player.mesh.position) < 1;
 				});
 
 			if (hit) {
 				this.screen.network.shotPlayer(player.id);
+			}
+		}
+
+		if (this.bouy) {
+			this.bouy.tick(dt);
+			var dist = utils.dist(this.player.playerObj.position, this.bouy.mesh.position);
+			if (dist < 2) {
+				this.screen.network.gotBouy();
+				this.bouy.mesh.position.set(0, -1, 0);
 			}
 		}
 
@@ -375,6 +410,10 @@ var WorldScreen = {
 		}, this);
 
 		world.tick(dt);
+
+		if (this.flashTime-- > 0) {
+			this.lights.ambientLight.color = new THREE.Color(this.flashTime % 10 < 5 ? 0xffffff : 0x000000);
+		}
 
 		/*// Add a pumpkin
 		if (Math.random() < 0.01) {
