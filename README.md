@@ -17,11 +17,16 @@ Now with Oculus Rift support!
 	'3': Reset headset in VR mode
 	'4': Toggle Ambient Occlusion (debugging)
 
-Query params:
+Query params /:
 
 	third=true : use third person camera (static at the moment)
 
 	> console.log(main.world.seed) : see current seed
+
+	> main.makeAzerty(); // If you want ZQSD instead of WASD
+
+	> main.screen.network or main.screen.world... if you feelin' cheat-y
+	(Next version will be driven by server, but this is just hacked together for fun)
 
 Running:
 
@@ -32,22 +37,38 @@ Running:
 
 ## Bugz
 
+> client
+
 - Can add block in position currently standing
 - Hit head slide down (and can get stuck in block)
 - Camera goes through block when close, looking on angle
 - Block & face selection wrong when close to blocks
 - Bullet gets stuck when firing close to block
+
+> server
+
+- Refresh loses session info
+- Background tab accumulates pumpkins
+- Block add/remove not synced
+
+> other
+
 - VR head tracking doesn't aim gun
-- Should walk in direction looking
-- Move world logic from main to worldscreen
+- VR Should walk in direction looking
 
 ## Needs
 
-- Freedy meshing. Currently had basic face-culling only.
+- Greedy meshing. Currently had basic face-culling only.
 - Block-based lighting
 - Shift-walk for overhang picking
 - Camera pitch/yaw not same as minecraft when looking up/down
-- Seeded random for block types
+
+## Would be cool
+
+- Create levels that others can play
+- Some indestructible/special blocks
+- Choose "just you" or "everyone" for add/remove blocks
+  - make tunnels just for you, baracades against everyone etc
 
 ## Cube geometry notes
 

@@ -56,6 +56,25 @@
 
 		},
 
+		makeAzerty: function () {
+
+			Settings.up = Settings.up.filter(function (k) { return k !== 87; }).concat([90]); // remove W, add Z
+			Settings.left = Settings.left.filter(function (k) { return k !== 65; }).concat([81]); // remove A, add Q
+			this.saveSettings();
+			alert("need to refresh...");
+			console.log("game french-ified");
+
+		},
+
+		makeQwerty: function () {
+
+			Settings.up = Settings.up.filter(function (k) { return k !== 90; }).concat([87]); // remove Z, add W
+			Settings.left = Settings.left.filter(function (k) { return k !== 81; }).concat([65]); // remove Q, add A
+			this.saveSettings();
+			alert("need to refresh...");
+
+		},
+
 		init3d: function () {
 
 			this.renderer = new THREE.WebGLRenderer();
