@@ -24,6 +24,8 @@ var TitleScreen = {
 		this.target = target;
 		this.scene.add(target.mesh);
 
+		console.log(Settings);
+		document.querySelector("#playerName").value = Settings.playerName;
 		this.button = document.querySelector("#lezgo");
 		this.button.addEventListener("click", (function joinit (e) {
 			this.join();
@@ -38,6 +40,11 @@ var TitleScreen = {
 			name = document.querySelector("#playerName").value,
 			lobby = document.querySelector("#lobby");
 		lobby.style.display = "none";
+		if (name !== Settings.playerName) {
+			console.log("ya")
+			Settings.playerName = name;
+			main.saveSettings();
+		};
 		Network.init(name, function () {
 			self.next();
 		});

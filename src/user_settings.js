@@ -1,5 +1,7 @@
 var user_settings = {
 
+	playerName: "Steak Styles " + (Math.random() * 1000 | 0),
+
 	mouse_sensitivity: 1.0, // * 1000
 	up: [38, 87], // up, W
 	down: [40, 83], // down, s
