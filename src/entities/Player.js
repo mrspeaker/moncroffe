@@ -151,7 +151,7 @@ var Player = {
 				Settings);
 
 		if (this.thrd) {
-			camera.position.set(-5, 12, 10);
+			camera.position.set(-5, 18, 5);
 			camera.rotation.set(0, -Math.PI / 2 , 0);
 		} else {
 			camera.position.y = this.bb.h - 1 - 0.2;

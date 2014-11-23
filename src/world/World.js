@@ -131,6 +131,47 @@
 
 		},
 
+		getBlockChunkAndPosAt: function (x, y, z) {
+
+			// TODO: really round? I don't even know anymore...
+			x = Math.round(x);
+			y = Math.round(y); // Not sure if y should be rounded...
+			z = Math.round(z);
+
+			var chW = data.chunk.w,
+				chH = data.chunk.h,
+				chunkX = Math.floor(x / chW),
+				chunkZ = Math.floor(z / chW),
+				chunk;
+
+			x -= chunkX * chW;
+			z -= chunkZ * chW;
+
+			if (y > chH - 1 || y < 0) {
+				console.log("wat?", y);
+				return {
+					chunkX: 999,
+					chunkZ: 999
+				};
+			}
+
+			chunk = this.chunks[chunkX + ":" + chunkZ];
+
+			if (!chunk) {
+				console.log("wit?", chunkX, chunkZ, x, y, z)
+				return null;
+			}
+
+			return {
+				chunkX: chunkX,
+				chunkZ: chunkZ,
+				x: x,
+				y: y,
+				z: z
+			}
+
+		},
+
 		getSurrounding: function (x, y, z) {
 
 			return {
@@ -203,12 +244,18 @@
 				return false;
 			}
 
+			// Check if player is in this block
 			if (playerBlocks.some(function (pb) {
-				if (pb.x === pos.x + face.x && pb.y == pos.y + face.y && pb.z == pos.z + face.z) {
+				var cAp = this.getBlockChunkAndPosAt(pb[0], pb[1], pb[2]);
+
+				if (chunkX !== cAp.chunkX || chunkZ !== cAp.chunkZ) {
+					return false;
+				}
+				if (cAp.x === pos.x + face.x && cAp.y == pos.y + face.y && cAp.z == pos.z + face.z) {
 					return true;
 				}
 				return false;
-			})) {
+			}, this)) {
 				return false;
 			}
 
@@ -529,7 +576,7 @@
 
 			//utils.msgln("Remesh Chunk[" + chId + "]:", ((end - start) * 1000 | 0) + "ms");
 
-		},
+		}
 
 
 	};

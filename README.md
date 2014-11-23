@@ -52,6 +52,7 @@ Running:
 
 > server
 
+- Multiple calls to getBouy
 - Refresh loses session info
 - Background tab accumulates pumpkins
 - Block add/remove not synced

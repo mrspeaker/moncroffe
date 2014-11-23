@@ -425,7 +425,26 @@ var WorldScreen = {
 		}
 
 		if (this.doAddBlock) {
-			var added = world.addBlockAtCursor(this.cursor, this.player.curTool, []);
+			var pos = this.player.playerObj.position,
+				bb = this.player.bb;
+			var added = world.addBlockAtCursor(
+				this.cursor,
+				this.player.curTool,
+				[
+					// Ensure don't draw on yourself...
+					// Not conviced about the Y checks here... should they be rounded? why -0.5?! Dang it!
+					// works though.
+					[pos.x - (bb.w / 2), pos.y - (bb.h / 2), pos.z - (bb.d / 2)],
+					[pos.x + (bb.w / 2), pos.y - (bb.h / 2), pos.z - (bb.d / 2)],
+					[pos.x - (bb.w / 2), pos.y - (bb.h / 2), pos.z + (bb.d / 2)],
+					[pos.x + (bb.w / 2), pos.y - (bb.h / 2), pos.z + (bb.d / 2)],
+
+					[pos.x - (bb.w / 2), pos.y + (bb.h / 2) - 0.5, pos.z - (bb.d / 2)],
+					[pos.x + (bb.w / 2), pos.y + (bb.h / 2) - 0.5, pos.z - (bb.d / 2)],
+					[pos.x - (bb.w / 2), pos.y + (bb.h / 2) - 0.5, pos.z + (bb.d / 2)],
+					[pos.x + (bb.w / 2), pos.y + (bb.h / 2) - 0.5, pos.z + (bb.d / 2)]
+				]);
+
 			if (!added) {
 				this.fire();
 			}

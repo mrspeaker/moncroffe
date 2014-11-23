@@ -101,6 +101,7 @@ io.on('connection', function(client){
 
 	client.on("gotBouy", function(pid) {
 		World.players = World.players.map(function (p) {
+			console.log(p.id, pid === p.id);
 			if (p.id === pid) {
 				p.score++;
 			}
