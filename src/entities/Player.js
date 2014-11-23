@@ -19,7 +19,7 @@ var Player = {
 
 		var playerObj = this.playerObj = new THREE.Object3D();
 
-		playerObj.position.set(screen.world.chunkWidth * 0.1, 17 +  (this.bb.h / 2), screen.world.chunkWidth * 0.75);
+		playerObj.position.set(0, 19, 0);
 
 		this.origPos = playerObj.position.clone();
 

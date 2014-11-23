@@ -2,8 +2,8 @@ var Data = {
 	init: function () {
 		this.world.midX = this.chunk.w / 2;
 		this.world.midZ = this.chunk.w;
-		this.maxX = this.chunk.w * this.world.radius + (this.chunk.w / 2);
-		this.maxZ = this.chunk.w * this.world.radius;
+		this.world.maxX = this.chunk.w * this.world.radius + (this.chunk.w / 2);
+		this.world.maxZ = this.chunk.w * this.world.radius;
 	},
 
 	textures: {},
@@ -23,6 +23,6 @@ var Data = {
 		midX: -1,
 		midZ: -1,
 		maxX: -1,
-		minZ: -1
+		maxZ: -1
 	}
 };

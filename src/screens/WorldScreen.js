@@ -69,11 +69,11 @@ var WorldScreen = {
 
 		// One of these guys turns out when player turns on!
 		var light = new THREE.PointLight(0xF4D2A3, 1, 10);
-		light.position.set(this.world.chunkWidth - 5, 5, this.world.chunkWidth - 5);
+		light.position.set(Data.chunk.w - 5, 5, Data.chunk.w - 5);
 		this.scene.add(light);
 
 		var light2 = new THREE.PointLight(0xF4D2A3, 1, 10);
-		light2.position.set(2 * this.world.chunkWidth - 3, 5, 2 * this.world.chunkWidth - 3);
+		light2.position.set(Data.world.radius * Data.chunk.w - 3, 5, Data.world.radius * Data.chunk.w - 3);
 		this.scene.add(light2);
 
 		this.scene.fog = new THREE.Fog(0xE8D998, 10, 80);
@@ -302,8 +302,8 @@ var WorldScreen = {
 			origin = ob.getObject().position.clone(),
 			cursor = this.cursor,
 			chs = this.world.chunks,
-			chW = this.world.chunkWidth,
-			chH = this.world.chunkHeight;
+			chW = Data.chunk.w,
+			chH = Data.chunk.h;
 
 		origin.addScalar(0.5);
 
@@ -342,57 +342,57 @@ var WorldScreen = {
 	tick: function (dt) {
 
 		var scr = this.screen,
+			scene = this.scene,
 			world = this.world;
 
 		this.player.tick(dt);
 		this.bullets = this.bullets.filter(function (b) {
 			var ret = b.tick(dt);
 			if (ret) {
-				var block = this.world.getBlockAtPos(b.pos);
+				var block = world.getBlockAtPos(b.pos);
 				if (block.type !== "air") {
 					b.stop();
 				}
 			} else {
-				this.scene.remove(b.mesh);
+				scene.remove(b.mesh);
 			}
 			return ret;
-		}, this);
+		});
 
-		var maxX = world.maxX,
-			maxZ = world.maxZ,
-			xo = world.xo,
-			zo = world.zo;
+		var maxX = Data.world.maxX,
+			maxZ = Data.world.maxZ,
+			xo = Data.world.midX,
+			zo = Data.world.midZ;
 
 		this.targets = this.targets.filter(function (t) {
 			var ret = t.tick(dt);
 			if (!ret) {
-				this.scene.remove(t.mesh);
+				scene.remove(t.mesh);
 			} else {
 				// If not to far out into space...
-
 				if (Math.abs(t.pos.x - xo) < maxX * 1.3 && Math.abs(t.pos.z - zo) < maxZ * 1.3) {
 					var hit = this.bullets.some(function (b) {
 						return b.ownShot && !b.stopped && utils.dist(b.pos, t.pos) < 2;
 					});
 					if (hit) {
 						ret = false;
-						this.scene.remove(t.mesh);
+						scene.remove(t.mesh);
 						this.explodeParticles(t.pos, t.bouyDir);
-						this.screen.network.targetHit(t.id);
+						scr.network.targetHit(t.id);
 					}
 				}
 			}
 			return ret;
 		}, this);
 
-		for (var p in this.screen.network.clients) {
-			var player = this.screen.network.clients[p],
+		for (var p in scr.network.clients) {
+			var player = scr.network.clients[p],
 				hit = this.bullets.some(function (b) {
 					return b.ownShot && !b.stopped && utils.dist(b.pos, player.mesh.position) < 1;
 				});
 
 			if (hit) {
-				this.screen.network.shotPlayer(player.id);
+				scr.network.shotPlayer(player.id);
 			}
 		}
 
@@ -400,7 +400,7 @@ var WorldScreen = {
 			this.bouy.tick(dt);
 			var dist = utils.dist(this.player.playerObj.position, this.bouy.mesh.position);
 			if (dist < 2) {
-				this.screen.network.gotBouy();
+				scr.network.gotBouy();
 				this.bouy.mesh.position.set(0, -1, 0);
 			}
 		}
@@ -408,10 +408,10 @@ var WorldScreen = {
 		this.particles = this.particles.filter(function (p) {
 			var t = p.tick(dt);
 			if (!t) {
-				this.scene.remove(p.mesh);
+				scene.remove(p.mesh);
 			}
 			return t;
-		}, this);
+		});
 
 		world.tick(dt);
 
@@ -419,24 +419,6 @@ var WorldScreen = {
 			this.lights.ambientLight.color = new THREE.Color(this.flashTime % 10 < 5 ?
 				(this.flashType === "dead" ? 0xff0000 : 0xffffff) : 0x000000);
 		}
-
-		/*// Add a pumpkin
-		if (Math.random() < 0.01) {
-			var target = Object.create(Target).init(
-				new THREE.Vector3(
-					xo + (Math.random() * (maxX * 0.3) * 2) - (maxX * 0.3),
-					(Math.random() * 13 | 0) + 0.75,
-					zo + (Math.random() * (maxZ * 0.3) * 2) - (maxZ * 0.3)
-				),
-				new THREE.Vector3(
-					Math.random() - 0.5,
-					0,
-					Math.random() - 0.5
-				),
-				scr.materials.target);
-			this.targets.push(target);
-			this.scene.add(target.mesh);
-		}*/
 
 		if (scr.frame % 50 === 0) {
 			this.updateDayNight();
