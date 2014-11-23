@@ -20,7 +20,7 @@ var TitleScreen = {
 				new THREE.Vector3(0, 0, -7),
 				new THREE.Vector3(0.5, 0.2, 0.1),
 				0,
-				this.screen.materials.target);
+				Data.materials.target);
 		this.target = target;
 		this.scene.add(target.mesh);
 

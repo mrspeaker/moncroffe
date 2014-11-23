@@ -26,12 +26,11 @@
 		init: function () {
 
 			Data.init();
+			Data.textures = this.loadTextures();
+			Data.materials = this.createMaterials(Data.textures);
 
 			this.initUserSettings();
-
 			this.init3d();
-			this.loadTextures();
-			this.addMaterials();
 
 			this.screen = Object.create(TitleScreen).init(this);
 
@@ -171,7 +170,7 @@
 
 		loadTextures: function () {
 
-			var t = this.textures = {
+			var t = {
 				blocks: THREE.ImageUtils.loadTexture("res/images/terrain.png"),
 				night: THREE.ImageUtils.loadTexture("res/images/night.jpg")
 			};
@@ -182,32 +181,37 @@
 			t.night.wrapS = t.night.wrapT = THREE.RepeatWrapping;
 			t.night.repeat.set(3, 3);
 
+			return t;
+
 		},
 
-		addMaterials: function () {
+		createMaterials: function (textures) {
 
-			this.materials.bullet = new THREE.MeshBasicMaterial({
+			var m = {};
+
+			m.bullet = new THREE.MeshBasicMaterial({
 				blending	: THREE.AdditiveBlending,
 				color		: 0x4444aa,
 				depthWrite	: false,
 				transparent	: true
 			});
 
-			this.materials.target = new THREE.MeshBasicMaterial({
-				map: this.textures.blocks,
+			m.target = new THREE.MeshBasicMaterial({
+				map: textures.blocks,
 				//color		: 0xff44aa,
 				depthWrite	: false,
 				transparent	: true,
 				opacity: 0.5
 			});
 
-			this.materials.blocks = new THREE.MeshLambertMaterial({
-				map: this.textures.blocks,
+			m.blocks = new THREE.MeshLambertMaterial({
+				map: textures.blocks,
 				wrapAround: true,
 				vertexColors: THREE.VertexColors,
 				wireframe: false
 			});
 
+			return m;
 		},
 
 		toggleOculus: function () {

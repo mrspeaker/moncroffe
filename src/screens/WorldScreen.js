@@ -45,7 +45,7 @@ var WorldScreen = {
 		this.bouy = Object.create(Bouy).init(
 			-1,
 			new THREE.Vector3(0, 0, 0),
-			screen.materials.blocks);
+			Data.materials.blocks);
 		this.scene.add(this.bouy.mesh);
 
 		screen.bindHandlers(this.player);
@@ -85,7 +85,7 @@ var WorldScreen = {
 		// Stary night
 		var nightGeometry = new THREE.SphereGeometry(200, 32, 15),
 			nightMaterial = new THREE.MeshLambertMaterial({
-				map: this.screen.textures.night,
+				map: Data.textures.night,
 				fog: false,
 				ambient: new THREE.Color(0xaaaaaa),
 				side: THREE.BackSide
@@ -145,7 +145,7 @@ var WorldScreen = {
 					pos.x + ((Math.random() * 3) - 1.5),
 					pos.y + ((Math.random() * 3) - 1.5),
 					pos.z + ((Math.random() * 3) - 1.5)),
-				this.screen.materials.target,
+				Data.materials.target,
 				dir);
 			this.scene.add(p.mesh);
 			this.particles.push(p);
@@ -168,7 +168,7 @@ var WorldScreen = {
 		var bullet = Object.create(Bullet).init(
 			new THREE.Vector3(bullet.pos.x, bullet.pos.y, bullet.pos.z),
 			new THREE.Vector3(bullet.dir.x, bullet.dir.y, bullet.dir.z),
-			this.screen.materials.bullet
+			Data.materials.bullet
 		);
 		bullet.ownShot = false;
 		this.bullets.push(bullet);
@@ -230,7 +230,7 @@ var WorldScreen = {
 					t.rot.z
 				),
 				t.speed,
-				this.screen.materials.target);
+				Data.materials.target);
 			this.targets.push(target);
 			if (bouy) {
 				target.bouyDir = bouy.mesh.position.clone();
@@ -274,7 +274,7 @@ var WorldScreen = {
 		// to translate, then re-do getDirection logic
 		if (!this.screen.isOculus) origin.y += 0.4;
 
-		var bullet = Object.create(Bullet).init(origin, direction, this.screen.materials.bullet);
+		var bullet = Object.create(Bullet).init(origin, direction, Data.materials.bullet);
 		this.bullets.push(bullet);
 		this.scene.add(bullet.mesh);
 		bullet.ownShot = true;

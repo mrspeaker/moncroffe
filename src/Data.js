@@ -26,3 +26,7 @@ var Data = {
 		maxZ: -1
 	}
 };
+
+if (module) {
+	module.exports = Data;
+}

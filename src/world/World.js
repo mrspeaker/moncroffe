@@ -20,7 +20,7 @@
 			this.screen = screen;
 			this.scene = screen.scene;
 
-			this.blockMaterial = screen.screen.materials.blocks;
+			this.blockMaterial = Data.materials.blocks;
 
 			var chW = Data.chunk.w;
 			this.xo = chW / 2;
