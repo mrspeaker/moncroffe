@@ -20,9 +20,9 @@
 			this.screen = screen;
 			this.scene = screen.scene;
 
-			this.blockMaterial = Data.materials.blocks;
+			this.blockMaterial = data.materials.blocks;
 
-			var chW = Data.chunk.w;
+			var chW = data.chunk.w;
 			this.xo = chW / 2;
 			this.zo = chW;
 			this.maxX = chW * this.radius + (chW / 2);
@@ -66,7 +66,7 @@
 
 		setBlockAt: function (x, y, z, type) {
 
-			var chW = Data.chunk.w,
+			var chW = data.chunk.w,
 				chunkX = Math.floor(x / chW),
 				chunkZ = Math.floor(z / chW),
 				chunk;
@@ -108,8 +108,8 @@
 
 		getBlockAt: function (x, y, z) {
 
-			var chW = Data.chunk.w,
-				chH = Data.chunk.h,
+			var chW = data.chunk.w,
+				chH = data.chunk.h,
 				chunkX = Math.floor(x / chW),
 				chunkZ = Math.floor(z / chW),
 				chunk;
@@ -145,7 +145,7 @@
 		},
 
 		reMeshChunkAndSurrounds: function (chX, chZ, x, z) {
-			var chW = Data.chunk.w,
+			var chW = data.chunk.w,
 				rechunks = [[chX, chZ]];
 
 			// Check if surrounding chunks need re-meshing
@@ -179,7 +179,7 @@
 			// (eg, if you attach to a face in an ajacent chunk)
 			var chunkX = cursor.chunkX,
 				chunkZ = cursor.chunkZ,
-				chW = Data.chunk.w;
+				chW = data.chunk.w;
 
 			if (pos.z + face.z >= chW) {
 				chunkZ++;
@@ -235,8 +235,8 @@
 		// Todo: move me to Chunk
 		createChunk: function (xo, zo) {
 
-			var chW = Data.chunk.w,
-				chH = Data.chunk.h,
+			var chW = data.chunk.w,
+				chH = data.chunk.h,
 				st = Math.random() < 0.3,
 				maxSphere = (Math.random() * 3 | 0) + 9,
 				minSphere = maxSphere - 2;
@@ -289,10 +289,10 @@
 		// TODO: refactor this with a "createQuad" function,
 		// so it can be fed to a greedy mesher.
 		createChunkGeom: function (x, z, chunk) {
-			var blockSize = Data.block.size,
+			var blockSize = data.block.size,
 				useAO = this.screen.useAO,
-				w = Data.chunk.w,
-				h = Data.chunk.h,
+				w = data.chunk.w,
+				h = data.chunk.h,
 				xo = x * w,
 				zo = z * w,
 				stats = {

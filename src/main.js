@@ -24,9 +24,9 @@
 
 		init: function () {
 
-			Data.init();
-			Data.textures = this.loadTextures();
-			Data.materials = this.createMaterials(Data.textures);
+			data.init();
+			data.textures = this.loadTextures();
+			data.materials = this.createMaterials(data.textures);
 
 			this.initUserSettings();
 			this.init3d();
@@ -140,7 +140,7 @@
 				if (Settings.ao.some(isKey)) {
 					var pos = player.playerObj.position;
 					this.screen.useAO = !this.screen.useAO;
-					this.screen.world.reMeshChunk(pos.x / Data.chunk.w | 0, pos.z / Data.chunk.w | 0);
+					this.screen.world.reMeshChunk(pos.x / data.chunk.w | 0, pos.z / data.chunk.w | 0);
 					return;
 				}
 
@@ -295,7 +295,7 @@
 			// Ensure not out of bounds: down or up.
 			if (nyb < 0) nyb = 0;
 			if (nyt < 1) nyt = 1;
-			if (nyt > Data.chunk.h - 1) nyt = Data.chunk.h - 1;
+			if (nyt > data.chunk.h - 1) nyt = data.chunk.h - 1;
 
 			// Check forward/backward
 			if (!(

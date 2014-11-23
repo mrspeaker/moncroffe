@@ -1,4 +1,4 @@
-var Data = {
+var data = {
 	init: function () {
 		this.world.midX = this.chunk.w / 2;
 		this.world.midZ = this.chunk.w;
@@ -28,5 +28,5 @@ var Data = {
 };
 
 if (typeof module !== "undefined") {
-	module.exports = Data;
+	module.exports = data;
 }

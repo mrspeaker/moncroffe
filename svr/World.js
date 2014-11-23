@@ -1,6 +1,6 @@
 // var Three = require("../lib/three.min.js");
 var Perlin = require("../lib/Perlin.js"),
-	Data = require("../src/Data.js");
+	data = require("../src/data.js");
 
 var World = {
 	seed: 42,
@@ -18,7 +18,7 @@ var World = {
 
 	init: function () {
 
-		Data.init();
+		data.init();
 
 	},
 
@@ -34,10 +34,10 @@ var World = {
 
 	tick: function () {
 
-		var xo = Data.world.midX,
-			zo = Data.world.midZ,
-			maxX = Data.world.maxX,
-			maxZ = Data.world.maxZ;
+		var xo = data.world.midX,
+			zo = data.world.midZ,
+			maxX = data.world.maxX,
+			maxZ = data.world.maxZ;
 
 		// Add a target.
 		if (Math.random() < 0.01) {
@@ -65,10 +65,10 @@ var World = {
 
 	getSafePos: function () {
 
-		var xo = Data.world.midX,
-			zo = Data.world.midZ,
-			maxX = Data.world.maxX,
-			maxZ = Data.world.maxZ,
+		var xo = data.world.midX,
+			zo = data.world.midZ,
+			maxX = data.world.maxX,
+			maxZ = data.world.maxZ,
 			safe = false;
 
 		while (!safe) {

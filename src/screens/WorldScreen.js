@@ -45,7 +45,7 @@ var WorldScreen = {
 		this.bouy = Object.create(Bouy).init(
 			-1,
 			new THREE.Vector3(0, 0, 0),
-			Data.materials.blocks);
+			data.materials.blocks);
 		this.scene.add(this.bouy.mesh);
 
 		screen.bindHandlers(this.player);
@@ -69,11 +69,11 @@ var WorldScreen = {
 
 		// One of these guys turns out when player turns on!
 		var light = new THREE.PointLight(0xF4D2A3, 1, 10);
-		light.position.set(Data.chunk.w - 5, 5, Data.chunk.w - 5);
+		light.position.set(data.chunk.w - 5, 5, data.chunk.w - 5);
 		this.scene.add(light);
 
 		var light2 = new THREE.PointLight(0xF4D2A3, 1, 10);
-		light2.position.set(Data.world.radius * Data.chunk.w - 3, 5, Data.world.radius * Data.chunk.w - 3);
+		light2.position.set(data.world.radius * data.chunk.w - 3, 5, data.world.radius * data.chunk.w - 3);
 		this.scene.add(light2);
 
 		this.scene.fog = new THREE.Fog(0xE8D998, 10, 80);
@@ -85,7 +85,7 @@ var WorldScreen = {
 		// Stary night
 		var nightGeometry = new THREE.SphereGeometry(200, 32, 15),
 			nightMaterial = new THREE.MeshLambertMaterial({
-				map: Data.textures.night,
+				map: data.textures.night,
 				fog: false,
 				ambient: new THREE.Color(0xaaaaaa),
 				side: THREE.BackSide
@@ -145,7 +145,7 @@ var WorldScreen = {
 					pos.x + ((Math.random() * 3) - 1.5),
 					pos.y + ((Math.random() * 3) - 1.5),
 					pos.z + ((Math.random() * 3) - 1.5)),
-				isPumpkin ? Data.materials.target : Data.materials.blocks,
+				isPumpkin ? data.materials.target : data.materials.blocks,
 				isPumpkin,
 				dir);
 			this.scene.add(p.mesh);
@@ -169,7 +169,7 @@ var WorldScreen = {
 		var bullet = Object.create(Bullet).init(
 			new THREE.Vector3(bullet.pos.x, bullet.pos.y, bullet.pos.z),
 			new THREE.Vector3(bullet.dir.x, bullet.dir.y, bullet.dir.z),
-			Data.materials.bullet
+			data.materials.bullet
 		);
 		bullet.ownShot = false;
 		this.bullets.push(bullet);
@@ -230,7 +230,7 @@ var WorldScreen = {
 					t.rot.z
 				),
 				t.speed,
-				Data.materials.target);
+				data.materials.target);
 			this.targets.push(target);
 			if (bouy) {
 				target.bouyDir = bouy.mesh.position.clone();
@@ -274,7 +274,7 @@ var WorldScreen = {
 		// to translate, then re-do getDirection logic
 		if (!this.screen.isOculus) origin.y += 0.4;
 
-		var bullet = Object.create(Bullet).init(origin, direction, Data.materials.bullet);
+		var bullet = Object.create(Bullet).init(origin, direction, data.materials.bullet);
 		this.bullets.push(bullet);
 		this.scene.add(bullet.mesh);
 		bullet.ownShot = true;
@@ -302,8 +302,8 @@ var WorldScreen = {
 			origin = ob.getObject().position.clone(),
 			cursor = this.cursor,
 			chs = this.world.chunks,
-			chW = Data.chunk.w,
-			chH = Data.chunk.h;
+			chW = data.chunk.w,
+			chH = data.chunk.h;
 
 		origin.addScalar(0.5);
 
@@ -358,10 +358,10 @@ var WorldScreen = {
 			return ret;
 		});
 
-		var maxX = Data.world.maxX,
-			maxZ = Data.world.maxZ,
-			xo = Data.world.midX,
-			zo = Data.world.midZ;
+		var maxX = data.world.maxX,
+			maxZ = data.world.maxZ,
+			xo = data.world.midX,
+			zo = data.world.midZ;
 
 		this.targets = this.targets.filter(function (t) {
 			var ret = t.tick(dt);

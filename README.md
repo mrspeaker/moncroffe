@@ -35,6 +35,11 @@ Running:
 
 	game served on port 3001
 
+## Next todos
+
+- Add Safe time after being hit
+- Add "arena mode" - 5 mins, then reset to new level
+
 ## Bugz
 
 > client
