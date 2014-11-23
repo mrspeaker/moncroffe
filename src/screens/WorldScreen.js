@@ -182,6 +182,13 @@ var WorldScreen = {
 			this.player.playerObj.position.copy(this.player.origPos);
 			this.flashType = "dead";
 			this.flashTime = 100;
+			return;
+		}
+
+		var player = Network.clients[pid];
+
+		if (player) {
+			this.explodeParticles(player.mesh.position, false);
 		}
 	},
 
@@ -392,7 +399,6 @@ var WorldScreen = {
 
 			if (hit) {
 				Network.shotPlayer(player.id);
-				this.explodeParticles(player.mesh.position, false);
 			}
 		}
 

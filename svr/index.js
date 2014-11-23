@@ -25,15 +25,19 @@ io.on('connection', function(client){
 	}
 
 	client.userid = UUID();
+	client.lastHit = Date.now();
+
 	console.log("Network:: " + client.userid + " connected");
 
 	clients.push(client);
-	players.push({
+	var player = {
 		id: client.userid,
 		score: 0,
 		pos: { x: 0, y: 0, z: 0 },
 		rot: { x: 0, z: 0}
-	});
+	};
+	players.push(player);
+	client.player = player;
 
 	client.on("disconnect", function () {
 		console.log("Network:: " + client.userid + " (" + client.name + ") disconnected");
@@ -94,9 +98,27 @@ io.on('connection', function(client){
 	});
 
 	client.on("shotPlayer", function(player) {
+		// Check if shot is too soon
+		var shotPlayer = World.clients.filter(function (c) {
+				return c.userid = player;
+			}),
+			now = Date.now();
+
+		if (!shotPlayer.length) {
+			console.log("erp... no player with this id");
+			return;
+		}
+
+		shotPlayer = shotPlayer[0];
+		if (now - shotPlayer.lastHit < data.safeTime) {
+			return;
+		}
+		shotPlayer.lastHit = now;
+
 		World.clients.forEach(function (c) {
 			c.emit("shotThePlayer", player);
 		});
+
 	});
 
 	client.on("gotBouy", function(pid) {

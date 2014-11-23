@@ -6,6 +6,8 @@ var PlayerProxy = {
 		h: 1.9
 	},
 
+	blinkTime: 0,
+
 	init: function (id, name) {
 
 		this.id = id;
@@ -19,6 +21,16 @@ var PlayerProxy = {
 
 		return this;
 
+	},
+
+	tick: function () {
+
+		if (this.blinkTime > 0) {
+			this.mesh.visible = this.blinkTime % 10 < 5;
+			if (this.blinkTime-- === 0) {
+				this.mesh.visible = true;
+			}
+		}
 	}
 
 };

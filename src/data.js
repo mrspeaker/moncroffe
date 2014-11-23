@@ -24,7 +24,9 @@ var data = {
 		midZ: -1,
 		maxX: -1,
 		maxZ: -1
-	}
+	},
+
+	safeTime: 3000
 };
 
 if (typeof module !== "undefined") {

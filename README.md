@@ -44,7 +44,6 @@ Running:
 
 > client
 
-- Can add block in position currently standing
 - Hit head slide down (and can get stuck in block)
 - Camera goes through block when close, looking on angle
 - Block & face selection wrong when close to blocks
