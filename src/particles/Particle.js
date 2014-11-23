@@ -45,7 +45,7 @@
 				this.dir = null;
 			}
 
-			if ((this.count / this.life) > 0.25) {
+			if (!this.dir || (this.count / this.life) > 0.25) {
 				this.vy += 0.001;
 				m.position.y -= this.vy;
 			}

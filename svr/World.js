@@ -59,7 +59,8 @@ var World = {
 			});
 		}
 
-		if (!this.bouy) {
+		if (!this.bouy && Math.random () < 0.01) {
+			console.log("added bouy");
 			this.bouy = this.getSafePos();
 		}
 	},
@@ -92,7 +93,7 @@ var World = {
 
 	gotBouy: function (id) {
 		this.flash = true;
-		this.bouy = this.getSafePos();
+		this.bouy = null;
 	}
 };
 

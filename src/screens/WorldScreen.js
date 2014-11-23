@@ -42,12 +42,6 @@ var WorldScreen = {
 		this.targets = [];
 		this.particles = [];
 
-		this.bouy = Object.create(Bouy).init(
-			-1,
-			new THREE.Vector3(0, 0, 0),
-			data.materials.blocks);
-		this.scene.add(this.bouy.mesh);
-
 		screen.bindHandlers(this.player);
 
 		this.addLights();
@@ -57,6 +51,16 @@ var WorldScreen = {
 		this.world.createChunks();
 
 		return this;
+	},
+
+	addBouy: function () {
+
+		this.bouy = Object.create(Bouy).init(
+			-1,
+			new THREE.Vector3(0, 0, 0),
+			data.materials.blocks);
+		this.scene.add(this.bouy.mesh);
+
 	},
 
 	addLights: function () {
@@ -250,6 +254,9 @@ var WorldScreen = {
 		}, this);
 
 		if (ping.bouy) {
+			if (!this.bouy) {
+				this.addBouy();
+			}
 			this.bouy.mesh.position.set(
 				ping.bouy.x,
 				ping.bouy.y,
