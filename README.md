@@ -1,22 +1,24 @@
 # Moncroffe
 
-[Minecraft style boxel demo](http://www.mrspeaker.net/dev/game/moncroffe) by [Mr Speaker](http://twitter.com/mrspeaker).
+[Boxel collect thing](http://www.mrspeaker.net/dev/game/moncroffe) by [Mr Speaker](http://twitter.com/mrspeaker).
 
+Find the mysterious boxes... the pumpkins know where they are. Shoot them to find the way.
 Now with Oculus Rift support!
+
 
 	Mouse: look
 	Keys/WSAD: move
-	Left click: add block if close, else shoot
-	Right click (or shift left): remove block
-	Wheel: change block
+	Left click: Add block if close, else shoot
+	Right click (or shift left): Remove block
+	Wheel: Change block
 
-	'1/2': adjust mouse sensitivity
-	'e': toggle Oculus Rift mode (no head tracking yet)
-	'q': toggle Ambient Occlusion
+	'1/2': Adjust mouse sensitivity
+	'e': Toggle Oculus Rift mode (no head tracking yet)
+	'3': Reset headset in VR mode
+	'4': Toggle Ambient Occlusion (debugging)
 
 Query params:
 
-	seed=1234 : use 1234 as generation seed
 	third=true : use third person camera (static at the moment)
 
 	> console.log(main.world.seed) : see current seed

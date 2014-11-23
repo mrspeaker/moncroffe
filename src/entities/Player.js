@@ -148,7 +148,7 @@ var Player = {
 		var camera = this.screen.screen.camera,
 			controls = new THREE.PointerLockControls(
 				this.thrd ? new THREE.Object3D(): camera,
-				this.screen.screen.settings.mouse_sensitivity);
+				Settings);
 
 		if (this.thrd) {
 			camera.position.set(-5, 12, 10);

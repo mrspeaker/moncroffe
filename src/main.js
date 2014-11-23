@@ -20,7 +20,6 @@
 		materials: {},
 
 		network: null,
-		settings: null,
 		screen: null,
 
 		init: function () {
@@ -41,18 +40,18 @@
 
 		initUserSettings: function () {
 
-			this.settings = utils.extend({}, default_settings);
+			window.Settings = utils.extend({}, user_settings);
 
 			var stored = window.localStorage.getItem("settings");
 			if (stored !== null) {
-				this.settings = JSON.parse(stored);
+				Settings = JSON.parse(stored);
 			}
 
 		},
 
 		saveSettings: function () {
 
-			var s = this.settings;
+			var s = window.Settings;
 			window.localStorage.setItem("settings", JSON.stringify(s));
 
 		},
@@ -111,29 +110,32 @@
 			document.addEventListener("DOMMouseScroll", onMouseWheel, false);
 			document.addEventListener("keydown", (function(e){
 
-				// Toggle Oculus
-				if (e.keyCode === 69 /*e*/) {
+				var key = e.keyCode,
+					isKey = function (k) { return k === key };
+
+				if (Settings.oculus.some(isKey)) {
 					this.toggleOculus();
+					return;
 				}
 
-				// Toggle AO
-				if (e.keyCode === 81 /*q*/) {
+				if (Settings.ao.some(isKey)) {
 					var pos = player.playerObj.position;
 					this.screen.useAO = !this.screen.useAO;
-					this.world.reMeshChunk(pos.x / Data.chunk.w | 0, pos.z / Data.chunk.w | 0);
+					this.screen.world.reMeshChunk(pos.x / Data.chunk.w | 0, pos.z / Data.chunk.w | 0);
+					return;
 				}
 
 				if (e.keyCode === 49 /*1*/) {
-					var s = this.settings.mouse_sensitivity - 0.05;
-					this.settings.mouse_sensitivity = s;
+					var s = Settings.mouse_sensitivity - 0.05;
+					Settings.mouse_sensitivity = s;
 					player.controls.setSensitivity(s);
 					utils.msg("Sensitivity", s.toFixed(2));
 
 					this.saveSettings();
 				}
 				if (e.keyCode === 50 /*2*/) {
-					var s = this.settings.mouse_sensitivity + 0.05;
-					this.settings.mouse_sensitivity = s;
+					var s = Settings.mouse_sensitivity + 0.05;
+					Settings.mouse_sensitivity = s;
 					player.controls.setSensitivity(s);
 					utils.msg("Sensitivity", s.toFixed(2));
 
@@ -141,7 +143,7 @@
 				}
 
 				if (e.keyCode === 51 /*3*/) {
-					this.vrControls.zeroSensor();
+					this.vrControls && this.vrControls.zeroSensor();
 				}
 
 			}).bind(this), false);

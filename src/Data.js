@@ -27,6 +27,6 @@ var Data = {
 	}
 };
 
-if (module) {
+if (typeof module !== "undefined") {
 	module.exports = Data;
 }
