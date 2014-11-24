@@ -84,10 +84,10 @@ io.on('connection', function(client){
 	});
 
 	// tmp: should be calced on server
-	client.on("pumpkinHit", function(id) {
+	client.on("clownHit", function(id) {
 		World.clients.forEach(function (c) {
 			if (c === client) return;
-			c.emit("pumpkinDestroyed", id);
+			c.emit("clownDestroyed", id);
 		});
 	});
 

@@ -33,7 +33,7 @@
 			this.socket.on("ping", this.pingRecieved.bind(this));
 			this.socket.on("dropped", this.dropReceived.bind(this));
 
-			this.socket.on("pumpkinDestroyed", this.pumpkinDestroyed.bind(this));
+			this.socket.on("clownDestroyed", this.clownDestroyed.bind(this));
 			this.socket.on("otherFiredBullet", this.otherFiredBullet.bind(this));
 			this.socket.on("shotThePlayer", this.shotThePlayer.bind(this));
 
@@ -105,12 +105,12 @@
 
 		// tmp: should be calced on server
 		targetHit: function (tid) {
-			this.socket.emit("pumpkinHit", tid);
+			this.socket.emit("clownHit", tid);
 		},
 
 		// tmp: should be calced on server
-		pumpkinDestroyed : function (tid) {
-			main.screen.pumpkinDestroyed(tid);
+		clownDestroyed : function (tid) {
+			main.screen.clownDestroyed(tid);
 		},
 
 		fireBullet: function (bullet) {

@@ -2,7 +2,7 @@
 
 [Boxel collect thing](http://www.mrspeaker.net/dev/game/moncroffe) by [Mr Speaker](http://twitter.com/mrspeaker).
 
-Find the mysterious boxes... the pumpkins know where they are. Shoot them to find the way.
+Find the mysterious boxes... the evil clowns know where they are. Shoot them to find the way.
 Now with Oculus Rift support!
 
 
@@ -51,7 +51,7 @@ Running:
 > server
 
 - Refresh loses session info
-- Background tab accumulates pumpkins
+- Background tab accumulates evil clowns
 - Block add/remove not synced
 
 > other

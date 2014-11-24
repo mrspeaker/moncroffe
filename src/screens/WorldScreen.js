@@ -146,7 +146,7 @@ var WorldScreen = {
 
 	},
 
-	explodeParticles: function (pos, isPumpkin, dir) {
+	explodeParticles: function (pos, isClown, dir) {
 
 		for (var i = 0; i < 10; i++) {
 			var p = Object.create(Particle).init(
@@ -155,8 +155,8 @@ var WorldScreen = {
 					pos.x + ((Math.random() * 3) - 1.5),
 					pos.y + ((Math.random() * 3) - 1.5),
 					pos.z + ((Math.random() * 3) - 1.5)),
-				isPumpkin ? data.materials.target : data.materials.blocks,
-				isPumpkin,
+				isClown ? data.materials.target : data.materials.blocks,
+				isClown,
 				dir);
 			this.scene.add(p.mesh);
 			this.particles.push(p);
@@ -164,7 +164,7 @@ var WorldScreen = {
 
 	},
 
-	pumpkinDestroyed: function (id) {
+	clownDestroyed: function (id) {
 		this.targets = this.targets.filter(function (t) {
 			var deadPump = t.id === id;
 			if (deadPump) {
@@ -237,7 +237,7 @@ var WorldScreen = {
 			utils.msgln(p.name + ":" + p.score);
 		}, this);
 
-		// Add new pumpkins
+		// Add new clowns
 		ping.targets.forEach(function (t) {
 			var target = Object.create(Target).init(
 				t.id,

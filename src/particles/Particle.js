@@ -5,14 +5,14 @@
 		count: 0,
 		vy: 0,
 
-		init: function (size, pos, material, isPumpkin, dir) {
+		init: function (size, pos, material, isClown, dir) {
 
 			this.life = 100 + (Math.random() * 50 | 0);
 
 			this.mesh = new THREE.Mesh(
 				utils.texturify(
 					new THREE.CubeGeometry(size),
-					isPumpkin ?
+					isClown ?
 						[[7, 8], [6, 8], [6, 8], [6, 8], [7, 9], [6, 9]] :
 						[[4, 9], [4, 9], [4, 9], [4, 9], [5, 9], [5, 9]]
 				),
