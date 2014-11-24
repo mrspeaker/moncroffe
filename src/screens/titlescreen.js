@@ -42,7 +42,6 @@ var TitleScreen = {
 			lobby = document.querySelector("#lobby");
 		lobby.style.display = "none";
 		if (name !== Settings.playerName) {
-			console.log("ya")
 			Settings.playerName = name;
 			main.saveSettings();
 		};

@@ -37,7 +37,10 @@ Running:
 
 ## Next todos
 
+- Explain goal in titlescreen
 - Add "arena mode" - 5 mins, then reset to new level
+- remove old block selecty thing
+- remove old texture
 
 ## Bugz
 
@@ -50,8 +53,9 @@ Running:
 
 > server
 
-- Refresh loses session info
-- Background tab accumulates evil clowns
+- Disconnects not all registered? Old players still visible
+- Client refresh loses session info
+- Client background tab accumulates evil clowns
 - Block add/remove not synced
 
 > other

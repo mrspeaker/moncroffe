@@ -88,6 +88,7 @@ var World = {
 		}
 
 		return pos;
+
 	},
 
 	gotBouy: function (id) {
