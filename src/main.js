@@ -45,6 +45,8 @@
 			var stored = window.localStorage.getItem("settings");
 			if (stored !== null) {
 				Settings = JSON.parse(stored);
+			} else {
+				this.saveSettings();
 			}
 
 		},

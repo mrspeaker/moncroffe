@@ -262,6 +262,11 @@ var WorldScreen = {
 				ping.bouy.y,
 				ping.bouy.z
 			);
+		} else {
+			// Hack - if bouy killed, move it away
+			if (this.bouy) {
+				this.bouy.mesh.position.set(0, -3, 0);
+			}
 		}
 
 		if (ping.flash) {

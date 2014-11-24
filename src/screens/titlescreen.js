@@ -24,7 +24,6 @@ var TitleScreen = {
 		this.target = target;
 		this.scene.add(target.mesh);
 
-		console.log(Settings);
 		document.querySelector("#playerName").value = Settings.playerName;
 		this.button = document.querySelector("#lezgo");
 		this.button.addEventListener("click", (function joinit (e) {

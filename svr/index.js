@@ -140,6 +140,16 @@ io.on('connection', function(client){
 
 });
 
+function resetGame() {
+	World.reset();
+	World.clients.forEach(function (c) {
+		c.emit("resetGame", {
+			seed: World.seed,
+			elapsed: World.elapsed
+		});
+	});
+}
+
 function runPingLoop () {
 
 	setTimeout(function () {
@@ -164,6 +174,9 @@ function runPingLoop () {
 
 function runRenderLoop () {
 	World.tick();
+	/*if (World.elapsed > 10) {
+		resetGame();
+	}*/
 	setTimeout(runRenderLoop, 16);
 }
 

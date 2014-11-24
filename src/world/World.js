@@ -158,8 +158,11 @@
 			chunk = this.chunks[chunkX + ":" + chunkZ];
 
 			if (!chunk) {
-				console.log("wit?", chunkX, chunkZ, x, y, z)
-				return null;
+				// prolly outside the world
+				return {
+					chunkX: 999,
+					chunkZ: 999
+				};
 			}
 
 			return {

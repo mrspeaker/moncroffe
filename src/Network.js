@@ -29,6 +29,7 @@
 			this.socket.on("onconnected", (function (data) {
 				this.connectedRecieved(data, joinCb);
 			}).bind(this));
+			this.socket.on("resetGame", this.resetGame.bind(this));
 			this.socket.on("ping", this.pingRecieved.bind(this));
 			this.socket.on("dropped", this.dropReceived.bind(this));
 
@@ -49,6 +50,12 @@
 				this.lastPingSent = now;
 				this.pingSend(mesh.position, mesh.rotation.y);
 			}
+		},
+
+		resetGame : function (data) {
+			console.log("Reset!");
+			this.world.seed = data.seed;
+			main.startGame();
 		},
 
 		connectedRecieved: function (data, cb) {

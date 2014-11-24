@@ -111,3 +111,5 @@ Face order: Front, Left, Back, Right, Bottom, Top
 ## Good seeds
 
 9696309
+25301249
+
