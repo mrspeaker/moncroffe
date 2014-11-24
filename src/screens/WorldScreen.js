@@ -32,6 +32,12 @@ var WorldScreen = {
 
 	init: function (screen) {
 
+		this.sounds = {
+			shoot: Object.create(Sound).init("res/audio/laz1", 0.15),
+			die: Object.create(Sound).init("res/audio/dead", 0.9),
+			find: Object.create(Sound).init("res/audio/getget", 0.7)
+		};
+
 		this.screen = screen;
 		this.scene = new THREE.Scene();
 
@@ -186,6 +192,7 @@ var WorldScreen = {
 			this.player.playerObj.position.copy(this.player.origPos);
 			this.flashType = "dead";
 			this.flashTime = 100;
+			this.sounds.die.play();
 			return;
 		}
 
@@ -272,6 +279,7 @@ var WorldScreen = {
 		if (ping.flash) {
 			this.flashTime = 100;
 			this.flashType = "get";
+			this.sounds.find.play();
 		}
 
 		this.elapsed = ping.elapsed;
@@ -315,6 +323,11 @@ var WorldScreen = {
 			}
 		});
 
+		this.sounds.shoot.rewind();
+		var shoot = this.sounds.shoot;
+		setTimeout(function () {
+			shoot.play();
+		}, 5);
 
 
 	},

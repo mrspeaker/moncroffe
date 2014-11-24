@@ -31,6 +31,8 @@ var TitleScreen = {
 			this.button.removeEventListener("click", joinit);
 		}).bind(this), false);
 
+		this.target.mesh.rotation.x += Math.PI;
+
 		return this;
 	},
 
