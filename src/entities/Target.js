@@ -22,7 +22,7 @@ var Target = {
 
 		var geom = utils.texturify(
 			new THREE.CubeGeometry(this.bb.w),
-			[[8, 8], [6, 8], [6, 8], [6, 8], [6, 9], [6, 9]]);
+			[[8, 8], [6, 8], [6, 8], [6, 8], [7, 9], [6, 9]]);
 
 		this.mesh = new THREE.Mesh(
 			geom,
