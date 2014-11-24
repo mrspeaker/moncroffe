@@ -60,7 +60,6 @@ var World = {
 		}
 
 		if (!this.bouy && Math.random () < 0.01) {
-			console.log("added bouy");
 			this.bouy = this.getSafePos();
 		}
 	},

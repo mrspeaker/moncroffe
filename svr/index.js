@@ -39,9 +39,12 @@ io.on('connection', function(client){
 	};
 	players.push(player);
 	client.player = player;
+	if (World.players.length !== World.clients.length) {
+		console.log("connect diff:", World.players.length, World.clients.length);
+	}
 
 	client.on("disconnect", function () {
-		console.log("Network:: " + client.userid + " (" + client.name + ") disconnected");
+		console.log("Network:: " + client.userid + " (" + client.userName + ") disconnected");
 		World.players = World.players.filter(function (p) {
 			return p.id !== client.userid;
 		});
@@ -51,6 +54,9 @@ io.on('connection', function(client){
 			}
 			return c !== client;
 		});
+		if (World.players.length !== World.clients.length) {
+			console.log("disconnect diff:", World.players.length, World.clients.length);
+		}
 	});
 
 	client.on("ping", function(ping) {
@@ -80,6 +86,8 @@ io.on('connection', function(client){
 			seed: World.seed,
 			elapsed: World.elapsed
 		});
+
+		client.userName = name;
 
 	});
 
@@ -123,19 +131,37 @@ io.on('connection', function(client){
 	});
 
 	client.on("gotBouy", function(pid) {
-		var now = Date.now();
+		var now = Date.now(),
+			legit = true;
+
+		// Check for distance
 		if (now - client.lastGetBouy < 1000) {
-			console.log("Too early for antohter boouyy");
-			return;
+			console.log("Too early for another bouy");
+			legit = false;
 		}
-		client.lastGetBouy = now;
-		World.players = World.players.map(function (p) {
-			if (p.id === pid) {
-				p.score++;
-			}
-			return p;
-		});
-		World.gotBouy();
+
+		if (legit) {
+			// Check for distance
+			client.lastGetBouy = now;
+			World.players = World.players.map(function (p) {
+				if (p.id === pid) {
+					var dist = utils.dist(p.pos, World.bouy);
+					console.log(dist);
+					if (dist > 4) {
+						console.log("hmmm... cheaty?");
+						legit = false;
+					} else {
+						p.score++;
+					}
+				}
+				return p;
+			});
+		}
+
+		// Reset and party
+		if (legit) {
+			World.gotBouy();
+		}
 	});
 
 });
@@ -186,4 +212,11 @@ http.listen(3001, function(){
 	runRenderLoop();
 });
 
+var utils = {};
+utils.dist = function (v1, v2) {
+	var dx = v1.x - v2.x,
+		dy = v1.y - v2.y,
+		dz = v1.z - v2.z;
 
+	return Math.sqrt(dx*dx+dy*dy+dz*dz);
+}
