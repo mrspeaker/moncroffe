@@ -75,7 +75,8 @@
 		play: function () {
 
 			this.rewind();
-			this.audio.load();
+			// HACK: chrome needs to load, firefox not!
+			if (window.chrome) this.audio.load();
 			this.audio.play();
 		},
 
