@@ -54,7 +54,6 @@
 		saveSettings: function () {
 
 			var s = window.Settings;
-			console.log(s, "SSS")
 			window.localStorage.setItem("settings", JSON.stringify(s));
 
 		},

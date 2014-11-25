@@ -207,6 +207,8 @@ var WorldScreen = {
 
 		var bouy = this.bouy;
 
+		//console.log(ping.state, ping.remaining);
+
 		if (ping.players.length) utils.msg("");
 		ping.players.forEach(function (p) {
 

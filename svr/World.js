@@ -6,6 +6,7 @@ var World = {
 	seed: 42,
 	startTime: 0,
 	elapsed: 0,
+	stateStartTime: 0,
 
 	clients: [],
 	players: [],
@@ -16,16 +17,23 @@ var World = {
 
 	bouy: null,
 
+	state: null,
+	stateFirst: true,
+	remaining: 0,
+
 	init: function () {
 
 		data.init();
 		this.data = data;
-
+		this.state = "BORN";
 	},
 
 	reset: function () {
 		this.startTime = Date.now();
+		this.roundEndTime = Date.now();
 		this.elapsed = 0;
+		this.setState("BORN");
+
 		this.seed = Math.random() * 99999999 | 0;
 		Perlin.noise.seed(this.seed);
 
@@ -33,12 +41,64 @@ var World = {
 		console.log("Reset:", this.seed);
 	},
 
+	setState: function (state) {
+		this.state = state;
+		this.stateStartTime = Date.now();
+		this.stateFirst = true;
+	},
+
 	tick: function () {
 
+		var elapsed = this.elapsed = (Date.now() - this.startTime) / 1000,
+			stateElapsed = this.stateElapsed = (Date.now() - this.stateStartTime) / 1000,
+			state = this.state;
+
+		switch (state) {
+
+		case "BORN":
+			if (this.stateFirst) {
+				this.remaining = 0;
+				this.stateFirst = false;
+			}
+			if (stateElapsed > 2) {
+				this.setState("ROUND_BEGIN");
+			}
+			break;
+
+		case "ROUND_BEGIN":
+			if (this.stateFirst) {
+				this.roundEndTime = stateElapsed + 102;
+				this.stateFirst = false;
+			}
+			if (stateElapsed > this.roundEndTime) {
+				this.setState("ROUND_OVER");
+				this.roundEndTime = null;
+			}
+			this.tick_GO();
+			break;
+
+		case "ROUND_OVER":
+			if (this.stateFirst) {
+				this.remaining = 0;
+				this.stateFirst = false;
+			}
+
+			if (stateElapsed > 2) {
+				this.setState("BORN");
+			}
+			break;
+
+		}
+
+	},
+
+	tick_GO: function () {
 		var xo = data.world.midX,
 			zo = data.world.midZ,
 			maxX = data.world.maxX,
 			maxZ = data.world.maxZ;
+
+		this.remaining = this.roundEndTime - this.stateElapsed;
 
 		// Add a target.
 		if (Math.random() < 0.01) {

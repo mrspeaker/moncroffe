@@ -179,11 +179,12 @@ function resetGame() {
 function runPingLoop () {
 
 	setTimeout(function () {
-		World.elapsed = (Date.now() - World.startTime) / 1000;
 
 		World.clients.forEach(function (c) {
 			c.emit("ping", {
 				elapsed: World.elapsed,
+				remaining: World.remaining,
+				state: World.state,
 				players: World.players,
 				bullets: World.bullets,
 				targets: World.targets,
