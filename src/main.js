@@ -22,6 +22,8 @@
 		network: null,
 		screen: null,
 
+		havePointerLock: 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document,
+
 		init: function () {
 
 			data.init();
@@ -32,6 +34,11 @@
 			this.init3d();
 
 			this.screen = Object.create(TitleScreen).init(this);
+
+			var self = this;
+			utils.bindPointerLock(function (state) {
+				self.onPointerLockChange(state);
+			});
 
 			this.run();
 
@@ -169,13 +176,12 @@
 
 			}).bind(this), false);
 
-			utils.bindPointerLock(function (state) {
-
-				player.controls.enabled = state;
-
-			});
-
 			window.addEventListener("resize", this.setCameraDimensions.bind(this), false );
+		},
+
+		onPointerLockChange: function (state) {
+			if (!this.screen.player) return;
+			this.screen.player.controls.enabled = state;
 		},
 
 		setCameraDimensions: function () {

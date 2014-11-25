@@ -33,6 +33,11 @@ var TitleScreen = {
 
 		this.target.mesh.rotation.x += Math.PI;
 
+		document.querySelector("#gui").style.display = "none";
+		document.querySelector("#cursor").style.display = "none";
+		document.querySelector("#blocker").style.display = "none";
+		document.querySelector("#instructions").style.display = "none";
+
 		return this;
 	},
 
@@ -46,6 +51,11 @@ var TitleScreen = {
 			main.saveSettings();
 		};
 		Network.init(name, function () {
+			document.querySelector("#blocker").style.display = ""
+			document.querySelector("#instructions").style.display = "";
+			document.querySelector("#gui").style.display = "";
+			document.querySelector("#cursor").style.display = "";
+
 			self.next();
 		});
 	},
