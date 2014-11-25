@@ -218,7 +218,9 @@ var WorldScreen = {
 		this.state = ping.state;
 		this.remaining = ping.remaining;
 
-		if (ping.players.length) utils.msg(ping.players.length);
+		var msg = this.state;
+		if (this.state == "ROUND") msg += " : " + (this.remaining | 0);
+		utils.msg(msg);
 		ping.players.forEach(function (p) {
 
 			// Just update your score
