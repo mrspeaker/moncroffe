@@ -60,14 +60,14 @@ var World = {
 				this.remaining = 0;
 				this.stateFirst = false;
 			}
-			if (stateElapsed > 2) {
-				this.setState("ROUND_BEGIN");
+			if (stateElapsed > 5) {
+				this.setState("ROUND");
 			}
 			break;
 
-		case "ROUND_BEGIN":
+		case "ROUND":
 			if (this.stateFirst) {
-				this.roundEndTime = stateElapsed + 102;
+				this.roundEndTime = stateElapsed + 12;
 				this.stateFirst = false;
 			}
 			if (stateElapsed > this.roundEndTime) {

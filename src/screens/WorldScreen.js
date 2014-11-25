@@ -29,6 +29,9 @@ var WorldScreen = {
 	flashType: "",
 
 	elapsed: 0,
+	state: "BORN",
+	stateFirst: true,
+	remaining: 0,
 
 	init: function (screen) {
 
@@ -56,6 +59,7 @@ var WorldScreen = {
 
 		this.world.createChunks();
 
+		this.player.controls.setPos(this.player.playerObj.x, this.player.playerObj.y, this.player.playerObj.z);
 		return this;
 	},
 
@@ -208,8 +212,13 @@ var WorldScreen = {
 		var bouy = this.bouy;
 
 		//console.log(ping.state, ping.remaining);
+		if (ping.state !== this.state) {
+			this.stateFirst = true;
+		}
+		this.state = ping.state;
+		this.remaining = ping.remaining;
 
-		if (ping.players.length) utils.msg("");
+		if (ping.players.length) utils.msg(ping.players.length);
 		ping.players.forEach(function (p) {
 
 			// Just update your score
@@ -379,10 +388,29 @@ var WorldScreen = {
 
 	tick: function (dt) {
 
+		switch (this.state) {
+		case "BORN":
+			if (this.stateFirst) {
+				this.player.tick(dt);
+			}
+			break;
+		case "ROUND":
+			this.tick_ROUND(dt);
+			break;
+		case "ROUND_OVER":
+			break;
+		}
+
+		this.stateFirst = false;
+
+	},
+
+	tick_ROUND: function (dt) {
 		var scene = this.scene,
 			world = this.world;
 
 		this.player.tick(dt);
+
 		this.bullets = this.bullets.filter(function (b) {
 			var ret = b.tick(dt);
 			if (ret) {
