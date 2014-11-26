@@ -95,31 +95,29 @@ var Player = {
 
 		model.rot = move.rot.y;
 
+		// Figure out how far we want to move this frame
 		var xo = 0,
 			zo = 0,
 			yo = model.vel.y;
-
-		var oldPos = mesh.position.clone(),
-			newPos;
 
 		xo += move.x * power;
 		zo += move.z * power;
 		yo -= 9.8 * drag; // Gravity
 
-		// TODO: translate on model, not mesh.
+		// TODO: translate on model (pos * rot), not mesh.
 		mesh.translateX(xo * delta);
 		mesh.translateY(yo * delta);
 		mesh.translateZ(zo * delta);
 
-		newPos = mesh.position.clone();
-		newPos.sub(oldPos);
+		var moveAmount = mesh.position.clone();
+		moveAmount.sub(model.pos);
 
 		mesh.translateX(-xo * delta);
 		mesh.translateY(-yo * delta);
 		mesh.translateZ(-zo * delta);
 
-		// Check if ok...
-		var col = this.screen.screen.tryMove(this, newPos);
+		// Check that amount of movement is ok...
+		var col = this.screen.tryMove(model.pos, model.bb, moveAmount);
 
 		model.pos = { x: col.x, y: col.y, z: col.z };
 
@@ -134,21 +132,22 @@ var Player = {
 			col.ground = true; // Allow jumping!
 		}
 
+		// If we're on the ground, and want to jump... do it.
 		if (col.ground && move.jump) {
 			yo += jump;
 		}
+		model.vel.y = yo;
 
 		this.screen.cast(); // see what we're looking at
-
-		model.vel.y = yo;
 
 		// bobbing
 		var size = 0.12,
 			speed = 200,
-			bobbing = !this.screen.screen.isOculus && col.ground && (model.pos.x !== oldPos.x || model.pos.z !== oldPos.z),
+			bobbing = !this.screen.screen.isOculus && col.ground && (moveAmount.x !== 0 || moveAmount.z !== 0),
 			bobX = bobbing ? Math.sin(Date.now() / speed) * size : 0;
 			bobY = bobbing ? - Math.abs(Math.cos(Date.now() / speed)) * size + (size/2) : 0;
 
+		// Sync the camera
 		this.controls.setPos(model.pos.x + bobX, model.pos.y + bobY, model.pos.z);
 
 		this.syncMesh();
