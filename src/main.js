@@ -149,7 +149,7 @@
 				}
 
 				if (Settings.ao.some(isKey)) {
-					var pos = player.playerObj.position;
+					var pos = player.mesh.position;
 					this.screen.useAO = !this.screen.useAO;
 					this.screen.world.reMeshChunk(pos.x / data.chunk.w | 0, pos.z / data.chunk.w | 0);
 					return;

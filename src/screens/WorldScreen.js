@@ -59,7 +59,7 @@ var WorldScreen = {
 
 		this.world.createChunks();
 
-		this.player.controls.setPos(this.player.playerObj.x, this.player.playerObj.y, this.player.playerObj.z);
+		//this.player.controls.setPos(this.player.playerObj.x, this.player.playerObj.y, this.player.playerObj.z);
 		return this;
 	},
 
@@ -302,7 +302,7 @@ var WorldScreen = {
 	fire: function () {
 
 		var ob = this.player.controls,
-			origin = this.player.playerObj.position.clone(),
+			origin = this.player.mesh.position.clone(),
 			direction = ob.getDirection().clone();
 
 		if (this.screen.isOculus) {
@@ -466,7 +466,7 @@ var WorldScreen = {
 
 		if (this.bouy) {
 			this.bouy.tick(dt);
-			var dist = utils.dist(this.player.playerObj.position, this.bouy.mesh.position);
+			var dist = utils.dist(this.player.mesh.position, this.bouy.mesh.position);
 			if (dist < 2) {
 				Network.gotBouy();
 				this.bouy.mesh.position.set(0, -1, 0);
@@ -493,7 +493,7 @@ var WorldScreen = {
 		}
 
 		if (this.doAddBlock) {
-			var pos = this.player.playerObj.position,
+			var pos = this.player.mesh.position,
 				bb = this.player.model.bb;
 			var added = world.addBlockAtCursor(
 				this.cursor,
@@ -525,7 +525,7 @@ var WorldScreen = {
 		}
 
 		// Do update ping
-		Network.tick(this.player.playerObj);
+		Network.tick(this.player.mesh);
 
 	},
 

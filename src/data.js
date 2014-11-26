@@ -26,7 +26,7 @@ var data = {
 		maxZ: -1
 	},
 
-	safeTime: 3000
+	safeTime: 3500
 };
 
 if (typeof module !== "undefined") {

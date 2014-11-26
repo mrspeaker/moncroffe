@@ -17,7 +17,7 @@ var Player = {
 
 		this.screen = screen;
 
-		this.playerObj = new THREE.Object3D();
+		this.mesh = new THREE.Object3D();
 		this.addPlayerMesh();
 
 		this.respawn();
@@ -37,7 +37,7 @@ var Player = {
 			z: spawn.z
 		};
 
-		this.playerObj.position.set(spawn.x, spawn.y, spawn.z);
+		this.mesh.position.set(spawn.x, spawn.y, spawn.z);
 
 	},
 
@@ -64,12 +64,12 @@ var Player = {
 
 		// Mesh bounding box for the player in third person mode
 		if (this.thrd) {
-			this.playerObj.add(
+			this.mesh.add(
 				new THREE.Mesh(
 					new THREE.BoxGeometry(this.model.bb.x, this.model.bb.y, this.model.bb.z),
 					new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: true})));
 
-			this.screen.scene.add(this.playerObj);
+			this.screen.scene.add(this.mesh);
 		}
 
 	},
@@ -80,7 +80,7 @@ var Player = {
 			delta = 0;
 		}
 
-		var mesh = this.playerObj,
+		var mesh = this.mesh,
 			model = this.model,
 			move = this.controls.update(delta),
 			power = 250 * delta,
@@ -150,7 +150,7 @@ var Player = {
 
 	syncMesh: function () {
 		var model = this.model,
-			mesh = this.playerObj,
+			mesh = this.mesh,
 			marker = this.marker;
 
 		mesh.rotation.set(0, model.rot, 0);
