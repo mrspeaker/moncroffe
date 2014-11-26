@@ -107,7 +107,7 @@ var Player = {
 		zo += move.z * power;
 		yo -= 9.8 * drag; // Gravity
 
-		// TODO: translate without doing the actual translate, please.
+		// TODO: translate on model, not mesh.
 		mesh.translateX(xo * delta);
 		mesh.translateY(yo * delta);
 		mesh.translateZ(zo * delta);
@@ -143,9 +143,6 @@ var Player = {
 
 		model.vel.y = yo;
 
-		mesh.rotation.set(0, move.rot.y, 0);
-		mesh.position.set(model.pos.x, model.pos.y, model.pos.z);
-
 		// bobbing
 		var size = 0.12,
 			speed = 200,
@@ -154,8 +151,20 @@ var Player = {
 			bobY = bobbing ? - Math.abs(Math.cos(Date.now() / speed)) * size + (size/2) : 0;
 
 		this.controls.setPos(model.pos.x + bobX, model.pos.y + bobY, model.pos.z);
-		this.marker.position.set(model.pos.x, model.pos.y - (model.bb.y / 2) + 0.05, model.pos.z);
 
+		this.syncMesh();
+
+	},
+
+	syncMesh: function () {
+		var model = this.model,
+			mesh = this.playerObj,
+			marker = this.marker;
+
+		mesh.rotation.set(0, model.rot, 0);
+		mesh.position.set(model.pos.x, model.pos.y, model.pos.z);
+
+		marker.position.set(model.pos.x, model.pos.y - (model.bb.y / 2) + 0.05, model.pos.z);
 	},
 
 	createControls: function () {
@@ -169,7 +178,7 @@ var Player = {
 			camera.position.set(-5, 18, 5);
 			camera.rotation.set(0, -Math.PI / 2 , 0);
 		} else {
-			camera.position.y = this.bb.h - 1 - 0.2;
+			camera.position.y = this.model.bb.y - 1 - 0.2;
 		}
 
 		this.screen.scene.add(controls.getObject());
