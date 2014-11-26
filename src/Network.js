@@ -43,12 +43,12 @@
 			return this;
 		},
 
-		tick: function (mesh) {
+		tick: function (model) {
 			// Do update ping
 			var now = Date.now();
 			if (this.clientId && now - this.lastPingSent > this.pingEvery) {
 				this.lastPingSent = now;
-				this.pingSend(mesh.position, mesh.rotation.y);
+				this.pingSend(model.pos, model.rot);
 			}
 		},
 

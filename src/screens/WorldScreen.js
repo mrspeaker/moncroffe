@@ -456,7 +456,7 @@ var WorldScreen = {
 		for (var p in Network.clients) {
 			var player = Network.clients[p],
 				hit = this.bullets.some(function (b) {
-					return b.ownShot && !b.stopped && utils.dist(b.pos, player.mesh.position) < 1;
+					return b.ownShot && !b.stopped && utils.dist(b.pos, player.model.pos) < 1;
 				});
 
 			if (hit) {
@@ -466,7 +466,7 @@ var WorldScreen = {
 
 		if (this.bouy) {
 			this.bouy.tick(dt);
-			var dist = utils.dist(this.player.mesh.position, this.bouy.mesh.position);
+			var dist = utils.dist(this.player.model.pos, this.bouy.mesh.position);
 			if (dist < 2) {
 				Network.gotBouy();
 				this.bouy.mesh.position.set(0, -1, 0);
@@ -493,7 +493,7 @@ var WorldScreen = {
 		}
 
 		if (this.doAddBlock) {
-			var pos = this.player.mesh.position,
+			var pos = this.player.model.pos,
 				bb = this.player.model.bb;
 			var added = world.addBlockAtCursor(
 				this.cursor,
@@ -525,7 +525,7 @@ var WorldScreen = {
 		}
 
 		// Do update ping
-		Network.tick(this.player.mesh);
+		Network.tick(this.player.model);
 
 	},
 
