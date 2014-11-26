@@ -58,7 +58,7 @@ var Player = {
 
 		this.marker = new THREE.Object3D();
 		this.marker.add(new THREE.Mesh(
-			new THREE.BoxGeometry(this.model.bb.x, 0.1, this.model.bb.w),
+			new THREE.BoxGeometry(this.model.bb.x, 0.1, this.model.bb.z),
 			new THREE.MeshLambertMaterial({ color: 0x0000ff })));
 		this.marker.add(new THREE.Mesh(
 			new THREE.BoxGeometry(0.05, 0.2, 0.5),
