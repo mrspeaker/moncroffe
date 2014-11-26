@@ -497,7 +497,7 @@ var WorldScreen = {
 				bb = this.player.bb;
 			var added = world.addBlockAtCursor(
 				this.cursor,
-				this.player.curTool,
+				this.player.model.tool,
 				[
 					// Ensure don't draw on yourself...
 					// Not conviced about the Y checks here... should they be rounded? why -0.5?! Dang it!

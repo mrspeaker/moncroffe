@@ -2,7 +2,6 @@ var Player = {
 
 	thrd: utils.urlParams.third || false,
 
-	curTool: 1,
 	lastToolChange: Date.now(),
 
 	model: {
@@ -196,15 +195,18 @@ var Player = {
 
 		this.lastToolChange = Date.now();
 
-		this.curTool += dir;
-		if (dir > 0 && this.curTool > blocks.length - 1) {
-			this.curTool = 1;
+		var tool = this.model.tool;
+		tool += dir;
+		if (dir > 0 && tool > blocks.length - 1) {
+			tool = 1;
 		}
-		if (dir < 0 && this.curTool === 0) {
-			this.curTool = blocks.length - 1;
+		if (dir < 0 && tool === 0) {
+			tool = blocks.length - 1;
 		}
 
-		document.querySelector("#gui").innerHTML = blocks[this.curTool];
+		document.querySelector("#gui").innerHTML = blocks[tool];
+
+		this.model.tool = tool;
 	}
 
 };
