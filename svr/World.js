@@ -49,9 +49,10 @@ var World = {
 
 	tick: function () {
 
-		var elapsed = this.elapsed = (Date.now() - this.startTime) / 1000,
-			stateElapsed = this.stateElapsed = (Date.now() - this.stateStartTime) / 1000,
+		var stateElapsed = this.stateElapsed = (Date.now() - this.stateStartTime) / 1000,
 			state = this.state;
+
+		this.elapsed = (Date.now() - this.startTime) / 1000;
 
 		switch (state) {
 
@@ -130,11 +131,12 @@ var World = {
 			zo = data.world.midZ,
 			maxX = data.world.maxX,
 			maxZ = data.world.maxZ,
-			safe = false;
+			safe = false,
+			pos;
 
 		while (!safe) {
 
-			var pos = { x: Math.floor(xo + (Math.random() * (maxX * 0.97) * 2) - (maxX * 0.97)),
+			pos = { x: Math.floor(xo + (Math.random() * (maxX * 0.97) * 2) - (maxX * 0.97)),
 				y: Math.floor(Math.random() * 18 | 0) + 1,
 				z: Math.floor(zo + (Math.random() * (maxZ * 0.97) * 2) - (maxZ * 0.97))
 			}

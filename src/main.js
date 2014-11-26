@@ -1,4 +1,4 @@
-(function (World, utils, THREE) {
+(function (World, utils, THREE, Sound, data, user_settings, TitleScreen, WorldScreen) {
 
 	"use strict";
 
@@ -22,7 +22,7 @@
 		network: null,
 		screen: null,
 
-		havePointerLock: 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document,
+		havePointerLock: "pointerLockElement" in document || "mozPointerLockElement" in document || "webkitPointerLockElement" in document,
 
 		init: function () {
 
@@ -52,7 +52,7 @@
 			window.Settings = utils.extend({}, user_settings);
 
 			var stored = window.localStorage.getItem("settings");
-			if (stored !== null) {
+			if (stored !== null && stored !== "undefined") {
 				Settings = JSON.parse(stored);
 			} else {
 				this.saveSettings();
@@ -62,8 +62,7 @@
 
 		saveSettings: function () {
 
-			var s = window.Settings;
-			window.localStorage.setItem("settings", JSON.stringify(s));
+			window.localStorage.setItem("settings", JSON.stringify(Settings));
 
 		},
 
@@ -141,7 +140,8 @@
 			document.addEventListener("keydown", (function(e){
 
 				var key = e.keyCode,
-					isKey = function (k) { return k === key };
+					isKey = function (k) { return k === key; },
+					s;
 
 				if (Settings.oculus.some(isKey)) {
 					this.toggleOculus();
@@ -156,7 +156,7 @@
 				}
 
 				if (e.keyCode === 49 /*1*/) {
-					var s = Settings.mouse_sensitivity - 0.05;
+					s = Settings.mouse_sensitivity - 0.05;
 					Settings.mouse_sensitivity = s;
 					player.controls.setSensitivity(s);
 					utils.msg("Sensitivity", s.toFixed(2));
@@ -164,7 +164,7 @@
 					this.saveSettings();
 				}
 				if (e.keyCode === 50 /*2*/) {
-					var s = Settings.mouse_sensitivity + 0.05;
+					s = Settings.mouse_sensitivity + 0.05;
 					Settings.mouse_sensitivity = s;
 					player.controls.setSensitivity(s);
 					utils.msg("Sensitivity", s.toFixed(2));
@@ -300,5 +300,10 @@
 }(
 	window.World,
 	window.utils,
-	window.THREE
+	window.THREE,
+	window.Sound,
+	window.data,
+	window.user_settings,
+	window.TitleScreen,
+	window.WorldScreen
 ));
