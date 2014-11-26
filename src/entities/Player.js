@@ -29,9 +29,7 @@ var Player = {
 
 		this.respawn();
 
-
-		var controls = this.controls = this.createControls();
-		this.screen.scene.add(controls.getObject());
+		this.controls = this.createControls();
 
 		return this;
 	},
@@ -173,6 +171,8 @@ var Player = {
 		} else {
 			camera.position.y = this.bb.h - 1 - 0.2;
 		}
+
+		this.screen.scene.add(controls.getObject());
 
 		return controls;
 	},
