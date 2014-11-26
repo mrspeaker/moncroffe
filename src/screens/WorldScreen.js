@@ -494,7 +494,7 @@ var WorldScreen = {
 
 		if (this.doAddBlock) {
 			var pos = this.player.playerObj.position,
-				bb = this.player.bb;
+				bb = this.player.model.bb;
 			var added = world.addBlockAtCursor(
 				this.cursor,
 				this.player.model.tool,
@@ -502,15 +502,15 @@ var WorldScreen = {
 					// Ensure don't draw on yourself...
 					// Not conviced about the Y checks here... should they be rounded? why -0.5?! Dang it!
 					// works though.
-					[pos.x - (bb.w / 2), pos.y - (bb.h / 2), pos.z - (bb.d / 2)],
-					[pos.x + (bb.w / 2), pos.y - (bb.h / 2), pos.z - (bb.d / 2)],
-					[pos.x - (bb.w / 2), pos.y - (bb.h / 2), pos.z + (bb.d / 2)],
-					[pos.x + (bb.w / 2), pos.y - (bb.h / 2), pos.z + (bb.d / 2)],
+					[pos.x - (bb.x / 2), pos.y - (bb.y / 2), pos.z - (bb.z / 2)],
+					[pos.x + (bb.x / 2), pos.y - (bb.y / 2), pos.z - (bb.z / 2)],
+					[pos.x - (bb.x / 2), pos.y - (bb.y / 2), pos.z + (bb.z / 2)],
+					[pos.x + (bb.x / 2), pos.y - (bb.y / 2), pos.z + (bb.z / 2)],
 
-					[pos.x - (bb.w / 2), pos.y + (bb.h / 2) - 0.5, pos.z - (bb.d / 2)],
-					[pos.x + (bb.w / 2), pos.y + (bb.h / 2) - 0.5, pos.z - (bb.d / 2)],
-					[pos.x - (bb.w / 2), pos.y + (bb.h / 2) - 0.5, pos.z + (bb.d / 2)],
-					[pos.x + (bb.w / 2), pos.y + (bb.h / 2) - 0.5, pos.z + (bb.d / 2)]
+					[pos.x - (bb.x / 2), pos.y + (bb.y / 2) - 0.5, pos.z - (bb.z / 2)],
+					[pos.x + (bb.x / 2), pos.y + (bb.y / 2) - 0.5, pos.z - (bb.z / 2)],
+					[pos.x - (bb.x / 2), pos.y + (bb.y / 2) - 0.5, pos.z + (bb.z / 2)],
+					[pos.x + (bb.x / 2), pos.y + (bb.y / 2) - 0.5, pos.z + (bb.z / 2)]
 				]);
 
 			if (!added) {

@@ -17,12 +17,6 @@ var Player = {
 
 		this.screen = screen;
 
-		this.bb = {
-			w: 0.7,
-			d: 0.7,
-			h: 1.9
-		};
-
 		this.playerObj = new THREE.Object3D();
 		this.addPlayerMesh();
 

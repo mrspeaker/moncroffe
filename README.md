@@ -21,7 +21,7 @@ Query params /:
 
 	third=true : use third person camera (static at the moment)
 
-	> console.log(main.world.seed) : see current seed
+	> console.log(main.screen.world.seed) : see current seed
 
 	> main.makeAzerty(); // If you want ZQSD instead of WASD
 
@@ -39,8 +39,8 @@ Running:
 
 - Explain goal in titlescreen
 - Add "arena mode" - 5 mins, then reset to new level
-- remove old block selecty thing
-- remove old texture
+
+- trying to move out data from functions that act on it.
 
 ## Bugz
 
@@ -67,7 +67,7 @@ Running:
 
 - Greedy meshing. Currently had basic face-culling only.
 - Block-based lighting
-- Shift-walk for overhang picking
+- Shift-walk for overhang picking?
 - Camera pitch/yaw not same as minecraft when looking up/down
 
 ## Would be cool
