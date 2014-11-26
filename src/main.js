@@ -26,6 +26,8 @@
 
 		init: function () {
 
+			Sound._setVolume(0);
+
 			data.init();
 			data.textures = this.loadTextures();
 			data.materials = this.createMaterials(data.textures);

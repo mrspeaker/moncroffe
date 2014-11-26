@@ -193,7 +193,7 @@ var WorldScreen = {
 
 	shotThePlayer: function (pid) {
 		if (pid === Network.clientId) {
-			this.player.playerObj.position.copy(this.player.origPos);
+			this.player.respawn();
 			this.flashType = "dead";
 			this.flashTime = 100;
 			this.sounds.die.play();
@@ -211,7 +211,7 @@ var WorldScreen = {
 
 		var bouy = this.bouy;
 
-		//console.log(ping.state, ping.remaining);
+		// console.log(ping.state, ping.remaining);
 		if (ping.state !== this.state) {
 			this.stateFirst = true;
 		}
@@ -221,6 +221,7 @@ var WorldScreen = {
 		var msg = this.state;
 		if (this.state == "ROUND") msg += " : " + (this.remaining | 0);
 		utils.msg(msg);
+
 		ping.players.forEach(function (p) {
 
 			// Just update your score

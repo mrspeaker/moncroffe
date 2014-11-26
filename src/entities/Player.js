@@ -5,6 +5,15 @@ var Player = {
 	curTool: 1,
 	lastToolChange: Date.now(),
 
+	model: {
+		bb: { x: 0.7, y: 1.9, z: 0.7 },
+		pos: { x: 0, y: 19, z: 0 },
+		spawn: { x: 0, y: 19, z: 0 },
+		rot: 0,
+		vel: { x: 0, y: 0, z: 0 },
+		tool: 1
+	},
+
 	init: function (screen) {
 
 		this.screen = screen;
@@ -15,15 +24,11 @@ var Player = {
 			h: 1.9
 		};
 
-		this.velocity = new THREE.Vector3(0, 0, 0);
-
-		var playerObj = this.playerObj = new THREE.Object3D();
-
-		playerObj.position.set(0, 19, 0);
-
-		this.origPos = playerObj.position.clone();
-
+		this.playerObj = new THREE.Object3D();
 		this.addPlayerMesh();
+
+		this.respawn();
+
 
 		var controls = this.controls = this.createControls();
 		this.screen.scene.add(controls.getObject());
@@ -31,17 +36,31 @@ var Player = {
 		return this;
 	},
 
+	respawn: function () {
+
+		var spawn = this.model.spawn;
+
+		this.model.pos = {
+			x: spawn.x,
+			y: spawn.y,
+			z: spawn.z
+		};
+
+		this.playerObj.position.set(spawn.x, spawn.y, spawn.z);
+
+	},
+
 	addPlayerMesh: function () {
 
 		this.edge = edge = new THREE.Mesh(
 			new THREE.BoxGeometry(0.1, 0.3, 0.1),
 			new THREE.MeshLambertMaterial({ color: 0x0099ff }));
-			edge.position.x = -(this.bb.w / 2);
-			edge.position.z = -(this.bb.d / 2)
+			edge.position.x = -(this.model.bb.x / 2);
+			edge.position.z = -(this.model.bb.z / 2)
 
 		this.marker = new THREE.Object3D();
 		this.marker.add(new THREE.Mesh(
-			new THREE.BoxGeometry(this.bb.w, 0.1, this.bb.d),
+			new THREE.BoxGeometry(this.model.bb.x, 0.1, this.model.bb.w),
 			new THREE.MeshLambertMaterial({ color: 0x0000ff })));
 		this.marker.add(new THREE.Mesh(
 			new THREE.BoxGeometry(0.05, 0.2, 0.5),
@@ -56,7 +75,7 @@ var Player = {
 		if (this.thrd) {
 			this.playerObj.add(
 				new THREE.Mesh(
-					new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d),
+					new THREE.BoxGeometry(this.model.bb.x, this.model.bb.y, this.model.bb.z),
 					new THREE.MeshLambertMaterial({ color: 0xff00ff, wireframe: true})));
 
 			this.screen.scene.add(this.playerObj);
@@ -70,19 +89,20 @@ var Player = {
 			delta = 0;
 		}
 
-		var obj = this.playerObj,
+		var mesh = this.playerObj,
+			model = this.model,
 			move = this.controls.update(delta),
 			power = 250 * delta,
 			jump = 23,
 			drag = 10 * delta;
 
-		obj.rotation.set(move.rot.x, move.rot.y, move.rot.z);
+		model.rot = move.rot.y;
 
-		var xo = this.velocity.x,
-			zo = this.velocity.z,
-			yo = this.velocity.y;
+		var xo = 0,
+			zo = 0,
+			yo = model.vel.y;
 
-		var oldPos = obj.position.clone(),
+		var oldPos = mesh.position.clone(),
 			newPos;
 
 		xo += move.x * power;
@@ -90,32 +110,30 @@ var Player = {
 		yo -= 9.8 * drag; // Gravity
 
 		// TODO: translate without doing the actual translate, please.
-		obj.translateX(xo * delta);
-		obj.translateY(yo * delta);
-		obj.translateZ(zo * delta);
+		mesh.translateX(xo * delta);
+		mesh.translateY(yo * delta);
+		mesh.translateZ(zo * delta);
 
-		newPos = obj.position.clone();
+		newPos = mesh.position.clone();
 		newPos.sub(oldPos);
 
-		obj.translateX(-xo * delta);
-		obj.translateY(-yo * delta);
-		obj.translateZ(-zo * delta);
+		mesh.translateX(-xo * delta);
+		mesh.translateY(-yo * delta);
+		mesh.translateZ(-zo * delta);
 
 		// Check if ok...
 		var col = this.screen.screen.tryMove(this, newPos);
 
-		obj.position.x = col.x;
-		obj.position.y = col.y;
-		obj.position.z = col.z;
+		model.pos = { x: col.x, y: col.y, z: col.z };
 
 		if (col.ground) {
 			yo = 0;
 		}
 
 		// Check if fallen past ground
-		if (obj.position.y < 0 + (this.bb.h / 2)) {
+		if (model.pos.y < 0 + (model.bb.y / 2)) {
 			yo = 0;
-			obj.position.y = 0 + (this.bb.h / 2);
+			model.pos.y = 0 + (model.bb.y / 2);
 			col.ground = true; // Allow jumping!
 		}
 
@@ -125,21 +143,20 @@ var Player = {
 
 		this.screen.cast(); // see what we're looking at
 
-		// Carry over gravity velocity to next frame
-		// x/z stops dead - no drag.
-		this.velocity.set(0, yo, 0);
+		model.vel.y = yo;
+
+		mesh.rotation.set(0, move.rot.y, 0);
+		mesh.position.set(model.pos.x, model.pos.y, model.pos.z);
 
 		// bobbing
 		var size = 0.12,
 			speed = 200,
-			bobbing = !this.screen.screen.isOculus && col.ground && (obj.position.x !== oldPos.x || obj.position.z !== oldPos.z),
+			bobbing = !this.screen.screen.isOculus && col.ground && (model.pos.x !== oldPos.x || model.pos.z !== oldPos.z),
 			bobX = bobbing ? Math.sin(Date.now() / speed) * size : 0;
 			bobY = bobbing ? - Math.abs(Math.cos(Date.now() / speed)) * size + (size/2) : 0;
 
-		this.playerObj.rotation.y = this.controls.getObject().rotation.y;
-
-		this.controls.setPos(obj.position.x + bobX, obj.position.y + bobY, obj.position.z);
-		this.marker.position.set(obj.position.x, obj.position.y - (this.bb.h / 2) + 0.05, obj.position.z);
+		this.controls.setPos(model.pos.x + bobX, model.pos.y + bobY, model.pos.z);
+		this.marker.position.set(model.pos.x, model.pos.y - (model.bb.y / 2) + 0.05, model.pos.z);
 
 	},
 
