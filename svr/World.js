@@ -68,7 +68,7 @@ var World = {
 
 		case "ROUND":
 			if (this.stateFirst) {
-				this.roundEndTime = stateElapsed + 12;
+				this.roundEndTime = stateElapsed + 32;
 				this.stateFirst = false;
 			}
 			if (stateElapsed > this.roundEndTime) {

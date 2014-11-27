@@ -207,7 +207,8 @@
 			var player = Network.clients[pid];
 
 			if (player) {
-				this.explodeParticles(player.mesh.position, false);
+				this.explodeParticles(player.model.pos, false);
+				player.blinkTime = 150;
 			}
 		},
 
@@ -215,7 +216,6 @@
 
 			var bouy = this.bouy;
 
-			// console.log(ping.state, ping.remaining);
 			if (ping.state !== this.state) {
 				this.stateFirst = true;
 			}
@@ -244,13 +244,8 @@
 					this.scene.add(player.mesh);
 				}
 
-				// Update it
-				player.mesh.position.set(
-					p.pos.x,
-					p.pos.y,
-					p.pos.z
-				);
-				player.mesh.rotation.set(0, p.rot, 0);
+				player.model.pos = p.pos;
+				player.model.rot = p.rot;
 
 				utils.msgln(p.name + ":" + p.score);
 			}, this);
@@ -458,10 +453,15 @@
 			}, this);
 
 			for (var p in Network.clients) {
+
 				var player = Network.clients[p],
-					hit = this.bullets.some(function (b) {
-						return b.ownShot && !b.stopped && utils.dist(b.pos, player.mesh.position) < 1;
-					});
+					hit;
+
+				player.tick(dt);
+
+				hit = this.bullets.some(function (b) {
+					return b.ownShot && !b.stopped && utils.dist(b.pos, player.model.pos) < 1;
+				});
 
 				if (hit) {
 					Network.shotPlayer(player.id);
