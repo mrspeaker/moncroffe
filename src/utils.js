@@ -1,26 +1,26 @@
-(function () {
+(function (THREE) {
 
 	"use strict";
 
 	var utils = {};
 
-	utils.msg = function (m) {
+	utils.msg = function () {
 		var dom = document.querySelector("#watch"),
 			args = Array.prototype.slice.call(arguments);
 		dom.innerHTML = "";
 		args.forEach(function (m, i) {
 			dom.innerHTML += m + (i < args.length - 1 ? " : " : "");
 		});
-	}
+	};
 
-	utils.msgln = function (m) {
+	utils.msgln = function () {
 		var dom = document.querySelector("#watch"),
 			args = Array.prototype.slice.call(arguments);
 		dom.innerHTML += "<br/>";
 		args.forEach(function (m, i) {
 			dom.innerHTML += m + (i < args.length - 1 ? " : " : "");
 		});
-	}
+	};
 
 	utils.rnd = {
 
@@ -51,8 +51,8 @@
     		dy = v1.y - v2.y,
     		dz = v1.z - v2.z;
 
-    	return Math.sqrt(dx*dx+dy*dy+dz*dz);
-	}
+    	return Math.sqrt(dx * dx + dy * dy + dz * dz);
+	};
 
 	utils.urlParams = (function () {
 		if (!window.location && !window.location.search) {
@@ -112,20 +112,20 @@
 			wdir = wdir * -1;
 			hdir = hdir * -1;
 
-		};
+		}
 
 		return path;
 	};
 
 	utils.bindPointerLock = function (onChange) {
 
-		var blocker = document.getElementById( 'blocker' ),
-			instructions = document.getElementById( 'instructions' ),
-			havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+		var blocker = document.getElementById("blocker"),
+			instructions = document.getElementById("instructions"),
+			havePointerLock = "pointerLockElement" in document || "mozPointerLockElement" in document || "webkitPointerLockElement" in document;
 
 		if (havePointerLock) {
 			var element = document.body;
-			var pointerlockchange = function ( event ) {
+			var pointerlockchange = function () {
 				if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
 					onChange(true);
 					blocker.style.display = "none";
@@ -136,21 +136,21 @@
 					blocker.style.display = "box";
 					instructions.style.display = "";
 				}
-			}
+			};
 
-			var pointerlockerror = function ( event ) {
+			var pointerlockerror = function () {
 				instructions.style.display = "";
 			};
 
 			["pointerlockchange", "mozpointerlockchange", "webkitpointerlockchange"].forEach(function (e) {
-				document.addEventListener(e, pointerlockchange, false );
+				document.addEventListener(e, pointerlockchange, false);
 			});
 
 			["pointerlockerror", "mozpointerlockerror", "webkitpointerlockerror"].forEach(function (e) {
-				document.addEventListener(e, pointerlockerror, false );
+				document.addEventListener(e, pointerlockerror, false);
 			});
 
-			instructions.addEventListener("click", function ( event ) {
+			instructions.addEventListener("click", function () {
 				instructions.style.display = "none";
 				// Ask the browser to lock the pointer
 				element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
@@ -159,11 +159,11 @@
 		} else {
 			instructions.innerHTML = "Your browser doesn't seem to support Pointer Lock API";
 		}
-	}
+	};
 
 	// extends 'from' object with members from 'to'. If 'to' is null, a deep clone of 'from' is returned
 	utils.extend = function (from, to) {
-	    if (from == null || typeof from != "object") return from;
+	    if (from === null || typeof from !== "object") return from;
 	    if (from.constructor != Object && from.constructor != Array) return from;
 	    if (from.constructor == Date || from.constructor == RegExp || from.constructor == Function ||
 	        from.constructor == String || from.constructor == Number || from.constructor == Boolean)
@@ -173,11 +173,11 @@
 
 	    for (var name in from)
 	    {
-	        to[name] = typeof to[name] == "undefined" ? extend(from[name], null) : to[name];
+	        to[name] = typeof to[name] == "undefined" ? utils.extend(from[name], null) : to[name];
 	    }
 
 	    return to;
-	}
+	};
 
 	utils.texturify = function (cube, tile, surround) {
 
@@ -189,7 +189,7 @@
 				left: false,
 				top: false,
 				bottom: false
-			}
+			};
 		}
 
 		function getBlock(x, y) {
@@ -377,4 +377,6 @@
 
 	window.utils = utils;
 
-}());
+}(
+	window.THREE
+));

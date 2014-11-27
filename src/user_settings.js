@@ -1,15 +1,23 @@
-var user_settings = {
+(function () {
 
-	playerName: "Steak Styles " + (Math.random() * 1000 | 0),
+	"use strict";
 
-	mouse_sensitivity: 1.0, // * 1000
-	up: [38, 87], // up, W
-	down: [40, 83], // down, s
-	left: [37, 65], // left, a
-	right: [39, 68], //right, d
-	jump: [32],
+	var user_settings = {
 
-	oculus: [69], // "e"
-	ao: [52] // "4"
+		playerName: "Steak Styles " + (Math.random() * 1000 | 0),
 
-};
+		mouse_sensitivity: 1.0, // * 1000
+		up: [38, 87], // up, W
+		down: [40, 83], // down, s
+		left: [37, 65], // left, a
+		right: [39, 68], //right, d
+		jump: [32],
+
+		oculus: [69], // "e"
+		ao: [52] // "4"
+
+	};
+
+	window.user_settings = user_settings;
+
+}());
