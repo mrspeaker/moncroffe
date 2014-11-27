@@ -1,11 +1,5 @@
 var PlayerProxy = {
 
-	bb: {
-		w: 0.7,
-		d: 0.7,
-		h: 1.9
-	},
-
 	model: {
 		bb: { x: 0.7, y: 1.9, z: 0.7 },
 		pos: { x: 0, y: 0, z: 0 },
