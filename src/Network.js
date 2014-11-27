@@ -1,4 +1,4 @@
-(function () {
+(function (main) {
 
 	"use strict";
 
@@ -23,7 +23,7 @@
 			};
 
 			this.name = name;
-			this.socket = io();
+			this.socket = window.io();
 
 			// Listeners
 			this.socket.on("onconnected", (function (data) {
@@ -134,8 +134,8 @@
 			this.socket.emit("gotBouy", this.clientId);
 		}
 
-	}
+	};
 
 	window.Network = Network;
 
-}());
+}(window.main));

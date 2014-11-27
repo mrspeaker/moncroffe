@@ -1,4 +1,4 @@
-(function () {
+(function (utils, data, noise, THREE) {
 
 	"use strict";
 
@@ -31,7 +31,7 @@
 			return this;
 		},
 
-		tick: function (dt) { },
+		tick: function () { },
 
 		createChunks: function () {
 
@@ -171,7 +171,7 @@
 				x: x,
 				y: y,
 				z: z
-			}
+			};
 
 		},
 
@@ -286,10 +286,7 @@
 		createChunk: function (xo, zo) {
 
 			var chW = data.chunk.w,
-				chH = data.chunk.h,
-				st = Math.random() < 0.3,
-				maxSphere = (Math.random() * 3 | 0) + 9,
-				minSphere = maxSphere - 2;
+				chH = data.chunk.h;
 
 			// Create the chunk
 			var chunk = [];
@@ -308,9 +305,7 @@
 						var val = noise.simplex3((x + (xo * chW)) / 15, y / 10, (z + (zo* chW)) / 15);
 						var val2 = noise.simplex3((x + (xo * chW)) / 20, y / 20, (z + (zo* chW)) / 22);
 
-						//if (xo == 0 && zo == 0) { console.log(val)}
-
-						if (y == 0) {
+						if (y === 0) {
 							type = val2 < -0.1 ? "stone" : (Math.random() < 0.3 ? "dirt":"grass");
 						} else {
 							if (y < 16 && val > 0) {
@@ -328,7 +323,7 @@
 						chunk[z][y][x] = {
 							type: type,
 							light: {}
-						}
+						};
 					}
 				}
 			}
@@ -489,7 +484,7 @@
   					}
 					return (val * 0.5) + 0.5;
 
-				}
+				};
 
 			// For AO calcs
 			var neigbours = {
@@ -502,7 +497,7 @@
 				"1, 0, 0": [[1, -1, -1], [0, -1, -1], [1, -1, 0]],
 				"0, 1, 0": [[-1, 1, -1], [-1, 1, 0], [0, 1, -1]],
 				"1, 1, 0": [[1, 1, -1], [0, 1, -1], [1, 1, 0]]
-			}
+			};
 
 			var mesh = new THREE.Mesh(),
 				i, j, k, block, pos;
@@ -560,18 +555,15 @@
 				return;
 			}
 
-			var screen = this.screen.screen,
-				scene = this.scene,
-				start = screen.clock.getElapsedTime(),
-				end;
+			var scene = this.scene;
+			// start = screen.clock.getElapsedTime()
 
 			scene.remove(this.chunkGeom[chId]);
 			this.chunkGeom[chId] = this.createChunkGeom(x, z, this.chunks[chId]);
 			scene.add(this.chunkGeom[chId]);
 
-			var end = screen.clock.getElapsedTime();
-
-			//utils.msgln("Remesh Chunk[" + chId + "]:", ((end - start) * 1000 | 0) + "ms");
+			// end = screen.clock.getElapsedTime();
+			// utils.msgln("Remesh Chunk[" + chId + "]:", ((end - start) * 1000 | 0) + "ms");
 
 		}
 
@@ -580,4 +572,9 @@
 
 	window.World = World;
 
-}());
+}(
+	window.utils,
+	window.data,
+	window.noise,
+	window.THREE
+));

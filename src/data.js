@@ -1,3 +1,5 @@
+"use strict";
+
 var data = {
 	init: function () {
 		this.world.midX = this.chunk.w / 2;
