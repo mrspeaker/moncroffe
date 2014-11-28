@@ -1,7 +1,9 @@
 var Bouy = {
 
-	pos: null,
-	bb: null,
+	model: {
+		bb: { x: 1.5, y: 1.5, z: 1.5 },
+		pos: { x: 0, y: 0, z: 0 }
+	},
 
 	count: 0,
 
@@ -12,14 +14,8 @@ var Bouy = {
 
 		this.id = id;
 
-		this.bb = {
-			w: 1.5,
-			d: 1.5,
-			h: 1.5
-		};
-
 		var geom = utils.texturify(
-			new THREE.CubeGeometry(this.bb.w),
+			new THREE.CubeGeometry(this.model.bb.x),
 			[[1, 8], [1, 8], [1, 8], [1, 8], [1, 9], [1, 9]]);
 
 		this.mesh = new THREE.Mesh(
@@ -27,7 +23,11 @@ var Bouy = {
 			material
 		);
 
-		this.pos = pos;
+		var pos = this.model.pos;
+		pos.x = pos.x;
+		pos.y = pos.y;
+		pos.z = pos.z;
+
 		this.mesh.position.copy(pos);
 
 		return this;
@@ -36,13 +36,22 @@ var Bouy = {
 
 	tick: function (dt) {
 		var m = this.mesh,
+			pos = m.position,
 			pow = Math.sin(Date.now() / 1000) * dt * this.speed;
 
 		m.translateY(pow);
 
-		this.pos = m.position;
+		this.model.pos.x = pos.x;
+		this.model.pos.y = pos.y;
+		this.model.pos.z = pos.z;
 
 		return !(this.remove);
+	},
+
+	setPos: function (pos) {
+
+
+
 	}
 
 };

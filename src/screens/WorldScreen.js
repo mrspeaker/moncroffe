@@ -470,7 +470,7 @@
 
 			if (this.bouy) {
 				this.bouy.tick(dt);
-				var dist = utils.dist(this.player.model.pos, this.bouy.mesh.position);
+				var dist = utils.dist(this.player.model.pos, this.bouy.model.pos);
 				if (dist < 2) {
 					Network.gotBouy();
 					this.bouy.mesh.position.set(0, -1, 0);
