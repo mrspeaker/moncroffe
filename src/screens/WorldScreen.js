@@ -63,7 +63,6 @@
 
 			this.world.createChunks();
 
-			//this.player.controls.setPos(this.player.playerObj.x, this.player.playerObj.y, this.player.playerObj.z);
 			return this;
 		},
 

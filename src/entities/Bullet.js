@@ -1,63 +1,71 @@
-var Bullet = {
+(function (THREE) {
 
-	pos: null,
-	bb: null,
-	stopped: false,
-	ownShot: true,
+	"use strict";
 
-	count: 0,
-	life: 30,
-	hangAroundFor: 4000,
+	var Bullet = {
 
-	direction: null,
-	velocity: 40,
+		pos: null,
+		bb: null,
+		stopped: false,
+		ownShot: true,
 
-	init: function (pos, direction, material) {
+		count: 0,
+		life: 30,
+		hangAroundFor: 4000,
 
-		this.bb = {
-			w: 0.15,
-			d: 1.15,
-			h: 0.1
-		};
+		direction: null,
+		velocity: 40,
 
-		this.mesh = new THREE.Mesh(
-			new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d),
-			material
-		);
+		init: function (pos, direction, material) {
 
-		this.pos = pos;
-		this.mesh.position.copy(pos);
-		this.mesh.lookAt(pos.add(direction));
+			this.bb = {
+				w: 0.15,
+				d: 1.15,
+				h: 0.1
+			};
 
-		this.direction = direction;
+			this.mesh = new THREE.Mesh(
+				new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d),
+				material
+			);
 
-		return this;
+			this.pos = pos;
+			this.mesh.position.copy(pos);
+			this.mesh.lookAt(pos.add(direction));
 
-	},
+			this.direction = direction;
 
-	stop: function () {
+			return this;
 
-		this.stopped = true;
+		},
 
-	},
+		stop: function () {
 
-	tick: function (dt) {
-		var m = this.mesh,
-			pow = dt * this.velocity;
+			this.stopped = true;
 
-		if (this.count++ < this.life && !this.stopped) {
-			m.translateZ(pow);
-			this.pos = m.position;
-			if (this.count === this.life) {
-				this.stopped = true;
+		},
+
+		tick: function (dt) {
+			var m = this.mesh,
+				pow = dt * this.velocity;
+
+			if (this.count++ < this.life && !this.stopped) {
+				m.translateZ(pow);
+				this.pos = m.position;
+				if (this.count === this.life) {
+					this.stopped = true;
+				}
 			}
+
+			if (this.count < this.hangAroundFor) {
+				return true;
+			}
+
+			return false;
 		}
 
-		if (this.count < this.hangAroundFor) {
-			return true;
-		}
+	};
 
-		return false;
-	}
+	window.Bullet = Bullet;
 
-};
+}(window.THREE));
