@@ -154,7 +154,7 @@ var World = {
 	},
 
 	gotBouy: function (id) {
-		this.flash = true;
+		this.flash = id;
 		this.bouy = null;
 	}
 };

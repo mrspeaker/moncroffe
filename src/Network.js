@@ -15,6 +15,16 @@
 
 		world: null,
 
+		getName: function (id) {
+
+			if (id === this.clientId) {
+				return this.name;
+			}
+
+			return this.clients[id] ? this.clients[id].name : "???";
+
+		},
+
 		init: function (name, joinCb) {
 			this.lastPingSent = Date.now();
 			this.lastPingRec = Date.now();

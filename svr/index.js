@@ -160,7 +160,7 @@ io.on('connection', function(client){
 
 		// Reset and party
 		if (legit) {
-			World.gotBouy();
+			World.gotBouy(pid);
 		}
 	});
 

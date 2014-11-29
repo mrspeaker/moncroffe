@@ -292,6 +292,17 @@
 			if (ping.flash) {
 				this.flashTime = 100;
 				this.flashType = "get";
+
+				var name = Network.getName(ping.flash);
+
+				// TODO! ENCODE!
+				document.querySelector("#playerGetName").innerHTML = name;
+				document.querySelector("#bg").style.display = "block";
+
+				setTimeout(function () {
+					document.querySelector("#bg").style.display = "none";
+				}, 3000);
+
 				this.sounds.find.play();
 			}
 

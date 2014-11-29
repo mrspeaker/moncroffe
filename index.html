@@ -21,9 +21,8 @@
 		<input type="text" id="playerName" />
 		<button id="lezgo">join</button>
 	</div>
-
 	<div id="blocker">
-		<div id="instructions">
+		<div id="instructions" class="centaur">
 			<span style="font-size:40px">Magic Box Get</span>
 			<br />
 			Collect the magic boxes to gain points.<br/>
@@ -36,7 +35,13 @@
 			1/2: adjust mouse sensitivity<br/>
 		</div>
 	</div>
-
+	<div id="bg">
+		<div id="hudMsg" class="centaur">
+			<div id="hudTitle">BLOCK GET!</div><br/>
+			<div>by</div><br/>
+			<div id="playerGetName">...</div>
+		</div>
+	</div>
 	<script src="lib/three.min.js"></script>
 	<script src="lib/PointerLockControls.js"></script>
 	<script src="lib/VREffect.js"></script>
