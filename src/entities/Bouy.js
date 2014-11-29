@@ -1,57 +1,56 @@
-var Bouy = {
+(function (THREE, utils) {
 
-	model: {
-		bb: { x: 1.5, y: 1.5, z: 1.5 },
-		pos: { x: 0, y: 0, z: 0 }
-	},
+	"use strict";
 
-	count: 0,
+	var Bouy = {
 
-	remove: false,
-	speed: 0.5,
+		model: {
+			bb: { x: 1.5, y: 1.5, z: 1.5 },
+			pos: { x: 0, y: 0, z: 0 }
+		},
 
-	init: function (id, pos, material) {
+		count: 0,
 
-		this.id = id;
+		remove: false,
+		speed: 0.5,
 
-		var geom = utils.texturify(
-			new THREE.CubeGeometry(this.model.bb.x),
-			[[1, 8], [1, 8], [1, 8], [1, 8], [1, 9], [1, 9]]);
+		init: function (material) {
 
-		this.mesh = new THREE.Mesh(
-			geom,
-			material
-		);
+			var geom = utils.texturify(
+				new THREE.CubeGeometry(this.model.bb.x),
+				[[1, 8], [1, 8], [1, 8], [1, 8], [1, 9], [1, 9]]);
 
-		var pos = this.model.pos;
-		pos.x = pos.x;
-		pos.y = pos.y;
-		pos.z = pos.z;
+			this.mesh = new THREE.Mesh(
+				geom,
+				material
+			);
 
-		this.mesh.position.copy(pos);
+			return this;
 
-		return this;
+		},
 
-	},
+		tick: function (dt) {
 
-	tick: function (dt) {
-		var m = this.mesh,
-			pos = m.position,
-			pow = Math.sin(Date.now() / 1000) * dt * this.speed;
+			var m = this.mesh,
+				pos = m.position,
+				pow = Math.sin(Date.now() / 1000) * dt * this.speed;
 
-		m.translateY(pow);
+			m.translateY(pow);
 
-		this.model.pos.x = pos.x;
-		this.model.pos.y = pos.y;
-		this.model.pos.z = pos.z;
+			this.model.pos = {
+				x: pos.x,
+				y: pos.y,
+				z: pos.z
+			};
 
-		return !(this.remove);
-	},
+			return !(this.remove);
+		}
 
-	setPos: function (pos) {
+	};
 
+	window.Bouy = Bouy;
 
-
-	}
-
-};
+}(
+	window.THREE,
+	window.utils
+));

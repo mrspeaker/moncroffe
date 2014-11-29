@@ -69,10 +69,7 @@
 
 		addBouy: function () {
 
-			this.bouy = Object.create(Bouy).init(
-				-1,
-				new THREE.Vector3(0, 0, 0),
-				data.materials.blocks);
+			this.bouy = Object.create(Bouy).init(data.materials.blocks);
 			this.scene.add(this.bouy.mesh);
 
 		},
@@ -147,10 +144,11 @@
 			this.lights.ambientLight.color = (new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time);
 			this.lights.player.visible = time > 0.5;
 
-			this.stratosphere.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
-			this.stratosphere.uniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);
-			this.stratosphere.skybox.visible = time < 0.875;
-			this.stratosphere.nightbox.visible = time >= 0.875;
+			var strat = this.stratosphere;
+			strat.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
+			strat.uniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);
+			strat.skybox.visible = time < 0.875;
+			strat.nightbox.visible = time >= 0.875;
 
 		},
 
