@@ -36,7 +36,6 @@ var World = {
 
 		this.seed = Math.random() * 99999999 | 0;
 		Perlin.noise.seed(this.seed);
-
 		this.bouy = null;
 		console.log("Reset:", this.seed);
 	},

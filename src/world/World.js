@@ -64,6 +64,12 @@
 
 		},
 
+		removeChunks: function () {
+			for (var ch in this.chunkGeom) {
+				this.scene.remove(this.chunkGeom[ch]);
+			}
+		},
+
 		setBlockAt: function (x, y, z, type) {
 
 			var chW = data.chunk.w,

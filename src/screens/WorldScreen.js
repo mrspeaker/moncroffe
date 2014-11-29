@@ -48,7 +48,6 @@
 			this.screen = screen;
 			this.scene = new THREE.Scene();
 
-			this.world = Object.create(World).init(this, Network.world.seed);
 			this.player = Object.create(Player).init(this);
 			this.cursor = Object.create(Cursor).init(this);
 			this.bullets = [];
@@ -61,9 +60,18 @@
 			this.addStratosphere();
 			this.updateDayNight();
 
-			this.world.createChunks();
-
 			return this;
+		},
+
+		reset: function () {
+			// remove old chunks...
+			if (this.world) this.world.removeChunks();
+			// Shoot up in the air
+			this.player.model.pos.y = 19;
+
+			// Readd the new ones...
+			this.world = Object.create(World).init(this, Network.world.seed);
+			this.world.createChunks();
 		},
 
 		addBouy: function () {
@@ -440,6 +448,7 @@
 			switch (this.state) {
 			case "BORN":
 				if (this.stateFirst) {
+					this.reset();
 					this.player.tick(dt);
 				}
 				break;
