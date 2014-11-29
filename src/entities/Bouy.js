@@ -35,13 +35,7 @@
 				pos = m.position,
 				pow = Math.sin(Date.now() / 1000) * dt * this.speed;
 
-			m.translateY(pow);
-
-			this.model.pos = {
-				x: pos.x,
-				y: pos.y,
-				z: pos.z
-			};
+			//m.translateY(pow);
 
 			return !(this.remove);
 		}

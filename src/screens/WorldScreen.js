@@ -277,11 +277,32 @@
 				if (!this.bouy) {
 					this.addBouy();
 				}
-				this.bouy.mesh.position.set(
-					ping.bouy.x,
-					ping.bouy.y,
-					ping.bouy.z
-				);
+				var bouyPos = this.bouy.model.pos;
+
+				if (ping.bouy.x !== bouyPos.x ||
+					ping.bouy.y !== bouyPos.y ||
+ 					ping.bouy.z !== bouyPos.z) {
+
+					// Set the new pos
+					this.bouy.model.pos = {
+						x: ping.bouy.x,
+						y: ping.bouy.y,
+						z: ping.bouy.z
+					};
+
+					this.bouy.mesh.position.set(
+						ping.bouy.x,
+						ping.bouy.y,
+						ping.bouy.z
+					);
+
+					// Update the targets
+					this.targets.forEach(function (t) {
+						t.bouyDir = this.bouy.mesh.position.clone();
+					}, this);
+
+				}
+
 			} else {
 				// Hack - if bouy killed, move it away
 				if (this.bouy) {
@@ -485,6 +506,11 @@
 				if (dist < 2) {
 					Network.gotBouy();
 					this.bouy.mesh.position.set(0, -1, 0);
+					this.bouy.model.pos = {
+						x: 0,
+						y: -10,
+						z: 0
+					}
 				}
 			}
 
