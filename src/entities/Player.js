@@ -89,10 +89,9 @@
 				delta = 0;
 			}
 
-			var mesh = this.mesh,
-				model = this.model,
+			var model = this.model,
 				move = this.controls.update(delta),
-				power = 250 * delta,
+				power = 5.5 * delta,
 				jump = 23,
 				drag = 10 * delta;
 
@@ -101,26 +100,24 @@
 			// Figure out how far we want to move this frame
 			var xo = 0,
 				zo = 0,
-				yo = model.vel.y;
+				yo = model.vel.y,
+				wannaMove = {};
 
 			xo += move.x * power;
 			zo += move.z * power;
 			yo -= 9.8 * drag; // Gravity
 
-			// TODO: translate on model (pos * rot), not mesh.
-			mesh.translateX(xo * delta);
-			mesh.translateY(yo * delta);
-			mesh.translateZ(zo * delta);
+			// Forward/backward
+			wannaMove.x = zo * Math.sin(model.rot);
+			wannaMove.z = zo * Math.cos(model.rot);
+			wannaMove.y = yo * delta;
 
-			var moveAmount = mesh.position.clone();
-			moveAmount.sub(model.pos);
-
-			mesh.translateX(-xo * delta);
-			mesh.translateY(-yo * delta);
-			mesh.translateZ(-zo * delta);
+			// Strafe
+			wannaMove.x += xo * Math.sin(model.rot + Math.PI / 2);
+			wannaMove.z += xo * Math.cos(model.rot + Math.PI / 2);
 
 			// Check that amount of movement is ok...
-			var col = this.screen.tryMove(model.pos, model.bb, moveAmount);
+			var col = this.screen.tryMove(model.pos, model.bb, wannaMove);
 
 			model.pos = { x: col.x, y: col.y, z: col.z };
 
@@ -146,7 +143,7 @@
 			// bobbing
 			var size = 0.12,
 				speed = 200,
-				bobbing = !this.screen.screen.isOculus && col.ground && (moveAmount.x !== 0 || moveAmount.z !== 0),
+				bobbing = !this.screen.screen.isOculus && col.ground && (wannaMove.x !== 0 || wannaMove.z !== 0),
 				bobX = bobbing ? Math.sin(Date.now() / speed) * size : 0,
 				bobY = bobbing ? - Math.abs(Math.cos(Date.now() / speed)) * size + (size/2) : 0;
 
