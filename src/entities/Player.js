@@ -100,17 +100,18 @@
 			// Figure out how far we want to move this frame
 			var xo = 0,
 				zo = 0,
-				yo = model.vel.y,
-				wannaMove = {};
+				yo = model.vel.y;
 
 			xo += move.x * power;
 			zo += move.z * power;
 			yo -= 9.8 * drag; // Gravity
 
 			// Forward/backward
-			wannaMove.x = zo * Math.sin(model.rot);
-			wannaMove.z = zo * Math.cos(model.rot);
-			wannaMove.y = yo * delta;
+			var wannaMove = {
+				x: zo * Math.sin(model.rot),
+				z: zo * Math.cos(model.rot),
+				y: yo * delta
+			};
 
 			// Strafe
 			wannaMove.x += xo * Math.sin(model.rot + Math.PI / 2);
@@ -189,12 +190,11 @@
 			if (Date.now() - this.lastToolChange < 200) {
 				return;
 			}
-
-			var blocks = this.screen.world.blocks;
-
 			this.lastToolChange = Date.now();
 
-			var tool = this.model.tool;
+			var blocks = this.screen.world.blocks,
+				tool = this.model.tool;
+
 			tool += dir;
 			if (dir > 0 && tool > blocks.length - 1) {
 				tool = 1;
