@@ -1,66 +1,74 @@
-var Cursor = {
+(function () {
 
-	pos: null,
-	face: null,
-	chunkX: 0,
-	chunkZ: 0,
-	chunkId: "0:0",
-	visible: true,
+	"use strict";
 
-	init: function (screen) {
+	var Cursor = {
 
-		var cursor = this.mesh = new THREE.Mesh(
-			new THREE.BoxGeometry(1.01, 1.01, 1.01),
-			new THREE.MeshBasicMaterial({
-				color: 0xdddddd,
-				wireframe: false,
-				opacity: 0.15,
-				transparent: true
-			}));
+		pos: null,
+		face: null,
+		chunkX: 0,
+		chunkZ: 0,
+		chunkId: "0:0",
+		visible: true,
 
-		this.pos = new THREE.Vector3(0, 0, 0);
-		cursor.position.copy(this.pos);
+		init: function (screen) {
 
-		this.screen = screen;
+			var cursor = this.mesh = new THREE.Mesh(
+				new THREE.BoxGeometry(1.01, 1.01, 1.01),
+				new THREE.MeshBasicMaterial({
+					color: 0xdddddd,
+					wireframe: false,
+					opacity: 0.15,
+					transparent: true
+				}));
 
-		screen.scene.add(cursor);
+			this.pos = new THREE.Vector3(0, 0, 0);
+			cursor.position.copy(this.pos);
 
-		return this;
+			this.screen = screen;
 
-	},
+			screen.scene.add(cursor);
 
-	set: function (pos, chunk, face) {
+			return this;
 
-		this.pos.set(pos.x, pos.y, pos.z);
+		},
 
-		this.chunkX = chunk.x;
-		this.chunkZ = chunk.z;
-		this.chunkId = chunk.x + ":" + chunk.z;
+		set: function (pos, chunk, face) {
 
-		this.face = face;
+			this.pos.set(pos.x, pos.y, pos.z);
 
-	},
+			this.chunkX = chunk.x;
+			this.chunkZ = chunk.z;
+			this.chunkId = chunk.x + ":" + chunk.z;
 
-	hide: function () {
+			this.face = face;
 
-		if (!this.visible) return;
+		},
 
-		this.visible = false;
-		this.mesh.visible = false;
+		hide: function () {
 
-	},
+			if (!this.visible) return;
 
-	show: function () {
+			this.visible = false;
+			this.mesh.visible = false;
 
-		if (this.visible) return;
+		},
 
-		this.visible = true;
-		this.mesh.visible = true;
+		show: function () {
 
-	},
+			if (this.visible) return;
 
-	tick: function (dt) {
+			this.visible = true;
+			this.mesh.visible = true;
 
-	}
+		},
 
-};
+		tick: function (dt) {
+
+		}
+
+	};
+
+	window.Cursor = Cursor;
+
+}());

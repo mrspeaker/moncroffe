@@ -1,47 +1,55 @@
-var PlayerProxy = {
+(function () {
 
-	model: {
-		bb: { x: 0.7, y: 1.9, z: 0.7 },
-		pos: { x: 0, y: 0, z: 0 },
-		rot: 0
-	},
+	"use strict";
 
-	blinkTime: 0,
+	var PlayerProxy = {
 
-	init: function (id, name) {
+		model: {
+			bb: { x: 0.7, y: 1.9, z: 0.7 },
+			pos: { x: 0, y: 0, z: 0 },
+			rot: 0
+		},
 
-		this.id = id;
-		this.name = name;
+		blinkTime: 0,
 
-		this.mesh = new THREE.Mesh(
-			new THREE.BoxGeometry(this.model.bb.x, this.model.bb.y, this.model.bb.z),
-			new THREE.MeshBasicMaterial({
-   				color: 0x992277,
-			}));
+		init: function (id, name) {
 
-		return this;
+			this.id = id;
+			this.name = name;
 
-	},
+			this.mesh = new THREE.Mesh(
+				new THREE.BoxGeometry(this.model.bb.x, this.model.bb.y, this.model.bb.z),
+				new THREE.MeshBasicMaterial({
+	   				color: 0x992277,
+				}));
 
-	tick: function () {
+			return this;
 
-		if (this.blinkTime > 0) {
-			this.mesh.visible = this.blinkTime % 10 < 5;
-			if (this.blinkTime-- === 0) {
-				this.mesh.visible = true;
+		},
+
+		tick: function () {
+
+			if (this.blinkTime > 0) {
+				this.mesh.visible = this.blinkTime % 10 < 5;
+				if (this.blinkTime-- === 0) {
+					this.mesh.visible = true;
+				}
 			}
+
+			this.syncMesh();
+
+		},
+
+		syncMesh: function () {
+			var model = this.model,
+				mesh = this.mesh;
+
+			mesh.rotation.set(0, model.rot, 0);
+			mesh.position.set(model.pos.x, model.pos.y, model.pos.z);
 		}
 
-		this.syncMesh();
+	};
 
-	},
+	window.PlayerProxy = PlayerProxy;
 
-	syncMesh: function () {
-		var model = this.model,
-			mesh = this.mesh;
-
-		mesh.rotation.set(0, model.rot, 0);
-		mesh.position.set(model.pos.x, model.pos.y, model.pos.z);
-	}
-
-};
+}());

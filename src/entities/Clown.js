@@ -1,57 +1,65 @@
-var Clown = {
+(function () {
 
-	pos: null,
-	bb: null,
+	"use strict";
 
-	count: 0,
+	var Clown = {
 
-	remove: false,
-	speed: 0,
+		pos: null,
+		bb: null,
 
-	init: function (id, pos, direction, speed, material) {
+		count: 0,
 
-		this.id = id;
+		remove: false,
+		speed: 0,
 
-		this.bb = {
-			w: 1.5,
-			d: 1.5,
-			h: 1.5
-		};
+		init: function (id, pos, direction, speed, material) {
 
-		this.speed = speed;
+			this.id = id;
 
-		var geom = utils.texturify(
-			new THREE.CubeGeometry(this.bb.w),
-			[[8, 8], [6, 8], [6, 8], [6, 8], [7, 9], [6, 9]]);
+			this.bb = {
+				w: 1.5,
+				d: 1.5,
+				h: 1.5
+			};
 
-		this.mesh = new THREE.Mesh(
-			geom,
-			material
-		);
+			this.speed = speed;
 
-		this.pos = pos;
-		this.mesh.position.copy(pos);
-		this.mesh.lookAt(pos.add(direction));
+			var geom = utils.texturify(
+				new THREE.CubeGeometry(this.bb.w),
+				[[8, 8], [6, 8], [6, 8], [6, 8], [7, 9], [6, 9]]);
 
-		this.direction = direction;
+			this.mesh = new THREE.Mesh(
+				geom,
+				material
+			);
 
-		return this;
+			this.pos = pos;
+			this.mesh.position.copy(pos);
+			this.mesh.lookAt(pos.add(direction));
 
-	},
+			this.direction = direction;
 
-	tick: function (dt) {
-		var m = this.mesh,
-			pow = dt * this.speed;
+			return this;
 
-		m.translateZ(pow);
+		},
 
-		this.pos = m.position;
+		tick: function (dt) {
+			var m = this.mesh,
+				pow = dt * this.speed;
 
-		if (this.count++ > 2000) {
-			this.remove = true;
+			m.translateZ(pow);
+
+			this.pos = m.position;
+
+			if (this.count++ > 2000) {
+				this.remove = true;
+			}
+
+			return !(this.remove);
 		}
 
-		return !(this.remove);
-	}
+	};
 
-};
+	window.Clown = Clown;
+
+}());
