@@ -17,6 +17,8 @@
 
 		getName: function (id) {
 
+			console.log(id, this.clients)
+
 			if (id === this.clientId) {
 				return this.name;
 			}

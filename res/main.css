@@ -52,7 +52,7 @@ body {
 #watch {
 	width: 300px;
 	height: 180px;
-	font-size: 9pt;
+	font-size: 11pt;
 	position:absolute;
 	top: 5px;
 	left: 5px;
@@ -60,6 +60,7 @@ body {
 }
 
 #gui {
+	display: none;
 	background-color: rgba(0,0,0,0.2);
 	width: 240px;
 	height: 40px;

@@ -226,11 +226,14 @@
 			if (this.state == "ROUND") msg += " : " + (this.remaining | 0);
 			utils.msg(msg);
 
+
+			var scores = [];
 			ping.players.forEach(function (p) {
 
 				// Just update your score
 				if (p.id === Network.clientId) {
-					utils.msgln(p.name + ":" + p.score);
+					//utils.msgln(p.name + ":" + p.score);
+					scores.push({name: p.name, score: p.score});
 					return;
 				}
 
@@ -242,13 +245,25 @@
 					player = Network.clients[p.id] = Object.create(PlayerProxy).init(p.id, p.name);
 
 					this.scene.add(player.mesh);
+				} else {
+					Network.clients[p.id].name = p.name;
 				}
 
 				player.model.pos = p.pos;
 				player.model.rot = p.rot;
 
-				utils.msgln(p.name + ":" + p.score);
+				scores.push({name: p.name, score: p.score});
+				//utils.msgln(p.name + ":" + p.score);
 			}, this);
+
+			scores.sort(function (a, b) {
+				return b.score - a.score;
+			}).forEach(function (s, i) {
+				utils.msgln(
+					(i === 0 ? "<strong>" : "") +
+					s.name + ": " + s.score +
+					(i === 0 ? "</strong>" : ""));
+			});
 
 			// Add new clowns
 			ping.targets.forEach(function (t) {
