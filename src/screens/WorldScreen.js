@@ -181,18 +181,21 @@
 		},
 
 		otherFiredBullet: function (bullet) {
-			var bullet = Object.create(Bullet).init(
+
+			var b = Object.create(Bullet).init(
 				new THREE.Vector3(bullet.pos.x, bullet.pos.y, bullet.pos.z),
 				new THREE.Vector3(bullet.dir.x, bullet.dir.y, bullet.dir.z),
 				data.materials.bullet
 			);
-			bullet.ownShot = false;
-			this.bullets.push(bullet);
-			this.scene.add(bullet.mesh);
+
+			b.ownShot = false;
+			this.bullets.push(b);
+			this.scene.add(b.mesh);
 
 		},
 
 		shotThePlayer: function (pid) {
+
 			if (pid === Network.clientId) {
 				this.player.respawn();
 				this.flashType = "dead";
@@ -249,7 +252,7 @@
 
 			// Add new clowns
 			ping.targets.forEach(function (t) {
-				var target = Object.create(Target).init(
+				var target = Object.create(Clown).init(
 					t.id,
 					new THREE.Vector3(
 						t.pos.x,
@@ -413,7 +416,7 @@
 			this.bullets = this.bullets.filter(function (b) {
 				var ret = b.tick(dt);
 				if (ret) {
-					var block = world.getBlockAtPos(b.pos);
+					var block = world.getBlockAtPos(b.model.pos);
 					if (block.type !== "air") {
 						b.stop();
 					}
@@ -436,7 +439,7 @@
 					// If not to far out into space...
 					if (Math.abs(t.pos.x - xo) < maxX * 1.3 && Math.abs(t.pos.z - zo) < maxZ * 1.3) {
 						var hit = this.bullets.some(function (b) {
-							return b.ownShot && !b.stopped && utils.dist(b.pos, t.pos) < 2;
+							return b.ownShot && !b.stopped && utils.dist(b.model.pos, t.pos) < 2;
 						});
 						if (hit) {
 							ret = false;
@@ -457,7 +460,7 @@
 				player.tick(dt);
 
 				hit = this.bullets.some(function (b) {
-					return b.ownShot && !b.stopped && utils.dist(b.pos, player.model.pos) < 1;
+					return b.ownShot && !b.stopped && utils.dist(b.model.pos, player.model.pos) < 1;
 				});
 
 				if (hit) {

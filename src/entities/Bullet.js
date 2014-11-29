@@ -4,10 +4,13 @@
 
 	var Bullet = {
 
-		pos: null,
-		bb: null,
 		stopped: false,
 		ownShot: true,
+
+		model: {
+			pos: { x: 0, y: 0, z: 0 },
+			bb: { x: 0.15, y: 0.10, z: 1.15 }
+		},
 
 		count: 0,
 		life: 30,
@@ -18,18 +21,15 @@
 
 		init: function (pos, direction, material) {
 
-			this.bb = {
-				w: 0.15,
-				d: 1.15,
-				h: 0.1
-			};
-
 			this.mesh = new THREE.Mesh(
-				new THREE.BoxGeometry(this.bb.w, this.bb.h, this.bb.d),
+				new THREE.BoxGeometry(this.model.bb.x, this.model.bb.y, this.model.bb.z),
 				material
 			);
 
-			this.pos = pos;
+			this.model.pos.x = pos.x;
+			this.model.pos.y = pos.y;
+			this.model.pos.z = pos.z;
+
 			this.mesh.position.copy(pos);
 			this.mesh.lookAt(pos.add(direction));
 
@@ -51,7 +51,11 @@
 
 			if (this.count++ < this.life && !this.stopped) {
 				m.translateZ(pow);
-				this.pos = m.position;
+				this.model.pos = {
+					x: m.position.x,
+					y: m.position.y,
+					z: m.position.z
+				};
 				if (this.count === this.life) {
 					this.stopped = true;
 				}

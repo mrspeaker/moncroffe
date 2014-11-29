@@ -1,4 +1,4 @@
-(function (THREE, Target, data) {
+(function (THREE, Clown, data) {
 
 	"use strict";
 
@@ -17,16 +17,18 @@
 			this.scene = new THREE.Scene();
 
 			// Spinny intro
-			var target = Object
-				.create(Target)
+			var clown = Object
+				.create(Clown)
 				.init(
 					0,
 					new THREE.Vector3(0, 0, -7),
 					new THREE.Vector3(0.5, 0.2, 0.1),
 					0,
 					data.materials.target);
-			this.target = target;
-			this.scene.add(target.mesh);
+			this.clown = clown;
+			this.scene.add(clown.mesh);
+
+			clown.mesh.rotation.x += Math.PI;
 
 			document.querySelector("#playerName").value = Settings.playerName;
 			this.button = document.querySelector("#lezgo");
@@ -34,8 +36,6 @@
 				this.join();
 				this.button.removeEventListener("click", joinit);
 			}).bind(this), false);
-
-			this.target.mesh.rotation.x += Math.PI;
 
 			document.querySelector("#gui").style.display = "none";
 			document.querySelector("#cursor").style.display = "none";
@@ -70,9 +70,9 @@
 		},
 
 		tick: function () {
-			this.target.mesh.rotation.x += 0.05;
-			this.target.mesh.rotation.y += 0.055;
-			this.target.mesh.rotation.z += 0.060;
+			this.clown.mesh.rotation.x += 0.05;
+			this.clown.mesh.rotation.y += 0.055;
+			this.clown.mesh.rotation.z += 0.060;
 		}
 
 	};
@@ -81,6 +81,6 @@
 
 }(
 	window.THREE,
-	window.Target,
+	window.Clown,
 	window.data
 ));

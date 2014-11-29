@@ -1,4 +1,4 @@
-var Target = {
+var Clown = {
 
 	pos: null,
 	bb: null,
