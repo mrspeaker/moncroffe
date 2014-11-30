@@ -1,8 +1,8 @@
-// var Three = require("../lib/three.min.js");
 var Perlin = require("../lib/Perlin.js"),
 	data = require("../src/data.js");
 
 var World = {
+
 	seed: 42,
 	startTime: 0,
 	elapsed: 0,
@@ -12,10 +12,9 @@ var World = {
 	players: [],
 	targets: [],
 	bullets: [],
+	bouy: null,
 
 	flash: false,
-
-	bouy: null,
 
 	state: null,
 	stateFirst: true,
@@ -29,17 +28,21 @@ var World = {
 	},
 
 	reset: function () {
+
 		this.startTime = Date.now();
 		this.roundEndTime = Date.now();
 		this.elapsed = 0;
 		this.setState("RESET");
 		this.bouy = null;
+
 	},
 
 	setState: function (state) {
+
 		this.state = state;
 		this.stateStartTime = Date.now();
 		this.stateFirst = true;
+
 	},
 
 	tick: function () {
@@ -96,6 +99,7 @@ var World = {
 	},
 
 	tick_GO: function () {
+
 		var xo = data.world.midX,
 			zo = data.world.midZ,
 			maxX = data.world.maxX,
@@ -120,11 +124,15 @@ var World = {
 				},
 				speed: (Math.random() * 4) + 1
 			});
+
 		}
 
 		if (!this.bouy && Math.random () < 0.01) {
+
 			this.bouy = this.getSafePos();
+
 		}
+
 	},
 
 	getSafePos: function () {
@@ -156,8 +164,10 @@ var World = {
 	},
 
 	gotBouy: function (id) {
+
 		this.flash = id;
 		this.bouy = null;
+
 	}
 };
 

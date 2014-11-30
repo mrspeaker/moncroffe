@@ -15,7 +15,7 @@ app.use("/src", express.static(__dirname + '/../src/'));
 app.use("/res", express.static(__dirname + '/../res/'));
 app.use("/lib", express.static(__dirname + '/../lib/'));
 
-io.on('connection', function(client){
+io.on('connection', function (client) {
 
 	var clients = World.clients,
 		players = World.players;
@@ -27,10 +27,10 @@ io.on('connection', function(client){
 	client.userid = UUID();
 	client.lastHit = Date.now();
 	client.lastGetBouy = Date.now();
+	clients.push(client);
 
 	console.log("Network:: " + client.userid + " connected");
 
-	clients.push(client);
 	var player = {
 		id: client.userid,
 		score: 0,
@@ -39,6 +39,7 @@ io.on('connection', function(client){
 	};
 	players.push(player);
 	client.player = player;
+
 	if (World.players.length !== World.clients.length) {
 		console.log("connect diff:", World.players.length, World.clients.length);
 	}
@@ -93,20 +94,25 @@ io.on('connection', function(client){
 
 	// tmp: should be calced on server
 	client.on("clownHit", function(id) {
+
 		World.clients.forEach(function (c) {
 			if (c === client) return;
 			c.emit("clownDestroyed", id);
 		});
+
 	});
 
 	client.on("fireBullet", function(bullet) {
+
 		World.clients.forEach(function (c) {
 			if (c === client) return;
 			c.emit("otherFiredBullet", bullet);
 		});
+
 	});
 
 	client.on("shotPlayer", function(player) {
+
 		// Check if shot is too soon
 		var shotPlayer = World.clients.filter(function (c) {
 				return c.userid = player;
@@ -145,9 +151,7 @@ io.on('connection', function(client){
 			client.lastGetBouy = now;
 			World.players = World.players.map(function (p) {
 				if (p.id === pid) {
-					var dist = utils.dist(p.pos, World.bouy);
-					console.log(dist);
-					if (dist > 4) {
+					if (utils.dist(p.pos, World.bouy) > 4) {
 						console.log("hmmm... cheaty?");
 						legit = false;
 					} else {
@@ -166,22 +170,12 @@ io.on('connection', function(client){
 
 });
 
-function resetGame() {
-	console.log("EVER GET HERE?");
-	World.reset();
-	World.clients.forEach(function (c) {
-		c.emit("resetGame", {
-			seed: World.seed,
-			elapsed: World.elapsed
-		});
-	});
-}
-
 function runPingLoop () {
 
 	setTimeout(function () {
 
 		World.clients.forEach(function (c) {
+
 			c.emit("ping", {
 				elapsed: World.elapsed,
 				remaining: World.remaining,
@@ -193,19 +187,19 @@ function runPingLoop () {
 				bouy: World.bouy,
 				flash: World.flash
 			});
+
 		});
+
 		World.flash = false;
 		World.targets = [];
 
 		runPingLoop();
+
 	}, 40);
 }
 
 function runRenderLoop () {
 	World.tick();
-	/*if (World.elapsed > 10) {
-		resetGame();
-	}*/
 	setTimeout(runRenderLoop, 16);
 }
 
@@ -221,5 +215,5 @@ utils.dist = function (v1, v2) {
 		dy = v1.y - v2.y,
 		dz = v1.z - v2.z;
 
-	return Math.sqrt(dx*dx+dy*dy+dz*dz);
+	return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
