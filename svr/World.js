@@ -65,18 +65,24 @@ var World = {
 		switch (state) {
 
 		case "BORN":
-			// Reset all player's scores...
-			this.players.forEach(function (p) {
-				p.score = 0;
-			});
+			if (this.stateFirst) {
+				// Reset all player's scores...
+				this.players.forEach(function (p) {
+					p.score = 0;
+				});
 
-			this.round = 0;
-			this.stateFirst = false;
-			this.setState("ROUND_READY");
+				this.round = 0;
+				this.stateFirst = false;
+			}
+
+			if (stateElapsed > 3) {
+				this.setState("ROUND_READY");
+			}
 			break;
 
 		case "ROUND_READY":
 			if (this.stateFirst) {
+				this.bouy = null;
 				this.remaining = 0;
 				this.stateFirst = false;
 				this.resetSeed();
