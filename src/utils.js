@@ -32,7 +32,16 @@
 			document.querySelector("#bg").style.display = "none";
 			document.querySelector(id).style.display = "none";
 		}, time);
-	}
+	};
+
+	utils.formatTime = function (sec) {
+
+		var mins = Math.floor(sec / 60),
+			secs = sec - (mins * 60);
+
+		return mins + ":" + (secs < 10 ? "0" : "") + secs;
+
+	};
 
 	utils.rnd = {
 

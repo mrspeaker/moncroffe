@@ -38,9 +38,8 @@ Running:
 ## Next todos
 
 - Explain goal in titlescreen
-- Announce "block exists"?
-
-- trying to move out data from functions that act on it.
+- disconnect-y screen instead of pointerlock
+- leaderboard (session)
 
 ## Bugz
 
@@ -70,6 +69,7 @@ Running:
 - Block-based lighting
 - Shift-walk for overhang picking?
 - Camera pitch/yaw not same as minecraft when looking up/down
+- Leaderboard (global)
 
 ## Would be cool
 

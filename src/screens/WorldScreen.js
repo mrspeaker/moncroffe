@@ -38,6 +38,7 @@
 		remaining: 0,
 
 		round: 0,
+		doneInitialReset: false,
 
 		init: function (screen) {
 
@@ -66,6 +67,7 @@
 		},
 
 		reset: function () {
+
 			// remove old chunks...
 			if (this.world) this.world.removeChunks();
 			// Shoot up in the air
@@ -74,6 +76,8 @@
 			// Readd the new ones...
 			this.world = Object.create(World).init(this, Network.world.seed);
 			this.world.createChunks();
+
+			this.doneInitialReset = true;
 		},
 
 		addBouy: function () {
@@ -243,7 +247,7 @@
 
 			var msg = this.state;
 			if (this.state == "ROUND") {
-				msg += " " + (this.round + 1) + " of " + data.rounds.total + " : " + (this.remaining | 0);
+				msg += " " + (this.round + 1) + " of " + data.rounds.total + ". " + (utils.formatTime(this.remaining | 0));
 			}
 			utils.msg(msg);
 
@@ -474,6 +478,11 @@
 				}
 				break;
 			case "ROUND":
+				if (this.stateFirst) {
+					if (!this.doneInitialReset) {
+						this.reset();
+					}
+				}
 				this.tick_ROUND(dt);
 				break;
 			case "ROUND_OVER":
