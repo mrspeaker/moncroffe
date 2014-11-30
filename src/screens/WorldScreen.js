@@ -213,7 +213,6 @@
 			}
 
 			var player = Network.clients[pid];
-
 			if (player) {
 				this.explodeParticles(player.model.pos, false);
 				player.blinkTime = 150;
@@ -228,6 +227,10 @@
 				this.stateFirst = true;
 				if (ping.state === "ROUND_READY" && ping.seed) {
 					Network.world.seed = ping.seed;
+				}
+
+				if (ping.state === "GAME_OVER") {
+					utils.showMsg("#gameOverWin", 2000);
 				}
 			}
 			this.state = ping.state;
@@ -343,13 +346,7 @@
 
 				// TODO! ENCODE!
 				document.querySelector("#playerGetName").innerHTML = name;
-				document.querySelector("#bg").style.display = "block";
-				document.querySelector("#hudMsg").style.display = "";
-
-				setTimeout(function () {
-					document.querySelector("#bg").style.display = "none";
-					document.querySelector("#hudMsg").style.display = "none";
-				}, 3000);
+				utils.showMsg("#hudMsg", 3000);
 
 				this.sounds.find.play();
 			}
@@ -454,12 +451,7 @@
 				if (this.stateFirst) {
 					this.reset();
 					this.player.tick(dt);
-					document.querySelector("#bg").style.display = "block";
-					document.querySelector("#getReady").style.display = "block";
-					setTimeout(function () {
-						document.querySelector("#bg").style.display = "none";
-						document.querySelector("#getReady").style.display = "none";
-					}, 3000);
+					utils.showMsg("#getReady", 3000);
 				}
 				break;
 			case "ROUND":

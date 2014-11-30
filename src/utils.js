@@ -22,6 +22,16 @@
 		});
 	};
 
+	utils.showMsg = function (id, time) {
+		document.querySelector("#bg").style.display = "block";
+		document.querySelector(id).style.display = "";
+
+		setTimeout(function () {
+			document.querySelector("#bg").style.display = "none";
+			document.querySelector(id).style.display = "none";
+		}, time);
+	}
+
 	utils.rnd = {
 
 		seed: 42,

@@ -84,8 +84,8 @@ body {
 	right: 0;
 	color: rgba(255,255,255,0.6);
 }
-#instructions {
-}
+
+#instructions {}
 
 .centaur {
 	width: 100%;
@@ -127,9 +127,6 @@ body {
 	font-size: 22pt;
 }
 
-#hudMsg {
-	display: none;
-}
-#getReady {
-	display: none;
-}
+#hudMsg {}
+#getReady {}
+#gameOver {}

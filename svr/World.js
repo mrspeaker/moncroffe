@@ -65,6 +65,11 @@ var World = {
 		switch (state) {
 
 		case "BORN":
+			// Reset all player's scores...
+			this.players.forEach(function (p) {
+				p.score = 0;
+			});
+
 			this.round = 0;
 			this.stateFirst = false;
 			this.setState("ROUND_READY");
@@ -83,7 +88,7 @@ var World = {
 
 		case "ROUND":
 			if (this.stateFirst) {
-				this.roundEndTime = stateElapsed + 10;
+				this.roundEndTime = stateElapsed + 120;
 				this.stateFirst = false;
 			}
 			if (stateElapsed > this.roundEndTime) {

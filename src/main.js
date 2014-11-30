@@ -178,6 +178,11 @@
 			}).bind(this), false);
 
 			window.addEventListener("resize", this.setCameraDimensions.bind(this), false );
+
+			document.querySelector("#hudMsg").style.display = "none";
+			document.querySelector("#getReady").style.display = "none";
+			document.querySelector("#gameOver").style.display = "none";
+
 		},
 
 		onPointerLockChange: function (state) {
