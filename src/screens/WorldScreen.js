@@ -694,6 +694,17 @@
 			}
 
 			return { x: p.x, y: p.y, z: p.z, ground: hitGround };
+		},
+
+		recieveChat: function (msg) {
+
+			var inner = document.querySelector("#chatLog").innerHTML;
+			inner = inner.slice(0, 500);
+
+			var name = Network.getName(msg[0]);
+
+			document.querySelector("#chatLog").innerHTML = name + ": " + msg[1] + "<br/>" + inner;
+
 		}
 
 	};

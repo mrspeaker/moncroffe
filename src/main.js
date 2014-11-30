@@ -49,7 +49,7 @@
 
 		initUserSettings: function () {
 
-			window.Settings = utils.extend({}, user_settings);
+			var Settings = window.Settings = utils.extend({}, user_settings);
 
 			var stored = window.localStorage.getItem("settings");
 			if (stored !== null && stored !== "undefined") {
@@ -62,11 +62,13 @@
 
 		saveSettings: function () {
 
-			window.localStorage.setItem("settings", JSON.stringify(Settings));
+			window.localStorage.setItem("settings", JSON.stringify(window.Settings));
 
 		},
 
 		makeAzerty: function () {
+
+			var Settings = window.Settings;
 
 			Settings.up = Settings.up.filter(function (k) { return k !== 87; }).concat([90]); // remove W, add Z
 			Settings.left = Settings.left.filter(function (k) { return k !== 65; }).concat([81]); // remove A, add Q
@@ -77,6 +79,8 @@
 		},
 
 		makeQwerty: function () {
+
+			var Settings = window.Settings;
 
 			Settings.up = Settings.up.filter(function (k) { return k !== 90; }).concat([87]); // remove Z, add W
 			Settings.left = Settings.left.filter(function (k) { return k !== 81; }).concat([65]); // remove Q, add A
@@ -140,7 +144,8 @@
 
 				var key = e.keyCode,
 					isKey = function (k) { return k === key; },
-					s;
+					s,
+					Settings = window.Settings;
 
 				if (Settings.oculus.some(isKey)) {
 					this.toggleOculus();
@@ -172,7 +177,14 @@
 				}
 
 				if (e.keyCode === 51 /*3*/) {
-					this.vrControls && this.vrControls.zeroSensor();
+					if (this.vrControls) {
+						this.vrControls.zeroSensor();
+					}
+				}
+
+				if (e.keyCode === 84) {
+					this.toggleChat();
+					e.preventDefault();
 				}
 
 			}).bind(this), false);
@@ -182,6 +194,35 @@
 			document.querySelector("#hudMsg").style.display = "none";
 			document.querySelector("#getReady").style.display = "none";
 			document.querySelector("#gameOver").style.display = "none";
+
+			var self = this;
+			document.querySelector("#chatMsg").addEventListener("keydown", function (e) {
+
+				e.stopPropagation();
+
+				if (e.keyCode === 13) {
+					if (this.value !== "") {
+						window.Network.sendChat(this.value);
+					}
+					self.toggleChat();
+				}
+
+			});
+
+		},
+
+		toggleChat: function () {
+
+			var box = document.querySelector("#chatMsg"),
+				visible = box.style.display === "block";
+
+			box.style.display = visible ? "none" : "block";
+			visible = !visible;
+
+			if (visible) {
+				box.value = "";
+				box.focus();
+			}
 
 		},
 

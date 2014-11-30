@@ -191,6 +191,18 @@ io.on("connection", function (client) {
 
 	});
 
+	client.on("sendChat", function(msg) {
+
+		World.clients.forEach(function (c) {
+
+			//if (c === client) return;
+
+			c.emit("recieveChat", msg);
+
+		});
+
+	});
+
 });
 
 function runPingLoop () {

@@ -47,6 +47,7 @@
 			this.socket.on("clownDestroyed", this.clownDestroyed.bind(this));
 			this.socket.on("otherFiredBullet", this.otherFiredBullet.bind(this));
 			this.socket.on("shotThePlayer", this.shotThePlayer.bind(this));
+			this.socket.on("recieveChat", this.recieveChat.bind(this));
 
 			// Let's go!
 			this.socket.emit("join", name);
@@ -152,7 +153,6 @@
 
 		shotThePlayer: function (pid) {
 
-			console.log("a player shot:: ", pid);
 			main.screen.shotThePlayer(pid);
 
 		},
@@ -161,7 +161,21 @@
 
 			this.socket.emit("gotBouy", this.clientId);
 
+		},
+
+		sendChat: function (msg) {
+
+			this.socket.emit("sendChat", [this.clientId, msg]);
+
+		},
+
+		recieveChat: function (msg) {
+
+
+			main.screen.recieveChat(msg);
+
 		}
+
 
 	};
 
