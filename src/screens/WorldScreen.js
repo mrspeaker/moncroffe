@@ -715,8 +715,6 @@
 			inner = document.querySelector("#chatLog").innerHTML;
 			inner = inner.slice(0, 500);
 
-			console.log(typeof msg[0], "zero");
-
 			if (typeof msg[0] == "string") {
 				name = Network.getName(msg[0]),
 				post = name + ": " + msg[1];

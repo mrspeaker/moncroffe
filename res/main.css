@@ -162,4 +162,5 @@ body {
 }
 .ev_get {
 	color: hsl(100, 50%, 60%);
+	font-weight: bold;
 }

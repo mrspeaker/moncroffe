@@ -36,7 +36,7 @@ var data = {
 		duration: {
 			born: 3,
 			roundReady: 8,
-			round: 90,
+			round: 180,
 			roundOver: 2,
 			gameOver: 5
 		}

@@ -166,6 +166,11 @@ io.on("connection", function (client) {
 			legit = false;
 		}
 
+		if (!World.bouy) {
+			console.error("Hmm... no bouy, but more tha 1000ms");
+			legit = false;
+		}
+
 		if (legit) {
 			// Check for distance
 			client.lastGetBouy = now;
@@ -194,8 +199,6 @@ io.on("connection", function (client) {
 	client.on("sendChat", function(msg) {
 
 		World.clients.forEach(function (c) {
-
-			//if (c === client) return;
 
 			c.emit("receiveChat", msg);
 
