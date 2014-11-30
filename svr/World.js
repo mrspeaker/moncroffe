@@ -75,7 +75,7 @@ var World = {
 				this.stateFirst = false;
 			}
 
-			if (stateElapsed > 3) {
+			if (stateElapsed > data.rounds.duration.born) {
 				this.setState("ROUND_READY");
 			}
 			break;
@@ -87,14 +87,14 @@ var World = {
 				this.stateFirst = false;
 				this.resetSeed();
 			}
-			if (stateElapsed > 5) {
+			if (stateElapsed > data.rounds.duration.roundReady) {
 				this.setState("ROUND");
 			}
 			break;
 
 		case "ROUND":
 			if (this.stateFirst) {
-				this.roundEndTime = stateElapsed + 120;
+				this.roundEndTime = stateElapsed + data.rounds.duration.round;
 				this.stateFirst = false;
 			}
 			if (stateElapsed > this.roundEndTime) {
@@ -110,8 +110,8 @@ var World = {
 				this.stateFirst = false;
 			}
 
-			if (stateElapsed > 2) {
-				if (++this.round < 3) {
+			if (stateElapsed > data.rounds.duration.roundOver) {
+				if (++this.round < data.rounds.total) {
 					this.setState("ROUND_READY");
 				} else {
 					this.setState("GAME_OVER");
@@ -124,7 +124,7 @@ var World = {
 				this.stateFirst = false;
 			}
 
-			if (stateElapsed > 5) {
+			if (stateElapsed > data.rounds.duration.gameOver) {
 				this.setState("BORN");
 			}
 			break;

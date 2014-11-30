@@ -37,6 +37,8 @@
 		stateFirst: true,
 		remaining: 0,
 
+		round: 0,
+
 		init: function (screen) {
 
 			this.sounds = {
@@ -221,23 +223,28 @@
 
 		pingReceived: function (ping) {
 
-			var bouy = this.bouy;
+			var bouy = this.bouy,
+				setWinnerName = false;
 
 			if (ping.state !== this.state) {
 				this.stateFirst = true;
 				if (ping.state === "ROUND_READY" && ping.seed) {
 					Network.world.seed = ping.seed;
+					this.round = ping.round;
 				}
 
 				if (ping.state === "GAME_OVER") {
-					utils.showMsg("#gameOverWin", 2000);
+					utils.showMsg("#gameOver", data.rounds.duration.gameOver - 0.1);
+					setWinnerName = true;
 				}
 			}
 			this.state = ping.state;
 			this.remaining = ping.remaining;
 
 			var msg = this.state;
-			if (this.state == "ROUND") msg += " : " + (this.remaining | 0);
+			if (this.state == "ROUND") {
+				msg += " " + (this.round + 1) + " of " + data.rounds.total + " : " + (this.remaining | 0);
+			}
 			utils.msg(msg);
 
 			var scores = [];
@@ -266,7 +273,6 @@
 				player.model.rot = p.rot;
 
 				scores.push({name: p.name, score: p.score});
-				//utils.msgln(p.name + ":" + p.score);
 			}, this);
 
 			scores.sort(function (a, b) {
@@ -277,6 +283,19 @@
 					s.name + ": " + s.score +
 					(i === 0 ? "</strong>" : ""));
 			});
+
+			if (setWinnerName) {
+				var winners = scores
+					.filter(function (s) {
+						return s.score === scores[0].score;
+					})
+					.map(function (s) {
+						return s.name;
+					})
+					.join("<br />");
+				document.querySelector("#gameOverWin").innerHTML = winners;
+			}
+
 
 			// Add new clowns
 			ping.targets.forEach(function (t) {
@@ -346,7 +365,7 @@
 
 				// TODO! ENCODE!
 				document.querySelector("#playerGetName").innerHTML = name;
-				utils.showMsg("#hudMsg", 3000);
+				utils.showMsg("#hudMsg", 3);
 
 				this.sounds.find.play();
 			}
@@ -451,7 +470,7 @@
 				if (this.stateFirst) {
 					this.reset();
 					this.player.tick(dt);
-					utils.showMsg("#getReady", 3000);
+					utils.showMsg("#getReady", data.rounds.duration.roundReady - 0.1);
 				}
 				break;
 			case "ROUND":

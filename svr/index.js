@@ -202,13 +202,15 @@ function runPingLoop () {
 			c.emit("ping", {
 				elapsed: World.elapsed,
 				remaining: World.remaining,
-				state: World.state,
-				seed: World.seed,
 				players: World.players,
 				bullets: World.bullets,
 				targets: World.targets,
+				// Should come as seperate messages, yo.
+				state: World.state,
 				bouy: World.bouy,
-				flash: World.flash
+				seed: World.seed,
+				flash: World.flash,
+				round: World.round
 			});
 
 		});

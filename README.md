@@ -57,6 +57,7 @@ Running:
 - Client refresh loses session info
 - Client background tab accumulates evil clowns
 - Block add/remove not synced
+- escape html in innerHTML calls
 
 > other
 

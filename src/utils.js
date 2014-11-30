@@ -23,6 +23,8 @@
 	};
 
 	utils.showMsg = function (id, time) {
+
+		time = time ? time * 1000 : 1000;
 		document.querySelector("#bg").style.display = "block";
 		document.querySelector(id).style.display = "";
 
