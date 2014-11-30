@@ -226,7 +226,7 @@
 
 			if (ping.state !== this.state) {
 				this.stateFirst = true;
-				if (ping.state === "BORN" && ping.seed) {
+				if (ping.state === "ROUND_READY" && ping.seed) {
 					Network.world.seed = ping.seed;
 				}
 			}
@@ -450,7 +450,7 @@
 		tick: function (dt) {
 
 			switch (this.state) {
-			case "BORN":
+			case "ROUND_READY":
 				if (this.stateFirst) {
 					this.reset();
 					this.player.tick(dt);

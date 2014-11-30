@@ -88,7 +88,6 @@
 		init3d: function () {
 
 			this.renderer = new THREE.WebGLRenderer();
-
 			this.vrRenderer = new THREE.VREffect(this.renderer, function (err) {
 				if (err) {
 					console.error("vr error:", err);

@@ -1,11 +1,14 @@
 "use strict";
 
 var data = {
+
 	init: function () {
-		this.world.midX = this.chunk.w / 2;
-		this.world.midZ = this.chunk.w;
-		this.world.maxX = this.chunk.w * this.world.radius + (this.chunk.w / 2);
-		this.world.maxZ = this.chunk.w * this.world.radius;
+		var world = this.world,
+			chunk = this.chunk;
+		world.midX = chunk.w / 2;
+		world.midZ = chunk.w;
+		world.maxX = chunk.w * world.radius + (chunk.w / 2);
+		world.maxZ = chunk.w * world.radius;
 	},
 
 	textures: {},

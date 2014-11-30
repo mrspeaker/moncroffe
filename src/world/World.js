@@ -51,6 +51,7 @@
 			// Todo: promise-ify (or at least callback-ify!)
 			var self = this;
 			(function createChunksGeom(chunks) {
+
 				if (!chunks.length) return;
 
 				var ch = chunks[0];
@@ -58,8 +59,11 @@
 				self.scene.add(self.chunkGeom[ch.id]);
 
 				setTimeout(function () {
+
 					createChunksGeom(chunks.slice(1));
+
 				}, 20);
+
 			}(chunks));
 
 		},

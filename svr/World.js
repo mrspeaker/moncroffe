@@ -20,11 +20,13 @@ var World = {
 	stateFirst: true,
 	remaining: 0,
 
+	round: 0,
+
 	init: function () {
 
 		data.init();
 		this.data = data;
-		this.state = "BORN";
+		this.reset();
 	},
 
 	reset: function () {
@@ -32,8 +34,16 @@ var World = {
 		this.startTime = Date.now();
 		this.roundEndTime = Date.now();
 		this.elapsed = 0;
-		this.setState("RESET");
+		this.setState("BORN");
 		this.bouy = null;
+
+	},
+
+	resetSeed: function () {
+
+		this.seed = Math.random() * 99999999 | 0;
+		Perlin.noise.seed(this.seed);
+		console.log("Reset:", this.seed);
 
 	},
 
@@ -54,17 +64,17 @@ var World = {
 
 		switch (state) {
 
-		case "RESET":
-			this.seed = Math.random() * 99999999 | 0;
-			Perlin.noise.seed(this.seed);
-			console.log("Reset:", this.seed);
-			this.setState("BORN");
+		case "BORN":
+			this.round = 0;
+			this.stateFirst = false;
+			this.setState("ROUND_READY");
 			break;
 
-		case "BORN":
+		case "ROUND_READY":
 			if (this.stateFirst) {
 				this.remaining = 0;
 				this.stateFirst = false;
+				this.resetSeed();
 			}
 			if (stateElapsed > 5) {
 				this.setState("ROUND");
@@ -73,7 +83,7 @@ var World = {
 
 		case "ROUND":
 			if (this.stateFirst) {
-				this.roundEndTime = stateElapsed + 120;
+				this.roundEndTime = stateElapsed + 10;
 				this.stateFirst = false;
 			}
 			if (stateElapsed > this.roundEndTime) {
@@ -90,10 +100,23 @@ var World = {
 			}
 
 			if (stateElapsed > 2) {
-				this.setState("RESET");
+				if (++this.round < 3) {
+					this.setState("ROUND_READY");
+				} else {
+					this.setState("GAME_OVER");
+				}
 			}
 			break;
 
+		case "GAME_OVER":
+			if (this.stateFirst) {
+				this.stateFirst = false;
+			}
+
+			if (stateElapsed > 5) {
+				this.setState("BORN");
+			}
+			break;
 		}
 
 	},

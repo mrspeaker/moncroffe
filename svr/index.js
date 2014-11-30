@@ -1,21 +1,23 @@
+"use strict";
+
 var express = require("express"),
 	app = express(),
-	http = require('http').Server(app),
-	io = require('socket.io')(http),
-	UUID = require('uuid'),
+	http = require("http").Server(app),
+	io = require("socket.io")(http),
+	UUID = require("uuid"),
 	World = require("./World.js");
 
-app.get('/', function(req, res){
-	res.sendFile('index.html', {'root': '../'});
+app.get("/", function(req, res){
+	res.sendFile("index.html", {"root": "../"});
 });
 
 World.init();
 
-app.use("/src", express.static(__dirname + '/../src/'));
-app.use("/res", express.static(__dirname + '/../res/'));
-app.use("/lib", express.static(__dirname + '/../lib/'));
+app.use("/src", express.static(__dirname + "/../src/"));
+app.use("/res", express.static(__dirname + "/../res/"));
+app.use("/lib", express.static(__dirname + "/../lib/"));
 
-io.on('connection', function (client) {
+io.on("connection", function (client) {
 
 	var clients = World.clients,
 		players = World.players;
@@ -45,23 +47,32 @@ io.on('connection', function (client) {
 	}
 
 	client.on("disconnect", function () {
+
 		console.log("Network:: " + client.userid + " (" + client.userName + ") disconnected");
 		World.players = World.players.filter(function (p) {
+
 			return p.id !== client.userid;
+
 		});
+
 		World.clients = World.clients.filter(function (c) {
+
 			if (c !== client) {
 				c.emit("dropped", client.userid);
 			}
 			return c !== client;
+
 		});
+
 		if (World.players.length !== World.clients.length) {
 			console.log("disconnect diff:", World.players.length, World.clients.length);
 		}
 	});
 
 	client.on("ping", function(ping) {
+
 		players.forEach(function (p) {
+
 			if (ping.clientId === p.id) {
 				p.pos.x = ping.pos.x;
 				p.pos.y = ping.pos.y;
@@ -69,19 +80,23 @@ io.on('connection', function (client) {
 
 				p.rot = ping.rot;
 			}
+
 		});
+
 	});
 
 	client.on("join", function (name) {
 
 		// Update name
 		players.forEach(function (p) {
+
 			if (client.userid === p.id) {
 				p.name = name;
 			}
+
 		});
 
-		client.emit('onconnected', {
+		client.emit("onconnected", {
 			id: client.userid,
 			name: client.name,
 			seed: World.seed,
@@ -96,8 +111,10 @@ io.on('connection', function (client) {
 	client.on("clownHit", function(id) {
 
 		World.clients.forEach(function (c) {
+
 			if (c === client) return;
 			c.emit("clownDestroyed", id);
+
 		});
 
 	});
@@ -105,8 +122,10 @@ io.on('connection', function (client) {
 	client.on("fireBullet", function(bullet) {
 
 		World.clients.forEach(function (c) {
+
 			if (c === client) return;
 			c.emit("otherFiredBullet", bullet);
+
 		});
 
 	});
@@ -137,6 +156,7 @@ io.on('connection', function (client) {
 	});
 
 	client.on("gotBouy", function(pid) {
+
 		var now = Date.now(),
 			legit = true;
 
@@ -150,6 +170,7 @@ io.on('connection', function (client) {
 			// Check for distance
 			client.lastGetBouy = now;
 			World.players = World.players.map(function (p) {
+
 				if (p.id === pid) {
 					if (utils.dist(p.pos, World.bouy) > 4) {
 						console.log("hmmm... cheaty?");
@@ -159,6 +180,7 @@ io.on('connection', function (client) {
 					}
 				}
 				return p;
+
 			});
 		}
 
@@ -166,6 +188,7 @@ io.on('connection', function (client) {
 		if (legit) {
 			World.gotBouy(pid);
 		}
+
 	});
 
 });
@@ -199,12 +222,14 @@ function runPingLoop () {
 }
 
 function runRenderLoop () {
+
 	World.tick();
 	setTimeout(runRenderLoop, 16);
+
 }
 
 http.listen(3001, function(){
-	console.log('listening on *:3001');
+	console.log("listening on *:3001");
 	runPingLoop();
 	runRenderLoop();
 });
@@ -216,4 +241,5 @@ utils.dist = function (v1, v2) {
 		dz = v1.z - v2.z;
 
 	return Math.sqrt(dx * dx + dy * dy + dz * dz);
-}
+};
+
