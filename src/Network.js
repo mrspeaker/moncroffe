@@ -83,6 +83,7 @@
 
 			if (c) {
 				// TODO: derp, global ref
+				main.screen.receiveChat([-1, c.name + " left."]);
 				main.screen.scene.remove(c.mesh);
 				delete this.clients[id];
 			}

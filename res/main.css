@@ -133,7 +133,7 @@ body {
 
 #chat {
 	position: absolute;
-	width: 250px;
+	width: 200px;
 	height: 150px;
 	left: 0;
 	bottom: 0;
@@ -152,4 +152,14 @@ body {
 	color: #ddd;
 	width: 180px;
 	padding-left: 5px;
+}
+
+.ev_join {
+	color: hsl(200, 50%, 50%);
+}
+.ev_kill {
+	color: hsl(0, 50%, 50%);
+}
+.ev_get {
+	color: hsl(100, 50%, 60%);
 }

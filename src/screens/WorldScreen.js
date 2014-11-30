@@ -215,6 +215,8 @@
 				this.flashType = "dead";
 				this.flashTime = 100;
 				this.sounds.die.play();
+
+				this.receiveChat([-2, "You were hit."]);
 				return;
 			}
 
@@ -222,6 +224,7 @@
 			if (player) {
 				this.explodeParticles(player.model.pos, false);
 				player.blinkTime = 150;
+				this.receiveChat([-2, player.name + " was hit."]);
 			}
 		},
 
@@ -265,12 +268,18 @@
 				var player = Network.clients[p.id];
 
 				if (!player) {
+					// TODO: no name on connect, only join!
 					console.log("Player joined:", p.id, p.name);
+
 					player = Network.clients[p.id] = Object.create(PlayerProxy).init(p.id, p.name);
 
 					this.scene.add(player.mesh);
 				} else {
-					Network.clients[p.id].name = p.name;
+					// no name on connect, only join... so update here
+					if (Network.clients[p.id].name !== p.name) {
+						Network.clients[p.id].name = p.name;
+						this.receiveChat([-1, p.name + " joined."]);
+					}
 				}
 
 				player.model.pos = p.pos;
@@ -370,6 +379,7 @@
 				// TODO! ENCODE!
 				document.querySelector("#playerGetName").innerHTML = name;
 				utils.showMsg("#hudMsg", 3);
+				this.receiveChat([-3, name + " got the box."]);
 
 				this.sounds.find.play();
 			}
@@ -698,12 +708,26 @@
 
 		receiveChat: function (msg) {
 
-			var inner = document.querySelector("#chatLog").innerHTML;
+			var inner,
+				name,
+				post;
+
+			inner = document.querySelector("#chatLog").innerHTML;
 			inner = inner.slice(0, 500);
 
-			var name = Network.getName(msg[0]);
+			console.log(typeof msg[0], "zero");
 
-			document.querySelector("#chatLog").innerHTML = name + ": " + msg[1] + "<br/>" + inner;
+			if (typeof msg[0] == "string") {
+				name = Network.getName(msg[0]),
+				post = name + ": " + msg[1];
+			} else {
+				post = "<span class='" +
+				["", "ev_join", "ev_kill", "ev_get"][Math.abs(msg[0])] +
+				"'>" + msg[1] + "</span>";
+			}
+
+
+			document.querySelector("#chatLog").innerHTML = post + "<br/>" + inner;
 
 		}
 
