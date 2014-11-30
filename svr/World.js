@@ -32,12 +32,8 @@ var World = {
 		this.startTime = Date.now();
 		this.roundEndTime = Date.now();
 		this.elapsed = 0;
-		this.setState("BORN");
-
-		this.seed = Math.random() * 99999999 | 0;
-		Perlin.noise.seed(this.seed);
+		this.setState("RESET");
 		this.bouy = null;
-		console.log("Reset:", this.seed);
 	},
 
 	setState: function (state) {
@@ -55,6 +51,13 @@ var World = {
 
 		switch (state) {
 
+		case "RESET":
+			this.seed = Math.random() * 99999999 | 0;
+			Perlin.noise.seed(this.seed);
+			console.log("Reset:", this.seed);
+			this.setState("BORN");
+			break;
+
 		case "BORN":
 			if (this.stateFirst) {
 				this.remaining = 0;
@@ -67,7 +70,7 @@ var World = {
 
 		case "ROUND":
 			if (this.stateFirst) {
-				this.roundEndTime = stateElapsed + 60;
+				this.roundEndTime = stateElapsed + 120;
 				this.stateFirst = false;
 			}
 			if (stateElapsed > this.roundEndTime) {
@@ -84,7 +87,7 @@ var World = {
 			}
 
 			if (stateElapsed > 2) {
-				this.setState("BORN");
+				this.setState("RESET");
 			}
 			break;
 

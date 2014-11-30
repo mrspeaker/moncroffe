@@ -124,8 +124,12 @@ body {
 	left: 0;
 	botton: 0;
 	right: 0;
+	font-size: 22pt;
 }
 
 #hudMsg {
-	font-size: 22pt;
+	display: none;
+}
+#getReady {
+	display: none;
 }

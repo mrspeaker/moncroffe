@@ -38,8 +38,7 @@ Running:
 ## Next todos
 
 - Explain goal in titlescreen
-- Add "arena mode" - 5 mins, then reset to new level
-- announce block exists
+- Announce "block exists"?
 
 - trying to move out data from functions that act on it.
 

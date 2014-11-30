@@ -167,6 +167,7 @@ io.on('connection', function(client){
 });
 
 function resetGame() {
+	console.log("EVER GET HERE?");
 	World.reset();
 	World.clients.forEach(function (c) {
 		c.emit("resetGame", {
@@ -185,6 +186,7 @@ function runPingLoop () {
 				elapsed: World.elapsed,
 				remaining: World.remaining,
 				state: World.state,
+				seed: World.seed,
 				players: World.players,
 				bullets: World.bullets,
 				targets: World.targets,
