@@ -696,7 +696,7 @@
 			return { x: p.x, y: p.y, z: p.z, ground: hitGround };
 		},
 
-		recieveChat: function (msg) {
+		receiveChat: function (msg) {
 
 			var inner = document.querySelector("#chatLog").innerHTML;
 			inner = inner.slice(0, 500);

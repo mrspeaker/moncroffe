@@ -53,7 +53,7 @@
 
 			var stored = window.localStorage.getItem("settings");
 			if (stored !== null && stored !== "undefined") {
-				Settings = JSON.parse(stored);
+				window.Settings = JSON.parse(stored);
 			} else {
 				this.saveSettings();
 			}

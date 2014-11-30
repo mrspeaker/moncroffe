@@ -39,15 +39,15 @@
 
 			// Listeners
 			this.socket.on("onconnected", (function (data) {
-				this.connectedRecieved(data, joinCb);
+				this.connectedReceived(data, joinCb);
 			}).bind(this));
-			this.socket.on("ping", this.pingRecieved.bind(this));
+			this.socket.on("ping", this.pingReceived.bind(this));
 			this.socket.on("dropped", this.dropReceived.bind(this));
 
 			this.socket.on("clownDestroyed", this.clownDestroyed.bind(this));
 			this.socket.on("otherFiredBullet", this.otherFiredBullet.bind(this));
 			this.socket.on("shotThePlayer", this.shotThePlayer.bind(this));
-			this.socket.on("recieveChat", this.recieveChat.bind(this));
+			this.socket.on("receiveChat", this.receiveChat.bind(this));
 
 			// Let's go!
 			this.socket.emit("join", name);
@@ -67,7 +67,7 @@
 
 		},
 
-		connectedRecieved: function (data, cb) {
+		connectedReceived: function (data, cb) {
 
 			this.clientId = data.id;
 			this.world.seed = data.seed;
@@ -89,7 +89,7 @@
 
 		},
 
-		pingRecieved: function (ping) {
+		pingReceived: function (ping) {
 
 			if (!this.clientId) {
 				return;
@@ -169,10 +169,10 @@
 
 		},
 
-		recieveChat: function (msg) {
+		receiveChat: function (msg) {
 
 
-			main.screen.recieveChat(msg);
+			main.screen.receiveChat(msg);
 
 		}
 

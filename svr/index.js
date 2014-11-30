@@ -197,7 +197,7 @@ io.on("connection", function (client) {
 
 			//if (c === client) return;
 
-			c.emit("recieveChat", msg);
+			c.emit("receiveChat", msg);
 
 		});
 
