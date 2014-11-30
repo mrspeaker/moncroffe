@@ -158,7 +158,6 @@
 			z -= chunkZ * chW;
 
 			if (y > chH - 1 || y < 0) {
-				console.log("wat?", y);
 				return {
 					chunkX: 999,
 					chunkZ: 999

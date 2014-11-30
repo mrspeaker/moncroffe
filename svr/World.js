@@ -85,7 +85,6 @@ var World = {
 				this.bouy = null;
 				this.remaining = 0;
 				this.stateFirst = false;
-				this.resetSeed();
 			}
 			if (stateElapsed > data.rounds.duration.roundReady) {
 				this.setState("ROUND");
@@ -126,6 +125,7 @@ var World = {
 
 			if (stateElapsed > data.rounds.duration.gameOver) {
 				this.setState("BORN");
+				this.resetSeed();
 			}
 			break;
 		}

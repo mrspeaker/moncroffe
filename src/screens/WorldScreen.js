@@ -70,7 +70,7 @@
 
 			// remove old chunks...
 			if (this.world) this.world.removeChunks();
-			// Shoot up in the air
+
 			this.player.model.pos.y = 19;
 
 			// Readd the new ones...
@@ -250,7 +250,10 @@
 
 			var msg = this.state;
 			if (this.state == "ROUND") {
-				msg += " " + (this.round + 1) + " of " + data.rounds.total + ". " + (utils.formatTime(this.remaining | 0));
+				msg += " " + (this.round + 1) +
+					" of " + data.rounds.total +
+					". " +
+					(utils.formatTime(this.remaining | 0));
 			}
 			utils.msg(msg);
 
@@ -259,7 +262,6 @@
 
 				// Just update your score
 				if (p.id === Network.clientId) {
-					//utils.msgln(p.name + ":" + p.score);
 					scores.push({name: p.name, score: p.score});
 					return;
 				}
@@ -480,9 +482,16 @@
 		tick: function (dt) {
 
 			switch (this.state) {
-			case "ROUND_READY":
+			case "BORN":
 				if (this.stateFirst) {
 					this.reset();
+				}
+				break;
+			case "ROUND_READY":
+				if (this.stateFirst) {
+					// Shoot up in the air
+					this.player.model.pos.y = 19;
+
 					this.player.tick(dt);
 					utils.showMsg("#getReady", data.rounds.duration.roundReady - 0.1);
 				}

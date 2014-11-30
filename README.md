@@ -12,6 +12,7 @@ Now with Oculus Rift support!
 	Right click (or shift left): Remove block
 	Wheel: Change block
 
+	't': Chat
 	'1/2': Adjust mouse sensitivity
 	'e': Toggle Oculus Rift mode (no head tracking yet)
 	'3': Reset headset in VR mode
