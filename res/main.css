@@ -134,14 +134,14 @@ body {
 #chat {
 	position: absolute;
 	width: 200px;
-	height: 150px;
+	height: 120px;
 	left: 0;
 	bottom: 0;
 	margin-left: 3px;
 }
 #chatLog {
 	font-size: 8pt;
-	height: 130px;
+	height: 100px;
 	overflow: auto;
 }
 
