@@ -20,7 +20,7 @@
 
 			this.mesh = new THREE.Object3D();
 
-			var mesh = new THREE.Mesh(
+			this.body = new THREE.Mesh(
 				new THREE.BoxGeometry(this.model.bb.x, this.model.bb.y, this.model.bb.z),
 				new THREE.MeshBasicMaterial({
 	   				color: 0x992277,
@@ -28,7 +28,7 @@
    					transparent: true
 				}));
 
-			this.mesh.add(mesh);
+			this.mesh.add(this.body);
 
 			this.addNameLabel(name ? name : "???");
 
@@ -54,7 +54,7 @@
 			this.mesh.add(this.label);
 		},
 
-		tick: function (dt) {
+		tick: function (dt, lookAt) {
 
 			if (this.name !== this.initName) {
 				this.addNameLabel(this.name);
@@ -68,18 +68,20 @@
 				}
 			}
 
-			this.syncMesh();
+			this.syncMesh(lookAt);
 
 		},
 
-		syncMesh: function () {
-			var model = this.model,
-				mesh = this.mesh;
+		syncMesh: function (camera) {
 
-			mesh.rotation.set(0, model.rot, 0);
+			var model = this.model,
+				mesh = this.mesh,
+				body = this.body;
+
+			body.rotation.set(0, model.rot, 0);
 			mesh.position.set(model.pos.x, model.pos.y, model.pos.z);
 
-			this.label.rotation.y += 0.02;
+        	this.label.rotation.setFromRotationMatrix(camera.matrix);
 
 		}
 

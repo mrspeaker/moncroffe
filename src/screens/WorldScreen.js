@@ -553,7 +553,8 @@
 
 		tick_ROUND: function (dt) {
 			var scene = this.scene,
-				world = this.world;
+				world = this.world,
+				camera = this.player.controls.getObject();
 
 			this.player.tick(dt);
 
@@ -601,7 +602,7 @@
 				var player = Network.clients[p],
 					hit;
 
-				player.tick(dt);
+				player.tick(dt, camera);
 
 				hit = this.bullets.some(function (b) {
 					return b.ownShot && !b.stopped && utils.dist(b.model.pos, player.model.pos) < 1;
