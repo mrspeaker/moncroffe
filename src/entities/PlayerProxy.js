@@ -24,15 +24,12 @@
 				new THREE.BoxGeometry(this.model.bb.x, this.model.bb.y, this.model.bb.z),
 				new THREE.MeshBasicMaterial({
 	   				color: 0x992277,
+	   				opacity: 0.8,
+   					transparent: true
 				}));
 
 			this.mesh.add(mesh);
 
-			if (!name) {
-				console.log("not yet, bub.");
-			}
-
-			console.log("name!", name);
 			this.addNameLabel(name ? name : "???");
 
 			return this;
@@ -57,12 +54,11 @@
 			this.mesh.add(this.label);
 		},
 
-		tick: function () {
+		tick: function (dt) {
 
 			if (this.name !== this.initName) {
 				this.addNameLabel(this.name);
 				this.initName = this.name;
-				console.log("name cahnged to:", this.name);
 			}
 
 			if (this.blinkTime > 0) {
@@ -82,6 +78,9 @@
 
 			mesh.rotation.set(0, model.rot, 0);
 			mesh.position.set(model.pos.x, model.pos.y, model.pos.z);
+
+			this.label.rotation.y += 0.02;
+
 		}
 
 	};
