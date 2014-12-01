@@ -23,7 +23,7 @@ io.on("connection", function (client) {
 		players = World.players;
 
 	if (!clients.length) {
-		World.reset(true);
+		World.resetAll();
 	}
 
 	client.userid = UUID();

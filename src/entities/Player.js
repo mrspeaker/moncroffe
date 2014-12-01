@@ -30,6 +30,7 @@
 			this.respawn();
 
 			this.controls = this.createControls();
+			this.syncAll();
 
 			return this;
 		},
@@ -152,6 +153,15 @@
 			this.controls.setPos(model.pos.x + bobX, model.pos.y + bobY, model.pos.z);
 
 			this.syncMesh();
+
+		},
+
+		syncAll: function () {
+
+			var pos = this.model.pos;
+			this.syncMesh();
+			this.controls.setPos(pos.x, pos.y, pos.z);
+
 
 		},
 

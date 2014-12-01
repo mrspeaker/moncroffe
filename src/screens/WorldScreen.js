@@ -76,6 +76,8 @@
 			this.world.createChunks();
 
 			this.doneInitialReset = true;
+
+			//this.player.syncControls();
 		},
 
 		addBouy: function () {
