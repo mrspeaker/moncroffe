@@ -38,6 +38,7 @@ Running:
 
 ## Next todos
 
+- players names on screen
 - Explain goal in titlescreen
 - disconnect-y screen instead of pointerlock
 - leaderboard (session)
@@ -56,11 +57,11 @@ Running:
 
 > server
 
-- Disconnects not all registered? Old players still visible
 - Client refresh loses session info
 - Client background tab accumulates evil clowns
 - Block add/remove not synced
 - escape html in innerHTML calls
+- server game keeps running even when no clients
 
 > other
 
@@ -75,12 +76,17 @@ Running:
 - Camera pitch/yaw not same as minecraft when looking up/down
 - Leaderboard (global)
 
-## Would be cool
+## Would be cool/maybes
 
 - Create levels that others can play
 - Some indestructible/special blocks
 - Choose "just you" or "everyone" for add/remove blocks
   - make tunnels just for you, baracades against everyone etc
+
+- Health level on player, colour desaturates - easier to hide when nearly dead
+- Some reason clown particles get attracted to cube (theme)
+
+- thee more you destroy clowns, the more coins the block sucks, greater the blocks value becomes. if people can't find it, it's value will rise
 
 ## Cube geometry notes
 
