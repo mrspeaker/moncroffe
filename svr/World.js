@@ -1,3 +1,5 @@
+"use strict";
+
 var Perlin = require("../lib/Perlin.js"),
 	data = require("../src/data.js");
 
@@ -60,6 +62,10 @@ var World = {
 	},
 
 	tick: function () {
+
+		if (!this.clients.length) {
+			return;
+		}
 
 		var stateElapsed = this.stateElapsed = (Date.now() - this.stateStartTime) / 1000,
 			state = this.state;
@@ -188,7 +194,7 @@ var World = {
 			pos = { x: Math.floor(xo + (Math.random() * (maxX * 0.97) * 2) - (maxX * 0.97)),
 				y: Math.floor(Math.random() * 18 | 0) + 1,
 				z: Math.floor(zo + (Math.random() * (maxZ * 0.97) * 2) - (maxZ * 0.97))
-			}
+			};
 
 			var val = Perlin.noise.simplex3(pos.x / 15, pos.y / 10, pos.z / 15);
 

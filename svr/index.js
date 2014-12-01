@@ -236,17 +236,17 @@ function runPingLoop () {
 	}, 40);
 }
 
-function runRenderLoop () {
+function runTickLoop () {
 
 	World.tick();
-	setTimeout(runRenderLoop, 16);
+	setTimeout(runTickLoop, 16);
 
 }
 
 http.listen(3001, function(){
 	console.log("listening on *:3001");
 	runPingLoop();
-	runRenderLoop();
+	runTickLoop();
 });
 
 var utils = {};
