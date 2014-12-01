@@ -4,7 +4,6 @@ var express = require("express"),
 	app = express(),
 	http = require("http").Server(app),
 	io = require("socket.io")(http),
-	UUID = require("uuid"),
 	World = require("./World.js");
 
 app.get("/", function(req, res){
@@ -23,63 +22,15 @@ io.on("connection", function (client) {
 		World.resetAll();
 	}
 
-	client.userid = UUID();
-	client.lastHit = Date.now();
-	client.lastGetBouy = Date.now();
-	World.clients.push(client);
+	World.initPlayer(client);
 
 	console.log("Network:: " + client.userid + " connected");
-
-	var player = {
-		id: client.userid,
-		score: 0,
-		pos: { x: 0, y: 0, z: 0 },
-		rot: { x: 0, z: 0}
-	};
-	World.players.push(player);
-	client.player = player;
-
-	if (World.players.length !== World.clients.length) {
-		console.log("connect diff:", World.players.length, World.clients.length);
-	}
 
 	client.on("disconnect", function () {
 
 		console.log("Network:: " + client.userid + " (" + client.userName + ") disconnected");
 
-		World.players = World.players.filter(function (p) {
-
-			return p.id !== client.userid;
-
-		});
-
-		World.clients = World.clients.filter(function (c) {
-
-			if (c !== client) {
-				c.emit("dropped", client.userid);
-			}
-			return c !== client;
-
-		});
-
-		if (World.players.length !== World.clients.length) {
-			console.log("disconnect diff:", World.players.length, World.clients.length);
-		}
-	});
-
-	client.on("ping", function(ping) {
-
-		World.players.forEach(function (p) {
-
-			if (ping.clientId === p.id) {
-				p.pos.x = ping.pos.x;
-				p.pos.y = ping.pos.y;
-				p.pos.z = ping.pos.z;
-
-				p.rot = ping.rot;
-			}
-
-		});
+		World.removePlayer(client.userid);
 
 	});
 
@@ -96,12 +47,26 @@ io.on("connection", function (client) {
 
 		client.emit("onconnected", {
 			id: client.userid,
-			name: client.name,
-			seed: World.seed,
-			elapsed: World.elapsed
+			seed: World.seed
 		});
 
 		client.userName = name;
+
+	});
+
+	client.on("ping", function(ping) {
+
+		World.players.forEach(function (p) {
+
+			if (ping.clientId === p.id) {
+				p.pos.x = ping.pos.x;
+				p.pos.y = ping.pos.y;
+				p.pos.z = ping.pos.z;
+
+				p.rot = ping.rot;
+			}
+
+		});
 
 	});
 
@@ -148,7 +113,7 @@ io.on("connection", function (client) {
 		shotPlayer.lastHit = now;
 
 		World.clients.forEach(function (c) {
-			c.emit("shotThePlayer", player);
+			c.emit("receiveShotPlayer", player);
 		});
 
 	});

@@ -211,7 +211,7 @@
 
 		},
 
-		shotThePlayer: function (pid) {
+		receiveShotPlayer: function (pid) {
 
 			if (pid === Network.clientId) {
 				this.player.respawn();

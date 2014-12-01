@@ -1,7 +1,8 @@
 "use strict";
 
 var Perlin = require("../lib/Perlin.js"),
-	data = require("../src/data.js");
+	data = require("../src/data.js"),
+	UUID = require("uuid");
 
 var World = {
 
@@ -29,6 +30,45 @@ var World = {
 		data.init();
 		this.data = data;
 		this.resetAll();
+	},
+
+	initPlayer: function (client) {
+
+		client.userid = UUID();
+		client.lastHit = Date.now();
+		client.lastGetBouy = Date.now();
+
+		var player = {
+			id: client.userid,
+			score: 0,
+			pos: { x: 0, y: 0, z: 0 },
+			rot: { x: 0, z: 0}
+		};
+
+		this.clients.push(client);
+		this.players.push(player);
+
+		client.player = player;
+
+	},
+
+	removePlayer: function (userid) {
+
+		this.players = this.players.filter(function (p) {
+
+			return p.id !== userid;
+
+		});
+
+		this.clients = this.clients.filter(function (c) {
+
+			if (c.userid !== userid) {
+				c.emit("dropped", userid);
+			}
+			return c.userid !== userid;
+
+		});
+
 	},
 
 	resetAll: function () {
