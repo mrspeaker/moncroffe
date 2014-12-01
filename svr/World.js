@@ -111,14 +111,16 @@ var World = {
 			if (this.stateFirst) {
 				this.remaining = 0;
 				this.stateFirst = false;
+
+				if (this.round === data.rounds.total - 1) {
+					this.setState("GAME_OVER");
+					break;
+				}
 			}
 
 			if (stateElapsed > data.rounds.duration.roundOver) {
-				if (++this.round < data.rounds.total) {
-					this.setState("ROUND_READY");
-				} else {
-					this.setState("GAME_OVER");
-				}
+				this.round++;
+				this.setState("ROUND_READY");
 			}
 			break;
 

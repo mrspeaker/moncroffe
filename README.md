@@ -44,6 +44,9 @@ Running:
 
 ## Bugz
 
+- omg... if no players connected you can jump 3 blocks.
+  ... if more than one, less than three blocks.
+
 > client
 
 - Hit head slide down (and can get stuck in block)

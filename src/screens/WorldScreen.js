@@ -40,6 +40,8 @@
 		round: 0,
 		doneInitialReset: false,
 
+		scores: null,
+
 		init: function (screen) {
 
 			this.sounds = {
@@ -56,6 +58,7 @@
 			this.bullets = [];
 			this.targets = [];
 			this.particles = [];
+			this.scores = [];
 
 			screen.bindHandlers(this.player);
 
@@ -257,12 +260,12 @@
 			}
 			utils.msg(msg);
 
-			var scores = [];
+			this.scores = [];
 			ping.players.forEach(function (p) {
 
 				// Just update your score
 				if (p.id === Network.clientId) {
-					scores.push({name: p.name, score: p.score});
+					this.scores.push({name: p.name, score: p.score});
 					return;
 				}
 
@@ -287,12 +290,14 @@
 				player.model.pos = p.pos;
 				player.model.rot = p.rot;
 
-				scores.push({name: p.name, score: p.score});
+				this.scores.push({name: p.name, score: p.score});
 			}, this);
 
-			scores.sort(function (a, b) {
+			this.scores = this.scores.sort(function (a, b) {
 				return b.score - a.score;
-			}).forEach(function (s, i) {
+			});
+
+			this.scores.forEach(function (s, i) {
 				utils.msgln(
 					(i === 0 ? "<strong>" : "") +
 					s.name + ": " + s.score +
@@ -300,14 +305,7 @@
 			});
 
 			if (setWinnerName) {
-				var winners = scores
-					.filter(function (s) {
-						return s.score === scores[0].score;
-					})
-					.map(function (s) {
-						return s.name;
-					})
-					.join("<br />");
+				var winners = this.getLeaders();
 				document.querySelector("#gameOverWin").innerHTML = winners;
 			}
 
@@ -387,6 +385,17 @@
 			}
 
 			this.elapsed = ping.elapsed;
+		},
+
+		getLeaders: function () {
+			return this.scores
+				.filter(function (s) {
+					return s.score === this.scores[0].score;
+				}, this)
+				.map(function (s) {
+					return s.name;
+				})
+				.join("<br />");
 		},
 
 		fire: function () {
@@ -493,7 +502,32 @@
 					this.player.model.pos.y = 19;
 
 					this.player.tick(dt);
+
+					var msg = "";
+
+					if (this.round === 0) {
+						msg = "WELCOME!<br />Find the boxes.</br/>Best of " + data.rounds.total + " ";
+					} else if (this.round === data.rounds.total - 1) {
+						msg = "Final round<br/>";
+					}
+					else {
+						msg = "Round " + (this.round + 1);
+					}
+
+					document.querySelector("#getReadyStage").innerHTML = msg;
+
 					utils.showMsg("#getReady", data.rounds.duration.roundReady - 0.1);
+					var n = Date.now();
+					(function countdown () {
+
+						var cd = (data.rounds.duration.roundReady * 1000) - (Date.now() - n);
+						cd = cd / 1000 | 0;
+						document.querySelector("#gameStartsIn").innerHTML = cd;
+						setTimeout(function () {
+							if (cd > 0) countdown();
+						}, 200);
+
+					}());
 				}
 				break;
 			case "ROUND":
@@ -504,7 +538,12 @@
 				}
 				this.tick_ROUND(dt);
 				break;
+
 			case "ROUND_OVER":
+				if (this.stateFirst && this.round < data.rounds.total - 1 ) {
+					document.querySelector("#roundWinner").innerHTML = this.getLeaders();
+					utils.showMsg("#roundOver", data.rounds.duration.roundOver - 0.5);
+				}
 				break;
 			}
 

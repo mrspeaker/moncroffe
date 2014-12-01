@@ -32,6 +32,7 @@
 			document.querySelector("#bg").style.display = "none";
 			document.querySelector(id).style.display = "none";
 		}, time);
+
 	};
 
 	utils.formatTime = function (sec) {
