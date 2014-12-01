@@ -26,23 +26,27 @@ var World = {
 
 		data.init();
 		this.data = data;
-		this.reset();
+		this.resetAll();
 	},
 
-	reset: function () {
+	resetAll: function () {
+
+		this.setState("BORN");
+		this.reset(true);
+
+	},
+
+	reset: function (refreshSeed) {
 
 		this.startTime = Date.now();
 		this.roundEndTime = Date.now();
 		this.elapsed = 0;
-		this.setState("BORN");
 		this.bouy = null;
 
-	},
-
-	resetSeed: function () {
-
-		this.seed = Math.random() * 99999999 | 0;
-		Perlin.noise.seed(this.seed);
+		if (refreshSeed) {
+			this.seed = Math.random() * 99999999 | 0;
+			Perlin.noise.seed(this.seed);
+		}
 		console.log("Reset:", this.seed);
 
 	},
@@ -82,8 +86,8 @@ var World = {
 
 		case "ROUND_READY":
 			if (this.stateFirst) {
-				this.bouy = null;
 				this.remaining = 0;
+				this.reset(false);
 				this.stateFirst = false;
 			}
 			if (stateElapsed > data.rounds.duration.roundReady) {
@@ -124,8 +128,7 @@ var World = {
 			}
 
 			if (stateElapsed > data.rounds.duration.gameOver) {
-				this.setState("BORN");
-				this.resetSeed();
+				this.resetAll();
 			}
 			break;
 		}

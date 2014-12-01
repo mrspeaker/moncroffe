@@ -71,8 +71,6 @@
 			// remove old chunks...
 			if (this.world) this.world.removeChunks();
 
-			this.player.model.pos.y = 19;
-
 			// Readd the new ones...
 			this.world = Object.create(World).init(this, Network.world.seed);
 			this.world.createChunks();
