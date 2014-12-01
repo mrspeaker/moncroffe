@@ -397,6 +397,35 @@
 	  }
 	};
 
+	utils.createCanvasPlane = function (w, h, drawFunc) {
+
+		var scale = 0.01;
+
+		var canvas = document.createElement("canvas"),
+			ctx = canvas.getContext("2d");
+
+		canvas.width = w;
+		canvas.height = h;
+
+		drawFunc(ctx, w, h);
+
+		var texture = new THREE.Texture(canvas);
+		texture.needsUpdate = true;
+
+		var material = new THREE.MeshBasicMaterial({
+			map: texture,
+			side: THREE.DoubleSide,
+			transparent: true
+		});
+
+		var geometry = new THREE.PlaneBufferGeometry(canvas.width, canvas.height, 1, 1),
+			planeMesh = new THREE.Mesh(geometry, material);
+
+		planeMesh.scale.set(scale, scale, scale);
+
+		return planeMesh;
+	};
+
 	window.utils = utils;
 
 }(

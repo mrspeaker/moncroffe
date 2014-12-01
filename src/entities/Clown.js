@@ -16,6 +16,7 @@
 
 			this.id = id;
 
+			// TODO: move to model.
 			this.bb = {
 				w: 1.5,
 				d: 1.5,
@@ -28,10 +29,14 @@
 				new THREE.CubeGeometry(this.bb.w),
 				[[8, 8], [6, 8], [6, 8], [6, 8], [7, 9], [6, 9]]);
 
-			this.mesh = new THREE.Mesh(
+			this.mesh = new THREE.Object3D();
+
+			var mesh = new THREE.Mesh(
 				geom,
 				material
 			);
+
+			this.mesh.add(mesh);
 
 			this.pos = pos;
 			this.mesh.position.copy(pos);
@@ -44,12 +49,12 @@
 		},
 
 		tick: function (dt) {
-			var m = this.mesh,
+			var mesh = this.mesh,
 				pow = dt * this.speed;
 
-			m.translateZ(pow);
+			mesh.translateZ(pow);
 
-			this.pos = m.position;
+			this.pos = mesh.position;
 
 			if (this.count++ > 2000) {
 				this.remove = true;

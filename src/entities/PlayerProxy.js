@@ -16,18 +16,54 @@
 
 			this.id = id;
 			this.name = name;
+			this.initName = name;
 
-			this.mesh = new THREE.Mesh(
+			this.mesh = new THREE.Object3D();
+
+			var mesh = new THREE.Mesh(
 				new THREE.BoxGeometry(this.model.bb.x, this.model.bb.y, this.model.bb.z),
 				new THREE.MeshBasicMaterial({
 	   				color: 0x992277,
 				}));
 
+			this.mesh.add(mesh);
+
+			if (!name) {
+				console.log("not yet, bub.");
+			}
+
+			console.log("name!", name);
+			this.addNameLabel(name ? name : "???");
+
 			return this;
 
 		},
 
+		addNameLabel: function (txt) {
+			if (this.label) {
+				this.mesh.remove(this.label);
+			}
+			this.label = utils.createCanvasPlane(200, 40, function (ctx, w, h) {
+
+				ctx.font = "22pt Helvetica";
+
+				ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+				ctx.textAlign = "center";
+				ctx.fillText(txt, w / 2, h / 2 + 11);
+
+			});
+
+			this.label.position.set(0, this.model.bb.y / 2 + 0.3, 0);
+			this.mesh.add(this.label);
+		},
+
 		tick: function () {
+
+			if (this.name !== this.initName) {
+				this.addNameLabel(this.name);
+				this.initName = this.name;
+				console.log("name cahnged to:", this.name);
+			}
 
 			if (this.blinkTime > 0) {
 				this.mesh.visible = this.blinkTime % 10 < 5;
