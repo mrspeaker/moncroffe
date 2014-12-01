@@ -96,6 +96,14 @@
 				jump = 23,
 				drag = 10 * delta;
 
+			// 00 02 04 06 08  <- over 8 seconds...
+			// 20          00  <- move power from 20 to 0
+			//   2  2  2  2    <- if delta every 2...
+			// 20 15 10 05 00  <- would look like this
+			//      4     4    <- if deltal every 4...
+			// 20 20 10 10 00  <- would look like this
+			// oh... just realised. Need a fixed timestep. oops.
+
 			model.rot = move.rot.y;
 
 			// Figure out how far we want to move this frame

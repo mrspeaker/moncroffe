@@ -49,6 +49,7 @@ io.on("connection", function (client) {
 	client.on("disconnect", function () {
 
 		console.log("Network:: " + client.userid + " (" + client.userName + ") disconnected");
+
 		World.players = World.players.filter(function (p) {
 
 			return p.id !== client.userid;
