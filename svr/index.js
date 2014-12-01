@@ -19,17 +19,14 @@ app.use("/lib", express.static(__dirname + "/../lib/"));
 
 io.on("connection", function (client) {
 
-	var clients = World.clients,
-		players = World.players;
-
-	if (!clients.length) {
+	if (!World.clients.length) {
 		World.resetAll();
 	}
 
 	client.userid = UUID();
 	client.lastHit = Date.now();
 	client.lastGetBouy = Date.now();
-	clients.push(client);
+	World.clients.push(client);
 
 	console.log("Network:: " + client.userid + " connected");
 
@@ -39,7 +36,7 @@ io.on("connection", function (client) {
 		pos: { x: 0, y: 0, z: 0 },
 		rot: { x: 0, z: 0}
 	};
-	players.push(player);
+	World.players.push(player);
 	client.player = player;
 
 	if (World.players.length !== World.clients.length) {
@@ -72,7 +69,7 @@ io.on("connection", function (client) {
 
 	client.on("ping", function(ping) {
 
-		players.forEach(function (p) {
+		World.players.forEach(function (p) {
 
 			if (ping.clientId === p.id) {
 				p.pos.x = ping.pos.x;
@@ -89,7 +86,7 @@ io.on("connection", function (client) {
 	client.on("join", function (name) {
 
 		// Update name
-		players.forEach(function (p) {
+		World.players.forEach(function (p) {
 
 			if (client.userid === p.id) {
 				p.name = name;
@@ -135,7 +132,7 @@ io.on("connection", function (client) {
 
 		// Check if shot is too soon
 		var shotPlayer = World.clients.filter(function (c) {
-				return c.userid = player;
+				return c.userid === player;
 			}),
 			now = Date.now();
 

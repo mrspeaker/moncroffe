@@ -44,8 +44,8 @@ Running:
 
 ## Bugz
 
-- omg... if no players connected you can jump 3 blocks.
-  ... if more than one, less than three blocks.
+- omg... multiplayer, you can't jump as high...
+  ... need to switch to fixed timestep for physics.
 
 > client
 
