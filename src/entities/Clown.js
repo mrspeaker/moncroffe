@@ -4,8 +4,14 @@
 
 	var Clown = {
 
-		pos: null,
-		bb: null,
+		model: {
+			pos: { x: 0, y: 0, z: 0},
+			bb: {
+				x: 1.5,
+				y: 1.5,
+				z: 1.5
+			}
+		},
 
 		count: 0,
 
@@ -16,17 +22,10 @@
 
 			this.id = id;
 
-			// TODO: move to model.
-			this.bb = {
-				w: 1.5,
-				d: 1.5,
-				h: 1.5
-			};
-
 			this.speed = speed;
 
 			var geom = utils.texturify(
-				new THREE.CubeGeometry(this.bb.w),
+				new THREE.CubeGeometry(this.model.bb.x),
 				[[8, 8], [6, 8], [6, 8], [6, 8], [7, 9], [6, 9]]);
 
 			this.mesh = new THREE.Object3D();
@@ -38,7 +37,7 @@
 
 			this.mesh.add(mesh);
 
-			this.pos = pos;
+			this.model.pos = { x: pos.x, y: pos.y, z: pos.z };
 			this.mesh.position.copy(pos);
 			this.mesh.lookAt(pos.add(direction));
 

@@ -584,7 +584,7 @@
 					// If not to far out into space...
 					if (Math.abs(t.pos.x - xo) < maxX * 1.3 && Math.abs(t.pos.z - zo) < maxZ * 1.3) {
 						var hit = this.bullets.some(function (b) {
-							return b.ownShot && !b.stopped && utils.dist(b.model.pos, t.pos) < 2;
+							return b.ownShot && !b.stopped && utils.dist(b.model.pos, t.pos) < t.model.bb.x;
 						});
 						if (hit) {
 							ret = false;
