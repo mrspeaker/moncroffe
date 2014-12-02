@@ -83,10 +83,10 @@ Running:
 - Choose "just you" or "everyone" for add/remove blocks
   - make tunnels just for you, baracades against everyone etc
 
-- Health level on player, colour desaturates - easier to hide when nearly dead
 - Some reason clown particles get attracted to cube (theme)
+- The more you destroy clowns, the more coins the block sucks, greater the blocks value becomes. if people can't find it, it's value will rise
 
-- thee more you destroy clowns, the more coins the block sucks, greater the blocks value becomes. if people can't find it, it's value will rise
+- Health level on player, colour desaturates - easier to hide when nearly dead
 
 ## Cube geometry notes
 

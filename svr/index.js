@@ -4,12 +4,14 @@ var express = require("express"),
 	app = express(),
 	http = require("http").Server(app),
 	io = require("socket.io")(http),
-	World = require("./World.js");
+	World = require("./World.js"),
+	Worlds = require("./Worlds.js");
 
 app.get("/", function(req, res){
 	res.sendFile("index.html", {"root": "../"});
 });
 
+Worlds.init();
 World.init();
 
 app.use("/src", express.static(__dirname + "/../src/"));
@@ -203,6 +205,7 @@ function runPingLoop () {
 
 function runTickLoop () {
 
+	Worlds.tick();
 	World.tick();
 	setTimeout(runTickLoop, 16);
 
