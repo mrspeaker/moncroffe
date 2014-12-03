@@ -106,7 +106,7 @@ var World = {
 	tick: function () {
 
 		if (!this.clients.length) {
-			return;
+			return true;
 		}
 
 		var stateElapsed = this.stateElapsed = (Date.now() - this.stateStartTime) / 1000,
@@ -182,6 +182,8 @@ var World = {
 			}
 			break;
 		}
+
+		return true;
 
 	},
 

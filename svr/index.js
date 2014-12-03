@@ -207,7 +207,6 @@ function runPingLoop () {
 function runTickLoop () {
 
 	Worlds.tick();
-	World.tick();
 	setTimeout(runTickLoop, 16);
 
 }
