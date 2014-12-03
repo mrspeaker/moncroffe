@@ -12,16 +12,13 @@ app.get("/", function(req, res){
 
 Worlds.init();
 
-// TODO: move all World references to Worlds.
-var World = Worlds.addWorld();
-
 app.use("/src", express.static(__dirname + "/../src/"));
 app.use("/res", express.static(__dirname + "/../res/"));
 app.use("/lib", express.static(__dirname + "/../lib/"));
 
 io.on("connection", function (client) {
 
-	Worlds.onClientConnected(client, World);
+	Worlds.onClientConnected(client);
 
 });
 

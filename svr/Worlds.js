@@ -13,16 +13,25 @@ var Worlds = {
 		this.waitingPlayers = [];
 		this.leaderboards = {};
 
+		// TODO: only 1 world at the moment!
+		// And clients all connect to it automatically.
+		this.addWorld();
+
 		return this;
 	},
 
 	addWorld: function () {
+
 		var world = Object.create(World).init();
+
 		this.worlds.push(world);
+
 		return world;
 	},
 
-	onClientConnected: function (client, World) {
+	onClientConnected: function (client) {
+
+		var World = this.worlds[0];
 
 		if (!World.clients.length) {
 			World.resetAll();
@@ -32,6 +41,7 @@ var Worlds = {
 
 		console.log("Network:: " + client.userid + " connected");
 
+		// Todo: move client logic to player/client.
 		client.on("disconnect", function () {
 
 			console.log("Network:: " + client.userid + " (" + client.userName + ") disconnected");
