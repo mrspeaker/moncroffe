@@ -30,6 +30,8 @@ var World = {
 		data.init();
 		this.data = data;
 		this.resetAll();
+
+		return this;
 	},
 
 	initPlayer: function (client) {

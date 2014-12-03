@@ -4,7 +4,6 @@ var express = require("express"),
 	app = express(),
 	http = require("http").Server(app),
 	io = require("socket.io")(http),
-	World = require("./World.js"),
 	Worlds = require("./Worlds.js");
 
 app.get("/", function(req, res){
@@ -12,6 +11,8 @@ app.get("/", function(req, res){
 });
 
 Worlds.init();
+
+var World = Worlds.addWorld();
 World.init();
 
 app.use("/src", express.static(__dirname + "/../src/"));

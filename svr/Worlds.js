@@ -1,5 +1,7 @@
 "use strict";
 
+var World = require("./World.js");
+
 var Worlds = {
 
 	worlds: null,
@@ -12,6 +14,12 @@ var Worlds = {
 		this.leaderboards = {};
 
 		return this;
+	},
+
+	addWorld: function () {
+		var world = Object.create(World).init();
+		this.worlds.push(world);
+		return world;
 	},
 
 	tick: function () {
