@@ -34,22 +34,26 @@
 		tick: function (dt) {
 
 			var m = this.mesh,
-				pow = dt * 2;
+				pow = dt * 2,
+				stageOne = this.count / this.life <= 0.25,
+				stageTwo = !stageOne;
 
-			m.translateX(pow);
-			m.translateY(pow);
+			if (stageOne) {
+				m.translateX(pow);
+				m.translateY(pow);
+			}
 			m.translateZ(pow);
 
-			if (this.dir && (this.count / this.life) > 0.25) {
+			if (this.dir && stageTwo) {
 				this.mesh.lookAt(this.dir);
 				this.dir = null;
 			}
 
-			if (!this.dir || (this.count / this.life) > 0.25) {
+			// Fall (if no box direction, or being pulled.)
+			if (!this.dir || stageTwo) {
 				this.vy += 0.001;
 				m.position.y -= this.vy;
 			}
-
 
 			return this.count++ < this.life;
 
