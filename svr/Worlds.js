@@ -24,6 +24,12 @@ var Worlds = {
 
 	onClientConnected: function (client, World) {
 
+		if (!World.clients.length) {
+			World.resetAll();
+		}
+
+		World.initPlayer(client);
+
 		console.log("Network:: " + client.userid + " connected");
 
 		client.on("disconnect", function () {

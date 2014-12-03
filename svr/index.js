@@ -21,11 +21,6 @@ app.use("/lib", express.static(__dirname + "/../lib/"));
 
 io.on("connection", function (client) {
 
-	if (!World.clients.length) {
-		World.resetAll();
-	}
-
-	World.initPlayer(client);
 	Worlds.onClientConnected(client, World);
 
 });
