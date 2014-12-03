@@ -175,40 +175,13 @@ io.on("connection", function (client) {
 });
 
 function runPingLoop () {
-
-	setTimeout(function () {
-
-		World.clients.forEach(function (c) {
-
-			c.emit("ping", {
-				elapsed: World.elapsed,
-				remaining: World.remaining,
-				players: World.players,
-				bullets: World.bullets,
-				targets: World.targets,
-				// Should come as seperate messages, yo.
-				state: World.state,
-				bouy: World.bouy,
-				seed: World.seed,
-				flash: World.flash,
-				round: World.round
-			});
-
-		});
-
-		World.flash = false;
-		World.targets = [];
-
-		runPingLoop();
-
-	}, 40);
+	Worlds.ping();
+	setTimeout(runPingLoop, 40);
 }
 
 function runTickLoop () {
-
 	Worlds.tick();
 	setTimeout(runTickLoop, 16);
-
 }
 
 http.listen(3001, function(){

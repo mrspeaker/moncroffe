@@ -54,6 +54,7 @@ Running:
 - Camera goes through block when close, looking on angle
 - Block & face selection wrong when close to blocks
 - Bullet gets stuck when firing close to block
+- Weird CSS display issue "ROUND OVER" with background, isntead of "got box"
 
 > server
 
