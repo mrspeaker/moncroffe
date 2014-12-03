@@ -12,8 +12,8 @@ app.get("/", function(req, res){
 
 Worlds.init();
 
+// TODO: move all World references to Worlds.
 var World = Worlds.addWorld();
-World.init();
 
 app.use("/src", express.static(__dirname + "/../src/"));
 app.use("/res", express.static(__dirname + "/../res/"));
@@ -26,168 +26,24 @@ io.on("connection", function (client) {
 	}
 
 	World.initPlayer(client);
-
-	console.log("Network:: " + client.userid + " connected");
-
-	client.on("disconnect", function () {
-
-		console.log("Network:: " + client.userid + " (" + client.userName + ") disconnected");
-
-		World.removePlayer(client.userid);
-
-	});
-
-	client.on("join", function (name) {
-
-		// Update name
-		World.players.forEach(function (p) {
-
-			if (client.userid === p.id) {
-				p.name = name;
-			}
-
-		});
-
-		client.emit("onconnected", {
-			id: client.userid,
-			seed: World.seed
-		});
-
-		client.userName = name;
-
-	});
-
-	client.on("ping", function(ping) {
-
-		World.players.forEach(function (p) {
-
-			if (ping.clientId === p.id) {
-				p.pos.x = ping.pos.x;
-				p.pos.y = ping.pos.y;
-				p.pos.z = ping.pos.z;
-
-				p.rot = ping.rot;
-			}
-
-		});
-
-	});
-
-	// tmp: should be calced on server
-	client.on("clownHit", function(id) {
-
-		World.clients.forEach(function (c) {
-
-			if (c === client) return;
-			c.emit("clownDestroyed", id);
-
-		});
-
-	});
-
-	client.on("fireBullet", function(bullet) {
-
-		World.clients.forEach(function (c) {
-
-			if (c === client) return;
-			c.emit("otherFiredBullet", bullet);
-
-		});
-
-	});
-
-	client.on("shotPlayer", function(player) {
-
-		// Check if shot is too soon
-		var shotPlayer = World.clients.filter(function (c) {
-				return c.userid === player;
-			}),
-			now = Date.now();
-
-		if (!shotPlayer.length) {
-			console.log("erp... no player with this id");
-			return;
-		}
-
-		shotPlayer = shotPlayer[0];
-		if (now - shotPlayer.lastHit < World.data.safeTime) {
-			return;
-		}
-		shotPlayer.lastHit = now;
-
-		World.clients.forEach(function (c) {
-			c.emit("receiveShotPlayer", player);
-		});
-
-	});
-
-	client.on("gotBouy", function(pid) {
-
-		var now = Date.now(),
-			legit = true;
-
-		// Check for distance
-		if (now - client.lastGetBouy < 1000) {
-			console.log("Too early for another bouy");
-			legit = false;
-		}
-
-		if (!World.bouy) {
-			console.error("Hmm... no bouy, but more tha 1000ms");
-			legit = false;
-		}
-
-		if (legit) {
-			// Check for distance
-			client.lastGetBouy = now;
-			World.players = World.players.map(function (p) {
-
-				if (p.id === pid) {
-					if (utils.dist(p.pos, World.bouy) > 4) {
-						console.log("hmmm... cheaty?");
-						legit = false;
-					} else {
-						p.score++;
-					}
-				}
-				return p;
-
-			});
-		}
-
-		// Reset and party
-		if (legit) {
-			World.gotBouy(pid);
-		}
-
-	});
-
-	client.on("sendChat", function(msg) {
-
-		World.clients.forEach(function (c) {
-
-			c.emit("receiveChat", msg);
-
-		});
-
-	});
+	Worlds.onClientConnected(client, World);
 
 });
 
-function runPingLoop () {
+function loopPing () {
 	Worlds.ping();
-	setTimeout(runPingLoop, 40);
+	setTimeout(loopPing, 40);
 }
 
-function runTickLoop () {
+function loopTick () {
 	Worlds.tick();
-	setTimeout(runTickLoop, 16);
+	setTimeout(loopTick, 16);
 }
 
 http.listen(3001, function(){
 	console.log("listening on *:3001");
-	runPingLoop();
-	runTickLoop();
+	loopTick();
+	loopPing();
 });
 
 var utils = {};
