@@ -4,7 +4,8 @@ var express = require("express"),
 	app = express(),
 	http = require("http").Server(app),
 	io = require("socket.io")(http),
-	Worlds = require("./Worlds.js");
+	Worlds = require("./Worlds.js"),
+	port = 3001;
 
 app.get("/", function(req, res){
 	res.sendFile("index.html", {"root": "../"});
@@ -23,17 +24,23 @@ io.on("connection", function (client) {
 });
 
 function loopPing () {
+
 	Worlds.ping();
 	setTimeout(loopPing, 40);
+
 }
 
 function loopTick () {
+
 	Worlds.tick();
 	setTimeout(loopTick, 16);
+
 }
 
-http.listen(3001, function(){
-	console.log("listening on *:3001");
+http.listen(port, function () {
+
+	console.log("listening on *:" + port);
 	loopTick();
 	loopPing();
+
 });

@@ -10,6 +10,7 @@ var Worlds = {
 	leaderboards: null,
 
 	init: function () {
+
 		this.worlds = [];
 		this.waitingPlayers = [];
 		this.leaderboards = {};
@@ -71,7 +72,7 @@ var Worlds = {
 
 		});
 
-		client.on("ping", function(ping) {
+		client.on("ping", function (ping) {
 
 			World.players.forEach(function (p) {
 
@@ -88,7 +89,7 @@ var Worlds = {
 		});
 
 		// tmp: should be calced on server
-		client.on("clownHit", function(id) {
+		client.on("clownHit", function (id) {
 
 			World.clients.forEach(function (c) {
 
@@ -99,7 +100,7 @@ var Worlds = {
 
 		});
 
-		client.on("fireBullet", function(bullet) {
+		client.on("fireBullet", function (bullet) {
 
 			World.clients.forEach(function (c) {
 
@@ -110,7 +111,7 @@ var Worlds = {
 
 		});
 
-		client.on("shotPlayer", function(player) {
+		client.on("shotPlayer", function (player) {
 
 			// Check if shot is too soon
 			var shotPlayer = World.clients.filter(function (c) {
@@ -135,7 +136,7 @@ var Worlds = {
 
 		});
 
-		client.on("gotBouy", function(pid) {
+		client.on("gotBouy", function (pid) {
 
 			var now = Date.now(),
 				legit = true;
@@ -176,7 +177,7 @@ var Worlds = {
 
 		});
 
-		client.on("sendChat", function(msg) {
+		client.on("sendChat", function (msg) {
 
 			World.clients.forEach(function (c) {
 
@@ -188,10 +189,13 @@ var Worlds = {
 	},
 
 	tick: function () {
+
 		// tick all worlds
 		this.worlds = this.worlds.filter(function (w) {
+
 			return w.tick();
 		});
+
 	},
 
 	ping: function () {

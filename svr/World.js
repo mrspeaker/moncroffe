@@ -36,11 +36,13 @@ var World = {
 
 	initPlayer: function (client) {
 
+		var player;
+
 		client.userid = UUID();
 		client.lastHit = Date.now();
 		client.lastGetBouy = Date.now();
 
-		var player = {
+		player = {
 			id: client.userid,
 			score: 0,
 			pos: { x: 0, y: 0, z: 0 },
