@@ -29,6 +29,7 @@ var Worlds = {
 		this.worlds.push(world);
 
 		return world;
+
 	},
 
 	onClientConnected: function (client) {

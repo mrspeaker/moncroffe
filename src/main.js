@@ -39,7 +39,9 @@
 
 			var self = this;
 			utils.bindPointerLock(function (state) {
+
 				self.onPointerLockChange(state);
+
 			});
 
 			this.run();
@@ -140,7 +142,7 @@
 
 			document.addEventListener("mousewheel", onMouseWheel, false);
 			document.addEventListener("DOMMouseScroll", onMouseWheel, false);
-			document.addEventListener("keydown", (function(e){
+			document.addEventListener("keydown", (function (e) {
 
 				var key = e.keyCode,
 					isKey = function (k) { return k === key; },
@@ -189,11 +191,10 @@
 
 			}).bind(this), false);
 
-			window.addEventListener("resize", this.setCameraDimensions.bind(this), false );
+			window.addEventListener("resize", this.setCameraDimensions.bind(this), false);
 
-			document.querySelector("#hudMsg").style.display = "none";
-			document.querySelector("#getReady").style.display = "none";
-			document.querySelector("#gameOver").style.display = "none";
+			// Hide all the HUDS
+			document.querySelector("#bg > div").style.display = "none";
 
 			var self = this;
 			document.querySelector("#chatMsg").addEventListener("keydown", function (e) {
@@ -227,8 +228,10 @@
 		},
 
 		onPointerLockChange: function (state) {
+
 			if (!this.screen.player) return;
 			this.screen.player.controls.enabled = state;
+
 		},
 
 		setCameraDimensions: function () {

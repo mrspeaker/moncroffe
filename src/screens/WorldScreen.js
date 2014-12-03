@@ -506,7 +506,7 @@
 					var msg = "";
 
 					if (this.round === 0) {
-						msg = "WELCOME!<br />Find the boxes.</br/>Best of " + data.rounds.total + " ";
+						msg = "WELCOME!<br />Find the boxes.</br/>Best of " + data.rounds.total + "";
 					} else if (this.round === data.rounds.total - 1) {
 						msg = "Final round<br/>";
 					}
