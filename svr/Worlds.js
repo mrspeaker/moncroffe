@@ -1,6 +1,7 @@
 "use strict";
 
-var World = require("./World.js");
+var World = require("./World.js"),
+	utils = require("./utils.js");
 
 var Worlds = {
 
