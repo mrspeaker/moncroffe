@@ -24,6 +24,7 @@ var World = {
 	remaining: 0,
 
 	round: 0,
+	roundsEverStarted: false,
 
 	init: function () {
 
@@ -171,6 +172,7 @@ var World = {
 			if (stateElapsed > data.rounds.duration.roundOver) {
 				this.round++;
 				this.setState("ROUND_READY");
+				this.roundsEverStarted = false; // If player dropped out last round, resart if the re-join.
 			}
 			break;
 

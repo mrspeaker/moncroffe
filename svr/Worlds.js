@@ -37,7 +37,15 @@ var Worlds = {
 		var World = this.worlds[0];
 
 		if (!World.clients.length) {
+			// First person joining.
 			World.resetAll();
+		}
+
+		if (World.clients.length === 1 && !World.roundsEverStarted) {
+			// Second person joining.
+			World.setState("BORN");
+			World.reset(false);
+			World.roundsEverStarted = true;
 		}
 
 		World.initPlayer(client);
