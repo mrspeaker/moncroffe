@@ -41,7 +41,7 @@ var Worlds = {
 			World.resetAll();
 		}
 
-		// If on
+		// Restart if second person joins for the first time
 		if (World.clients.length === 1 && !World.roundsEverStarted) {
 			// Second person joining.
 			World.setState("BORN");
