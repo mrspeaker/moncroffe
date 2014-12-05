@@ -113,7 +113,8 @@ var World = {
 		}
 
 		var stateElapsed = this.stateElapsed = (Date.now() - this.stateStartTime) / 1000,
-			state = this.state;
+			state = this.state,
+			readyDuration;
 
 		this.elapsed = (Date.now() - this.startTime) / 1000;
 
@@ -141,7 +142,11 @@ var World = {
 				this.reset(false);
 				this.stateFirst = false;
 			}
-			if (stateElapsed > data.rounds.duration.roundReady) {
+			readyDuration = this.round === 0 ?
+				data.rounds.duration.firstRoundReady :
+				data.rounds.duration.roundReady;
+
+			if (stateElapsed > readyDuration) {
 				this.setState("ROUND");
 			}
 			break;

@@ -516,11 +516,15 @@
 
 					document.querySelector("#getReadyStage").innerHTML = msg;
 
-					utils.showMsg("#getReady", data.rounds.duration.roundReady - 0.1);
+					var roundDuration = this.round === 0 ?
+						data.rounds.duration.firstRoundReady :
+						data.rounds.duration.roundReady;
+
+					utils.showMsg("#getReady", roundDuration - 0.1);
 					var n = Date.now();
 					(function countdown () {
 
-						var cd = (data.rounds.duration.roundReady * 1000) - (Date.now() - n);
+						var cd = (roundDuration * 1000) - (Date.now() - n);
 						cd = cd / 1000 | 0;
 						document.querySelector("#gameStartsIn").innerHTML = cd;
 						setTimeout(function () {

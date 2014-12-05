@@ -56,7 +56,7 @@ var Worlds = {
 		// Todo: move client logic to player/client.
 		client.on("disconnect", function () {
 
-			console.log("Network:: " + client.userid + " (" + client.userName + ") disconnected");
+			console.log("Network:: " + client.userid + " (" + client.player.name + ") disconnected");
 
 			World.removePlayer(client.userid);
 
@@ -65,20 +65,13 @@ var Worlds = {
 		client.on("join", function (name) {
 
 			// Update name
-			World.players.forEach(function (p) {
-
-				if (client.userid === p.id) {
-					p.name = name;
-				}
-
-			});
+			client.player.name = name;
 
 			client.emit("onconnected", {
 				id: client.userid,
 				seed: World.seed
 			});
 
-			client.userName = name;
 
 		});
 
