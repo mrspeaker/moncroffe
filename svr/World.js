@@ -16,6 +16,7 @@ var World = {
 	targets: [],
 	bullets: [],
 	bouy: null,
+	lastTargetTime: Date.now(),
 
 	flash: false,
 
@@ -201,12 +202,15 @@ var World = {
 		var xo = data.world.midX,
 			zo = data.world.midZ,
 			maxX = data.world.maxX,
-			maxZ = data.world.maxZ;
+			maxZ = data.world.maxZ,
+			now = Date.now();
 
 		this.remaining = this.roundEndTime - this.stateElapsed;
 
 		// Add a target.
-		if (Math.random() < 0.01) {
+		if (now - this.lastTargetTime > data.guideSpawnTime) {
+
+			this.lastTargetTime = now;
 
 			this.targets.push({
 				id: Math.random() * 99999999 | 0,

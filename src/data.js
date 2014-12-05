@@ -35,7 +35,7 @@ var data = {
 		total: 3,
 		duration: {
 			born: 4,
-			firstRoundReady: 8
+			firstRoundReady: 8,
 			roundReady: 4,
 			round: 160,
 			roundOver: 4,
@@ -43,7 +43,8 @@ var data = {
 		}
 	},
 
-	safeTime: 3500
+	safeTime: 3500,
+	guideSpawnTime: 1800
 };
 
 if (typeof module !== "undefined") {
