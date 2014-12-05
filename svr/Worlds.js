@@ -1,7 +1,8 @@
 "use strict";
 
 var World = require("./World.js"),
-	utils = require("./utils.js");
+	utils = require("./utils.js"),
+	data = require("../src/data.js");
 
 var Worlds = {
 
@@ -15,16 +16,14 @@ var Worlds = {
 		this.waitingPlayers = [];
 		this.leaderboards = {};
 
-		// TODO: only 1 world at the moment!
-		// And clients all connect to it automatically.
-		this.addWorld();
-
 		return this;
 	},
 
 	addWorld: function () {
 
+		// TODO: give ID to world
 		var world = Object.create(World).init();
+		console.log("Created new world:", world.id);
 
 		this.worlds.push(world);
 
@@ -32,9 +31,25 @@ var Worlds = {
 
 	},
 
+	getWorld: function () {
+
+		// Find a world with free spots
+		var world = this.worlds.reduce(function (ac, el) {
+			if (ac) return ac;
+			if (el.clients.length < data.world.maxClients) {
+				console.log("Joining world:", el.id);
+				return el;
+			}
+		}, null);
+
+		// ... or create a new one.
+		return world || this.addWorld();
+
+	},
+
 	onClientConnected: function (client) {
 
-		var World = this.worlds[0];
+		var World = this.getWorld();
 
 		if (!World.clients.length) {
 			// First person joining.
@@ -128,7 +143,7 @@ var Worlds = {
 			}
 
 			shotPlayer = shotPlayer[0];
-			if (now - shotPlayer.lastHit < World.data.safeTime) {
+			if (now - shotPlayer.lastHit < data.safeTime) {
 				return;
 			}
 			shotPlayer.lastHit = now;
@@ -196,7 +211,12 @@ var Worlds = {
 		// tick all worlds
 		this.worlds = this.worlds.filter(function (w) {
 
-			return w.tick();
+			var res = w.tick();
+			if (!res) {
+				console.log("World removed: ", w.id);
+			}
+			return res;
+
 		});
 
 	},

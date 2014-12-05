@@ -31,10 +31,16 @@
 			clown.mesh.rotation.x += Math.PI;
 
 			document.querySelector("#playerName").value = Settings.playerName;
-			this.button = document.querySelector("#lezgo");
-			this.button.addEventListener("click", (function joinit () {
-				this.join();
-				this.button.removeEventListener("click", joinit);
+			var join = document.querySelector("#lezgo");
+			join.addEventListener("click", (function joinit () {
+				this.connect();
+				join.removeEventListener("click", joinit);
+			}).bind(this), false);
+
+			var create = document.querySelector("#lezcreate");
+			create.addEventListener("click", (function createit () {
+				this.connect(true);
+				create.removeEventListener("click", createit);
 			}).bind(this), false);
 
 			document.querySelector("#gui").style.display = "none";
@@ -45,14 +51,19 @@
 			return this;
 		},
 
-		join: function () {
+		connect: function (createRoom) {
 			var self = this,
 				name = document.querySelector("#playerName").value,
 				lobby = document.querySelector("#lobby");
 			lobby.style.display = "none";
+
 			if (name !== Settings.playerName) {
 				Settings.playerName = name;
 				main.saveSettings();
+			}
+
+			if (createRoom) {
+				alert("sorry, no private games yet.");
 			}
 
 			Network.init(name, function () {
@@ -66,13 +77,17 @@
 		},
 
 		next: function () {
+
 			this.screen.startGame();
+
 		},
 
 		tick: function () {
+
 			this.clown.mesh.rotation.x += 0.05;
 			this.clown.mesh.rotation.y += 0.055;
 			this.clown.mesh.rotation.z += 0.060;
+
 		}
 
 	};

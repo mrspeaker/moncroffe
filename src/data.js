@@ -28,7 +28,8 @@ var data = {
 		midX: -1,
 		midZ: -1,
 		maxX: -1,
-		maxZ: -1
+		maxZ: -1,
+		maxClients: 2
 	},
 
 	rounds: {

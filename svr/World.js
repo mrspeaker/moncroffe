@@ -6,15 +6,17 @@ var Perlin = require("../lib/Perlin.js"),
 
 var World = {
 
+	id: null,
+
 	seed: 42,
 	startTime: 0,
 	elapsed: 0,
 	stateStartTime: 0,
 
-	clients: [],
-	players: [],
-	targets: [],
-	bullets: [],
+	clients: null,
+	players: null,
+	targets: null,
+	bullets: null,
 	bouy: null,
 	lastTargetTime: Date.now(),
 
@@ -28,6 +30,13 @@ var World = {
 	roundsEverStarted: false,
 
 	init: function () {
+
+		this.id = UUID();
+
+		this.clients = [];
+		this.players = [];
+		this.targets = [];
+		this.bullets = [];
 
 		data.init();
 		this.data = data;
@@ -110,7 +119,7 @@ var World = {
 	tick: function () {
 
 		if (!this.clients.length) {
-			return true;
+			return false;
 		}
 
 		var stateElapsed = this.stateElapsed = (Date.now() - this.stateStartTime) / 1000,

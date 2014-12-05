@@ -115,6 +115,10 @@ body {
 	text-align: center;
 }
 
+#creater {
+	padding-top: 5px;
+}
+
 #bg {
 	display: none;
 	position: absolute;
