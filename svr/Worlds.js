@@ -21,7 +21,6 @@ var Worlds = {
 
 	addWorld: function () {
 
-		// TODO: give ID to world
 		var world = Object.create(World).init();
 		console.log("Created new world:", world.id);
 
@@ -78,6 +77,8 @@ var Worlds = {
 		});
 
 		client.on("join", function (name) {
+
+			//typeof name === "string" && /^[a-z0-9]{3,20}$/.exec(name)
 
 			// Update name
 			client.player.name = name;

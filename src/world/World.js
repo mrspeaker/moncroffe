@@ -363,6 +363,8 @@
 				gold: [[0, 13], [0, 13], [0, 13], [0, 13], [0, 13], [0, 13]]
 			};
 
+			// TODO: um.... this is the same as utils.texturify...
+
 			function getBlock(x, y) {
 				return [
 					new THREE.Vector2(x / 16, y / 16),

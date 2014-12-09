@@ -66,6 +66,24 @@
 			this.addStratosphere();
 			this.updateDayNight();
 
+
+			this.derp = new THREE.Sprite(new THREE.SpriteMaterial({
+				map: THREE.ImageUtils.loadTexture("res/images/terrain.png"),
+				fog: true
+			}));
+			this.derp.position.set(5, 17, 5);
+			this.scene.add(this.derp);
+
+			/*function getBlock(x, y) {
+			return [
+				new THREE.Vector2(x / 16, y / 16),
+				new THREE.Vector2((x + 1) / 16, y / 16),
+				new THREE.Vector2(x / 16, (y + 1) / 16),
+				new THREE.Vector2((x + 1) / 16, (y + 1) / 16)
+			];
+			}*/
+			console.log(this.derp.geometry.getAttribute("uv"), "!!!");//.geometry.faceVertexUvs)
+
 			return this;
 		},
 
