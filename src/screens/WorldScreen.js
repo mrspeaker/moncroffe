@@ -66,23 +66,23 @@
 			this.addStratosphere();
 			this.updateDayNight();
 
-
-			this.derp = new THREE.Sprite(new THREE.SpriteMaterial({
-				map: THREE.ImageUtils.loadTexture("res/images/terrain.png"),
+			var mat = new THREE.SpriteMaterial({
+				map: THREE.ImageUtils.loadTexture("res/images/flake.png"),
+				tranparency: true,
 				fog: true
-			}));
-			this.derp.position.set(5, 17, 5);
-			this.scene.add(this.derp);
+			});
 
-			/*function getBlock(x, y) {
-			return [
-				new THREE.Vector2(x / 16, y / 16),
-				new THREE.Vector2((x + 1) / 16, y / 16),
-				new THREE.Vector2(x / 16, (y + 1) / 16),
-				new THREE.Vector2((x + 1) / 16, (y + 1) / 16)
-			];
-			}*/
-			console.log(this.derp.geometry.getAttribute("uv"), "!!!");//.geometry.faceVertexUvs)
+			this.derps = [];
+			for (var i = 0; i < 1000; i ++) {
+				var derp = new THREE.Sprite(mat);
+
+				var d = data.world.radius * data.chunk.w;
+
+				derp.position.set(Math.random() * d - (d / 2), Math.random() * 19,  Math.random() * d - (d / 2));
+				derp.scale.set(0.1, 0.1, 0.1);
+				this.scene.add(derp);
+				this.derps.push(derp);
+			}
 
 			return this;
 		},
@@ -570,6 +570,13 @@
 			}
 
 			this.stateFirst = false;
+
+			this.derps.forEach(function (d) {
+
+				if ((d.position.y -= 0.05) < 0) {
+					d.position.y = 19;
+				}
+			});
 
 		},
 
