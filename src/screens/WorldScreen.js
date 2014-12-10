@@ -238,7 +238,12 @@
 
 		},
 
-		receiveShotPlayer: function (pid) {
+		receiveShotPlayer: function (hitData) {
+
+			var pid = hitData.hit,
+				byId = hitData.by,
+				hitPlayer = Network.getPlayer(pid),
+				byPlayer = Network.getPlayer(byId);
 
 			if (pid === Network.clientId) {
 				this.player.respawn();
@@ -246,15 +251,24 @@
 				this.flashTime = 100;
 				this.sounds.die.play();
 
-				this.receiveChat([-2, "You were hit."]);
+				this.receiveChat([-2, "You were hit" + (byPlayer ? " by " + byPlayer.name : "")]);
 				return;
 			}
 
-			var player = Network.clients[pid];
-			if (player) {
-				this.explodeParticles(player.model.pos, false);
-				player.blinkTime = 150;
-				this.receiveChat([-2, player.name + " was hit."]);
+			if (hitPlayer) {
+
+				var msg;
+
+				if (byId === Network.clientId) {
+					msg = "You killed " + hitPlayer.name + ".";
+				} else {
+					msg = hitPlayer.name + " was hit" +
+						(byPlayer ? " by " + byPlayer.name : "") + ".";
+				}
+
+				this.explodeParticles(hitPlayer.model.pos, false);
+				hitPlayer.blinkTime = 150;
+				this.receiveChat([-2, msg]);
 			}
 		},
 

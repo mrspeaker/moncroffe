@@ -25,7 +25,7 @@ var data = {
 
 	server: {
 		maxClients: 2,
-	}
+	},
 
 	world: {
 		radius: 2,

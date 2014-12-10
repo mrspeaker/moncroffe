@@ -15,13 +15,17 @@
 
 		world: null,
 
+		getPlayer: function (id) {
+
+			return id === this.clientId ? this : this.clients[id];
+
+		},
+
 		getName: function (id) {
 
-			if (id === this.clientId) {
-				return this.name;
-			}
+			var player = this.getPlayer(id);
 
-			return this.clients[id] ? this.clients[id].name : "???";
+			return player ? player.name : "???";
 
 		},
 
@@ -141,7 +145,6 @@
 		},
 
 		otherFiredBullet: function (bullet) {
-			console.log(bullet);
 
 			main.screen.otherFiredBullet(bullet);
 
@@ -153,9 +156,9 @@
 
 		},
 
-		receiveShotPlayer: function (pid) {
+		receiveShotPlayer: function (hitData) {
 
-			main.screen.receiveShotPlayer(pid);
+			main.screen.receiveShotPlayer(hitData);
 
 		},
 

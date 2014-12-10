@@ -150,7 +150,10 @@ var Worlds = {
 			shotPlayer.lastHit = now;
 
 			World.clients.forEach(function (c) {
-				c.emit("receiveShotPlayer", player);
+				c.emit("receiveShotPlayer", {
+					hit: player,
+					by: client.userid
+				});
 			});
 
 		});
