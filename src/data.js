@@ -23,13 +23,16 @@ var data = {
 		h: 20
 	},
 
+	server: {
+		maxClients: 2,
+	}
+
 	world: {
 		radius: 2,
 		midX: -1,
 		midZ: -1,
 		maxX: -1,
-		maxZ: -1,
-		maxClients: 2
+		maxZ: -1
 	},
 
 	rounds: {

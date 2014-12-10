@@ -35,7 +35,7 @@ var Worlds = {
 		// Find a world with free spots
 		var world = this.worlds.reduce(function (ac, el) {
 			if (ac) return ac;
-			if (el.clients.length < data.world.maxClients) {
+			if (el.clients.length < data.server.maxClients) {
 				console.log("Joining world:", el.id);
 				return el;
 			}

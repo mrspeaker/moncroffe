@@ -141,6 +141,7 @@
 		},
 
 		otherFiredBullet: function (bullet) {
+			console.log(bullet);
 
 			main.screen.otherFiredBullet(bullet);
 
