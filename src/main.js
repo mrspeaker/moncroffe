@@ -1,4 +1,4 @@
-(function (World, utils, THREE, Sound, data, user_settings, TitleScreen, WorldScreen) {
+(function (World, core, utils, THREE, Sound, data, user_settings, TitleScreen, WorldScreen) {
 
 	"use strict";
 
@@ -51,7 +51,7 @@
 
 		initUserSettings: function () {
 
-			var Settings = window.Settings = utils.extend({}, user_settings);
+			var Settings = window.Settings = core.utils.extend({}, user_settings);
 
 			var stored = window.localStorage.getItem("settings");
 			if (stored !== null && stored !== "undefined") {
@@ -347,6 +347,7 @@
 
 }(
 	window.World,
+	window.core,
 	window.utils,
 	window.THREE,
 	window.Sound,

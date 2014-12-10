@@ -50,11 +50,11 @@ Running:
 
 > client
 
+- if join with 1 (or wahtever) second until round, you get 10 second countdown
 - Hit head slide down (and can get stuck in block)
 - Camera goes through block when close, looking on angle
 - Block & face selection wrong when close to blocks
 - Bullet gets stuck when firing close to block
-- Weird CSS display issue "ROUND OVER" with background, isntead of "got box"
 
 > server
 

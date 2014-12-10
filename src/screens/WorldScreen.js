@@ -67,19 +67,28 @@
 			this.updateDayNight();
 
 			var mat = new THREE.SpriteMaterial({
-				map: THREE.ImageUtils.loadTexture("res/images/flake.png"),
+				map: THREE.ImageUtils.loadTexture("res/images/terrain.png"),
 				tranparency: true,
 				fog: true
 			});
 
+			function getBlock(x, y) {
+				return [
+					x / 16, y / 16,
+					(x + 1) / 16, y / 16,
+					x / 16, (y + 1) / 16,
+					(x + 1) / 16, (y + 1) / 16
+				];
+			}
+
 			this.derps = [];
-			for (var i = 0; i < 1000; i ++) {
-				var derp = new THREE.Sprite(mat);
+			var d = data.world.radius * data.chunk.w;
+			for (var i = 0; i < 10; i ++) {
 
-				var d = data.world.radius * data.chunk.w;
+				var derp = new THREE.Sprite( mat, getBlock(Math.random() * 15 | 0, Math.random() * 8 | 0) );
 
-				derp.position.set(Math.random() * d - (d / 2), Math.random() * 19,  Math.random() * d - (d / 2));
-				derp.scale.set(0.1, 0.1, 0.1);
+				derp.position.set(Math.random() * d - (d / 2), Math.random() * 25,  Math.random() * d - (d / 2));
+				//derp.scale.set(0.1, 0.1, 0.1);
 				this.scene.add(derp);
 				this.derps.push(derp);
 			}
@@ -274,7 +283,7 @@
 				msg += " " + (this.round + 1) +
 					" of " + data.rounds.total +
 					". " +
-					(utils.formatTime(this.remaining | 0));
+					(core.utils.formatTime(this.remaining | 0));
 			}
 			utils.msg(msg);
 
@@ -474,7 +483,7 @@
 
 			origin.addScalar(0.5);
 
-			utils.raycast(origin, ob.getDirection(), 5, function (x, y, z, face) {
+			core.utils.raycast(origin, ob.getDirection(), 5, function (x, y, z, face) {
 
 				if (x === "miss") {
 					cursor.hide();
@@ -574,7 +583,7 @@
 			this.derps.forEach(function (d) {
 
 				if ((d.position.y -= 0.05) < 0) {
-					d.position.y = 19;
+					d.position.y = 25;
 				}
 			});
 
@@ -613,7 +622,7 @@
 					// If not to far out into space...
 					if (Math.abs(t.pos.x - xo) < maxX * 1.3 && Math.abs(t.pos.z - zo) < maxZ * 1.3) {
 						var hit = this.bullets.some(function (b) {
-							return b.ownShot && !b.stopped && utils.dist(b.model.pos, t.pos) < t.model.bb.x;
+							return b.ownShot && !b.stopped && core.utils.dist(b.model.pos, t.pos) < t.model.bb.x;
 						});
 						if (hit) {
 							ret = false;
@@ -634,7 +643,7 @@
 				player.tick(dt, camera);
 
 				hit = this.bullets.some(function (b) {
-					return b.ownShot && !b.stopped && utils.dist(b.model.pos, player.model.pos) < 1;
+					return b.ownShot && !b.stopped && core.utils.dist(b.model.pos, player.model.pos) < 1;
 				});
 
 				if (hit) {
@@ -644,7 +653,7 @@
 
 			if (this.bouy) {
 				this.bouy.tick(dt);
-				var dist = utils.dist(this.player.model.pos, this.bouy.model.pos);
+				var dist = core.utils.dist(this.player.model.pos, this.bouy.model.pos);
 				if (dist < 2) {
 					Network.gotBouy();
 					this.bouy.mesh.position.set(0, -1, 0);

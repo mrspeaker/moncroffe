@@ -1,7 +1,7 @@
 "use strict";
 
 var World = require("./World.js"),
-	utils = require("./utils.js"),
+	utils = require("../src/core.js"),
 	data = require("../src/data.js");
 
 var Worlds = {
@@ -177,7 +177,7 @@ var Worlds = {
 				World.players = World.players.map(function (p) {
 
 					if (p.id === pid) {
-						if (utils.dist(p.pos, World.bouy) > 4) {
+						if (core.utils.dist(p.pos, World.bouy) > 4) {
 							console.log("hmmm... cheaty?");
 							legit = false;
 						} else {

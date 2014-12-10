@@ -35,7 +35,7 @@
 
 		createChunks: function () {
 
-			var chunks = utils.spiral2D(this.radius)
+			var chunks = core.utils.spiral2D(this.radius)
 
 				// Create the chunk data
 				.map(function (ch) {
