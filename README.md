@@ -41,7 +41,6 @@ Running:
 - Explain goal in titlescreen
 - disconnect-y screen instead of pointerlock
 - leaderboard (session)
-- can't die when joined
 
 ## Bugz
 

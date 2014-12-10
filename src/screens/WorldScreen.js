@@ -213,6 +213,15 @@
 
 		},
 
+		setEveryoneSafeBlinky: function () {
+			for (var p in Network.clients) {
+
+				var player = Network.clients[p];
+				// todo: 150 magic number
+				player.blinkTime = 150;
+			}
+		},
+
 		clownDestroyed: function (id) {
 			this.targets = this.targets.filter(function (t) {
 				var deadPump = t.id === id;
@@ -267,6 +276,7 @@
 				}
 
 				this.explodeParticles(hitPlayer.model.pos, false);
+				// todo: 150 magic number
 				hitPlayer.blinkTime = 150;
 				this.receiveChat([-2, msg]);
 			}
@@ -583,6 +593,7 @@
 					if (!this.doneInitialReset) {
 						this.reset();
 					}
+					this.setEveryoneSafeBlinky();
 				}
 				this.tick_ROUND(dt);
 				break;

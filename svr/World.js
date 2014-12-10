@@ -170,6 +170,7 @@ var World = {
 			if (this.stateFirst) {
 				this.roundEndTime = stateElapsed + data.rounds.duration.round;
 				this.stateFirst = false;
+				this.setEveryoneSafe();
 			}
 			if (stateElapsed > this.roundEndTime) {
 				this.setState("ROUND_OVER");
@@ -211,6 +212,14 @@ var World = {
 		}
 
 		return true;
+
+	},
+
+	setEveryoneSafe: function () {
+
+		this.clients.forEach(function (c) {
+			c.lastHit = Date.now();
+		});
 
 	},
 
