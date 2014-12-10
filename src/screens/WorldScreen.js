@@ -518,11 +518,13 @@
 		tick: function (dt) {
 
 			switch (this.state) {
+
 			case "BORN":
 				if (this.stateFirst) {
 					this.reset();
 				}
 				break;
+
 			case "ROUND_READY":
 				if (this.stateFirst) {
 					// Shoot up in the air
@@ -561,6 +563,7 @@
 					}());
 				}
 				break;
+
 			case "ROUND":
 				if (this.stateFirst) {
 					if (!this.doneInitialReset) {

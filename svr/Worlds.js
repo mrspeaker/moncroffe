@@ -1,7 +1,7 @@
 "use strict";
 
 var World = require("./World.js"),
-	utils = require("../src/core.js"),
+	core = require("../src/core.js"),
 	data = require("../src/data.js");
 
 var Worlds = {
