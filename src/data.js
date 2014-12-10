@@ -39,9 +39,9 @@ var data = {
 		total: 3,
 		duration: {
 			born: 4,
-			firstRoundReady: 8,
+			firstRoundReady: 4,
 			roundReady: 4,
-			round: 160,
+			round: 10,
 			roundOver: 4,
 			gameOver: 10
 		}

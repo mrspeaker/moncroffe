@@ -149,6 +149,10 @@ var Worlds = {
 			}
 			shotPlayer.lastHit = now;
 
+			// TODO: move these to player.stats?
+			client.stats.hits++;
+			shotPlayer.stats.deaths++;
+
 			World.clients.forEach(function (c) {
 				c.emit("receiveShotPlayer", {
 					hit: player,

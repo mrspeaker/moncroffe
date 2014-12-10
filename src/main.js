@@ -194,7 +194,9 @@
 			window.addEventListener("resize", this.setCameraDimensions.bind(this), false);
 
 			// Hide all the HUDS
-			document.querySelector("#bg > div").style.display = "none";
+			Array.prototype.slice.call(document.querySelectorAll("#bg > div")).forEach(function (el) {
+				el.style.display = "none";
+			});
 
 			var self = this;
 			document.querySelector("#chatMsg").addEventListener("keydown", function (e) {

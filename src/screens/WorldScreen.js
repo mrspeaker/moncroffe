@@ -67,7 +67,7 @@
 			this.updateDayNight();
 
 			var mat = new THREE.SpriteMaterial({
-				map: THREE.ImageUtils.loadTexture("res/images/terrain.png"),
+				map: THREE.ImageUtils.loadTexture("res/images/flake.png"),
 				tranparency: true,
 				fog: true
 			});
@@ -83,12 +83,12 @@
 
 			this.derps = [];
 			var d = data.world.radius * data.chunk.w;
-			for (var i = 0; i < 10; i ++) {
+			for (var i = 0; i < 500; i ++) {
 
 				var derp = new THREE.Sprite( mat, getBlock(Math.random() * 15 | 0, Math.random() * 8 | 0) );
 
 				derp.position.set(Math.random() * d - (d / 2), Math.random() * 25,  Math.random() * d - (d / 2));
-				//derp.scale.set(0.1, 0.1, 0.1);
+				derp.scale.set(0.1, 0.1, 0.1);
 				this.scene.add(derp);
 				this.derps.push(derp);
 			}
@@ -346,8 +346,8 @@
 			});
 
 			if (setWinnerName) {
-				var winners = this.getLeaders();
-				document.querySelector("#gameOverWin").innerHTML = winners;
+				//var winners = this.getLeaders();
+				//document.querySelector("#gameOverWin").innerHTML = winners;
 			}
 
 
@@ -589,7 +589,7 @@
 
 			case "ROUND_OVER":
 				if (this.stateFirst && this.round < data.rounds.total - 1 ) {
-					document.querySelector("#roundWinner").innerHTML = this.getLeaders();
+					//document.querySelector("#roundWinner").innerHTML = this.getLeaders();
 					utils.showMsg("#roundOver", data.rounds.duration.roundOver - 0.5);
 				}
 				break;
@@ -830,6 +830,23 @@
 
 
 			document.querySelector("#chatLog").innerHTML = post + "<br/>" + inner;
+
+		},
+
+		receiveScores: function (scores) {
+
+			//console.log(this.state);
+
+			//if (this.state === "ROUND_OVER") {
+				var html = scores.map(function (s) {
+					return Network.getName(s.id) +
+						". Finds: " + s.score +
+						" | Kills:" + s.hits +
+						" | Deaths:" + s.deaths;
+				}).join("<br/>");
+				document.querySelector("#roundWinner").innerHTML = html;
+				document.querySelector("#gameOverWin").innerHTML = html;
+			//}
 
 		}
 

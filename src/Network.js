@@ -52,6 +52,9 @@
 			this.socket.on("otherFiredBullet", this.otherFiredBullet.bind(this));
 			this.socket.on("receiveShotPlayer", this.receiveShotPlayer.bind(this));
 			this.socket.on("receiveChat", this.receiveChat.bind(this));
+			this.socket.on("scores", function (s) {
+				main.screen.receiveScores(s);
+			});
 
 			// Let's go!
 			this.socket.emit("join", name);

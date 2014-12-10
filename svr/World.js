@@ -60,6 +60,11 @@ var World = {
 			rot: { x: 0, z: 0}
 		};
 
+		client.stats = {
+			hits: 0,
+			deaths: 0
+		};
+
 		this.clients.push(client);
 		this.players.push(player);
 
@@ -182,6 +187,8 @@ var World = {
 					this.setState("GAME_OVER");
 					break;
 				}
+
+				this.sendHi();
 			}
 
 			if (stateElapsed > data.rounds.duration.roundOver) {
@@ -194,6 +201,7 @@ var World = {
 		case "GAME_OVER":
 			if (this.stateFirst) {
 				this.stateFirst = false;
+				this.sendHi();
 			}
 
 			if (stateElapsed > data.rounds.duration.gameOver) {
@@ -203,6 +211,38 @@ var World = {
 		}
 
 		return true;
+
+	},
+
+	sendHi: function () {
+
+		var his = this.clients.map(function (c) {
+
+			return {
+				id: c.userid,
+				score: c.player.score,
+				hits: c.stats.hits,
+				deaths: c.stats.deaths
+			};
+
+		}).sort(function (a, b) {
+
+			if (a.score != b.score) {
+				return b.score = a.score;
+			}
+			if (a.hits != b.hits) {
+				return b.hits - a.hits;
+			}
+			if (a.deaths != b.deaths) {
+				return b.deaths - a.deaths;
+			}
+			return Math.random() < 0.5;
+
+		});
+
+		this.clients.forEach(function (c) {
+			c.emit("scores", his);
+		});
 
 	},
 
