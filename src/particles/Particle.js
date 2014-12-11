@@ -27,6 +27,7 @@
 			));
 
 			this.dir = dir;
+			this.speedOffset = (Math.random() * 10) / 100;
 
 			return this;
 		},
@@ -34,7 +35,7 @@
 		tick: function (dt) {
 
 			var m = this.mesh,
-				pow = dt * 2,
+				pow = dt * 2 + (dt * this.speedOffset),
 				stageOne = this.count / this.life <= 0.25,
 				stageTwo = !stageOne;
 
