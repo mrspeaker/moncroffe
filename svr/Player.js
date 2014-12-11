@@ -1,8 +1,10 @@
 var Player = {
 
-	model: {},
+	model: null,
 
 	init: function () {
+
+		this.model = {};
 
 	}
 

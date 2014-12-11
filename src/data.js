@@ -24,7 +24,7 @@ var data = {
 	},
 
 	server: {
-		maxClients: 4,
+		maxClients: 5,
 	},
 
 	world: {
@@ -48,7 +48,7 @@ var data = {
 	},
 
 	safeTime: 3500,
-	guideSpawnTime: 1400
+	guideSpawnTime: 1000
 
 };
 

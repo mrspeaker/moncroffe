@@ -11,7 +11,7 @@
 		lastPingSent: null,
 		lastPingRec: null,
 
-		clients: {},
+		clients: null,
 
 		world: null,
 
@@ -30,6 +30,8 @@
 		},
 
 		init: function (name, joinCb) {
+
+			this.clients = {};
 
 			this.lastPingSent = Date.now();
 			this.lastPingRec = Date.now();

@@ -35,15 +35,24 @@
 		tick: function (dt) {
 
 			var m = this.mesh,
-				pow = dt * 2 + (dt * this.speedOffset),
+				pow = dt + (dt * this.speedOffset),
 				stageOne = this.count / this.life <= 0.25,
 				stageTwo = !stageOne;
 
 			if (stageOne) {
-				m.translateX(pow);
-				m.translateY(pow);
+				//m.translateX(pow);
+				//m.translateY(pow);
+				m.position.y += pow + pow;
+
+				m.rotation.x += 0.1;
+				m.rotation.y += 0.11;
+				m.rotation.z += 0.12;
+
+			} else {
+				m.translateX(pow / 2);
+				m.translateY(pow / 2);
+				m.translateZ(pow + pow + pow);
 			}
-			m.translateZ(pow + pow + pow);
 
 			if (this.dir && stageTwo) {
 				this.mesh.lookAt(this.dir);

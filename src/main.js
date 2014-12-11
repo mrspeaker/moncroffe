@@ -286,7 +286,7 @@
 				//color		: 0xff44aa,
 				depthWrite	: false,
 				transparent	: true,
-				opacity: 0.5
+				opacity: 0.75
 			});
 
 			m.blocks = new THREE.MeshLambertMaterial({
