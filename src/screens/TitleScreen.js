@@ -53,7 +53,7 @@
 
 		connect: function (createRoom) {
 			var self = this,
-				name = document.querySelector("#playerName").value,
+				name = core.utils.cleanInput(document.querySelector("#playerName").value),
 				lobby = document.querySelector("#lobby");
 			lobby.style.display = "none";
 

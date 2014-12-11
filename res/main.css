@@ -168,3 +168,10 @@ body {
 	color: hsl(100, 50%, 60%);
 	font-weight: bold;
 }
+
+#his {
+	background-color: rgba(0, 0, 0, 0.5);
+}
+#his > tr {
+	font-weight: bold;
+}

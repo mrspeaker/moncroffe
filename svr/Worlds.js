@@ -78,11 +78,7 @@ var Worlds = {
 
 		client.on("join", function (name) {
 
-			//typeof name === "string" && /^[a-z0-9]{3,20}$/.exec(name)
-			name = name.replace(/\s/g, "_").replace(/[^a-zA-Z0-9\-_\.\!\?']*/g, "").slice(0, 15);
-			if (name.length < 3) {
-				name += "_" + (Date.now() + "").slice(-4);
-			}
+			name = core.utils.cleanInput(name, 3, 15);
 
 			// Update name
 			client.player.name = name;

@@ -751,6 +751,8 @@
 
 		// Sees if the coast is clear to move a given amount
 		// cur position (xyz), bounding box (xyz), move amount (xyz)
+
+		// TODO: needs to be moved to server, pass in world dep.
 		tryMove: function (p, bb, move) {
 
 			var block = this.world.isBlockAt.bind(this.world);
@@ -846,18 +848,48 @@
 
 		receiveScores: function (scores) {
 
-			//console.log(this.state);
+			var els = ["<table style='display:inline-block' border=1 id='his'>"],
+				html;
 
-			//if (this.state === "ROUND_OVER") {
-				var html = scores.map(function (s) {
-					return Network.getName(s.id) +
-						". Finds: " + s.score +
-						" | Kills:" + s.hits +
-						" | Deaths:" + s.deaths;
-				}).join("<br/>");
-				document.querySelector("#roundWinner").innerHTML = html;
-				document.querySelector("#gameOverWin").innerHTML = html;
-			//}
+			els.push(
+				"<tr>" +
+				"<td>#</td>" +
+				"<td>Player</td>" +
+				"<td>Finds</td>" +
+				"<td>Kills</td>" +
+				"<td>Deaths</td>" +
+				"</tr>"
+			);
+
+			els.push(
+				scores.map(function (s, i) {
+
+					return "<tr>" +
+						[
+							i + 1,
+							Network.getName(s.id),
+							s.score,
+							s.hits,
+							s.deaths
+						].map(function (d) {
+
+							return "<td>" + d + "</td>";
+
+						}).join("") +
+						"</tr>";
+
+				}).join("")
+			);
+
+			els.push("</table></div>");
+			html = els.join("\n");
+
+			console.log(html);
+
+			document.querySelector("#roundWinner").innerHTML = html;
+			// TODO: duplicated
+			document.querySelector("#gameOverWin").innerHTML = html;
+
 
 		}
 
