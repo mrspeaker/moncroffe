@@ -156,7 +156,7 @@
 			var uniforms = this.stratosphere.uniforms = {
 				topColor: { type: "c", value: new THREE.Color(0x88C4EC) },
 				bottomColor: { type: "c", value: new THREE.Color(0xE8D998) },
-				offset: { type: "f", value: 40 },
+				offset: { type: "f", value: 90 },
 				exponent: { type: "f", value: 0.6 }
 			};
 
@@ -196,6 +196,11 @@
 		},
 
 		explodeParticles: function (pos, isClown, dir) {
+
+			if (!pos) {
+				console.error("no pos?", pos, isClown, dir);
+				return;
+			}
 
 			for (var i = 0; i < 10; i++) {
 				var p = Object.create(Particle).init(
@@ -388,24 +393,14 @@
 				if (!this.bouy) {
 					this.addBouy();
 				}
-				var bouyPos = this.bouy.model.pos;
+				var bouyPos = this.bouy.model.origPos;
 
 				if (ping.bouy.x !== bouyPos.x ||
 					ping.bouy.y !== bouyPos.y ||
  					ping.bouy.z !== bouyPos.z) {
 
 					// Set the new pos
-					this.bouy.model.pos = {
-						x: ping.bouy.x,
-						y: ping.bouy.y,
-						z: ping.bouy.z
-					};
-
-					this.bouy.mesh.position.set(
-						ping.bouy.x,
-						ping.bouy.y,
-						ping.bouy.z
-					);
+					this.bouy.setPos(ping.bouy);
 
 					// Update the targets
 					this.targets.forEach(function (t) {
@@ -883,8 +878,6 @@
 
 			els.push("</table></div>");
 			html = els.join("\n");
-
-			console.log(html);
 
 			document.querySelector("#roundWinner").innerHTML = html;
 			// TODO: duplicated

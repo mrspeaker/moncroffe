@@ -9,13 +9,14 @@
 		count: 0,
 
 		remove: false,
-		speed: 0.5,
+		speed: 0.3,
 
 		init: function (material) {
 
 			this.model = {
 				bb: { x: 1.5, y: 1.5, z: 1.5 },
-				pos: { x: 0, y: 0, z: 0 }
+				pos: { x: 0, y: 0, z: 0 },
+				origPos: { x: 0, y: 0, z: 0 }
 			};
 
 			var geom = utils.texturify(
@@ -31,13 +32,36 @@
 
 		},
 
+		setPos: function (pos) {
+
+			this.model.pos = {
+				x: pos.x,
+				y: pos.y,
+				z: pos.z
+			};
+
+			this.model.origPos = {
+				x: pos.x,
+				y: pos.y,
+				z: pos.z
+			};
+
+			this.mesh.position.set(
+				pos.x,
+				pos.y,
+				pos.z
+			);
+		},
+
 		tick: function (dt) {
 
 			var m = this.mesh,
 				pos = m.position,
-				pow = Math.sin(Date.now() / 1000) * dt * this.speed;
+				pow = Math.sin(Date.now() / 800) * dt * this.speed;
 
-			//m.translateY(pow);
+			m.translateY(pow);
+			pos.x += (Math.random() * 0.04) - 0.02;
+			pos.z += (Math.random() * 0.04) - 0.02;
 
 			return !(this.remove);
 		}
