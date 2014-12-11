@@ -10,6 +10,9 @@ var express = require("express"),
 app.get("/", function(req, res){
 	res.sendFile("index.html", {"root": "../"});
 });
+app.get("/test.html", function(req, res){
+	res.sendFile("test.html", {"root": "../"});
+});
 
 Worlds.init();
 

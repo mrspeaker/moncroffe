@@ -4,14 +4,7 @@
 
 	var Clown = {
 
-		model: {
-			pos: { x: 0, y: 0, z: 0},
-			bb: {
-				x: 1.5,
-				y: 1.5,
-				z: 1.5
-			}
-		},
+		model: null,
 
 		count: 0,
 
@@ -19,6 +12,15 @@
 		speed: 0,
 
 		init: function (id, pos, direction, speed, material) {
+
+			this.model = {
+				pos: { x: 0, y: 0, z: 0},
+				bb: {
+					x: 1.5,
+					y: 1.5,
+					z: 1.5
+				}
+			};
 
 			this.id = id;
 

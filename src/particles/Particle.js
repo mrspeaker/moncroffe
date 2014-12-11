@@ -42,7 +42,7 @@
 				m.translateX(pow);
 				m.translateY(pow);
 			}
-			m.translateZ(pow);
+			m.translateZ(pow + pow + pow);
 
 			if (this.dir && stageTwo) {
 				this.mesh.lookAt(this.dir);

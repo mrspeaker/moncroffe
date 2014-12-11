@@ -7,10 +7,7 @@
 		stopped: false,
 		ownShot: true,
 
-		model: {
-			pos: { x: 0, y: 0, z: 0 },
-			bb: { x: 0.15, y: 0.10, z: 1.15 }
-		},
+		model: null,
 
 		count: 0,
 		life: 30,
@@ -20,6 +17,11 @@
 		velocity: 40,
 
 		init: function (pos, direction, material) {
+
+			this.model = {
+				pos: { x: 0, y: 0, z: 0 },
+				bb: { x: 0.15, y: 0.10, z: 1.15 }
+			};
 
 			this.mesh = new THREE.Mesh(
 				new THREE.BoxGeometry(this.model.bb.x, this.model.bb.y, this.model.bb.z),

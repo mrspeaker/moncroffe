@@ -11,16 +11,18 @@
 		mesh: null,
 		marker: null,
 
-		model: {
-			bb: { x: 0.7, y: 1.9, z: 0.7 },
-			pos: { x: 0, y: 19, z: 0 },
-			spawn: { x: 0, y: 19, z: 0 },
-			rot: 0,
-			vel: { x: 0, y: 0, z: 0 },
-			tool: 1
-		},
+		model: null,
 
 		init: function (screen) {
+
+			this.model = {
+				bb: { x: 0.7, y: 1.9, z: 0.7 },
+				pos: { x: 0, y: 19, z: 0 },
+				spawn: { x: 0, y: 19, z: 0 },
+				rot: 0,
+				vel: { x: 0, y: 0, z: 0 },
+				tool: 1
+			};
 
 			this.screen = screen;
 

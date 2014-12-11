@@ -250,7 +250,9 @@ var World = {
 		});
 
 		this.clients.forEach(function (c) {
+
 			c.emit("scores", his);
+
 		});
 
 	},

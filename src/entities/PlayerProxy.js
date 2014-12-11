@@ -4,15 +4,17 @@
 
 	var PlayerProxy = {
 
-		model: {
-			bb: { x: 0.7, y: 1.9, z: 0.7 },
-			pos: { x: 0, y: 0, z: 0 },
-			rot: 0
-		},
+		model: null,
 
 		blinkTime: 0,
 
 		init: function (id, name) {
+
+			this.model = {
+				bb: { x: 0.7, y: 1.9, z: 0.7 },
+				pos: { x: 0, y: 0, z: 0 },
+				rot: 0
+			};
 
 			this.id = id;
 			this.name = name;

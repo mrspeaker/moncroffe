@@ -2,7 +2,7 @@ html,body{ height:100%; }
 body {
 	margin: 0;
 	padding: 0;
-	font-family: helvetica, arial, sans-serif;
+	font-family: 'Finger Paint', helvetica, arial, sans-serif;
 	color: #F4F2D3;
 	background-color: #222222;
 
@@ -52,11 +52,11 @@ body {
 #watch {
 	width: 300px;
 	height: 180px;
-	font-size: 11pt;
+	font-size: 12pt;
 	position:absolute;
 	top: 5px;
 	left: 5px;
-	font-family: monospace;
+	/*font-family: monospace;*/
 }
 
 #gui {
@@ -142,6 +142,7 @@ body {
 	left: 0;
 	bottom: 0;
 	margin-left: 3px;
+	font-family: helvetica, arial, sans-serif;
 }
 #chatLog {
 	font-size: 8pt;

@@ -24,7 +24,7 @@ var data = {
 	},
 
 	server: {
-		maxClients: 2,
+		maxClients: 4,
 	},
 
 	world: {
@@ -38,17 +38,18 @@ var data = {
 	rounds: {
 		total: 3,
 		duration: {
-			born: 4,
-			firstRoundReady: 4,
+			born: 5,
+			firstRoundReady: 6,
 			roundReady: 4,
-			round: 10,
+			round: 2.5 * 60,
 			roundOver: 4,
 			gameOver: 10
 		}
 	},
 
 	safeTime: 3500,
-	guideSpawnTime: 1800
+	guideSpawnTime: 1400
+
 };
 
 if (typeof module !== "undefined") {
