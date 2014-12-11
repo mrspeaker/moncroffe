@@ -7,6 +7,8 @@
 		playerName: "Steak Styles " + (Math.random() * 1000 | 0),
 
 		mouse_sensitivity: 1.0, // * 1000
+		invert_mouse: false,
+
 		up: [38, 87], // up, W
 		down: [40, 83], // down, s
 		left: [37, 65], // left, a

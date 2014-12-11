@@ -55,7 +55,7 @@
 
 			var stored = window.localStorage.getItem("settings");
 			if (stored !== null && stored !== "undefined") {
-				window.Settings = JSON.parse(stored);
+				window.Settings = core.utils.extend(window.Settings, JSON.parse(stored));
 			} else {
 				this.saveSettings();
 			}
@@ -182,6 +182,10 @@
 					if (this.vrControls) {
 						this.vrControls.zeroSensor();
 					}
+				}
+
+				if (e.keyCode === 53 /*5*/) {
+					Settings.invert_mouse = !Settings.invert_mouse;
 				}
 
 				if (e.keyCode === 84) {
