@@ -227,6 +227,8 @@ var World = {
 
 		var his = this.clients.map(function (c) {
 
+			console.log("c.player.score", c.player.score);
+
 			return {
 				id: c.userid,
 				score: c.player.score,
@@ -236,18 +238,20 @@ var World = {
 
 		}).sort(function (a, b) {
 
-			if (a.score != b.score) {
-				return b.score = a.score;
+			if (a.score !== b.score) {
+				return b.score - a.score;
 			}
-			if (a.hits != b.hits) {
+
+			if (a.hits !== b.hits) {
 				return b.hits - a.hits;
 			}
-			if (a.deaths != b.deaths) {
+			if (a.deaths !== b.deaths) {
 				return b.deaths - a.deaths;
 			}
 			return Math.random() < 0.5;
 
 		});
+
 
 		this.clients.forEach(function (c) {
 
