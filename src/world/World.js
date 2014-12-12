@@ -320,6 +320,9 @@
 							if (y < 16 && val > 0) {
 								type = y < 8 && val2 < -0.1 ? "stone" : "grass";
 							}
+							/*if (val < -0.75) {//} && Math.abs(val) < 0.02) {
+								this.screen.waypoints.push([x + (xo * chW), y, z + (zo * chW)]);
+							}*/
 						}
 
 						// Lil bit of gold

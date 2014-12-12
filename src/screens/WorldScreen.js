@@ -44,6 +44,8 @@
 
 		init: function (screen) {
 
+			this.waypoints = [];
+
 			this.sounds = {
 				shoot: Object.create(Sound).init("res/audio/laz1", 0.15),
 				die: Object.create(Sound).init("res/audio/dead", 0.9),
@@ -108,6 +110,29 @@
 			this.doneInitialReset = true;
 
 			//this.player.syncControls();
+		},
+
+
+		addWayPoints: function () {
+
+			// Testing ai
+			this.waypoints.forEach(function (w) {
+
+				var mesh = new THREE.Mesh(
+					utils.texturify(
+						new THREE.CubeGeometry(0.5),
+						[[4, 9], [4, 9], [4, 9], [4, 9], [5, 9], [5, 9]]
+					),
+					data.materials.target
+				);
+
+				mesh.position.set(w[0], w[1], w[2]);
+
+				this.scene.add(mesh);
+
+
+			}, this);
+
 		},
 
 		addBouy: function () {
