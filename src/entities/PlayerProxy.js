@@ -22,13 +22,42 @@
 
 			this.mesh = new THREE.Object3D();
 
-			this.body = new THREE.Mesh(
-				new THREE.BoxGeometry(this.model.bb.x, this.model.bb.y, this.model.bb.z),
-				new THREE.MeshBasicMaterial({
-	   				color: 0x992277,
-	   				opacity: 0.8,
-   					transparent: true
-				}));
+			var body = this.body = new THREE.Object3D();
+			var mat = new THREE.MeshBasicMaterial({
+   				color: 0x992277
+			});
+
+			function addBit (w, h, d, x, y, z) {
+				var mesh = new THREE.Mesh(
+					new THREE.BoxGeometry(w, h, d),
+					mat
+				);
+				mesh.position.set(x, y, z);
+				body.add(mesh);
+				return mesh;
+			}
+
+			//addBit(this.model.bb.x, this.model.bb.y, this.model.bb.z, 0, 0, 0);
+
+			addBit(this.model.bb.x, 0.6, this.model.bb.z, 0, -0.15, 0);
+
+			this.arm1 = addBit(0.2, 0.7, 0.3, -(this.model.bb.x / 2) - 0.1, -0.2, 0);
+			this.arm2 =addBit(0.2, 0.7, 0.3, (this.model.bb.x / 2) + 0.1, -0.2, 0);
+
+			addBit(0.3, 0.5, 0.3, -(this.model.bb.x / 2) + 0.15, -0.7, 0);
+			addBit(0.3, 0.5, 0.3, (this.model.bb.x / 2) - 0.15, -0.7, 0);
+
+			var geom = utils.texturify(
+				new THREE.CubeGeometry(0.8),
+				[[8, 8], [6, 8], [6, 8], [6, 8], [7, 9], [6, 9]]);
+			var mesh = new THREE.Mesh(
+				geom,
+				data.materials.target
+			);
+			mesh.position.set(0, 0.55, 0)
+			mesh.rotation.y += Math.PI;
+
+			body.add(mesh)
 
 			this.mesh.add(this.body);
 
@@ -54,6 +83,11 @@
 
 			this.label.position.set(0, this.model.bb.y / 2 + 0.3, 0);
 			this.mesh.add(this.label);
+		},
+
+		rottt: function () {
+			this.body.rotation.y += 0.01;
+			this.body.position.y += Math.sin(Date.now() / 1000) * 0.01;
 		},
 
 		tick: function (dt, lookAt) {

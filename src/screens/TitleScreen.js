@@ -26,9 +26,15 @@
 					0,
 					data.materials.target);
 			this.clown = clown;
-			this.scene.add(clown.mesh);
+			//this.scene.add(clown.mesh);
 
 			clown.mesh.rotation.x += Math.PI;
+
+			this.pp = Object.create(PlayerProxy).init(1, "heyhey");
+			this.pp.mesh.position.set(0, 0, -3);
+			this.pp.mesh.rotation.y += 3;
+
+			this.scene.add(this.pp.mesh);
 
 			document.querySelector("#playerName").value = Settings.playerName;
 			var join = document.querySelector("#lezgo"),
@@ -92,6 +98,8 @@
 			this.clown.mesh.rotation.x += 0.05;
 			this.clown.mesh.rotation.y += 0.055;
 			this.clown.mesh.rotation.z += 0.060;
+
+			this.pp.rottt();
 
 		}
 
