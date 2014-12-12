@@ -189,7 +189,6 @@ var Worlds = {
 							legit = false;
 						} else {
 							p.score++;
-							console.log(p.name, p.score);
 						}
 					}
 					return p;

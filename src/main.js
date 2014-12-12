@@ -35,7 +35,7 @@
 			this.initUserSettings();
 			this.init3d();
 
-			this.screen = Object.create(TitleScreen).init(this);
+			this.reset();
 
 			var self = this;
 			utils.bindPointerLock(function (state) {
@@ -46,7 +46,12 @@
 
 			this.run();
 
-			utils.msg("");
+		},
+
+		reset: function () {
+
+			this.screen = Object.create(TitleScreen).init(this);
+
 		},
 
 		initUserSettings: function () {

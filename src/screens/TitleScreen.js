@@ -31,22 +31,27 @@
 			clown.mesh.rotation.x += Math.PI;
 
 			document.querySelector("#playerName").value = Settings.playerName;
-			var join = document.querySelector("#lezgo");
-			join.addEventListener("click", (function joinit () {
-				this.connect();
-				join.removeEventListener("click", joinit);
-			}).bind(this), false);
+			var join = document.querySelector("#lezgo"),
+				joinHandler = function () {
+					join.removeEventListener("click", joinHandler, false);
+					this.connect();
+				}.bind(this);
+			join.addEventListener("click", joinHandler, false);
 
-			var create = document.querySelector("#lezcreate");
-			create.addEventListener("click", (function createit () {
-				this.connect(true);
-				create.removeEventListener("click", createit);
-			}).bind(this), false);
+			var create = document.querySelector("#lezcreate"),
+				createHandler = function () {
+					create.removeEventListener("click", createHandler);
+					this.connect(true);
+				}.bind(this);
+			create.addEventListener("click", createHandler, false);
 
 			document.querySelector("#gui").style.display = "none";
 			document.querySelector("#cursor").style.display = "none";
 			document.querySelector("#blocker").style.display = "none";
 			document.querySelector("#instructions").style.display = "none";
+
+			document.querySelector("#lobby").style.display = "block";
+			utils.msg(" ");
 
 			return this;
 		},

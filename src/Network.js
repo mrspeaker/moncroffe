@@ -41,25 +41,54 @@
 			};
 
 			this.name = name;
-			this.socket = window.io();
+
+			if (this.socket) {
+				// TODO: figure out reconnecting, restarting!
+				this.socket.emit("join", name);
+				return this;
+			}
+
+			var socket = this.socket = window.io(window.location.host,  {
+				reconnection: true
+			});
+
+			// socket.io.on('connect_error', function (obj) {
+			//     // does not fire
+			//     console.log("connect_error");
+			//     main.reset();
+			// });
+			// socket.io.on('connect_timeout', function (obj) {
+			//     // does not fire
+			//     console.log("connect_timeout");
+			//     main.reset();
+			// });
+
+			socket.io.on("reconnect", function () {
+				//main.reset();
+				// TODO: lol.
+				socket.io.disconnect();
+				setTimeout(function () {
+					window.location.href = window.location.href;
+				}, 250);
+			});
 
 			// Listeners
-			this.socket.on("onconnected", (function (data) {
+			socket.on("onconnected", (function (data) {
 				this.connectedReceived(data, joinCb);
 			}).bind(this));
-			this.socket.on("ping", this.pingReceived.bind(this));
-			this.socket.on("dropped", this.dropReceived.bind(this));
+			socket.on("ping", this.pingReceived.bind(this));
+			socket.on("dropped", this.dropReceived.bind(this));
 
-			this.socket.on("clownDestroyed", this.clownDestroyed.bind(this));
-			this.socket.on("otherFiredBullet", this.otherFiredBullet.bind(this));
-			this.socket.on("receiveShotPlayer", this.receiveShotPlayer.bind(this));
-			this.socket.on("receiveChat", this.receiveChat.bind(this));
-			this.socket.on("scores", function (s) {
+			socket.on("clownDestroyed", this.clownDestroyed.bind(this));
+			socket.on("otherFiredBullet", this.otherFiredBullet.bind(this));
+			socket.on("receiveShotPlayer", this.receiveShotPlayer.bind(this));
+			socket.on("receiveChat", this.receiveChat.bind(this));
+			socket.on("scores", function (s) {
 				main.screen.receiveScores(s);
 			});
 
 			// Let's go!
-			this.socket.emit("join", name);
+			socket.emit("join", name);
 
 			return this;
 		},

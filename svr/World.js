@@ -227,8 +227,6 @@ var World = {
 
 		var his = this.clients.map(function (c) {
 
-			console.log("c.player.score", c.player.score);
-
 			return {
 				id: c.userid,
 				score: c.player.score,
