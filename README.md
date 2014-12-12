@@ -39,6 +39,7 @@ Running:
 ## Next todos
 
 - Explain goal in titlescreen
+- allow restart to titlescreen
 - disconnect-y screen instead of pointerlock
 - leaderboard (session)
 

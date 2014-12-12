@@ -57,6 +57,7 @@
 			//     console.log("connect_error");
 			//     main.reset();
 			// });
+
 			// socket.io.on('connect_timeout', function (obj) {
 			//     // does not fire
 			//     console.log("connect_timeout");
