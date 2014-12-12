@@ -30,9 +30,8 @@
 
 			clown.mesh.rotation.x += Math.PI;
 
-			this.pp = Object.create(PlayerProxy).init(1, "heyhey");
+			this.pp = Object.create(PlayerProxy).init(1, " ");
 			this.pp.mesh.position.set(0, 0, -3);
-			this.pp.mesh.rotation.y += 3;
 
 			this.scene.add(this.pp.mesh);
 

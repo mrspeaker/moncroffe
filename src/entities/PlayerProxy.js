@@ -8,11 +8,15 @@
 
 		blinkTime: 0,
 
+		checkWalk: 0,
+		walking: false,
+
 		init: function (id, name) {
 
 			this.model = {
 				bb: { x: 0.7, y: 1.9, z: 0.7 },
 				pos: { x: 0, y: 0, z: 0 },
+				lastPos: {x:0, y:0,z:0},
 				rot: 0
 			};
 
@@ -23,9 +27,9 @@
 			this.mesh = new THREE.Object3D();
 
 			var body = this.body = new THREE.Object3D();
-			var mat = new THREE.MeshBasicMaterial({
-   				color: 0x992277
-			});
+			var mat = data.materials.blocks;;///new THREE.MeshBasicMaterial({
+   				//color: 0x992277
+			//});
 
 			function addBit (w, h, d, x, y, z) {
 				var mesh = new THREE.Mesh(
@@ -37,27 +41,40 @@
 				return mesh;
 			}
 
-			//addBit(this.model.bb.x, this.model.bb.y, this.model.bb.z, 0, 0, 0);
+			function offsetPivot (mesh, x, y, z) {
 
-			addBit(this.model.bb.x, 0.6, this.model.bb.z, 0, -0.15, 0);
+				return mesh.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(x, y, z));
 
-			this.arm1 = addBit(0.2, 0.7, 0.3, -(this.model.bb.x / 2) - 0.1, -0.2, 0);
-			this.arm2 =addBit(0.2, 0.7, 0.3, (this.model.bb.x / 2) + 0.1, -0.2, 0);
+			}
 
-			addBit(0.3, 0.5, 0.3, -(this.model.bb.x / 2) + 0.15, -0.7, 0);
-			addBit(0.3, 0.5, 0.3, (this.model.bb.x / 2) - 0.15, -0.7, 0);
+			this.bits = {
 
-			var geom = utils.texturify(
-				new THREE.CubeGeometry(0.8),
-				[[8, 8], [6, 8], [6, 8], [6, 8], [7, 9], [6, 9]]);
-			var mesh = new THREE.Mesh(
-				geom,
-				data.materials.target
-			);
-			mesh.position.set(0, 0.55, 0)
-			mesh.rotation.y += Math.PI;
+				torso :addBit(this.model.bb.x, 0.6, this.model.bb.z, 0, -0.15, 0),
 
-			body.add(mesh)
+				arm1: addBit(0.2, 0.7, 0.3, -(this.model.bb.x / 2) - 0.1, 0, 0),
+				arm2: addBit(0.2, 0.7, 0.3, (this.model.bb.x / 2) + 0.1, 0, 0),
+
+				leg1: addBit(0.3, 0.5, 0.3, -(this.model.bb.x / 2) + 0.15, -0.4, 0),
+				leg2: addBit(0.3, 0.5, 0.3, (this.model.bb.x / 2) - 0.15, -0.4, 0),
+
+				head: new THREE.Mesh(
+					utils.texturify(
+						new THREE.CubeGeometry(0.8),
+						[[8, 8], [6, 8], [6, 8], [6, 8], [7, 9], [6, 9]]
+					),
+					data.materials.target
+				)
+
+			};
+
+			offsetPivot(this.bits.arm1, 0, -0.3, 0);
+			offsetPivot(this.bits.arm2, 0, -0.3, 0);
+			offsetPivot(this.bits.leg1, 0, -0.3, 0);
+			offsetPivot(this.bits.leg2, 0, -0.3, 0);
+
+			this.bits.head.position.set(0, 0.55, 0);
+			this.bits.head.rotation.y += Math.PI;
+			body.add(this.bits.head);
 
 			this.mesh.add(this.body);
 
@@ -88,6 +105,8 @@
 		rottt: function () {
 			this.body.rotation.y += 0.01;
 			this.body.position.y += Math.sin(Date.now() / 1000) * 0.01;
+
+			this.walk();
 		},
 
 		tick: function (dt, lookAt) {
@@ -104,6 +123,18 @@
 				}
 			}
 
+			var lastPos = this.model.lastPos,
+				pos = this.model.pos;
+
+			if (this.checkWalk-- <= 0) {
+				this.walking = pos.x !== lastPos.x || pos.z !== lastPos.z;
+
+				lastPos.x = pos.x;
+				lastPos.y = pos.y;
+				lastPos.z = pos.z;
+				this.checkWalk = 10;
+			}
+
 			this.syncMesh(lookAt);
 
 		},
@@ -117,8 +148,25 @@
 			body.rotation.set(0, model.rot, 0);
 			mesh.position.set(model.pos.x, model.pos.y, model.pos.z);
 
+			// MOve arms!
+			if (this.walking) {
+				this.walk();
+			}
+
         	this.label.rotation.setFromRotationMatrix(camera.matrix);
 
+		},
+
+		walk: function () {
+			var sp = 100,
+				now = Date.now();
+
+			this.bits.head.position.y = 0.55 + Math.cos(now / 50) * 0.03;
+			this.bits.arm1.rotation.x = Math.sin((Math.PI * 1.5) + now / sp);
+			this.bits.arm2.rotation.x = Math.cos(now / sp);
+
+			this.bits.leg1.rotation.x = Math.cos(now / sp);
+			this.bits.leg2.rotation.x = Math.sin((Math.PI * 1.5) + now / sp);
 		}
 
 	};
