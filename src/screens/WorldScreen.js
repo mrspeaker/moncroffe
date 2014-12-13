@@ -49,7 +49,7 @@
 			this.sounds = {
 				shoot: Object.create(Sound).init("res/audio/laz1", 0.15),
 				die: Object.create(Sound).init("res/audio/dead", 0.9),
-				find: Object.create(Sound).init("res/audio/getget", 0.7),
+				find: Object.create(Sound).init("res/audio/getget2", 0.7),
 				bip: Object.create(Sound).init("res/audio/bip", 0.8)
 			};
 
