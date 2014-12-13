@@ -58,15 +58,16 @@
 
 		makeALilMan: function (body) {
 
-			var material = new THREE.MeshBasicMaterial({
-   				color: 0xaa3388
-			});
+			/*var material = new THREE.MeshLambertMaterial({
+   				color: 0xaa3388,
+   				map: data.textures.target
+			});*/
 
 			function addBodyBit (w, h, d, x, y, z) {
 
 				var mesh = new THREE.Mesh(
 					new THREE.BoxGeometry(w, h, d),
-					material
+					data.materials.target2
 				);
 				mesh.position.set(x, y, z);
 				body.add(mesh);

@@ -294,6 +294,11 @@
 				opacity: 0.75
 			});
 
+			m.target2 = new THREE.MeshBasicMaterial({
+				map: textures.blocks
+				//color		: 0xff44aa,
+			});
+
 			m.blocks = new THREE.MeshLambertMaterial({
 				map: textures.blocks,
 				wrapAround: true,

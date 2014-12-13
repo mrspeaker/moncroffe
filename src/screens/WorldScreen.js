@@ -237,7 +237,7 @@
 
 			this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
 			this.lights.ambientLight.color = (new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time);
-			this.lights.player.visible = time > 0.5;
+			this.lights.player.visible = true;//time > 0.5;
 
 			var strat = this.stratosphere;
 			strat.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
