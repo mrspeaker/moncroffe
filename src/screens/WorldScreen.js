@@ -271,12 +271,14 @@
 		},
 
 		setEveryoneSafeBlinky: function () {
+
 			for (var p in Network.clients) {
 
 				var player = Network.clients[p];
 				// todo: 150 magic number
 				player.blinkTime = 150;
 			}
+
 		},
 
 		clownDestroyed: function (id) {
@@ -371,22 +373,16 @@
 			this.scores = [];
 			ping.players.forEach(function (p) {
 
-				// Just update your score
-				if (p.id === Network.clientId) {
-					this.scores.push({name: p.name, score: p.score});
-					return;
-				}
-
-				// Update other players
-				var player = Network.clients[p.id];
+				var isSelf = p.id === Network.clientId,
+					player = Network.clients[p.id];
 
 				if (!player) {
 					// TODO: no name on connect, only join!
 					console.log("Player joined:", p.id, p.name);
 
-					player = Network.clients[p.id] = Object.create(PlayerProxy).init(p.id, p.name);
-
+					player = Network.clients[p.id] = Object.create(PlayerProxy).init(p.id, p.name, isSelf);
 					this.scene.add(player.mesh);
+
 				} else {
 					// no name on connect, only join... so update here
 					if (Network.clients[p.id].name !== p.name) {
@@ -412,10 +408,10 @@
 					(i === 0 ? "</strong>" : ""));
 			});
 
-			if (setWinnerName) {
+			//if (setWinnerName) {
 				//var winners = this.getLeaders();
 				//document.querySelector("#gameOverWin").innerHTML = winners;
-			}
+			//}
 
 
 			// Add new clowns
@@ -469,10 +465,14 @@
 			}
 
 			if (ping.flash) {
+				// THIS means someone got bouy...
 				this.flashTime = 100;
 				this.flashType = "get";
 
-				var name = Network.getName(ping.flash);
+				var player = Network.getPlayer(ping.flash);
+				var name = player.name;
+
+				player.hasBouy = true;
 
 				// TODO! ENCODE!
 				document.querySelector("#playerGetName").innerHTML = name;
@@ -718,12 +718,16 @@
 			for (var p in Network.clients) {
 
 				var player = Network.clients[p],
+					self = player.id === Network.clientId,
 					hit;
 
 				player.tick(dt, camera);
 
 				hit = this.bullets.some(function (b) {
-					return b.ownShot && !b.stopped && core.utils.dist(b.model.pos, player.model.pos) < 1;
+					return !self &&
+						b.ownShot &&
+						!b.stopped &&
+						core.utils.dist(b.model.pos, player.model.pos) < 1;
 				});
 
 				if (hit) {

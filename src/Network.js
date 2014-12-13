@@ -17,7 +17,8 @@
 
 		getPlayer: function (id) {
 
-			return id === this.clientId ? this : this.clients[id];
+			//return id === this.clientId ? this : this.clients[id];
+			return this.clients[id];
 
 		},
 
@@ -210,7 +211,6 @@
 		},
 
 		receiveChat: function (msg) {
-
 
 			main.screen.receiveChat(msg);
 

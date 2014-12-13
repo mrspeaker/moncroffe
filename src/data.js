@@ -38,7 +38,7 @@ var data = {
 	rounds: {
 		total: 3,
 		duration: {
-			born: 5,
+			born: 3,
 			firstRoundReady: 6,
 			roundReady: 4,
 			round: 2.5 * 60,

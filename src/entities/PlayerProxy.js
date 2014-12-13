@@ -11,7 +11,9 @@
 		checkWalk: 0,
 		walking: false,
 
-		init: function (id, name) {
+		init: function (id, name, isSelf) {
+
+			this.isSelf = isSelf;
 
 			this.model = {
 				bb: { x: 0.7, y: 1.9, z: 0.7 },
@@ -26,10 +28,10 @@
 
 			this.mesh = new THREE.Object3D();
 
-			this.body = this.makeALilMan(new THREE.Object3D());
+			this.body = this.makeALilMan(new THREE.Object3D(), isSelf);
 			this.mesh.add(this.body);
 
-			this.addNameLabel(name ? name : "???");
+			if (!isSelf) this.addNameLabel(name ? name : "???");
 
 			return this;
 
@@ -56,7 +58,7 @@
 
 		},
 
-		makeALilMan: function (body) {
+		makeALilMan: function (body, isSelf) {
 
 			/*var material = new THREE.MeshLambertMaterial({
    				color: 0xaa3388,
@@ -113,6 +115,10 @@
 			bits.head.rotation.y += Math.PI;
 			body.add(bits.head);
 
+			if (isSelf) {
+				bits.head.visible = false;
+			}
+
 			return body;
 
 		},
@@ -128,7 +134,9 @@
 		tick: function (dt, lookAt) {
 
 			if (this.name !== this.initName) {
-				this.addNameLabel(this.name);
+				if (!this.isSelf) {
+					this.addNameLabel(this.name);
+				}
 				this.initName = this.name;
 			}
 
@@ -169,7 +177,9 @@
 				this.walk();
 			}
 
-        	this.label.rotation.setFromRotationMatrix(camera.matrix);
+        	if (this.label) {
+        		this.label.rotation.setFromRotationMatrix(camera.matrix);
+        	}
 
 		},
 

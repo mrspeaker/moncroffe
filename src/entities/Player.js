@@ -27,7 +27,7 @@
 			this.screen = screen;
 
 			this.mesh = new THREE.Object3D();
-			this.marker = this.addMeshBB();
+			//this.marker = this.addMeshBB();
 
 			this.respawn();
 
@@ -183,7 +183,9 @@
 			mesh.rotation.set(0, model.rot, 0);
 			mesh.position.set(model.pos.x, model.pos.y, model.pos.z);
 
-			marker.position.set(model.pos.x, model.pos.y - (model.bb.y / 2) + 0.05, model.pos.z);
+			if (marker) {
+				marker.position.set(model.pos.x, model.pos.y - (model.bb.y / 2) + 0.05, model.pos.z);
+			}
 		},
 
 		createControls: function () {
