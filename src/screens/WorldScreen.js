@@ -50,7 +50,8 @@
 				shoot: Object.create(Sound).init("res/audio/laz1", 0.15),
 				die: Object.create(Sound).init("res/audio/dead", 0.9),
 				find: Object.create(Sound).init("res/audio/getget2", 0.7),
-				bip: Object.create(Sound).init("res/audio/bip", 0.8)
+				bip: Object.create(Sound).init("res/audio/bip", 0.8),
+				splode: Object.create(Sound).init("res/audio/lololp", 0.6)
 			};
 
 			this.screen = screen;
@@ -702,6 +703,7 @@
 							scene.remove(t.mesh);
 							this.explodeParticles(t.pos, true, t.bouyDir);
 							Network.targetHit(t.id);
+							this.sounds.splode.play();
 						}
 					}
 				}
