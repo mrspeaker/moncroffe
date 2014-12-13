@@ -606,11 +606,12 @@
 					var msg = "";
 
 					if (this.round === 0) {
-						msg = "<br/>Best of " + data.rounds.total + "<br/>" +
+						msg =
 						"Find the magic boxes:" +
-						"<img src='res/images/box.png'/><br/>" +
-						"Shoot the clowns for directions." +
-						"<img style='width:100px;float:right' src='res/images/guys.png' />";
+						"<img style='float:right;margin-top:-40px' src='res/images/box.png'/><br/>" +
+						"Shoot the clowns for directions:" +
+						"<img style='width:100px;float:right;margin-top:-40px' src='res/images/guys.png' />" +
+						"<br/>Best of " + data.rounds.total + "<br/>"
 					} else if (this.round === data.rounds.total - 1) {
 						msg = "Final round<br/>";
 					}
