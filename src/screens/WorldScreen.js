@@ -49,7 +49,8 @@
 			this.sounds = {
 				shoot: Object.create(Sound).init("res/audio/laz1", 0.15),
 				die: Object.create(Sound).init("res/audio/dead", 0.9),
-				find: Object.create(Sound).init("res/audio/getget", 0.7)
+				find: Object.create(Sound).init("res/audio/getget", 0.7),
+				bip: Object.create(Sound).init("res/audio/bip", 0.8)
 			};
 
 			this.screen = screen;
@@ -891,6 +892,7 @@
 			if (typeof msg[0] == "string") {
 				name = Network.getName(msg[0]),
 				post = name + ": " + msg[1];
+				this.sounds.bip.play();
 			} else {
 				post = "<span class='" +
 				["", "ev_join", "ev_kill", "ev_get"][Math.abs(msg[0])] +
