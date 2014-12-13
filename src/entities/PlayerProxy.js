@@ -1,4 +1,4 @@
-(function () {
+(function (THREE, data, utils) {
 
 	"use strict";
 
@@ -26,56 +26,7 @@
 
 			this.mesh = new THREE.Object3D();
 
-			var body = this.body = new THREE.Object3D();
-			var mat = data.materials.blocks;;///new THREE.MeshBasicMaterial({
-   				//color: 0x992277
-			//});
-
-			function addBit (w, h, d, x, y, z) {
-				var mesh = new THREE.Mesh(
-					new THREE.BoxGeometry(w, h, d),
-					mat
-				);
-				mesh.position.set(x, y, z);
-				body.add(mesh);
-				return mesh;
-			}
-
-			function offsetPivot (mesh, x, y, z) {
-
-				return mesh.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(x, y, z));
-
-			}
-
-			this.bits = {
-
-				torso :addBit(this.model.bb.x, 0.6, this.model.bb.z, 0, -0.15, 0),
-
-				arm1: addBit(0.2, 0.7, 0.3, -(this.model.bb.x / 2) - 0.1, 0, 0),
-				arm2: addBit(0.2, 0.7, 0.3, (this.model.bb.x / 2) + 0.1, 0, 0),
-
-				leg1: addBit(0.3, 0.5, 0.3, -(this.model.bb.x / 2) + 0.15, -0.4, 0),
-				leg2: addBit(0.3, 0.5, 0.3, (this.model.bb.x / 2) - 0.15, -0.4, 0),
-
-				head: new THREE.Mesh(
-					utils.texturify(
-						new THREE.CubeGeometry(0.8),
-						[[8, 8], [6, 8], [6, 8], [6, 8], [7, 9], [6, 9]]
-					),
-					data.materials.target
-				)
-
-			};
-
-			offsetPivot(this.bits.arm1, 0, -0.3, 0);
-			offsetPivot(this.bits.arm2, 0, -0.3, 0);
-			offsetPivot(this.bits.leg1, 0, -0.3, 0);
-			offsetPivot(this.bits.leg2, 0, -0.3, 0);
-
-			this.bits.head.position.set(0, 0.55, 0);
-			this.bits.head.rotation.y += Math.PI;
-			body.add(this.bits.head);
-
+			this.body = this.makeALilMan(new THREE.Object3D());
 			this.mesh.add(this.body);
 
 			this.addNameLabel(name ? name : "???");
@@ -102,10 +53,67 @@
 			this.mesh.add(this.label);
 		},
 
+		makeALilMan: function (body) {
+
+			var mat = new THREE.MeshBasicMaterial({
+   				color: 0x992277
+			});
+
+			function addBit (w, h, d, x, y, z) {
+
+				var mesh = new THREE.Mesh(
+					new THREE.BoxGeometry(w, h, d),
+					mat
+				);
+				mesh.position.set(x, y, z);
+				body.add(mesh);
+
+				return mesh;
+
+			}
+
+			function offsetPivot (mesh, x, y, z) {
+
+				return mesh.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(x, y, z));
+
+			}
+
+			var bits = this.bits = {
+
+				torso: addBit(this.model.bb.x, 0.6, this.model.bb.z, 0, -0.15, 0),
+
+				arm1: addBit(0.2, 0.7, 0.3, -(this.model.bb.x / 2) - 0.1, 0, 0),
+				arm2: addBit(0.2, 0.7, 0.3, (this.model.bb.x / 2) + 0.1, 0, 0),
+
+				leg1: addBit(0.3, 0.5, 0.3, -(this.model.bb.x / 2) + 0.15, -0.4, 0),
+				leg2: addBit(0.3, 0.5, 0.3, (this.model.bb.x / 2) - 0.15, -0.4, 0),
+
+				head: new THREE.Mesh(
+					utils.texturify(
+						new THREE.CubeGeometry(0.8),
+						[[8, 8], [6, 8], [6, 8], [6, 8], [7, 9], [6, 9]]
+					),
+					data.materials.target
+				)
+
+			};
+
+			offsetPivot(bits.arm1, 0, -0.3, 0);
+			offsetPivot(bits.arm2, 0, -0.3, 0);
+			offsetPivot(bits.leg1, 0, -0.3, 0);
+			offsetPivot(bits.leg2, 0, -0.3, 0);
+
+			bits.head.position.set(0, 0.55, 0);
+			bits.head.rotation.y += Math.PI;
+			body.add(bits.head);
+
+			return body;
+
+		},
+
 		rottt: function () {
 			this.body.rotation.y += 0.01;
 			this.body.position.y += Math.sin(Date.now() / 1000) * 0.01;
-
 			this.walk();
 		},
 
@@ -113,7 +121,7 @@
 
 			if (this.name !== this.initName) {
 				this.addNameLabel(this.name);
-				this.initName = this.name;
+				this.initName = this	.name;
 			}
 
 			if (this.blinkTime > 0) {
@@ -132,7 +140,7 @@
 				lastPos.x = pos.x;
 				lastPos.y = pos.y;
 				lastPos.z = pos.z;
-				this.checkWalk = 10;
+				this.checkWalk = 7;
 			}
 
 			this.syncMesh(lookAt);
@@ -158,19 +166,24 @@
 		},
 
 		walk: function () {
+
 			var sp = 100,
 				now = Date.now();
 
 			this.bits.head.position.y = 0.55 + Math.cos(now / 50) * 0.03;
 			this.bits.arm1.rotation.x = Math.sin((Math.PI * 1.5) + now / sp);
 			this.bits.arm2.rotation.x = Math.cos(now / sp);
-
 			this.bits.leg1.rotation.x = Math.cos(now / sp);
 			this.bits.leg2.rotation.x = Math.sin((Math.PI * 1.5) + now / sp);
+
 		}
 
 	};
 
 	window.PlayerProxy = PlayerProxy;
 
-}());
+}(
+	window.THREE,
+	window.data,
+	window.utils
+));
