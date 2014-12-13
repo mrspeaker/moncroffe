@@ -237,7 +237,7 @@
 
 			this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
 			this.lights.ambientLight.color = (new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time);
-			this.lights.player.visible = true;//time > 0.5;
+			this.lights.player.visible = time > 0.5;
 
 			var strat = this.stratosphere;
 			strat.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
@@ -606,7 +606,11 @@
 					var msg = "";
 
 					if (this.round === 0) {
-						msg = "Find the magic boxes.<Br/><img src='res/images/box.png'/><br/>Best of " + data.rounds.total + "";
+						msg = "<br/>Best of " + data.rounds.total + "<br/>" +
+						"Find the magic boxes:" +
+						"<img src='res/images/box.png'/><br/>" +
+						"Shoot the clowns for directions." +
+						"<img style='width:100px;float:right' src='res/images/guys.png' />";
 					} else if (this.round === data.rounds.total - 1) {
 						msg = "Final round<br/>";
 					}

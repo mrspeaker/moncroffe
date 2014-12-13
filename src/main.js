@@ -288,15 +288,14 @@
 
 			m.target = new THREE.MeshBasicMaterial({
 				map: textures.blocks,
-				//color		: 0xff44aa,
 				depthWrite	: false,
 				transparent	: true,
 				opacity: 0.75
 			});
 
 			m.target2 = new THREE.MeshBasicMaterial({
-				map: textures.blocks
-				//color		: 0xff44aa,
+				map: textures.blocks,
+				color : 0xff44aa
 			});
 
 			m.blocks = new THREE.MeshLambertMaterial({
