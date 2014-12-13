@@ -36,10 +36,12 @@
 		},
 
 		addNameLabel: function (txt) {
+
 			if (this.label) {
 				this.mesh.remove(this.label);
 			}
-			this.label = utils.createCanvasPlane(200, 40, function (ctx, w, h) {
+
+			this.label = utils.createCanvasPlane(256, 256, function (ctx, w, h) {
 
 				ctx.font = "22pt Helvetica";
 
@@ -51,19 +53,20 @@
 
 			this.label.position.set(0, this.model.bb.y / 2 + 0.3, 0);
 			this.mesh.add(this.label);
+
 		},
 
 		makeALilMan: function (body) {
 
-			var mat = new THREE.MeshBasicMaterial({
-   				color: 0x992277
+			var material = new THREE.MeshBasicMaterial({
+   				color: 0xaa3388
 			});
 
-			function addBit (w, h, d, x, y, z) {
+			function addBodyBit (w, h, d, x, y, z) {
 
 				var mesh = new THREE.Mesh(
 					new THREE.BoxGeometry(w, h, d),
-					mat
+					material
 				);
 				mesh.position.set(x, y, z);
 				body.add(mesh);
@@ -74,19 +77,21 @@
 
 			function offsetPivot (mesh, x, y, z) {
 
-				return mesh.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(x, y, z));
+				return mesh.geometry.applyMatrix(
+					new THREE.Matrix4().makeTranslation(x, y, z)
+				);
 
 			}
 
 			var bits = this.bits = {
 
-				torso: addBit(this.model.bb.x, 0.6, this.model.bb.z, 0, -0.15, 0),
+				torso: addBodyBit(this.model.bb.x, 0.6, this.model.bb.z, 0, -0.15, 0),
 
-				arm1: addBit(0.2, 0.7, 0.3, -(this.model.bb.x / 2) - 0.1, 0, 0),
-				arm2: addBit(0.2, 0.7, 0.3, (this.model.bb.x / 2) + 0.1, 0, 0),
+				arm1: addBodyBit(0.2, 0.7, 0.3, -(this.model.bb.x / 2) - 0.1, 0, 0),
+				arm2: addBodyBit(0.2, 0.7, 0.3, (this.model.bb.x / 2) + 0.1, 0, 0),
 
-				leg1: addBit(0.3, 0.5, 0.3, -(this.model.bb.x / 2) + 0.15, -0.4, 0),
-				leg2: addBit(0.3, 0.5, 0.3, (this.model.bb.x / 2) - 0.15, -0.4, 0),
+				leg1: addBodyBit(0.3, 0.5, 0.3, -(this.model.bb.x / 2) + 0.15, -0.4, 0),
+				leg2: addBodyBit(0.3, 0.5, 0.3, (this.model.bb.x / 2) - 0.15, -0.4, 0),
 
 				head: new THREE.Mesh(
 					utils.texturify(
@@ -112,16 +117,18 @@
 		},
 
 		rottt: function () {
+
 			this.body.rotation.y += 0.01;
 			this.body.position.y += Math.sin(Date.now() / 1000) * 0.01;
 			this.walk();
+
 		},
 
 		tick: function (dt, lookAt) {
 
 			if (this.name !== this.initName) {
 				this.addNameLabel(this.name);
-				this.initName = this	.name;
+				this.initName = this.name;
 			}
 
 			if (this.blinkTime > 0) {

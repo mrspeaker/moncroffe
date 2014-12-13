@@ -68,32 +68,7 @@
 			this.addStratosphere();
 			this.updateDayNight();
 
-			var mat = new THREE.SpriteMaterial({
-				map: THREE.ImageUtils.loadTexture("res/images/flake.png"),
-				tranparency: true,
-				fog: true
-			});
-
-			function getBlock(x, y) {
-				return [
-					x / 16, y / 16,
-					(x + 1) / 16, y / 16,
-					x / 16, (y + 1) / 16,
-					(x + 1) / 16, (y + 1) / 16
-				];
-			}
-
-			this.derps = [];
-			var d = data.world.radius * data.chunk.w;
-			for (var i = 0; i < 500; i ++) {
-
-				var derp = new THREE.Sprite( mat, getBlock(Math.random() * 15 | 0, Math.random() * 8 | 0) );
-
-				derp.position.set(Math.random() * d - (d / 2), Math.random() * 25,  Math.random() * d - (d / 2));
-				derp.scale.set(0.1, 0.1, 0.1);
-				this.scene.add(derp);
-				this.derps.push(derp);
-			}
+			this.addSnow();
 
 			return this;
 		},
@@ -109,9 +84,45 @@
 
 			this.doneInitialReset = true;
 
-			//this.player.syncControls();
 		},
 
+		addSnow: function () {
+
+			function getBlock(x, y) {
+				return [
+					x / 16, y / 16,
+					(x + 1) / 16, y / 16,
+					x / 16, (y + 1) / 16,
+					(x + 1) / 16, (y + 1) / 16
+				];
+			}
+
+			var flakeMaterial = new THREE.SpriteMaterial({
+				map: THREE.ImageUtils.loadTexture("res/images/flake.png"),
+				tranparency: false,
+				fog: true
+			});
+
+			this.snowflakes = [];
+			var d = data.world.radius * 2 * data.chunk.w;
+			for (var i = 0; i < 800; i ++) {
+
+				var flake = new THREE.Sprite(
+					flakeMaterial,
+					getBlock(Math.random() * 15 | 0, Math.random() * 8 | 0)
+				);
+
+				flake.position.set(
+					Math.random() * d - (d / 2),
+					Math.random() * 25,
+					Math.random() * d - (d / 2)  + (data.chunk.w)
+				);
+				flake.scale.set(0.1, 0.1, 0.1);
+				this.scene.add(flake);
+				this.snowflakes.push(flake);
+			}
+
+		},
 
 		addWayPoints: function () {
 
@@ -628,10 +639,10 @@
 
 			this.stateFirst = false;
 
-			this.derps.forEach(function (d) {
+			this.snowflakes.forEach(function (sf) {
 
-				if ((d.position.y -= 0.05) < 0) {
-					d.position.y = 25;
+				if ((sf.position.y -= 0.05) < 0) {
+					sf.position.y = 25;
 				}
 			});
 

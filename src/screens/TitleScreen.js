@@ -17,7 +17,7 @@
 			this.scene = new THREE.Scene();
 
 			// Spinny intro
-			var clown = Object
+			/*var clown = Object
 				.create(Clown)
 				.init(
 					0,
@@ -25,10 +25,10 @@
 					new THREE.Vector3(0.5, 0.2, 0.1),
 					0,
 					data.materials.target);
-			this.clown = clown;
-			//this.scene.add(clown.mesh);
+			this.clown = clown;*/
 
-			clown.mesh.rotation.x += Math.PI;
+			//this.scene.add(clown.mesh);
+			//clown.mesh.rotation.x += Math.PI;
 
 			this.pp = Object.create(PlayerProxy).init(1, " ");
 			this.pp.mesh.position.set(0, 0, -3);
@@ -94,9 +94,9 @@
 
 		tick: function () {
 
-			this.clown.mesh.rotation.x += 0.05;
-			this.clown.mesh.rotation.y += 0.055;
-			this.clown.mesh.rotation.z += 0.060;
+			//this.clown.mesh.rotation.x += 0.05;
+			//this.clown.mesh.rotation.y += 0.055;
+			//this.clown.mesh.rotation.z += 0.060;
 
 			this.pp.rottt();
 

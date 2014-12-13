@@ -327,7 +327,7 @@
 
 						// Lil bit of gold
 						if (type === "stone") {
-							if (Math.random() < 0.01) {
+							if (Math.random() < 0.5) {
 								type = "gold";
 							}
 						}
