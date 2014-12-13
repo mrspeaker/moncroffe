@@ -86,6 +86,22 @@
 
 		},
 
+		findyCube: function () {
+
+			var c = new THREE.Mesh(
+				utils.texturify(
+					new THREE.CubeGeometry(0.8),
+					[[1, 8], [1, 8], [1, 8], [1, 8], [1, 8], [1, 8]]
+				),
+				data.materials.blocks
+			);
+
+			this.scene.add(c);
+			c.position.set(3, 18, 3);
+			this.findy = c;
+
+		},
+
 		addSnow: function () {
 
 			function getBlock(x, y) {
@@ -590,7 +606,7 @@
 					var msg = "";
 
 					if (this.round === 0) {
-						msg = "WELCOME!<br />Find the boxes.</br/>Best of " + data.rounds.total + "";
+						msg = "Find the magic boxes.<Br/><img src='res/images/box.png'/><br/>Best of " + data.rounds.total + "";
 					} else if (this.round === data.rounds.total - 1) {
 						msg = "Final round<br/>";
 					}
