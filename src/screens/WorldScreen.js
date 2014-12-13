@@ -344,8 +344,7 @@
 
 		pingReceived: function (ping) {
 
-			var bouy = this.bouy,
-				setWinnerName = false;
+			var bouy = this.bouy;
 
 			if (ping.state !== this.state) {
 				this.stateFirst = true;
@@ -356,7 +355,6 @@
 
 				if (ping.state === "GAME_OVER") {
 					utils.showMsg("#gameOver", data.rounds.duration.gameOver - 0.1);
-					setWinnerName = true;
 				}
 			}
 			this.state = ping.state;
@@ -408,12 +406,6 @@
 					s.name + ": " + s.score +
 					(i === 0 ? "</strong>" : ""));
 			});
-
-			//if (setWinnerName) {
-				//var winners = this.getLeaders();
-				//document.querySelector("#gameOverWin").innerHTML = winners;
-			//}
-
 
 			// Add new clowns
 			ping.targets.forEach(function (t) {
@@ -537,9 +529,9 @@
 
 			this.sounds.shoot.rewind();
 			var shoot = this.sounds.shoot;
-			setTimeout(function () {
+			//setTimeout(function () {
 				shoot.play();
-			}, 5);
+			//}, 5);
 
 
 		},
@@ -612,7 +604,7 @@
 						"<img style='float:right;margin-top:-40px' src='res/images/box.png'/><br/>" +
 						"Shoot the clowns for directions:" +
 						"<img style='width:100px;float:right;margin-top:-40px' src='res/images/guys.png' />" +
-						"<br/>Best of " + data.rounds.total + "<br/>"
+						"<br/>Best of " + data.rounds.total + " "
 					} else if (this.round === data.rounds.total - 1) {
 						msg = "Final round<br/>";
 					}
