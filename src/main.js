@@ -21,6 +21,7 @@
 
 		network: null,
 		screen: null,
+		lastScene: null,
 
 		havePointerLock: "pointerLockElement" in document || "mozPointerLockElement" in document || "webkitPointerLockElement" in document,
 
@@ -340,6 +341,25 @@
 				//utils.msg(dt); // Track big/small updates
 			}
 
+			if (this.screen.scene &&  this.screen.scene !== this.lastScene) {
+				this.lastScene = this.screen.scene;
+
+				// Create a new composer
+				this.composer = new THREE.EffectComposer(this.renderer);
+				this.composer.addPass(new THREE.RenderPass(this.screen.scene, this.camera));
+
+				var effect = new THREE.ShaderPass( THREE.DotScreenShader );
+				effect.uniforms[ 'scale' ].value = 5;
+				effect.renderToScreen = true;
+				this.composer.addPass( effect );
+
+				/*var effect = new THREE.ShaderPass( THREE.RGBShiftShader );
+				effect.uniforms[ 'amount' ].value = 0.0015;
+				effect.renderToScreen = true;
+				this.composer.addPass( effect );*/
+
+			}
+
 			this.screen.tick(delta);
 
 		},
@@ -347,7 +367,11 @@
 		render: function () {
 
 			if (!this.isOculus) {
-				this.renderer.render(this.screen.scene, this.camera);
+				if (this.composer) {
+					this.composer.render();
+				} else {
+					this.renderer.render(this.screen.scene, this.camera);
+				}
 			} else {
 				this.vrControls.update();
 				this.vrRenderer.render(
