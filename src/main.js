@@ -348,16 +348,22 @@
 				this.composer = new THREE.EffectComposer(this.renderer);
 				this.composer.addPass(new THREE.RenderPass(this.screen.scene, this.camera));
 
-				var effect = new THREE.ShaderPass( THREE.DotScreenShader );
-				effect.uniforms[ 'scale' ].value = 5;
+				var effect = new THREE.ShaderPass( THREE.VignetteShader );
+				effect.uniforms["darkness"].value = 0.7;
+				this.composer.addPass( effect );
+
+				var effect = new THREE.ShaderPass( THREE.HueSaturationShader );
+				effect.uniforms["saturation"].value = 0.6;
+				this.hue = effect.uniforms["hue"];
+
 				effect.renderToScreen = true;
 				this.composer.addPass( effect );
 
-				/*var effect = new THREE.ShaderPass( THREE.RGBShiftShader );
-				effect.uniforms[ 'amount' ].value = 0.0015;
-				effect.renderToScreen = true;
-				this.composer.addPass( effect );*/
 
+			}
+
+			if (this.hue) {
+				this.hue.value = Math.sin(Date.now() / 20000);
 			}
 
 			this.screen.tick(delta);
