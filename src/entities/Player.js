@@ -109,8 +109,8 @@
 			model.rot = move.rot.y;
 
 			// Figure out how far we want to move this frame
-			var xo = 0,
-				zo = 0,
+			var xo = model.vel.x,
+				zo = model.vel.z,
 				yo = model.vel.y;
 
 			xo += move.x * power;
@@ -132,6 +132,11 @@
 			var col = this.screen.tryMove(model.pos, model.bb, wannaMove);
 
 			model.pos = { x: col.x, y: col.y, z: col.z };
+
+			model.vel.x *= 0.8;
+			model.vel.z *= 0.8;
+			if (model.vel.x < 0.01) {model.vel.x = 0;}
+			if (model.vel.z < 0.01) {model.vel.z = 0;}
 
 			if (col.ground) {
 				yo = 0;
@@ -186,6 +191,12 @@
 			if (marker) {
 				marker.position.set(model.pos.x, model.pos.y - (model.bb.y / 2) + 0.05, model.pos.z);
 			}
+		},
+
+		knockback: function () {
+
+			this.model.vel.z += 0.3;
+
 		},
 
 		createControls: function () {

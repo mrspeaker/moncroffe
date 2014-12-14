@@ -795,6 +795,7 @@
 
 				if (!added) {
 					this.fire();
+					this.player.knockback();
 				}
 				this.doAddBlock = false;
 			}

@@ -32,6 +32,7 @@
 
 			this.pp = Object.create(PlayerProxy).init(1, " ");
 			this.pp.mesh.position.set(0, 0, -3);
+			this.pp.mesh.rotation.y += Math.PI / 1.5;
 
 			this.scene.add(this.pp.mesh);
 
