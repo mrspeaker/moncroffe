@@ -167,6 +167,9 @@
 		addBouy: function () {
 
 			this.bouy = Object.create(Bouy).init(data.materials.blocks);
+			// this.bouy.mesh.add(this.lights.cube);
+			// this.lights.cube.position.set(0, 1, 0);
+			//
 			this.scene.add(this.bouy.mesh);
 
 		},
@@ -176,10 +179,9 @@
 			this.lights.ambientLight = new THREE.AmbientLight(0x999999);
 			this.scene.add(this.lights.ambientLight);
 
-			this.lights.player = new THREE.PointLight(0xF3AC44, 1, 8);
+			this.lights.player = new THREE.PointLight(0xF4D2A3, 1, 8);//(0xF3AC44, 1, 8);
 			this.screen.camera.add(this.lights.player); // light follows player
 
-			// One of these guys turns out when player turns on!
 			var light = new THREE.PointLight(0xF4D2A3, 1, 10);
 			light.position.set(data.chunk.w - 5, 5, data.chunk.w - 5);
 			this.scene.add(light);
@@ -187,6 +189,10 @@
 			var light2 = new THREE.PointLight(0xF4D2A3, 1, 10);
 			light2.position.set(data.world.radius * data.chunk.w - 3, 5, data.world.radius * data.chunk.w - 3);
 			this.scene.add(light2);
+
+			this.lights.cube = new THREE.PointLight(0xF4D0000, 12, 2.5);
+			this.lights.cube.position.set(0, -5, 0);
+			this.scene.add(this.lights.cube);
 
 			this.scene.fog = new THREE.Fog(0xE8D998, 10, 80);
 
@@ -239,7 +245,7 @@
 
 			this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
 			this.lights.ambientLight.color = (new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time);
-			this.lights.player.visible = time > 0.5;
+			this.lights.player.intensity = time > 0.5 ? 1 : 0;
 
 			var strat = this.stratosphere;
 			strat.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
@@ -443,6 +449,9 @@
 
 					// Set the new pos
 					this.bouy.setPos(ping.bouy);
+
+					this.lights.cube.position.set(ping.bouy.x, ping.bouy.y, ping.bouy.z);
+					console.log("what?", this.lights.cube.position);
 
 					// Update the targets
 					this.targets.forEach(function (t) {
