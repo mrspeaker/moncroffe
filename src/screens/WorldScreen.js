@@ -399,8 +399,10 @@
 					}
 				}
 
-				player.model.pos = p.pos;
-				player.model.rot = p.rot;
+				if (!isSelf) {
+					player.model.pos = p.pos;
+					player.model.rot = p.rot;
+				}
 
 				this.scores.push({name: p.name, score: p.score});
 			}, this);
@@ -603,7 +605,8 @@
 			case "ROUND_READY":
 				if (this.stateFirst) {
 					// Shoot up in the air
-					this.player.model.pos.y = 19;
+					var model = this.player.model;
+					model.pos.y = 19;
 
 					this.player.tick(dt);
 
@@ -673,16 +676,24 @@
 
 			if (this.cc) this.cc.tick(dt);
 
-
-
 		},
 
 		tick_ROUND: function (dt) {
 			var scene = this.scene,
 				world = this.world,
-				camera = this.player.controls.getObject();
+				camera = this.player.controls.getObject(),
+				model = this.player.model;
 
 			this.player.tick(dt);
+
+			var pp = Network.clients[Network.clientId];
+			if (pp) {
+				pp.tick(dt);
+				pp.model.pos.x = model.pos.x;
+				pp.model.pos.y = model.pos.y;
+				pp.model.pos.z = model.pos.z;
+				pp.model.rot = model.rot;
+			}
 
 			this.bullets = this.bullets.filter(function (b) {
 				var ret = b.tick(dt);

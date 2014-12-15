@@ -38,7 +38,8 @@ Running:
 
 ## Next todos
 
-- Explain goal in titlescreen
+- sound for round ending/starting
+- sound for player joined/disconnect
 - allow restart to titlescreen
 - disconnect-y screen instead of pointerlock
 - leaderboard (session)
