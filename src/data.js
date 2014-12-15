@@ -24,7 +24,7 @@ var data = {
 	},
 
 	server: {
-		maxClients: 5,
+		maxClients: 4,
 	},
 
 	world: {

@@ -19,7 +19,7 @@
 		textures: {},
 		materials: {},
 
-		network: null,
+		network: null, // TODO: do real network thingo.
 		screen: null,
 		lastScene: null,
 
@@ -39,7 +39,8 @@
 			this.reset();
 
 			var self = this;
-			utils.bindPointerLock(function (state) {
+
+			this.unbindPointer = utils.bindPointerLock(function (state) {
 
 				self.onPointerLockChange(state);
 
@@ -51,6 +52,10 @@
 
 		reset: function () {
 
+			this.unbindPointer && this.unbindPointer();
+			if (Network.socket) {
+				Network.socket.io.disconnect();
+			}
 			this.screen = Object.create(TitleScreen).init(this);
 
 		},
@@ -192,6 +197,7 @@
 
 				if (e.keyCode === 53 /*5*/) {
 					Settings.invert_mouse = !Settings.invert_mouse;
+					main.reset();
 				}
 
 				if (e.keyCode === 84) {
@@ -329,7 +335,9 @@
 		},
 
 		startGame: function () {
+
 			this.screen = Object.create(WorldScreen).init(this);
+
 		},
 
 		tick: function () {
@@ -341,7 +349,8 @@
 				//utils.msg(dt); // Track big/small updates
 			}
 
-			if (this.screen.scene &&  this.screen.scene !== this.lastScene) {
+			if (this.screen.scene && this.screen.scene !== this.lastScene) {
+
 				this.lastScene = this.screen.scene;
 
 				// Create a new composer
@@ -358,8 +367,6 @@
 
 				effect.renderToScreen = true;
 				this.composer.addPass( effect );
-
-
 			}
 
 			if (this.hue) {

@@ -438,20 +438,19 @@
 			}, this);
 
 			if (ping.bouy) {
+				var pb = ping.bouy;
 				if (!this.bouy) {
 					this.addBouy();
 				}
 				var bouyPos = this.bouy.model.origPos;
 
-				if (ping.bouy.x !== bouyPos.x ||
-					ping.bouy.y !== bouyPos.y ||
- 					ping.bouy.z !== bouyPos.z) {
+				if (pb.x !== bouyPos.x ||
+					pb.y !== bouyPos.y ||
+ 					pb.z !== bouyPos.z) {
 
 					// Set the new pos
 					this.bouy.setPos(ping.bouy);
-
-					this.lights.cube.position.set(ping.bouy.x, ping.bouy.y, ping.bouy.z);
-					console.log("what?", this.lights.cube.position);
+					this.lights.cube.position.set(pb.x, pb.y, pb.z);
 
 					// Update the targets
 					this.targets.forEach(function (t) {

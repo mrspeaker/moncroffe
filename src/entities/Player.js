@@ -195,7 +195,7 @@
 
 		knockback: function () {
 
-			this.model.vel.z += 0.3;
+			this.model.vel.z += 0.2;
 
 		},
 

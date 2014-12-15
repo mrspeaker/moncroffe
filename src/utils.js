@@ -53,12 +53,28 @@
 		return params;
 	}());
 
-
 	utils.bindPointerLock = function (onChange) {
 
 		var blocker = document.getElementById("blocker"),
 			instructions = document.getElementById("instructions"),
 			havePointerLock = "pointerLockElement" in document || "mozPointerLockElement" in document || "webkitPointerLockElement" in document;
+
+		function unbind () {
+
+			["pointerlockchange", "mozpointerlockchange", "webkitpointerlockchange"].forEach(function (e) {
+				document.removeEventListener(e, pointerlockchange, false);
+			});
+
+			["pointerlockerror", "mozpointerlockerror", "webkitpointerlockerror"].forEach(function (e) {
+				document.removeEventListener(e, pointerlockerror, false);
+			});
+
+			blocker.style.display = "none";
+			instructions.style.display = "none";
+
+			document.exitPointerLock();
+
+		}
 
 		if (havePointerLock) {
 			var element = document.body;
@@ -96,6 +112,8 @@
 		} else {
 			instructions.innerHTML = "Your browser doesn't seem to support Pointer Lock API";
 		}
+
+		return unbind;
 	};
 
 	utils.texturify = function (cube, tile, surround) {

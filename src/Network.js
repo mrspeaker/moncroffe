@@ -44,9 +44,10 @@
 			this.name = name;
 
 			if (this.socket) {
-				// TODO: figure out reconnecting, restarting!
-				this.socket.emit("join", name);
-				return this;
+				// TODO: figure out reconnectiong, restarting!
+				console.log("Wah?", this.socket)
+				//this.socket.emit("join", name);
+				//return this;
 			}
 
 			var socket = this.socket = window.io(window.location.host,  {
@@ -66,12 +67,15 @@
 			// });
 
 			socket.io.on("reconnect", function () {
+
 				//main.reset();
+
 				// TODO: lol.
 				socket.io.disconnect();
 				setTimeout(function () {
 					window.location.href = window.location.href;
 				}, 250);
+
 			});
 
 			// Listeners

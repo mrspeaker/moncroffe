@@ -16,24 +16,9 @@
 			this.screen = screen;
 			this.scene = new THREE.Scene();
 
-			// Spinny intro
-			/*var clown = Object
-				.create(Clown)
-				.init(
-					0,
-					new THREE.Vector3(0, 0, -7),
-					new THREE.Vector3(0.5, 0.2, 0.1),
-					0,
-					data.materials.target);
-			this.clown = clown;*/
-
-			//this.scene.add(clown.mesh);
-			//clown.mesh.rotation.x += Math.PI;
-
 			this.pp = Object.create(PlayerProxy).init(1, " ");
 			this.pp.mesh.position.set(0, 0, -3);
 			this.pp.mesh.rotation.y += Math.PI / 1.5;
-
 			this.scene.add(this.pp.mesh);
 
 			document.querySelector("#playerName").value = Settings.playerName;
