@@ -9,40 +9,35 @@
 		count: 0,
 
 		remove: false,
-		speed: 0,
+		speed: 0.3,
 
-		init: function (id, pos) {
+		init: function (pos) {
 
 			this.model = {
 				pos: { x: 0, y: 0, z: 0},
 			};
 
-			this.id = id;
-
-			var geom = utils.texturify(
-				new THREE.CubeGeometry(this.model.bb.x),
-				[[8, 8], [6, 8], [6, 8], [6, 8], [7, 9], [6, 9]]);
+			var geometry = new THREE.BoxGeometry(
+				(Math.random() * 2) + 1,
+				0.4,
+				(Math.random() * 5) + 2
+			);
+			var material = new THREE.MeshLambertMaterial( {color: 0xeeeeee} );
+			var mesh = new THREE.Mesh( geometry, material );
 
 			this.mesh = new THREE.Object3D();
-
-			var mesh = new THREE.Mesh(
-				geom,
-				material
-			);
-
 			this.mesh.add(mesh);
 
 			this.model.pos = { x: pos.x, y: pos.y, z: pos.z };
 			this.mesh.position.copy(pos);
-			this.mesh.lookAt(pos.add(direction));
-
-			this.direction = direction;
+			this.mesh.lookAt(pos.add(new THREE.Vector3(0, 0, 1)));
 
 			return this;
 
 		},
 
 		tick: function (dt) {
+
 			var mesh = this.mesh,
 				pow = dt * this.speed;
 
@@ -50,8 +45,9 @@
 
 			this.pos = mesh.position;
 
-			if (this.count++ > 2000) {
-				this.remove = true;
+			if (this.pos.z > 30) {
+				this.mesh.position.z -= 60;
+				//this.remove = true;
 			}
 
 			return !(this.remove);

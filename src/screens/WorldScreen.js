@@ -20,6 +20,7 @@
 		targets: null,
 		bouy: null,
 		world: null,
+		cc: null,
 
 		lights: {},
 
@@ -71,6 +72,8 @@
 			this.updateDayNight();
 
 			this.addSnow();
+			this.cc = Object.create(CloudController).init(null, 30, this.scene);
+
 
 			return this;
 		},
@@ -668,6 +671,10 @@
 					sf.position.y = 25;
 				}
 			});
+
+			if (this.cc) this.cc.tick(dt);
+
+
 
 		},
 
