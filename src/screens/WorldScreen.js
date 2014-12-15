@@ -52,7 +52,7 @@
 				die: Object.create(Sound).init("res/audio/dead", 0.9),
 				find: Object.create(Sound).init("res/audio/getget2", 0.7),
 				bip: Object.create(Sound).init("res/audio/bip", 0.8),
-				splode: Object.create(Sound).init("res/audio/lololp", 0.6)
+				splode: Object.create(Sound).init("res/audio/lololp2", 0.6)
 			};
 
 			this.screen = screen;
