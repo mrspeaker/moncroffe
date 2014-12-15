@@ -15,9 +15,9 @@
 			for (var i = 0; i < numClouds; i++) {
 				cloud = Object.create(Cloud).init(
 					new THREE.Vector3(
-						Math.random() * 150 - 75,
-						32,
-						Math.random() * 150 - 75
+						Math.random() * 500 - 250,
+						52,
+						Math.random() * 500 - 250
 					)
 				);
 
@@ -26,6 +26,11 @@
 			}
 
 			return this;
+		},
+
+		randCloud: function (cloud) {
+
+
 		},
 
 		tick: function (dt) {

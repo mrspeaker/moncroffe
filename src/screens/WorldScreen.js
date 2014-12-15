@@ -72,8 +72,7 @@
 			this.updateDayNight();
 
 			this.addSnow();
-			this.cc = Object.create(CloudController).init(null, 30, this.scene);
-
+			this.cc = Object.create(CloudController).init(null, 80, this.scene);
 
 			return this;
 		},

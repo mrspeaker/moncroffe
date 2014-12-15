@@ -9,7 +9,7 @@
 		count: 0,
 
 		remove: false,
-		speed: 0.3,
+		speed: 1.8,
 
 		init: function (pos) {
 
@@ -18,9 +18,9 @@
 			};
 
 			var geometry = new THREE.BoxGeometry(
-				(Math.random() * 2) + 1,
-				0.4,
-				(Math.random() * 5) + 2
+				(Math.random() * 30) + 15,
+				1,
+				(Math.random() * 40) + 15
 			);
 			var material = new THREE.MeshLambertMaterial( {color: 0xeeeeee} );
 			var mesh = new THREE.Mesh( geometry, material );
@@ -45,9 +45,10 @@
 
 			this.pos = mesh.position;
 
-			if (this.pos.z > 30) {
-				this.mesh.position.z -= 60;
+			if (this.pos.z > 250) {
+				this.mesh.position.z -= 500;
 				//this.remove = true;
+				this.mesh.position.x = Math.random() * 500 - 250;
 			}
 
 			return !(this.remove);
