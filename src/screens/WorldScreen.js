@@ -173,7 +173,7 @@
 			this.scene.add(this.lights.cube);
 
 			//this.fog.above = new THREE.Fog(0xE8D998, 10, 80);
-			this.scene.fog = new THREE.FogExp2(0x0000aa, 0.05);
+			this.scene.fog = new THREE.FogExp2(0xE8D998, 0.0005);
 
 		},
 
@@ -649,7 +649,7 @@
 
 			var curY = this.player.model.pos.y,
 				lastY = this.player.model.lastPos.y,
-				sea = data.world.seaLevel - this.player.model.bb.h;
+				sea = data.world.seaLevel - 0.7;// - this.player.model.bb.h;
 
 			//console.log(curY, lastY);
 			if (curY >= sea && lastY < sea) {
