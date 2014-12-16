@@ -6,17 +6,19 @@ Find the mysterious boxes... the evil clowns know where they are. Shoot them to 
 Now with Oculus Rift support!
 
 
-	Mouse: look
 	Keys/WSAD: move
-	Left click: Add block if close, else shoot
+	Left click: Shoot / Add block
 	Right click (or shift left): Remove block
-	Wheel: Change block
+	Mouse: Look
 
 	't': Chat
 	'1/2': Adjust mouse sensitivity
-	'e': Toggle Oculus Rift mode (no head tracking yet)
+
+	'e': Toggle Oculus Rift mode
 	'3': Reset headset in VR mode
 	'4': Toggle Ambient Occlusion (debugging)
+	'5': Invert mouse pitch
+	Wheel: Change block to add
 
 Query params /:
 
@@ -40,8 +42,7 @@ Running:
 
 - sound for round ending/starting
 - sound for player joined/disconnect
-- allow restart to titlescreen
-- disconnect-y screen instead of pointerlock
+- allow restart to titlescreen. Tough.
 - leaderboard (session)
 
 ## Bugz

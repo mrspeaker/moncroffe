@@ -311,7 +311,7 @@
 						//var val2 = noise.simplex3((x / 20) + (xo * chW), y / 20 , (z / 20) + (zo * chW));
 
 						// Blob chunk
-						var val = noise.simplex3((x + (xo * chW)) / 15, y / 10, (z + (zo* chW)) / 15);
+						var val = noise.simplex3((x + (xo * chW)) / data.world.noise.x, y / data.world.noise.y, (z + (zo* chW)) / data.world.noise.z);
 						var val2 = noise.simplex3((x + (xo * chW)) / 20, y / 20, (z + (zo* chW)) / 22);
 
 						if (y === 0) {

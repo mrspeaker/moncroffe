@@ -32,7 +32,12 @@ var data = {
 		midX: -1,
 		midZ: -1,
 		maxX: -1,
-		maxZ: -1
+		maxZ: -1,
+		noise: {
+			x: 15,
+			y: 10,
+			z: 15
+		}
 	},
 
 	rounds: {

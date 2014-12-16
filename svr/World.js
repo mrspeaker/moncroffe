@@ -315,7 +315,7 @@ var World = {
 				z: Math.floor(zo + (Math.random() * (maxZ * 0.97) * 2) - (maxZ * 0.97))
 			};
 
-			var val = Perlin.noise.simplex3(pos.x / 15, pos.y / 10, pos.z / 15);
+			var val = Perlin.noise.simplex3(pos.x / data.world.noise.x, pos.y / data.world.noise.y, pos.z / data.world.noise.z);
 
 			if (val < 0.01) {
 				safe = true;

@@ -67,6 +67,18 @@
 
 			screen.bindHandlers(this.player);
 
+			/*var material = new THREE.MeshBasicMaterial({
+					color: 0x1EABFF,
+					transparent: true,
+					opacity: 0.6
+				}),
+				geom = new THREE.BoxGeometry(400, 1, 400),
+				mesh = new THREE.Mesh(geom, material);
+
+			mesh.position.set(0, -0.3, 0);
+
+			this.scene.add(mesh);*/
+
 			this.addLights();
 			this.addStratosphere();
 			this.updateDayNight();
@@ -192,7 +204,7 @@
 			light2.position.set(data.world.radius * data.chunk.w - 3, 5, data.world.radius * data.chunk.w - 3);
 			this.scene.add(light2);
 
-			this.lights.cube = new THREE.PointLight(0xF4D0000, 12, 2.5);
+			this.lights.cube = new THREE.PointLight(0xF4D0000, 12, 4);
 			this.lights.cube.position.set(0, -5, 0);
 			this.scene.add(this.lights.cube);
 
