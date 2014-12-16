@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	var CloudController = {
+	var Clouds = {
 
 		clouds: null,
 
@@ -44,6 +44,6 @@
 		}
 	};
 
-	window.CloudController = CloudController;
+	window.Clouds = Clouds;
 
 }());

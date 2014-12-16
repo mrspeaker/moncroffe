@@ -95,7 +95,7 @@
 			var model = this.model,
 				move = this.controls.update(delta),
 				power = 5.5 * delta,
-				jump = 23,
+				jump = 18,//23,
 				drag = 10 * delta;
 
 			// 00 02 04 06 08  <- over 8 seconds...
@@ -115,7 +115,7 @@
 
 			xo += move.x * power;
 			zo += move.z * power;
-			yo -= 9.8 * drag; // Gravity
+			yo -= 5.8 * drag; // Gravity
 
 			// Forward/backward
 			var wannaMove = {

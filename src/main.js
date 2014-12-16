@@ -370,7 +370,9 @@
 			}
 
 			if (this.hue) {
-				this.hue.value = Math.sin(Date.now() / 20000);
+				//-35 to 10
+				//-1 to 1
+				this.hue.value = (((Math.sin(Date.now() / 20000) + 1) * 0.5) * 40 - 30) / 100;
 			}
 
 			this.screen.tick(delta);

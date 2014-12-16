@@ -20,9 +20,10 @@
 		targets: null,
 		bouy: null,
 		world: null,
-		cc: null,
+		clouds: null,
 
 		lights: {},
+		fog: {},
 
 		stratosphere: {
 			skybox: null,
@@ -67,24 +68,26 @@
 
 			screen.bindHandlers(this.player);
 
-			/*var material = new THREE.MeshBasicMaterial({
+			var material = new THREE.MeshBasicMaterial({
 					color: 0x1EABFF,
 					transparent: true,
-					opacity: 0.6
+					opacity: 0.6,
+					side: THREE.DoubleSide
 				}),
-				geom = new THREE.BoxGeometry(400, 1, 400),
+				geom = new THREE.PlaneGeometry(150, 150),
 				mesh = new THREE.Mesh(geom, material);
 
-			mesh.position.set(0, -0.3, 0);
+			mesh.rotation.x = -Math.PI/2;
+			mesh.position.set(0, 15.5, 0);
 
-			this.scene.add(mesh);*/
+			this.scene.add(mesh);
 
 			this.addLights();
 			this.addStratosphere();
 			this.updateDayNight();
 
-			this.addSnow();
-			this.cc = Object.create(CloudController).init(null, 80, this.scene);
+			this.flotsam = Object.create(Flotsam).init(this.scene);
+			this.clouds = Object.create(Clouds).init(null, 80, this.scene);
 
 			return this;
 		},
@@ -115,44 +118,6 @@
 			this.scene.add(c);
 			c.position.set(3, 18, 3);
 			this.findy = c;
-
-		},
-
-		addSnow: function () {
-
-			function getBlock(x, y) {
-				return [
-					x / 16, y / 16,
-					(x + 1) / 16, y / 16,
-					x / 16, (y + 1) / 16,
-					(x + 1) / 16, (y + 1) / 16
-				];
-			}
-
-			var flakeMaterial = new THREE.SpriteMaterial({
-				map: THREE.ImageUtils.loadTexture("res/images/flake.png"),
-				tranparency: false,
-				fog: true
-			});
-
-			this.snowflakes = [];
-			var d = data.world.radius * 2 * data.chunk.w;
-			for (var i = 0; i < 800; i ++) {
-
-				var flake = new THREE.Sprite(
-					flakeMaterial,
-					getBlock(Math.random() * 15 | 0, Math.random() * 8 | 0)
-				);
-
-				flake.position.set(
-					Math.random() * d - (d / 2),
-					Math.random() * 25,
-					Math.random() * d - (d / 2)  + (data.chunk.w)
-				);
-				flake.scale.set(0.1, 0.1, 0.1);
-				this.scene.add(flake);
-				this.snowflakes.push(flake);
-			}
 
 		},
 
@@ -208,7 +173,10 @@
 			this.lights.cube.position.set(0, -5, 0);
 			this.scene.add(this.lights.cube);
 
-			this.scene.fog = new THREE.Fog(0xE8D998, 10, 80);
+			this.fog.above = new THREE.Fog(0xE8D998, 10, 80);
+			this.fog.below = new THREE.Fog(0xff0088, 0.1, 200);
+
+			this.scene.fog = new THREE.FogExp2(0x0000aa, 0.05);
 
 		},
 
@@ -257,7 +225,7 @@
 				time = 1 + (1 - time);
 			}
 
-			this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
+			//this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
 			this.lights.ambientLight.color = (new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time);
 			this.lights.player.intensity = time > 0.5 ? 1 : 0;
 
@@ -388,7 +356,7 @@
 					". " +
 					(core.utils.formatTime(this.remaining | 0));
 			}
-			utils.msg(msg);
+			utils.msg(msg + "..." + (this.screen.hue.value * 100).toFixed(2));
 
 			this.scores = [];
 			ping.players.forEach(function (p) {
@@ -679,14 +647,8 @@
 
 			this.stateFirst = false;
 
-			this.snowflakes.forEach(function (sf) {
-
-				if ((sf.position.y -= 0.05) < 0) {
-					sf.position.y = 25;
-				}
-			});
-
-			if (this.cc) this.cc.tick(dt);
+			this.flotsam.tick(dt);
+			if (this.clouds) this.clouds.tick(dt);
 
 		},
 
