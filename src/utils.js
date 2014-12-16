@@ -53,7 +53,7 @@
 		return params;
 	}());
 
-	utils.bindPointerLock = function (onChange) {
+	utils.bindPointerLock = function (el, onChange) {
 
 		var blocker = document.getElementById("blocker"),
 			instructions = document.getElementById("instructions"),
@@ -77,7 +77,7 @@
 		}
 
 		if (havePointerLock) {
-			var element = document.body;
+			var element = el; //document.body;
 			var pointerlockchange = function () {
 				if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
 					onChange(true);

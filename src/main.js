@@ -40,7 +40,7 @@
 
 			var self = this;
 
-			this.unbindPointer = utils.bindPointerLock(function (state) {
+			this.unbindPointer = utils.bindPointerLock(this.renderer.domElement, function (state) {
 
 				self.onPointerLockChange(state);
 
