@@ -42,7 +42,7 @@
 
 				flotsam.position.set(
 					Math.random() * d - (d / 2),
-					Math.random() * 15.5,
+					Math.random() * data.world.seaLevel,
 					Math.random() * d - (d / 2)  + (data.chunk.w)
 				);
 
@@ -57,7 +57,7 @@
 
 			this.flotsam.forEach(function (sf) {
 
-				if ((sf.position.y += 0.015) > 15.5) {
+				if ((sf.position.y += 0.015) > data.world.seaLevel) {
 					sf.position.y = 0;
 				}
 

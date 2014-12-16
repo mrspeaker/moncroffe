@@ -13,11 +13,16 @@
 
 		model: null,
 
+		jumpPower: 18, //23,
+		gravity: 9.8,
+		speed: 5.5,
+
 		init: function (screen) {
 
 			this.model = {
 				bb: { x: 0.7, y: 1.9, z: 0.7 },
 				pos: { x: 0, y: 19, z: 0 },
+				lastPos: { x: 0, y: 19, z: 0 },
 				spawn: { x: 0, y: 19, z: 0 },
 				rot: 0,
 				vel: { x: 0, y: 0, z: 0 },
@@ -94,17 +99,13 @@
 
 			var model = this.model,
 				move = this.controls.update(delta),
-				power = 5.5 * delta,
-				jump = 18,//23,
+				power = this.speed * delta,
+				jump = this.jumpPower, //23,
 				drag = 10 * delta;
 
-			// 00 02 04 06 08  <- over 8 seconds...
-			// 20          00  <- move power from 20 to 0
-			//   2  2  2  2    <- if delta every 2...
-			// 20 15 10 05 00  <- would look like this
-			//      4     4    <- if deltal every 4...
-			// 20 20 10 10 00  <- would look like this
-			// oh... just realised. Need a fixed timestep. oops.
+			model.lastPos.x = model.pos.x;
+			model.lastPos.y = model.pos.y;
+			model.lastPos.z = model.pos.z;
 
 			model.rot = move.rot.y;
 
@@ -115,7 +116,7 @@
 
 			xo += move.x * power;
 			zo += move.z * power;
-			yo -= 5.8 * drag; // Gravity
+			yo -= this.gravity * drag; // Gravity
 
 			// Forward/backward
 			var wannaMove = {
@@ -168,7 +169,6 @@
 			this.controls.setPos(model.pos.x + bobX, model.pos.y + bobY, model.pos.z);
 
 			this.syncMesh();
-
 		},
 
 		syncAll: function () {

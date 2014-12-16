@@ -23,7 +23,6 @@
 		clouds: null,
 
 		lights: {},
-		fog: {},
 
 		stratosphere: {
 			skybox: null,
@@ -78,7 +77,7 @@
 				mesh = new THREE.Mesh(geom, material);
 
 			mesh.rotation.x = -Math.PI/2;
-			mesh.position.set(0, 15.5, 0);
+			mesh.position.set(0, data.world.seaLevel, 0);
 
 			this.scene.add(mesh);
 
@@ -173,9 +172,7 @@
 			this.lights.cube.position.set(0, -5, 0);
 			this.scene.add(this.lights.cube);
 
-			this.fog.above = new THREE.Fog(0xE8D998, 10, 80);
-			this.fog.below = new THREE.Fog(0xff0088, 0.1, 200);
-
+			//this.fog.above = new THREE.Fog(0xE8D998, 10, 80);
 			this.scene.fog = new THREE.FogExp2(0x0000aa, 0.05);
 
 		},
@@ -649,6 +646,30 @@
 
 			this.flotsam.tick(dt);
 			if (this.clouds) this.clouds.tick(dt);
+
+			var curY = this.player.model.pos.y,
+				lastY = this.player.model.lastPos.y,
+				sea = data.world.seaLevel - this.player.model.bb.h;
+
+			//console.log(curY, lastY);
+			if (curY >= sea && lastY < sea) {
+				// Went up!
+				this.scene.fog.density = 0.0005;
+				this.scene.fog.color = new THREE.Color(0xE8D998);
+				this.player.gravity = 9.8;
+				this.player.jumpPower = 23;
+				this.player.speed = 4.5
+			}
+
+			if (curY < sea && lastY >= sea) {
+				// Went downs!
+				this.scene.fog.density = 0.05;
+				this.scene.fog.color = new THREE.Color(0x0000aa);
+				this.player.gravity = 5.8;
+				this.player.jumpPower = 18;
+				this.player.speed = 5.5
+
+			}
 
 		},
 
