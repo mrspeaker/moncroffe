@@ -173,7 +173,13 @@
 			this.scene.add(this.lights.cube);
 
 			//this.fog.above = new THREE.Fog(0xE8D998, 10, 80);
-			this.scene.fog = new THREE.FogExp2(0xE8D998, 0.0005);
+			this.fog = {
+				above: new THREE.Color(0xE8D998),
+				below: new THREE.Color(0x0267BE),
+				current: null
+			}
+			this.fog.current = this.fog.above;
+			this.scene.fog = new THREE.FogExp2(this.fog.current.value, 0.0005);
 
 		},
 
@@ -222,7 +228,7 @@
 				time = 1 + (1 - time);
 			}
 
-			//this.scene.fog.color.copy(new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time));
+			this.scene.fog.color.copy(this.fog.current.lerp(new THREE.Color(0x000000), time));
 			this.lights.ambientLight.color = (new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time);
 			this.lights.player.intensity = time > 0.5 ? 1 : 0;
 
@@ -654,8 +660,9 @@
 			//console.log(curY, lastY);
 			if (curY >= sea && lastY < sea) {
 				// Went up!
+				this.fog.current = this.fog.above;
 				this.scene.fog.density = 0.0005;
-				this.scene.fog.color = new THREE.Color(0xE8D998);
+				this.scene.fog.color = this.fog.current;
 				this.player.gravity = 9.8;
 				this.player.jumpPower = 23;
 				this.player.speed = 4.5
@@ -664,7 +671,8 @@
 			if (curY < sea && lastY >= sea) {
 				// Went downs!
 				this.scene.fog.density = 0.05;
-				this.scene.fog.color = new THREE.Color(0x0000aa);
+				this.fog.current = this.fog.below;
+				this.scene.fog.color = this.fog.current;
 				this.player.gravity = 5.8;
 				this.player.jumpPower = 18;
 				this.player.speed = 5.5
