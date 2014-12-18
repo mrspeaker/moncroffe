@@ -158,7 +158,10 @@
 				(model.pos.z < -17 || model.pos.z > 48 ||
 				 model.pos.x < -33 || model.pos.x > 48)) {
 				//col.ground = false;
-				if (yo > 10) { this.fastMove = true; }
+				if (yo > 10 && !this.fastMove) {
+					this.screen.sounds.geyser.play();
+					this.fastMove = true;
+				}
 				yo += 350 * delta;
 			}
 

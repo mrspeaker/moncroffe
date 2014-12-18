@@ -53,7 +53,8 @@
 				find: Object.create(Sound).init("res/audio/getget2", 0.5),
 				bip: Object.create(Sound).init("res/audio/bip", 0.8),
 				splode: Object.create(Sound).init("res/audio/lololp2", 0.4),
-				undersea: Object.create(Sound).init("res/audio/underdasea", 1, true)
+				undersea: Object.create(Sound).init("res/audio/underdasea", 1, true),
+				geyser: Object.create(Sound).init("res/audio/geyser", 0.9)
 			};
 
 			this.screen = screen;
@@ -363,7 +364,15 @@
 					". " +
 					(core.utils.formatTime(this.remaining | 0));
 			}
-			utils.msg(msg + "..." + (this.screen.hue.value * 100).toFixed(2));
+			var p = this.player.model.pos,
+				bpos = "-";
+
+			msg = "";
+
+			if (this.bouy) {
+				bpos = this.bouy.model.pos.x.toFixed(2) + ":" + this.bouy.model.pos.z.toFixed(2);
+			}
+			utils.msg((window.dist ? dist.toFixed(2) : "")  + msg + "..." + bpos + "..." +  p.x.toFixed(2) + ":" + p.z.toFixed(2));
 
 			this.scores = [];
 			ping.players.forEach(function (p) {
@@ -770,6 +779,7 @@
 			if (this.bouy) {
 				this.bouy.tick(dt);
 				var dist = core.utils.dist(this.player.model.pos, this.bouy.model.pos);
+				window.dist = dist;
 				if (dist < 2) {
 					Network.gotBouy();
 					this.bouy.mesh.position.set(0, -1, 0);
