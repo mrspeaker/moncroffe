@@ -18,7 +18,7 @@
 		particles: null,
 		bullets: null,
 		targets: null,
-		lastTargetAdded: Date.now(),
+		targets_to_add: null,
 		bouy: null,
 		world: null,
 		clouds: null,
@@ -67,6 +67,7 @@
 			this.cursor = Object.create(Cursor).init(this);
 			this.bullets = [];
 			this.targets = [];
+			this.targets_to_add = [];
 			this.particles = [];
 			this.scores = [];
 
@@ -419,37 +420,9 @@
 					(i === 0 ? "</strong>" : ""));
 			});
 
-			// This is hack to stop clowns building up
-			//if (this.targets.length < 3) {
-				// Add new clowns
-				ping.targets.forEach(function (t, i) {
-
-					if (Date.now() - this.lastTargetAdded < 100) {
-						return;
-					}
-					this.lastTargetAdded = Date.now();
-
-					var target = Object.create(Clown).init(
-						t.id,
-						new THREE.Vector3(
-							t.pos.x,
-							t.pos.y,
-							t.pos.z
-						),
-						new THREE.Vector3(
-							t.rot.x,
-							t.rot.y,
-							t.rot.z
-						),
-						t.speed,
-						data.materials.target);
-					this.targets.push(target);
-					if (bouy) {
-						target.bouyDir = bouy.mesh.position.clone();
-					}
-					this.scene.add(target.mesh);
-				}, this);
-			//}
+			if (ping.targets.length) {
+				this.targets_to_add = this.targets_to_add.concat(ping.targets);
+			}
 
 			if (ping.bouy) {
 				var pb = ping.bouy;
@@ -677,6 +650,15 @@
 
 			this.stateFirst = false;
 
+			// Add any clowns
+			// Hack - don't add zillions when away from tab (take last X)
+			this.targets_to_add = this.targets_to_add.slice(-4).filter(function (t) {
+
+				this.addTarget(t, dt);
+				return false;
+
+			}, this);
+
 			this.flotsam.tick(dt);
 			if (this.clouds) this.clouds.tick(dt);
 
@@ -856,6 +838,33 @@
 
 			// Do update ping
 			Network.tick(this.player.model);
+
+		},
+
+		addTarget: function (t, dt) {
+
+			// Add new clowns
+			var target = Object.create(Clown).init(
+				t.id,
+				new THREE.Vector3(
+					t.pos.x,
+					t.pos.y,
+					t.pos.z
+				),
+				new THREE.Vector3(
+					t.rot.x,
+					t.rot.y,
+					t.rot.z
+				),
+				t.speed,
+				data.materials.target);
+
+			if (this.bouy) {
+				target.bouyDir = this.bouy.mesh.position.clone();
+			}
+
+			this.targets.push(target);
+			this.scene.add(target.mesh);
 
 		},
 
