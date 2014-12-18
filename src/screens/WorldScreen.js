@@ -18,6 +18,7 @@
 		particles: null,
 		bullets: null,
 		targets: null,
+		lastTargetAdded: Date.now(),
 		bouy: null,
 		world: null,
 		clouds: null,
@@ -55,7 +56,8 @@
 				splode: Object.create(Sound).init("res/audio/lolop3", 0.4),
 				undersea: Object.create(Sound).init("res/audio/underdasea", 1, true),
 				geyser: Object.create(Sound).init("res/audio/geyser", 0.9),
-				join: Object.create(Sound).init("res/audio/join", 0.8)
+				join: Object.create(Sound).init("res/audio/join", 0.8),
+				starty: Object.create(Sound).init("res/audio/starty", 0.8)
 			};
 
 			this.screen = screen;
@@ -94,7 +96,7 @@
 			this.flotsam = Object.create(Flotsam).init(this.scene);
 			this.clouds = Object.create(Clouds).init(null, 80, this.scene);
 
-			this.sounds.join.play();
+			this.sounds.starty.play();
 
 			return this;
 		},
@@ -173,7 +175,7 @@
 			light2.position.set(data.world.radius * data.chunk.w - 3, 5, data.world.radius * data.chunk.w - 3);
 			this.scene.add(light2);
 
-			this.lights.cube = new THREE.PointLight(0xF4D0000, 12, 4);
+			this.lights.cube = new THREE.PointLight(0xF4D0000, 12, 5);
 			this.lights.cube.position.set(0, -5, 0);
 			this.scene.add(this.lights.cube);
 
@@ -421,6 +423,12 @@
 			//if (this.targets.length < 3) {
 				// Add new clowns
 				ping.targets.forEach(function (t, i) {
+
+					if (Date.now() - this.lastTargetAdded < 100) {
+						return;
+					}
+					this.lastTargetAdded = Date.now();
+
 					var target = Object.create(Clown).init(
 						t.id,
 						new THREE.Vector3(
