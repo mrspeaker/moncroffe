@@ -229,6 +229,9 @@
 			});
 
 			window.onbeforeunload = function() {
+				if (!window.askToLeave) {
+					return;
+				}
 				return 'Sure you wanna leave?';
 			};
 

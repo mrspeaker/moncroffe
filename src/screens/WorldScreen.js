@@ -687,7 +687,7 @@
 				this.player.jumpPower = 18;
 				this.player.speed = 5.5;
 				this.sounds.undersea.play();
-				this.player.model.vel.y /= 10;
+				this.player.model.vel.y /= 10; // Slow down when hit water!
 
 			}
 

@@ -72,6 +72,7 @@
 				// TODO: lol.
 				socket.io.disconnect();
 				setTimeout(function () {
+					window.askToLeave = false;
 					window.location.href = window.location.href;
 				}, 250);
 
