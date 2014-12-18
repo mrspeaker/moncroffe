@@ -306,18 +306,20 @@ var World = {
 			maxX = data.world.maxX,
 			maxZ = data.world.maxZ,
 			safe = false,
-			pos;
+			pos,
+			tries = 0;
 
-		while (!safe) {
+		while (tries++ < 150 && !safe) {
 
-			pos = { x: Math.floor(xo + (Math.random() * (maxX * 0.97) * 2) - (maxX * 0.97)),
+			pos = {
+				x: Math.floor(xo + (Math.random() * (maxX * 0.97) * 2) - (maxX * 0.97)),
 				y: Math.floor(Math.random() * 18 | 0) + 1,
 				z: Math.floor(zo + (Math.random() * (maxZ * 0.97) * 2) - (maxZ * 0.97))
 			};
 
 			var val = Perlin.noise.simplex3(pos.x / data.world.noise.x, pos.y / data.world.noise.y, pos.z / data.world.noise.z);
 
-			if (val < 0.01) {
+			if (val < -0.2 && val > -0.3) {
 				safe = true;
 			}
 

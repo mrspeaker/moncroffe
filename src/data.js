@@ -34,9 +34,9 @@ var data = {
 		maxX: -1,
 		maxZ: -1,
 		noise: {
-			x: 15,
+			x: 13,
 			y: 10,
-			z: 15
+			z: 13
 		},
 		seaLevel: 15.5
 	},
