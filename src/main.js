@@ -228,6 +228,10 @@
 
 			});
 
+			window.onbeforeunload = function() {
+				return 'Sure you wanna leave?';
+			};
+
 		},
 
 		toggleChat: function () {
