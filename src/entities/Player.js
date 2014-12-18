@@ -17,6 +17,8 @@
 		gravity: 9.8,
 		speed: 5.5,
 
+		fastMove: false, // More power to move when getting flung
+
 		init: function (screen) {
 
 			this.model = {
@@ -99,7 +101,7 @@
 
 			var model = this.model,
 				move = this.controls.update(delta),
-				power = this.speed * delta,
+				power = (this.fastMove ? this.speed * 2.5 : this.speed) * delta,
 				jump = this.jumpPower, //23,
 				drag = 10 * delta;
 
@@ -141,6 +143,7 @@
 
 			if (col.ground) {
 				yo = 0;
+				this.fastMove = false;
 			}
 
 			// Check if fallen past ground
@@ -148,6 +151,15 @@
 				yo = 0;
 				model.pos.y = 0 + (model.bb.y / 2);
 				col.ground = true; // Allow jumping!
+			}
+
+			// Guiser
+			if (model.pos.y < 16 &&
+				(model.pos.z < -17 || model.pos.z > 48 ||
+				 model.pos.x < -33 || model.pos.x > 48)) {
+				//col.ground = false;
+				if (yo > 10) { this.fastMove = true; }
+				yo += 350 * delta;
 			}
 
 			// If we're on the ground, and want to jump... do it.
