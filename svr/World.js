@@ -322,7 +322,7 @@ var World = {
 			}
 
 		}
-		pos.y = 17;
+
 		return pos;
 
 	},
