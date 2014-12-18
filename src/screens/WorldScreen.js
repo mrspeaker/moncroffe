@@ -52,9 +52,10 @@
 				die: Object.create(Sound).init("res/audio/dead", 0.9),
 				find: Object.create(Sound).init("res/audio/getget2", 0.5),
 				bip: Object.create(Sound).init("res/audio/bip", 0.8),
-				splode: Object.create(Sound).init("res/audio/lololp2", 0.4),
+				splode: Object.create(Sound).init("res/audio/lolop3", 0.4),
 				undersea: Object.create(Sound).init("res/audio/underdasea", 1, true),
-				geyser: Object.create(Sound).init("res/audio/geyser", 0.9)
+				geyser: Object.create(Sound).init("res/audio/geyser", 0.9),
+				join: Object.create(Sound).init("res/audio/join", 0.8)
 			};
 
 			this.screen = screen;
@@ -92,6 +93,8 @@
 
 			this.flotsam = Object.create(Flotsam).init(this.scene);
 			this.clouds = Object.create(Clouds).init(null, 80, this.scene);
+
+			this.sounds.join.play();
 
 			return this;
 		},
@@ -150,9 +153,6 @@
 		addBouy: function () {
 
 			this.bouy = Object.create(Bouy).init(data.materials.blocks);
-			// this.bouy.mesh.add(this.lights.cube);
-			// this.lights.cube.position.set(0, 1, 0);
-			//
 			this.scene.add(this.bouy.mesh);
 
 		},
@@ -364,15 +364,17 @@
 					". " +
 					(core.utils.formatTime(this.remaining | 0));
 			}
-			var p = this.player.model.pos,
+			/*var p = this.player.model.pos,
 				bpos = "-";
 
 			msg = "";
 
 			if (this.bouy) {
 				bpos = this.bouy.model.pos.x.toFixed(2) + ":" + this.bouy.model.pos.z.toFixed(2);
+				(window.dist ? dist.toFixed(2) : "")
 			}
-			utils.msg((window.dist ? dist.toFixed(2) : "")  + msg + "..." + bpos + "..." +  p.x.toFixed(2) + ":" + p.z.toFixed(2));
+			*/
+			utils.msg(msg);
 
 			this.scores = [];
 			ping.players.forEach(function (p) {
@@ -383,6 +385,7 @@
 				if (!player) {
 					// TODO: no name on connect, only join!
 					console.log("Player joined:", p.id, p.name);
+					this.sounds.join.play();
 
 					player = Network.clients[p.id] = Object.create(PlayerProxy).init(p.id, p.name, isSelf);
 					this.scene.add(player.mesh);
