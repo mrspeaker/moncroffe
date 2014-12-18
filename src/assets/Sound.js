@@ -62,7 +62,7 @@
 
 		rewind: function () {
 
-			if (!this._loaded) { return; }
+			if (!this.audio._loaded) { return; }
 			this.audio.pause();
 			try{
 				this.audio.currentTime = 0;
@@ -82,7 +82,7 @@
 
 		stop: function () {
 
-			if (!this._loaded) { return; }
+			if (!this.audio._loaded) { return; }
 			this.audio.pause();
 
 		}

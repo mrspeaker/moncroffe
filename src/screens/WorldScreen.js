@@ -50,9 +50,10 @@
 			this.sounds = {
 				shoot: Object.create(Sound).init("res/audio/laz1", 0.15),
 				die: Object.create(Sound).init("res/audio/dead", 0.9),
-				find: Object.create(Sound).init("res/audio/getget2", 0.7),
+				find: Object.create(Sound).init("res/audio/getget2", 0.5),
 				bip: Object.create(Sound).init("res/audio/bip", 0.8),
-				splode: Object.create(Sound).init("res/audio/lololp2", 0.6)
+				splode: Object.create(Sound).init("res/audio/lololp2", 0.4),
+				undersea: Object.create(Sound).init("res/audio/underdasea", 1, true)
 			};
 
 			this.screen = screen;
@@ -67,10 +68,13 @@
 
 			screen.bindHandlers(this.player);
 
-			var material = new THREE.MeshBasicMaterial({
+			// Add the ocean top
+			var material = new THREE.MeshLambertMaterial({
 					color: 0x1EABFF,
 					transparent: true,
 					opacity: 0.6,
+					fog: true,
+					ambient: new THREE.Color(0x1EABFF),
 					side: THREE.DoubleSide
 				}),
 				geom = new THREE.PlaneGeometry(150, 150),
@@ -157,14 +161,14 @@
 			this.lights.ambientLight = new THREE.AmbientLight(0x999999);
 			this.scene.add(this.lights.ambientLight);
 
-			this.lights.player = new THREE.PointLight(0xF4D2A3, 1, 8);//(0xF3AC44, 1, 8);
+			this.lights.player = new THREE.PointLight(0x84b2f3, 1, 8);//(0xF3AC44, 1, 8);
 			this.screen.camera.add(this.lights.player); // light follows player
 
-			var light = new THREE.PointLight(0xF4D2A3, 1, 10);
+			var light = new THREE.PointLight(0xA4D2F3, 1, 10);
 			light.position.set(data.chunk.w - 5, 5, data.chunk.w - 5);
 			this.scene.add(light);
 
-			var light2 = new THREE.PointLight(0xF4D2A3, 1, 10);
+			var light2 = new THREE.PointLight(0xA4D2F3, 1, 10);
 			light2.position.set(data.world.radius * data.chunk.w - 3, 5, data.world.radius * data.chunk.w - 3);
 			this.scene.add(light2);
 
@@ -228,8 +232,8 @@
 				time = 1 + (1 - time);
 			}
 
-			this.scene.fog.color.copy(this.fog.current.lerp(new THREE.Color(0x000000), time));
-			this.lights.ambientLight.color = (new THREE.Color(0x999999)).lerp(new THREE.Color(0x2f2f2f), time);
+			this.scene.fog.color = this.fog.current.clone().lerp(new THREE.Color(0x000022), time);
+			this.lights.ambientLight.color = (new THREE.Color(0x9999cc)).lerp(new THREE.Color(0x2f2f2f), time);
 			this.lights.player.intensity = time > 0.5 ? 1 : 0;
 
 			var strat = this.stratosphere;
@@ -401,28 +405,31 @@
 					(i === 0 ? "</strong>" : ""));
 			});
 
-			// Add new clowns
-			ping.targets.forEach(function (t) {
-				var target = Object.create(Clown).init(
-					t.id,
-					new THREE.Vector3(
-						t.pos.x,
-						t.pos.y,
-						t.pos.z
-					),
-					new THREE.Vector3(
-						t.rot.x,
-						t.rot.y,
-						t.rot.z
-					),
-					t.speed,
-					data.materials.target);
-				this.targets.push(target);
-				if (bouy) {
-					target.bouyDir = bouy.mesh.position.clone();
-				}
-				this.scene.add(target.mesh);
-			}, this);
+			// This is hack to stop clowns building up
+			//if (this.targets.length < 3) {
+				// Add new clowns
+				ping.targets.forEach(function (t, i) {
+					var target = Object.create(Clown).init(
+						t.id,
+						new THREE.Vector3(
+							t.pos.x,
+							t.pos.y,
+							t.pos.z
+						),
+						new THREE.Vector3(
+							t.rot.x,
+							t.rot.y,
+							t.rot.z
+						),
+						t.speed,
+						data.materials.target);
+					this.targets.push(target);
+					if (bouy) {
+						target.bouyDir = bouy.mesh.position.clone();
+					}
+					this.scene.add(target.mesh);
+				}, this);
+			//}
 
 			if (ping.bouy) {
 				var pb = ping.bouy;
@@ -666,6 +673,7 @@
 				this.player.gravity = 9.8;
 				this.player.jumpPower = 23;
 				this.player.speed = 4.5
+				this.sounds.undersea.stop();
 			}
 
 			if (curY < sea && lastY >= sea) {
@@ -675,7 +683,8 @@
 				this.scene.fog.color = this.fog.current;
 				this.player.gravity = 5.8;
 				this.player.jumpPower = 18;
-				this.player.speed = 5.5
+				this.player.speed = 5.5;
+				this.sounds.undersea.play();
 
 			}
 

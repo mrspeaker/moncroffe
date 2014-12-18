@@ -27,13 +27,13 @@
 			}
 
 			var flotsamMaterial = new THREE.SpriteMaterial({
-				map: THREE.ImageUtils.loadTexture("res/images/flake.png"),
+				map: THREE.ImageUtils.loadTexture("res/images/bubble.png"),
 				tranparency: false,
 				fog: true
 			});
 
 			var d = data.world.radius * 2 * data.chunk.w;
-			for (var i = 0; i < 800; i ++) {
+			for (var i = 0; i < 1000; i ++) {
 
 				var flotsam = new THREE.Sprite(
 					flotsamMaterial,
