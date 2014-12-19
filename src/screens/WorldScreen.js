@@ -20,6 +20,9 @@
 		targets: null,
 		targets_to_add: null,
 		bouy: null,
+		bonuses: null,
+		bonuses_to_add: null,
+
 		world: null,
 		clouds: null,
 
@@ -68,6 +71,8 @@
 			this.bullets = [];
 			this.targets = [];
 			this.targets_to_add = [];
+			this.bonuses = [];
+			this.bonuses_to_add = [];
 			this.particles = [];
 			this.scores = [];
 
@@ -434,6 +439,9 @@
 			if (ping.targets.length) {
 				this.targets_to_add = this.targets_to_add.concat(ping.targets);
 			}
+			if (ping.bonus) {
+				this.bonuses_to_add.push(ping.bonus);
+			}
 
 			if (ping.bouy) {
 				var pb = ping.bouy;
@@ -670,6 +678,12 @@
 				return false;
 
 			}, this);
+			this.bonuses_to_add = this.bonuses_to_add.slice(-4).filter(function (b) {
+
+				this.addBonus(b);
+				return false;
+
+			}, this);
 
 			this.flotsam.tick(dt);
 			if (this.clouds) this.clouds.tick(dt);
@@ -760,6 +774,22 @@
 					}
 				}
 				return ret;
+			}, this);
+
+			this.bonuses = this.bonuses.filter(function (b) {
+
+				var ret = b.tick(dt);
+
+				if (core.utils.dist(this.player.model.pos, b.model.pos) < 2) {
+					ret = false;
+					this.player.powerUp(150);
+				}
+
+				if (!ret) {
+					scene.remove(b.mesh);
+				}
+				return ret;
+
 			}, this);
 
 			for (var p in Network.clients) {
@@ -878,6 +908,16 @@
 
 			this.targets.push(target);
 			this.scene.add(target.mesh);
+
+		},
+
+		addBonus: function (b) {
+			console.log("Add!", b);
+			// Add new clowns
+			var bonus = Object.create(PowerBall).init();
+			bonus.setPos(b);
+			this.bonuses.push(bonus);
+			this.scene.add(bonus.mesh);
 
 		},
 

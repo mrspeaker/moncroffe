@@ -19,6 +19,7 @@ var World = {
 	bullets: null,
 	bouy: null,
 	lastTargetTime: Date.now(),
+	lastBonusTime: Date.now(),
 
 	flash: false,
 
@@ -292,9 +293,12 @@ var World = {
 		}
 
 		if (!this.bouy && Math.random () < 0.01) {
-
 			this.bouy = this.getSafePos();
+		}
 
+		if (now - this.lastBonusTime > 3000) {
+			this.bonus = this.getSafePos();
+			this.lastBonusTime = now;
 		}
 
 	},

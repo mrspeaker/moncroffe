@@ -244,6 +244,7 @@ var Worlds = {
 					// Should come as seperate messages, yo.
 					state: World.state,
 					bouy: World.bouy,
+					bonus: World.bonus,
 					seed: World.seed,
 					flash: World.flash,
 					round: World.round
@@ -253,6 +254,7 @@ var Worlds = {
 
 			World.flash = false;
 			World.targets = [];
+			World.bonus = null;
 
 		});
 

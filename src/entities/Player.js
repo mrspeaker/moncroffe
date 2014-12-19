@@ -18,6 +18,7 @@
 		speed: 5.5,
 
 		fastMove: false, // More power to move when getting flung
+		powerUpTime: 0,
 
 		init: function (screen) {
 
@@ -55,6 +56,12 @@
 			};
 
 			this.mesh.position.set(spawn.x, spawn.y, spawn.z);
+
+		},
+
+		powerUp: function (time) {
+
+			this.powerUpTime = time;
 
 		},
 
@@ -117,7 +124,14 @@
 				yo = model.vel.y;
 
 			xo += move.x * power;
-			zo +=( move.z - 2) * power;
+			zo += move.z * power;
+
+			// Auto power!
+			if (this.powerUpTime > 0) {
+				this.powerUpTime--;
+				zo -= 9 * delta;
+			}
+
 			yo -= this.gravity * drag; // Gravity
 
 			// Forward/backward
