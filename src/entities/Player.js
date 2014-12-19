@@ -117,7 +117,7 @@
 				yo = model.vel.y;
 
 			xo += move.x * power;
-			zo += move.z * power;
+			zo +=( move.z - 2) * power;
 			yo -= this.gravity * drag; // Gravity
 
 			// Forward/backward

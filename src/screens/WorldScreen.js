@@ -655,7 +655,6 @@
 
 			case "ROUND_OVER":
 				if (this.stateFirst && this.round < data.rounds.total - 1 ) {
-					//document.querySelector("#roundWinner").innerHTML = this.getLeaders();
 					utils.showMsg("#roundOver", data.rounds.duration.roundOver - 0.5);
 				}
 				break;
@@ -664,10 +663,10 @@
 			this.stateFirst = false;
 
 			// Add any clowns
-			// Hack - don't add zillions when away from tab (take last X)
+			// .slice(-X) Hack: don't add zillions when away from tab
 			this.targets_to_add = this.targets_to_add.slice(-4).filter(function (t) {
 
-				this.addTarget(t, dt);
+				this.addTarget(t);
 				return false;
 
 			}, this);
@@ -855,7 +854,7 @@
 
 		},
 
-		addTarget: function (t, dt) {
+		addTarget: function (t) {
 
 			// Add new clowns
 			var target = Object.create(Clown).init(
