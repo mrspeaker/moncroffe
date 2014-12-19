@@ -912,7 +912,6 @@
 		},
 
 		addBonus: function (b) {
-			console.log("Add!", b);
 			// Add new clowns
 			var bonus = Object.create(PowerBall).init();
 			bonus.setPos(b);
