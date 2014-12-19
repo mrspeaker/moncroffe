@@ -276,7 +276,8 @@
 
 			var t = {
 				blocks: THREE.ImageUtils.loadTexture("res/images/terrain.png"),
-				night: THREE.ImageUtils.loadTexture("res/images/night.jpg")
+				night: THREE.ImageUtils.loadTexture("res/images/night.jpg"),
+				uparrow: THREE.ImageUtils.loadTexture("res/images/uparrow.png")
 			};
 
 			t.blocks.magFilter = THREE.NearestFilter;
@@ -284,6 +285,11 @@
 
 			t.night.wrapS = t.night.wrapT = THREE.RepeatWrapping;
 			t.night.repeat.set(3, 3);
+
+			t.uparrow.magFilter = THREE.NearestFilter;
+			t.uparrow.minFilter = THREE.NearestFilter;
+			t.uparrow.wrapS = t.uparrow.wrapT = THREE.RepeatWrapping;
+			t.uparrow.repeat.set(30, 30);
 
 			return t;
 
@@ -317,6 +323,13 @@
 				wrapAround: true,
 				vertexColors: THREE.VertexColors,
 				wireframe: false
+			});
+
+			m.arrow = new THREE.MeshLambertMaterial({
+				map: textures.uparrow,
+				transparent: true,
+				opacity: 0.2,
+				side: THREE.DoubleSide
 			});
 
 			return m;

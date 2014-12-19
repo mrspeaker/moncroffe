@@ -73,25 +73,9 @@
 
 			screen.bindHandlers(this.player);
 
-			// Add the ocean top
-			var material = new THREE.MeshLambertMaterial({
-					color: 0x1EABFF,
-					transparent: true,
-					opacity: 0.6,
-					fog: true,
-					ambient: new THREE.Color(0x1EABFF),
-					side: THREE.DoubleSide
-				}),
-				geom = new THREE.PlaneGeometry(150, 150),
-				mesh = new THREE.Mesh(geom, material);
-
-			mesh.rotation.x = -Math.PI/2;
-			mesh.position.set(0, data.world.seaLevel, 0);
-
-			this.scene.add(mesh);
-
 			this.addLights();
 			this.addStratosphere();
+			this.addOceanAndStuff();
 			this.updateDayNight();
 
 			this.flotsam = Object.create(Flotsam).init(this.scene);
@@ -225,6 +209,33 @@
 
 			this.scene.add(sky);
 			this.scene.add(night);
+
+		},
+
+		addOceanAndStuff: function () {
+
+			// Add the ocean top
+			var material = new THREE.MeshLambertMaterial({
+					color: 0x1EABFF,
+					transparent: true,
+					opacity: 0.6,
+					fog: true,
+					ambient: new THREE.Color(0x1EABFF),
+					side: THREE.DoubleSide
+				}),
+				geom = new THREE.PlaneGeometry(150, 150),
+				ocean = new THREE.Mesh(geom, material);
+
+			ocean.rotation.x = -Math.PI / 2;
+			ocean.position.set(0, data.world.seaLevel, 0);
+
+			this.scene.add(ocean);
+
+			var wall1Geom = new THREE.BoxGeometry(4, 20, 75);
+			var wall1 = new THREE.Mesh(wall1Geom, data.materials.arrow);
+
+			wall1.position.set(-(32.5 + 2), 4, 15);
+			this.scene.add(wall1);
 
 		},
 
@@ -638,6 +649,8 @@
 					this.setEveryoneSafeBlinky();
 				}
 				this.tick_ROUND(dt);
+
+				data.textures.uparrow.offset.set(0, 32 - (Date.now() / 200) % 32);
 				break;
 
 			case "ROUND_OVER":
