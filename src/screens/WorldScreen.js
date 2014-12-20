@@ -700,7 +700,7 @@
 				this.scene.fog.color = this.fog.current;
 				this.player.gravity = 9.8;
 				this.player.jumpPower = 23;
-				this.player.speed = 4.5
+				//this.player.speed = 4.5
 				this.sounds.undersea.stop();
 			}
 
@@ -711,7 +711,7 @@
 				this.scene.fog.color = this.fog.current;
 				this.player.gravity = 5.8;
 				this.player.jumpPower = 18;
-				this.player.speed = 5.5;
+				//this.player.speed = 5.5;
 				this.sounds.undersea.play();
 				this.player.model.vel.y /= 10; // Slow down when hit water!
 
@@ -782,7 +782,7 @@
 
 				if (core.utils.dist(this.player.model.pos, b.model.pos) < 2) {
 					ret = false;
-					this.player.powerUp(150);
+					this.player.powerUp(300);
 				}
 
 				if (!ret) {

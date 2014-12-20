@@ -130,9 +130,12 @@
 			if (this.powerUpTime > 0) {
 				this.powerUpTime--;
 				zo -= 9 * delta;
+				//var vector = new THREE.Vector3( 0, 0, -1 );
+				var vector = this.controls.getDirection().clone();
+				yo = vector.y * 10;
+			} else {
+				yo -= this.gravity * drag; // Gravity
 			}
-
-			yo -= this.gravity * drag; // Gravity
 
 			// Forward/backward
 			var wannaMove = {

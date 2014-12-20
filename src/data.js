@@ -42,7 +42,7 @@ var data = {
 	},
 
 	rounds: {
-		total: 3,
+		total: 2,
 		duration: {
 			born: 3,
 			firstRoundReady: 6,
