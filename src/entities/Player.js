@@ -127,14 +127,16 @@
 			zo += move.z * power;
 
 			// Auto power!
-			if (this.powerUpTime > 0 && zo !== 0) {
+			if (this.powerUpTime > 0) {
 				this.powerUpTime--;
 				if (this.powerUpTime === 0) {
 					this.screen.screen.vignetteEffect.value = 0.7;
 				}
-				zo *= this.fastMove ? 1.1 : 1.5;
-				var vector = this.controls.getDirection().clone();
-				yo = vector.y * 10;
+				if (zo !== 0) {
+					zo *= this.fastMove ? 1.1 : 1.3;
+					var vector = this.controls.getDirection().clone();
+					yo = vector.y * 10;
+				}
 			} else {
 				yo -= this.gravity * drag; // Gravity
 			}

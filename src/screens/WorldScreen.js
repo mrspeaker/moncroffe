@@ -100,6 +100,20 @@
 			this.world = Object.create(World).init(this, Network.world.seed);
 			this.world.createChunks();
 
+			this.targets = this.targets.filter(function (t) {
+
+				this.scene.remove(t.mesh);
+				return false;
+
+			}, this);
+
+			this.bonuses = this.bonuses.filter(function (b) {
+
+				this.scene.remove(b.mesh);
+				return false;
+
+			}, this);
+
 			this.doneInitialReset = true;
 
 		},
