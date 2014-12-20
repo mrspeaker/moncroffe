@@ -282,6 +282,7 @@
 
 			var pos = cursor.pos;
 
+			// Don't dig ground
 			if (!cursor.visible || pos.y === 0) {
 				return;
 			}

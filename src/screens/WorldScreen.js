@@ -60,7 +60,8 @@
 				undersea: Object.create(Sound).init("res/audio/underdasea", 1, true),
 				geyser: Object.create(Sound).init("res/audio/geyser", 0.9),
 				join: Object.create(Sound).init("res/audio/join", 0.8),
-				starty: Object.create(Sound).init("res/audio/starty", 0.8)
+				starty: Object.create(Sound).init("res/audio/starty", 0.8),
+				power: Object.create(Sound).init("res/audio/power", 0.4)
 			};
 
 			this.screen = screen;
@@ -797,6 +798,7 @@
 				if (core.utils.dist(this.player.model.pos, b.model.pos) < 2) {
 					ret = false;
 					this.player.powerUp(350);
+					this.sounds.power.play();
 					this.screen.vignetteEffect.value = 1.2;
 				}
 
