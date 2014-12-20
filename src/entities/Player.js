@@ -127,10 +127,12 @@
 			zo += move.z * power;
 
 			// Auto power!
-			if (this.powerUpTime > 0) {
+			if (this.powerUpTime > 0 && zo !== 0) {
 				this.powerUpTime--;
-				zo -= 9 * delta;
-				//var vector = new THREE.Vector3( 0, 0, -1 );
+				if (this.powerUpTime === 0) {
+					this.screen.screen.vignetteEffect.value = 0.7;
+				}
+				zo *= this.fastMove ? 1.1 : 1.5;
 				var vector = this.controls.getDirection().clone();
 				yo = vector.y * 10;
 			} else {

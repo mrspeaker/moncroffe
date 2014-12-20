@@ -381,8 +381,9 @@
 				this.composer = new THREE.EffectComposer(this.renderer);
 				this.composer.addPass(new THREE.RenderPass(this.screen.scene, this.camera));
 
-				var effect = new THREE.ShaderPass( THREE.VignetteShader );
-				effect.uniforms["darkness"].value = 0.7;
+				var effect = new THREE.ShaderPass(THREE.VignetteShader);
+				this.vignetteEffect = effect.uniforms["darkness"];
+				this.vignetteEffect.value = 0.7;
 				this.composer.addPass( effect );
 
 				var effect = new THREE.ShaderPass( THREE.HueSaturationShader );

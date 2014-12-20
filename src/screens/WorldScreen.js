@@ -782,7 +782,8 @@
 
 				if (core.utils.dist(this.player.model.pos, b.model.pos) < 2) {
 					ret = false;
-					this.player.powerUp(300);
+					this.player.powerUp(350);
+					this.screen.vignetteEffect.value = 1.2;
 				}
 
 				if (!ret) {
