@@ -13,11 +13,11 @@
 
 		model: null,
 
-		jumpPower: 18, //23,
+		jumpPower: 18,
 		gravity: 9.8,
 		speed: 5.5,
 
-		fastMove: false, // More power to move when getting flung
+		beingFlung: false, // More power to move when getting flung
 		powerUpTime: 0,
 
 		init: function (screen) {
@@ -108,7 +108,7 @@
 
 			var model = this.model,
 				move = this.controls.update(delta),
-				power = (this.fastMove ? this.speed * 2.5 : this.speed) * delta,
+				power = (this.beingFlung ? this.speed * 2.5 : this.speed) * delta,
 				jump = this.jumpPower, //23,
 				drag = 10 * delta;
 
@@ -133,12 +133,13 @@
 					this.screen.screen.vignetteEffect.value = 0.7;
 				}
 				if (zo !== 0) {
-					zo *= this.fastMove ? 1.1 : 1.3;
+					zo *= this.beingFlung ? 1.1 : 1.3;
 					var vector = this.controls.getDirection().clone();
 					yo = vector.y * 10;
 				}
 			} else {
-				yo -= this.gravity * drag; // Gravity
+				// Gravity
+				yo -= this.gravity * drag;
 			}
 
 			// Forward/backward
@@ -164,7 +165,7 @@
 
 			if (col.ground) {
 				yo = 0;
-				this.fastMove = false;
+				this.beingFlung = false;
 			}
 
 			// Check if fallen past ground
@@ -179,9 +180,9 @@
 				(model.pos.z < -17 || model.pos.z > 48 ||
 				 model.pos.x < -33 || model.pos.x > 48)) {
 				//col.ground = false;
-				if (yo > 10 && !this.fastMove) {
+				if (yo > 10 && !this.beingFlung) {
 					this.screen.sounds.geyser.play();
-					this.fastMove = true;
+					this.beingFlung = true;
 				}
 				yo += 350 * delta;
 			}

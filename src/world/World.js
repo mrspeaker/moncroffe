@@ -282,7 +282,7 @@
 
 			var pos = cursor.pos;
 
-			if (!cursor.visible) {
+			if (!cursor.visible || pos.y === 0) {
 				return;
 			}
 
