@@ -297,9 +297,17 @@ var World = {
 		}
 
 		if (now - this.lastBonusTime > 3000) {
-			this.bonus = this.getSafePos();
-			this.lastBonusTime = now;
+		//	this.addBonus();
 		}
+
+	},
+
+	addBonus: function () {
+
+		var now = Date.now();
+
+		this.bonus = this.getSafePos();
+		this.lastBonusTime = now;
 
 	},
 

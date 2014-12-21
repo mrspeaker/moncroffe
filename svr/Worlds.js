@@ -112,7 +112,7 @@ var Worlds = {
 
 			World.clients.forEach(function (c) {
 
-				if (c === client) return;
+				//if (c === client) return;
 				c.emit("clownDestroyed", id);
 
 			});

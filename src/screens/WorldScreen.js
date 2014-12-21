@@ -314,14 +314,19 @@
 		},
 
 		clownDestroyed: function (id) {
+
 			this.targets = this.targets.filter(function (t) {
-				var deadPump = t.id === id;
-				if (deadPump) {
+
+				var dead = t.id === id;
+				if (dead) {
+					this.addBonus(t.mesh.position);
 					this.scene.remove(t.mesh);
-					this.explodeParticles(t.pos, true);
+					this.explodeParticles(t.pos, true, t.bouyDir);
 				}
-				return !deadPump;
+				return !dead;
+
 			}, this);
+
 		},
 
 		otherFiredBullet: function (bullet) {
@@ -769,6 +774,8 @@
 				xo = data.world.midX,
 				zo = data.world.midZ;
 
+			// Remove any hit targets
+
 			this.targets = this.targets.filter(function (t) {
 				var ret = t.tick(dt);
 				if (!ret) {
@@ -780,9 +787,9 @@
 							return b.ownShot && !b.stopped && core.utils.dist(b.model.pos, t.pos) < t.model.bb.x;
 						});
 						if (hit) {
-							ret = false;
-							scene.remove(t.mesh);
-							this.explodeParticles(t.pos, true, t.bouyDir);
+							//ret = false;
+							//scene.remove(t.mesh);
+							//this.explodeParticles(t.pos, true, t.bouyDir);
 							Network.targetHit(t.id);
 							this.sounds.splode.play();
 						}

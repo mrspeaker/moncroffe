@@ -180,6 +180,7 @@
 
 					this.saveSettings();
 				}
+
 				if (e.keyCode === 50 /*2*/) {
 					s = Settings.mouse_sensitivity + 0.05;
 					Settings.mouse_sensitivity = s;
