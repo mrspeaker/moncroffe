@@ -40,8 +40,9 @@ Running:
 
 ## Next todos
 
+- powerball never collected in multiplayer
 - sound for round ending/starting
-- sound for player joined/disconnect
+- sound for player disconnect
 - allow restart to titlescreen. Tough.
 - leaderboard (session)
 
@@ -49,6 +50,7 @@ Running:
 
 - omg... multiplayer, you can't jump as high...
   ... need to switch to fixed timestep for physics.
+- can go up through blocks in powerball (same bug as head hit, I think)
 
 > client
 
@@ -68,6 +70,7 @@ Running:
 
 > other
 
+- Sounds of other players
 - VR head tracking doesn't aim gun
 - VR Should walk in direction looking
 

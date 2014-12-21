@@ -200,10 +200,6 @@
 					main.reset();
 				}
 
-				if (e.keyCode === 54 /*6*/) {
-					main.screen && main.screen.player && main.screen.player.powerUp(100);
-				}
-
 				if (e.keyCode === 84) {
 					this.toggleChat();
 					e.preventDefault();
