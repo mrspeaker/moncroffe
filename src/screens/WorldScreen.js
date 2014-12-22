@@ -670,9 +670,12 @@
 
 					var roundDuration = this.round === 0 ?
 						data.rounds.duration.firstRoundReady :
-						data.rounds.duration.roundReady;
+						data.rounds.duration.roundReady,
+						amount = (this.remaining || roundDuration);
 
-					utils.showMsg("#getReady", this.remaining - 0.1);
+					console.log(amount);
+
+					utils.showMsg("#getReady", (this.remaining || roundDuration) - 0.1);
 				}
 				document.querySelector("#gameStartsIn").innerHTML = Math.round(this.remaining);
 
@@ -815,6 +818,7 @@
 					this.player.powerUp(350);
 					this.sounds.power.play();
 					this.screen.vignetteEffect.value = 1.2;
+					this.explodeParticles(b.model.pos, false);
 					Network.powerballGotByMe(b.id);
 				}
 
