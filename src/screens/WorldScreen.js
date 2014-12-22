@@ -286,7 +286,9 @@
 				return;
 			}
 
-			for (var i = 0; i < 10; i++) {
+			var num = isClown ? 18 : 10;
+
+			for (var i = 0; i < num; i++) {
 				var p = Object.create(Particle).init(
 					0.3,
 					new THREE.Vector3(

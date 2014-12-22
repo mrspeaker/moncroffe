@@ -36,7 +36,7 @@
 
 			var m = this.mesh,
 				pow = dt + (dt * this.speedOffset),
-				stageOne = this.count / this.life <= 0.25,
+				stageOne = this.count / this.life <= 0.15,
 				stageTwo = !stageOne;
 
 			if (stageOne) {
