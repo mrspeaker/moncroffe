@@ -158,9 +158,12 @@ var World = {
 				this.reset(false);
 				this.stateFirst = false;
 			}
+
 			readyDuration = this.round === 0 ?
 				data.rounds.duration.firstRoundReady :
 				data.rounds.duration.roundReady;
+
+			this.remaining = readyDuration - stateElapsed;
 
 			if (stateElapsed > readyDuration) {
 				this.setState("ROUND");

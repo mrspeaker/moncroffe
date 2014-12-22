@@ -28,7 +28,7 @@
 		document.querySelector("#bg").style.display = "block";
 		document.querySelector(id).style.display = "";
 
-		setTimeout(function () {
+		return setTimeout(function () {
 			document.querySelector("#bg").style.display = "none";
 			document.querySelector(id).style.display = "none";
 		}, time);

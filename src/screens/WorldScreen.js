@@ -633,7 +633,6 @@
 					// Shoot up in the air
 					var model = this.player.model;
 					model.pos.y = 19;
-
 					this.player.tick(dt);
 
 					var msg = "";
@@ -658,19 +657,10 @@
 						data.rounds.duration.firstRoundReady :
 						data.rounds.duration.roundReady;
 
-					utils.showMsg("#getReady", roundDuration - 0.1);
-					var n = Date.now();
-					(function countdown () {
-
-						var cd = (roundDuration * 1000) - (Date.now() - n);
-						cd = cd / 1000 | 0;
-						document.querySelector("#gameStartsIn").innerHTML = cd;
-						setTimeout(function () {
-							if (cd > 0) countdown();
-						}, 200);
-
-					}());
+					utils.showMsg("#getReady", this.remaining - 0.1);
 				}
+				document.querySelector("#gameStartsIn").innerHTML = Math.round(this.remaining);
+
 				break;
 
 			case "ROUND":
