@@ -244,9 +244,11 @@ var World = {
 			if (a.hits !== b.hits) {
 				return b.hits - a.hits;
 			}
+
 			if (a.deaths !== b.deaths) {
 				return b.deaths - a.deaths;
 			}
+
 			return Math.random() < 0.5;
 
 		});
@@ -292,12 +294,9 @@ var World = {
 
 		}
 
+		// Add bouy if not present
 		if (!this.bouy && Math.random () < 0.01) {
 			this.bouy = this.getSafePos();
-		}
-
-		if (now - this.lastBonusTime > 3000) {
-		//	this.addBonus();
 		}
 
 	},

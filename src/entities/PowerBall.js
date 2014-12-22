@@ -18,10 +18,11 @@
 			};
 
 			var geometry = new THREE.SphereGeometry(0.7, 20, 20);
-			var material = new THREE.MeshBasicMaterial({
+			var material = new THREE.MeshLambertMaterial({
 				color: 0xE8D998,
+				ambient: 0xc8b998,
 				transparent: true,
-				opacity: 0.3
+				opacity: 0.75
 			});
 			this.mesh = new THREE.Mesh( geometry, material );
 

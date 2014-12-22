@@ -50,19 +50,17 @@ Running:
 
 - omg... multiplayer, you can't jump as high...
   ... need to switch to fixed timestep for physics.
-- can go up through blocks in powerball (same bug as head hit, I think)
 
 > client
 
 - if join with 1 (or wahtever) second until round, you get 10 second countdown
-- Hit head slide down (and can get stuck in block)
 - Camera goes through block when close, looking on angle
 - Block & face selection wrong when close to blocks
 - Bullet gets stuck when firing close to block
 
 > server
 
-- Can get stuck in "born" state
+- Can get stuck in "born" state (close puter while game is playing)
 - Client background tab accumulates evil clowns
 - Block add/remove not synced
 - escape html in innerHTML calls
@@ -128,9 +126,4 @@ Triangles: 0-1-3 and 0-3-2
 Quad: 0-1-3-2
 
 Face order: Front, Left, Back, Right, Bottom, Top
-
-## Good seeds
-
-9696309
-25301249
 

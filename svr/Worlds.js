@@ -112,7 +112,6 @@ var Worlds = {
 
 			World.clients.forEach(function (c) {
 
-				//if (c === client) return;
 				c.emit("clownDestroyed", id);
 
 			});
@@ -120,6 +119,8 @@ var Worlds = {
 		});
 
 		client.on("fireBullet", function (bullet) {
+
+			// todo - keep time stamp or something
 
 			World.clients.forEach(function (c) {
 

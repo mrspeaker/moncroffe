@@ -1003,15 +1003,8 @@
 			}
 
 			// Check top:
-			/*
-				TODO: this ain't quite right - "slide down" cubes
-				Always detects a head hit if you are jumping and pushing.
-				It's detecting the sides not just the top
-				- Maybe a resolution problem: if sides, move back, if top move down
-				- Maybe because of forward/back and left/right done togetehr?
-			*/
 			if (block(xl, nyt, zl) || block(xr, nyt, zl) || block(xl, nyt, zr) || block(xr, nyt, zr)) {
-				//p.y = nyt - (bb.y / 2); // can't force down because it's detecting sides, not just top
+				p.y = yt;
 				hitGround = true;
 			}
 

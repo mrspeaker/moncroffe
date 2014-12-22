@@ -232,7 +232,7 @@
 
 		knockback: function () {
 
-			this.model.vel.z += 0.2;
+			this.model.vel.z += 0.1;
 
 		},
 
