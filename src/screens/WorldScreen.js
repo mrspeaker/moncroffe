@@ -530,6 +530,10 @@
 				origin = this.player.mesh.position.clone(),
 				direction = ob.getDirection().clone();
 
+			origin.x += Math.random() * 0.5 - 0.25;
+			origin.y += Math.random() * 0.5 - 0.25;
+
+
 			if (this.screen.isOculus) {
 				// var vector = new THREE.Vector3( 0, 0, 1 );
 				// var camMatrix = ob.getObject().children[0].children[0].matrixWorld;
@@ -1002,7 +1006,7 @@
 				p.y = yb + (bb.y / 2);
 			}
 
-			// Check top:
+			// Check top
 			if (block(xl, nyt, zl) || block(xr, nyt, zl) || block(xl, nyt, zr) || block(xr, nyt, zr)) {
 				p.y = yt;
 				hitGround = true;
