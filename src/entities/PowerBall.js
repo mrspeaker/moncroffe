@@ -20,7 +20,7 @@
 			var geometry = new THREE.SphereGeometry(0.7, 20, 20);
 			var material = new THREE.MeshLambertMaterial({
 				color: 0xE8D998,
-				ambient: 0xc8b998,
+				ambient: 0xFFFF3C,
 				transparent: true,
 				opacity: 0.75
 			});
