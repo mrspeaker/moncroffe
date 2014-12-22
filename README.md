@@ -53,7 +53,6 @@ Running:
 
 > client
 
-- if join with 1 (or wahtever) second until round, you get 10 second countdown
 - Camera goes through block when close, looking on angle
 - Block & face selection wrong when close to blocks
 - Bullet gets stuck when firing close to block
@@ -61,7 +60,6 @@ Running:
 > server
 
 - Can get stuck in "born" state (close puter while game is playing)
-- Client background tab accumulates evil clowns
 - Block add/remove not synced
 - escape html in innerHTML calls
 - server game keeps running even when no clients

@@ -319,9 +319,24 @@
 
 				var dead = t.id === id;
 				if (dead) {
-					this.addBonus(t.mesh.position);
+					this.addBonus(t.mesh.position, t.id);
 					this.scene.remove(t.mesh);
 					this.explodeParticles(t.pos, true, t.bouyDir);
+				}
+				return !dead;
+
+			}, this);
+
+		},
+
+		powerballGotByOthers: function (pid) {
+
+			this.bonuses = this.bonuses.filter(function (p) {
+
+				var dead = p.id === pid;
+				if (dead) {
+					this.explodeParticles(p.mesh.position, false);
+					this.scene.remove(p.mesh);
 				}
 				return !dead;
 
@@ -632,7 +647,7 @@
 				if (this.stateFirst) {
 					// Shoot up in the air
 					var model = this.player.model;
-					model.pos.y = 19;
+					model.pos.y = 21;
 					this.player.tick(dt);
 
 					var msg = "";
@@ -706,7 +721,6 @@
 				lastY = this.player.model.lastPos.y,
 				sea = data.world.seaLevel - 0.7;// - this.player.model.bb.h;
 
-			//console.log(curY, lastY);
 			if (curY >= sea && lastY < sea) {
 				// Went up!
 				this.fog.current = this.fog.above;
@@ -801,6 +815,7 @@
 					this.player.powerUp(350);
 					this.sounds.power.play();
 					this.screen.vignetteEffect.value = 1.2;
+					Network.powerballGotByMe(b.id);
 				}
 
 				if (!ret) {
@@ -929,10 +944,12 @@
 
 		},
 
-		addBonus: function (b) {
-			// Add new clowns
+		addBonus: function (b, id) {
+
+			// Add new powerball
 			var bonus = Object.create(PowerBall).init();
 			bonus.setPos(b);
+			bonus.id = id;
 			this.bonuses.push(bonus);
 			this.scene.add(bonus.mesh);
 

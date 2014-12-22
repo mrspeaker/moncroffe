@@ -118,6 +118,17 @@ var Worlds = {
 
 		});
 
+		client.on("powerballGotByMe", function (pid) {
+
+			World.clients.forEach(function (c) {
+
+				if (c === client) return;
+				c.emit("powerballGotByOthers", pid);
+
+			});
+
+		});
+
 		client.on("fireBullet", function (bullet) {
 
 			// todo - keep time stamp or something

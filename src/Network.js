@@ -86,6 +86,7 @@
 			socket.on("dropped", this.dropReceived.bind(this));
 
 			socket.on("clownDestroyed", this.clownDestroyed.bind(this));
+			socket.on("powerballGotByOthers", this.powerballGotByOthers.bind(this));
 			socket.on("otherFiredBullet", this.otherFiredBullet.bind(this));
 			socket.on("receiveShotPlayer", this.receiveShotPlayer.bind(this));
 			socket.on("receiveChat", this.receiveChat.bind(this));
@@ -175,6 +176,18 @@
 		clownDestroyed : function (tid) {
 
 			main.screen.clownDestroyed(tid);
+
+		},
+
+		powerballGotByMe: function (pid) {
+
+			this.socket.emit("powerballGotByMe", pid);
+
+		},
+
+		powerballGotByOthers: function (pid) {
+
+			main.screen.powerballGotByOthers(pid);
 
 		},
 
