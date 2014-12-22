@@ -16,6 +16,8 @@
 		jumpPower: 18,
 		gravity: 9.8,
 		speed: 5.5,
+		swimming: false,
+		wasSwimming: false,
 
 		beingFlung: false, // More power to move when getting flung
 		powerUpTime: 0,
@@ -55,6 +57,7 @@
 				z: spawn.z
 			};
 
+			this.swimming = false;
 			this.mesh.position.set(spawn.x, spawn.y, spawn.z);
 
 		},
@@ -127,7 +130,7 @@
 			zo += move.z * power;
 
 			// Auto power!
-			if (this.powerUpTime > 0) {
+			if (this.powerUpTime > 0 && this.swimming) {
 				this.powerUpTime--;
 				if (this.powerUpTime === 0) {
 					this.screen.screen.vignetteEffect.value = 0.7;
@@ -140,6 +143,11 @@
 			} else {
 				// Gravity
 				yo -= this.gravity * drag;
+			}
+
+			// Bounce out of water on transitions
+			if (!this.swimming && this.wasSwimming) {
+				yo += jump;
 			}
 
 			// Forward/backward
@@ -206,6 +214,9 @@
 			this.controls.setPos(model.pos.x + bobX, model.pos.y + bobY, model.pos.z);
 
 			this.syncMesh();
+
+			this.wasSwimming = this.swimming;
+
 		},
 
 		syncAll: function () {
