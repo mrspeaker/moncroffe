@@ -654,11 +654,11 @@
 
 					if (this.round === 0) {
 						msg =
-						"Find the magic boxes:" +
+						"Find the <strong>BOX</strong> to win." +
 						"<img style='float:right;margin-top:-40px' src='res/images/box.png'/><br/>" +
-						"Shoot the clowns for directions:" +
+						"<strong>FOLLOW</strong> the explosions." +
 						"<img style='width:100px;float:right;margin-top:-40px' src='res/images/guys.png' />" +
-						"<br/>Best of " + data.rounds.total + " "
+						"<br/><br/>First <strong>HALF</strong>"
 					} else if (this.round === data.rounds.total - 1) {
 						msg = "Final round<br/>";
 					}

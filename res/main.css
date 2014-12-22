@@ -2,7 +2,7 @@ html,body{ height:100%; }
 body {
 	margin: 0;
 	padding: 0;
-	font-family: 'Finger Paint', helvetica, arial, sans-serif;
+	font-family: 'Ubuntu Mono', helvetica, arial, sans-serif;
 	color: #F4F2D3;
 	background-color: #222222;
 
@@ -122,6 +122,8 @@ body {
 }
 
 #bg {
+	background-color: rgba(0,0,0,0.4);
+	color: #fff;
 	display: none;
 	position: absolute;
 	width: 100%;
@@ -131,6 +133,8 @@ body {
 	botton: 0;
 	right: 0;
 	font-size: 22pt;
+	color: #;
+	text-shadow: 0px 0px 5px #f0f;
 }
 
 #roundWinner {

@@ -45,7 +45,7 @@ var data = {
 		total: 2,
 		duration: {
 			born: 3,
-			firstRoundReady: 6,
+			firstRoundReady: 8,
 			roundReady: 4,
 			round: 2.5 * 60,
 			roundOver: 4,
