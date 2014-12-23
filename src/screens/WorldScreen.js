@@ -90,6 +90,18 @@
 
 			this.sounds.starty.play();
 
+			for (var i = 0; i < 40; i++) {
+				var p = Object.create(Plant).init({
+					x: Math.random() * 60 - 30,
+					y: 1.5,
+					z: Math.random() * 44 - 22
+				});
+
+				this.scene.add(p.mesh);
+			}
+
+
+
 			return this;
 		},
 
@@ -244,7 +256,8 @@
 					ambient: new THREE.Color(0x1EABFF),
 					side: THREE.DoubleSide
 				}),
-				geom = new THREE.PlaneGeometry(150, 150),
+				// Is this worse for transparency? (buffergeom)
+				geom = new THREE.PlaneBufferGeometry(150, 150, 1, 1),
 				ocean = new THREE.Mesh(geom, material);
 
 			ocean.rotation.x = -Math.PI / 2;

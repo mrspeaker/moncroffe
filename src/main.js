@@ -278,7 +278,8 @@
 			var t = {
 				blocks: THREE.ImageUtils.loadTexture("res/images/terrain.png"),
 				night: THREE.ImageUtils.loadTexture("res/images/night.jpg"),
-				uparrow: THREE.ImageUtils.loadTexture("res/images/uparrow.png")
+				uparrow: THREE.ImageUtils.loadTexture("res/images/uparrow.png"),
+				plants: THREE.ImageUtils.loadTexture("res/images/plants.png")
 			};
 
 			t.blocks.magFilter = THREE.NearestFilter;
@@ -286,6 +287,9 @@
 
 			t.night.wrapS = t.night.wrapT = THREE.RepeatWrapping;
 			t.night.repeat.set(3, 3);
+
+			t.plants.magFilter = THREE.NearestFilter;
+			t.plants.minFilter = THREE.NearestFilter;
 
 			t.uparrow.magFilter = THREE.NearestFilter;
 			t.uparrow.minFilter = THREE.NearestFilter;
