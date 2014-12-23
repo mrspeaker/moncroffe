@@ -69,6 +69,7 @@
 
 			this.player = Object.create(Player).init(this);
 			this.cursor = Object.create(Cursor).init(this);
+
 			this.bullets = [];
 			this.targets = [];
 			this.targets_to_add = [];
@@ -712,6 +713,7 @@
 				return false;
 
 			}, this);
+
 			this.bonuses_to_add = this.bonuses_to_add.slice(-4).filter(function (b) {
 
 				this.addBonus(b);
@@ -720,7 +722,7 @@
 			}, this);
 
 			this.flotsam.tick(dt);
-			if (this.clouds) this.clouds.tick(dt);
+			this.clouds.tick(dt);
 
 			var curY = this.player.model.pos.y,
 				lastY = this.player.model.lastPos.y,
@@ -755,6 +757,7 @@
 		},
 
 		tick_ROUND: function (dt) {
+
 			var scene = this.scene,
 				world = this.world,
 				camera = this.player.controls.getObject(),
@@ -762,13 +765,13 @@
 
 			this.player.tick(dt);
 
-			var pp = Network.clients[Network.clientId];
-			if (pp) {
-				pp.tick(dt);
-				pp.model.pos.x = model.pos.x;
-				pp.model.pos.y = model.pos.y;
-				pp.model.pos.z = model.pos.z;
-				pp.model.rot = model.rot;
+			var player = Network.getPlayer();
+			if (player) {
+				player.tick(dt);
+				player.model.pos.x = model.pos.x;
+				player.model.pos.y = model.pos.y;
+				player.model.pos.z = model.pos.z;
+				player.model.rot = model.rot;
 			}
 
 			this.bullets = this.bullets.filter(function (b) {
@@ -802,9 +805,6 @@
 							return b.ownShot && !b.stopped && core.utils.dist(b.model.pos, t.pos) < t.model.bb.x;
 						});
 						if (hit) {
-							//ret = false;
-							//scene.remove(t.mesh);
-							//this.explodeParticles(t.pos, true, t.bouyDir);
 							Network.targetHit(t.id);
 							this.sounds.splode.play();
 						}
@@ -889,24 +889,24 @@
 
 			if (this.doAddBlock) {
 				var pos = this.player.model.pos,
-					bb = this.player.model.bb;
-				var added = world.addBlockAtCursor(
-					this.cursor,
-					this.player.model.tool,
-					[
-						// Ensure don't draw on yourself...
-						// Not conviced about the Y checks here... should they be rounded? why -0.5?! Dang it!
-						// works though.
-						[pos.x - (bb.x / 2), pos.y - (bb.y / 2), pos.z - (bb.z / 2)],
-						[pos.x + (bb.x / 2), pos.y - (bb.y / 2), pos.z - (bb.z / 2)],
-						[pos.x - (bb.x / 2), pos.y - (bb.y / 2), pos.z + (bb.z / 2)],
-						[pos.x + (bb.x / 2), pos.y - (bb.y / 2), pos.z + (bb.z / 2)],
+					bb = this.player.model.bb,
+					added = world.addBlockAtCursor(
+						this.cursor,
+						this.player.model.tool,
+						[
+							// Ensure don't draw on yourself...
+							// Not conviced about the Y checks here... should they be rounded? why -0.5?! Dang it!
+							// works though.
+							[pos.x - (bb.x / 2), pos.y - (bb.y / 2), pos.z - (bb.z / 2)],
+							[pos.x + (bb.x / 2), pos.y - (bb.y / 2), pos.z - (bb.z / 2)],
+							[pos.x - (bb.x / 2), pos.y - (bb.y / 2), pos.z + (bb.z / 2)],
+							[pos.x + (bb.x / 2), pos.y - (bb.y / 2), pos.z + (bb.z / 2)],
 
-						[pos.x - (bb.x / 2), pos.y + (bb.y / 2) - 0.5, pos.z - (bb.z / 2)],
-						[pos.x + (bb.x / 2), pos.y + (bb.y / 2) - 0.5, pos.z - (bb.z / 2)],
-						[pos.x - (bb.x / 2), pos.y + (bb.y / 2) - 0.5, pos.z + (bb.z / 2)],
-						[pos.x + (bb.x / 2), pos.y + (bb.y / 2) - 0.5, pos.z + (bb.z / 2)]
-					]);
+							[pos.x - (bb.x / 2), pos.y + (bb.y / 2) - 0.5, pos.z - (bb.z / 2)],
+							[pos.x + (bb.x / 2), pos.y + (bb.y / 2) - 0.5, pos.z - (bb.z / 2)],
+							[pos.x - (bb.x / 2), pos.y + (bb.y / 2) - 0.5, pos.z + (bb.z / 2)],
+							[pos.x + (bb.x / 2), pos.y + (bb.y / 2) - 0.5, pos.z + (bb.z / 2)]
+						]);
 
 				if (!added) {
 					this.fire();
@@ -930,16 +930,8 @@
 			// Add new clowns
 			var target = Object.create(Clown).init(
 				t.id,
-				new THREE.Vector3(
-					t.pos.x,
-					t.pos.y,
-					t.pos.z
-				),
-				new THREE.Vector3(
-					t.rot.x,
-					t.rot.y,
-					t.rot.z
-				),
+				new THREE.Vector3(t.pos.x, t.pos.y, t.pos.z),
+				new THREE.Vector3(t.rot.x, t.rot.y, t.rot.z),
 				t.speed,
 				data.materials.target);
 
@@ -956,6 +948,7 @@
 
 			// Add new powerball
 			var bonus = Object.create(PowerBall).init();
+
 			bonus.setPos(b);
 			bonus.id = id;
 			this.bonuses.push(bonus);
@@ -1056,41 +1049,14 @@
 
 		receiveScores: function (scores) {
 
-			var els = ["<table style='display:inline-block' border=1 id='his'>"],
-				html;
-
-			els.push(
-				"<tr>" +
-				"<td>#</td>" +
-				"<td>Player</td>" +
-				"<td>Finds</td>" +
-				"<td>Kills</td>" +
-				"<td>Deaths</td>" +
-				"</tr>"
-			);
-
-			els.push(
-				scores.map(function (s, i) {
-
-					return "<tr>" +
-						[
-							i + 1,
-							Network.getName(s.id),
-							s.score,
-							s.hits,
-							s.deaths
-						].map(function (d) {
-
-							return "<td>" + d + "</td>";
-
-						}).join("") +
-						"</tr>";
-
-				}).join("")
-			);
-
-			els.push("</table></div>");
-			html = els.join("\n");
+			var html = createScoresHTML(scores.map(function (s) {
+				return {
+					name: Network.getName(s.id),
+					score: s.score,
+					hits: s.hits,
+					deaths: s.deaths
+				}
+			}));
 
 			document.querySelector("#roundWinner").innerHTML = html;
 			// TODO: duplicated
@@ -1100,6 +1066,46 @@
 		}
 
 	};
+
+	var createScoresHTML = function (scores) {
+
+		var els = ["<table style='display:inline-block' border=1 id='his'>"];
+
+		els.push(
+			"<tr>" +
+			"<td>#</td>" +
+			"<td>Player</td>" +
+			"<td>Finds</td>" +
+			"<td>Kills</td>" +
+			"<td>Deaths</td>" +
+			"</tr>"
+		);
+
+		els.push(
+			scores.map(function (s, i) {
+
+				return "<tr>" +
+					[
+						i + 1,
+						s.name,
+						s.score,
+						s.hits,
+						s.deaths
+					].map(function (d) {
+
+						return "<td>" + d + "</td>";
+
+					}).join("") +
+					"</tr>";
+
+			}).join("")
+		);
+
+		els.push("</table></div>");
+
+		return els.join("\n");
+
+	}
 
 	window.WorldScreen = WorldScreen;
 

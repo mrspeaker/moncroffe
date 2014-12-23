@@ -17,7 +17,7 @@
 
 		getPlayer: function (id) {
 
-			return this.clients[id];
+			return this.clients[id || this.clientId];
 
 		},
 

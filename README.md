@@ -40,7 +40,6 @@ Running:
 
 ## Next todos
 
-- powerball never collected in multiplayer
 - sound for round ending/starting
 - sound for player disconnect
 - allow restart to titlescreen. Tough.
@@ -56,6 +55,7 @@ Running:
 - Camera goes through block when close, looking on angle
 - Block & face selection wrong when close to blocks
 - Bullet gets stuck when firing close to block
+- game should run in "offline mode"?
 
 > server
 
