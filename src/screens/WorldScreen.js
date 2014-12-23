@@ -90,11 +90,11 @@
 
 			this.sounds.starty.play();
 
-			for (var i = 0; i < 40; i++) {
+			for (var i = 0; i < 60; i++) {
 				var p = Object.create(Plant).init({
-					x: Math.random() * 60 - 30,
+					x: (Math.random() * (48 + 33)) - 33,
 					y: 1.5,
-					z: Math.random() * 44 - 22
+					z: (Math.random() * (48 + 17)) - 17
 				});
 
 				this.scene.add(p.mesh);
