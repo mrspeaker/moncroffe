@@ -16,9 +16,10 @@
 
 	utils.cleanInput = function (txt, min, max) {
 
-		///typeof name === "string" && /^[a-z0-9]{3,20}$/.exec(name)
-
-		var name = txt.replace(/\s/g, "_").replace(/[^a-zA-Z0-9\-_\.\!\?']*/g, "").slice(0, 15);
+		var name = txt
+			.replace(/^\s+|\s+$|\s{2,3}/g, "") // Trim, and no 2+ spaces
+			.replace(/[^a-zA-Z0-9\-_\.\!\? ']*/g, "") // Only allowed chars
+			.slice(0, 15); // 16 chars max
 		if (name.length < 3) {
 			name += "_" + (Date.now() + "").slice(-4);
 		}
