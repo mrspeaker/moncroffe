@@ -726,7 +726,7 @@
 
 			var curY = this.player.model.pos.y,
 				lastY = this.player.model.lastPos.y,
-				sea = data.world.seaLevel - 0.7;// - this.player.model.bb.h;
+				sea = data.world.seaLevel - 0.7; // - this.player.model.bb.h;
 
 			if (curY >= sea && lastY < sea) {
 				// Went up!
@@ -735,8 +735,7 @@
 				this.scene.fog.color = this.fog.current;
 				this.player.gravity = 9.8;
 				this.player.jumpPower = 23;
-				this.player.swimming = false;
-				//this.player.speed = 4.5
+				this.player.model.swimming = false;
 				this.sounds.undersea.stop();
 			}
 
@@ -747,10 +746,9 @@
 				this.scene.fog.color = this.fog.current;
 				this.player.gravity = 5.8;
 				this.player.jumpPower = 18;
-				this.player.swimming = true;
-				//this.player.speed = 5.5;
-				this.sounds.undersea.play();
+				this.player.model.swimming = true;
 				this.player.model.vel.y /= 10; // Slow down when hit water!
+				this.sounds.undersea.play();
 
 			}
 

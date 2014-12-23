@@ -19,7 +19,7 @@
 		var name = txt
 			.replace(/^\s+|\s+$|\s{2,3}/g, "") // Trim, and no 2+ spaces
 			.replace(/[^a-zA-Z0-9\-_\.\!\? ']*/g, "") // Only allowed chars
-			.slice(0, 15); // 16 chars max
+			.slice(0, 16); // 16 chars max
 		if (name.length < 3) {
 			name += "_" + (Date.now() + "").slice(-4);
 		}

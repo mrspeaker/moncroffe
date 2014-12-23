@@ -13,17 +13,16 @@
 
 		model: null,
 
+		// These are variables, so should be in model.
 		jumpPower: 18,
 		gravity: 9.8,
 		speed: 5.5,
-		swimming: false,
-		wasSwimming: false,
-
-		beingFlung: false, // More power to move when getting flung
 		powerUpTime: 0,
 
 		init: function (screen) {
 
+			// Model should contain only data for player
+			// so can move towards data driven structure
 			this.model = {
 				bb: { x: 0.7, y: 1.9, z: 0.7 },
 				pos: { x: 0, y: 19, z: 0 },
@@ -31,7 +30,10 @@
 				spawn: { x: 0, y: 19, z: 0 },
 				rot: 0,
 				vel: { x: 0, y: 0, z: 0 },
-				tool: 1
+				tool: 1,
+				swimming: false,
+				wasSwimming: false, // Could derive this from lastPos
+				beingFlung: false // More power to move when getting flung
 			};
 
 			this.screen = screen;
@@ -57,7 +59,7 @@
 				z: spawn.z
 			};
 
-			this.swimming = false;
+			this.model.swimming = false;
 			this.mesh.position.set(spawn.x, spawn.y, spawn.z);
 
 		},
@@ -111,7 +113,7 @@
 
 			var model = this.model,
 				move = this.controls.update(delta),
-				power = (this.beingFlung ? this.speed * 2.5 : this.speed) * delta,
+				power = (model.beingFlung ? this.speed * 2.5 : this.speed) * delta,
 				jump = this.jumpPower, //23,
 				drag = 10 * delta;
 
@@ -129,16 +131,20 @@
 			xo += move.x * power;
 			zo += move.z * power;
 
-			// Auto power!
-			if (this.powerUpTime > 0 && this.swimming) {
+			// Swimming
+			if (this.powerUpTime > 0 && model.swimming) {
 				this.powerUpTime--;
 				if (this.powerUpTime === 0) {
+					// Ergh... screen effect when swimming.
+					// It's added in one place, removed in anohter
+					// put it somewhere sensibile
 					this.screen.screen.vignetteEffect.value = 0.7;
 				}
+				// If player is moving...
 				if (zo !== 0) {
-					zo *= this.beingFlung ? 1.1 : 1.3;
-					var vector = this.controls.getDirection().clone();
-					yo = vector.y * 10;
+					zo *= model.beingFlung ? 1.1 : 1.3;
+					// Move in the pitch direction we're looking
+					yo = this.controls.getDirection().y * 10; // 10?
 				}
 			} else {
 				// Gravity
@@ -146,7 +152,7 @@
 			}
 
 			// Bounce out of water on transitions
-			if (!this.swimming && this.wasSwimming) {
+			if (!model.swimming && model.wasSwimming) {
 				yo += jump;
 			}
 
@@ -173,7 +179,7 @@
 
 			if (col.ground) {
 				yo = 0;
-				this.beingFlung = false;
+				model.beingFlung = false;
 			}
 
 			// Check if fallen past ground
@@ -188,9 +194,9 @@
 				(model.pos.z < -17 || model.pos.z > 48 ||
 				 model.pos.x < -33 || model.pos.x > 48)) {
 				//col.ground = false;
-				if (yo > 10 && !this.beingFlung) {
+				if (yo > 10 && !model.beingFlung) {
 					this.screen.sounds.geyser.play();
-					this.beingFlung = true;
+					model.beingFlung = true;
 				}
 				yo += 350 * delta;
 			}
@@ -215,7 +221,7 @@
 
 			this.syncMesh();
 
-			this.wasSwimming = this.swimming;
+			model.wasSwimming = model.swimming;
 
 		},
 
@@ -224,7 +230,6 @@
 			var pos = this.model.pos;
 			this.syncMesh();
 			this.controls.setPos(pos.x, pos.y, pos.z);
-
 
 		},
 
