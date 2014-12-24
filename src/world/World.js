@@ -376,7 +376,7 @@
 				];
 			}
 
-			function getGeometry(block) {
+			function getGeometry(block, tileOffsetForFun) {
 
 				var surround = block.surround,
 					geometry = new THREE.CubeGeometry(blockSize, surround);
@@ -390,15 +390,15 @@
 				var tile = blocks[block.type];
 
 				if (block.type === "grass") {
-					tile[5][1] = [15, 15, 14, 14, 13, 13, 12][Math.random() * 7 | 0];
+					tile[5][1] = [15, 15, 14, 14, 13, 13, 12][tileOffsetForFun % 7];
 				}
 				if (block.type === "stone") {
-					tile[0][1] = [15, 14, 13][Math.random() * 3 | 0];
-					tile[1][1] = [15, 14, 13][Math.random() * 3 | 0];
-					tile[2][1] = [15, 14, 13][Math.random() * 3 | 0];
-					tile[3][1] = [15, 14, 13][Math.random() * 3 | 0];
-					tile[4][1] = [15, 14, 13][Math.random() * 3 | 0];
-					tile[5][1] = [15, 14, 13][Math.random() * 3 | 0];
+					tile[0][1] = [15, 14, 13][tileOffsetForFun % 3];
+					tile[1][1] = [15, 14, 13][tileOffsetForFun % 3];
+					tile[2][1] = [15, 14, 13][tileOffsetForFun % 3];
+					tile[3][1] = [15, 14, 13][tileOffsetForFun % 3];
+					tile[4][1] = [15, 14, 13][tileOffsetForFun % 3];
+					tile[5][1] = [15, 14, 13][tileOffsetForFun % 3];
 				}
 
 				var front = getBlock(tile[0][0], tile[0][1]),
@@ -526,10 +526,10 @@
 			};
 
 			var mesh = new THREE.Mesh(),
-				i, j, k, block, pos;
+				i, j, k, block, pos, count = 0;
 			mesh.matrixAutoUpdate = false;
 			for (i = 0; i < w; i++) {
-				for (j = 0; j  < h; j++) {
+				for (j = 0; j < h; j++) {
 					for (k = 0; k < w; k++) {
 						block = chunk[i][j][k];
 						if (block.type !== "air") {
@@ -553,7 +553,7 @@
 							];
 
 							// Make a cube
-							mesh.geometry = getGeometry(block);
+							mesh.geometry = getGeometry(block, Math.abs((xo + k) ^ (zo + i) + j));
 
 							// Move up so bottom of cube is at 0, not -0.5
 							mesh.position.set(pos[0], j + blockSize / 2, pos[2]);
@@ -566,7 +566,7 @@
 				}
 			}
 
-			utils.msg("Cubes:" + stats.cubes, " F:" + stats.faces, " V:" + stats.verts);
+			//utils.msg("Cubes:" + stats.cubes, " F:" + stats.faces, " V:" + stats.verts);
 
 			var totalMesh = new THREE.Mesh(totalGeom, this.blockMaterial);
 			totalMesh.matrixAutoUpdate = false;

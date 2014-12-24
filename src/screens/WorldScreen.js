@@ -65,7 +65,8 @@
 				join: Object.create(Sound).init("res/audio/join", 0.8),
 				starty: Object.create(Sound).init("res/audio/starty", 0.8),
 				power: Object.create(Sound).init("res/audio/power", 0.4),
-				count: Object.create(Sound).init("res/audio/count1", 0.6)
+				count1: Object.create(Sound).init("res/audio/count1", 0.3),
+				count2: Object.create(Sound).init("res/audio/count2", 0.3)
 			};
 
 			this.screen = screen;
@@ -131,7 +132,7 @@
 
 			this.plants.forEach(function (p) {
 				this.scene.remove(p.mesh);
-			});
+			}, this);
 
 			// Add plants
 			var x,
@@ -477,19 +478,11 @@
 			if (this.state == "ROUND") {
 				msg += " " + (this.round + 1) +
 					" of " + data.rounds.total +
-					". " +
-					(core.utils.formatTime(this.remaining | 0));
+					". <span class='msg-highlight msg-big'>" +
+					(core.utils.formatTime(this.remaining | 0)) +
+					"</span>";
 			}
-			/*var p = this.player.model.pos,
-				bpos = "-";
 
-			msg = "";
-
-			if (this.bouy) {
-				bpos = this.bouy.model.pos.x.toFixed(2) + ":" + this.bouy.model.pos.z.toFixed(2);
-				(window.dist ? dist.toFixed(2) : "")
-			}
-			*/
 			utils.msg(msg);
 
 			this.scores = [];
@@ -519,7 +512,7 @@
 					player.model.rot = p.rot;
 				}
 
-				this.scores.push({name: p.name, score: p.score});
+				this.scores.push({mine: isSelf, name: p.name, score: p.score});
 			}, this);
 
 			this.scores = this.scores.sort(function (a, b) {
@@ -528,9 +521,9 @@
 
 			this.scores.forEach(function (s, i) {
 				utils.msgln(
-					(i === 0 ? "<strong>" : "") +
-					s.name + ": " + s.score +
-					(i === 0 ? "</strong>" : ""));
+					(s.mine ? "<strong>" : "") +
+					"<span class='msg-highlight'>" + s.score + ": </span> " + s.name +
+					(s.mine ? "</strong>" : ""));
 			});
 
 			if (ping.targets.length) {
@@ -697,6 +690,10 @@
 
 		tick: function (dt) {
 
+			var remainingDisplay,
+				roundDuration,
+				model;
+
 			switch (this.state) {
 
 			case "BORN":
@@ -708,7 +705,7 @@
 			case "ROUND_READY":
 				if (this.stateFirst) {
 					// Shoot up in the air
-					var model = this.player.model;
+					model = this.player.model;
 					model.pos.y = 21;
 					this.player.tick(dt);
 
@@ -730,17 +727,16 @@
 
 					document.querySelector("#getReadyStage").innerHTML = msg;
 
-					var roundDuration = this.round === 0 ?
+					roundDuration = this.round === 0 ?
 						data.rounds.duration.firstRoundReady :
-						data.rounds.duration.roundReady,
-						amount = (this.remaining || roundDuration);
-
+						data.rounds.duration.roundReady;
 					utils.showMsg("#getReady", (this.remaining || roundDuration) - 0.1);
 				}
-				var remainingDisplay = Math.round(this.remaining);
+
+				remainingDisplay = Math.round(this.remaining);
 				if (remainingDisplay !== this.lastRemainingDisplay) {
 					if (remainingDisplay < 4) {
-						this.sounds.count.play();
+						this.sounds[remainingDisplay < 1 ? "count2" : "count1"].play();
 					}
 					this.lastRemainingDisplay = remainingDisplay;
 				}
@@ -756,6 +752,14 @@
 					this.setEveryoneSafeBlinky();
 				}
 				this.tick_ROUND(dt);
+
+				remainingDisplay = Math.round(this.remaining);
+				if (remainingDisplay !== this.lastRemainingDisplay) {
+					if (remainingDisplay < 4) {
+						this.sounds[remainingDisplay < 1 ? "count2" : "count1"].play();
+					}
+					this.lastRemainingDisplay = remainingDisplay;
+				}
 
 				data.textures.uparrow.offset.set(0, 32 - (Date.now() / 200) % 32);
 				break;
