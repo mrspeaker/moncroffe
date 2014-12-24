@@ -23,6 +23,8 @@
 		bonuses: null,
 		bonuses_to_add: null,
 
+		plants: null,
+
 		world: null,
 		clouds: null,
 
@@ -41,6 +43,7 @@
 		state: "BORN",
 		stateFirst: true,
 		remaining: 0,
+		lastRemainingDisplay: 0,
 
 		round: 0,
 		doneInitialReset: false,
@@ -61,7 +64,8 @@
 				geyser: Object.create(Sound).init("res/audio/geyser", 0.9),
 				join: Object.create(Sound).init("res/audio/join", 0.8),
 				starty: Object.create(Sound).init("res/audio/starty", 0.8),
-				power: Object.create(Sound).init("res/audio/power", 0.4)
+				power: Object.create(Sound).init("res/audio/power", 0.4),
+				count: Object.create(Sound).init("res/audio/count1", 0.6)
 			};
 
 			this.screen = screen;
@@ -77,6 +81,7 @@
 			this.bonuses_to_add = [];
 			this.particles = [];
 			this.scores = [];
+			this.plants = [];
 
 			screen.bindHandlers(this.player);
 
@@ -90,18 +95,6 @@
 
 			this.sounds.starty.play();
 
-			for (var i = 0; i < 60; i++) {
-				var p = Object.create(Plant).init({
-					x: (Math.random() * (48 + 33)) - 33,
-					y: 1.5,
-					z: (Math.random() * (48 + 17)) - 17
-				});
-
-				this.scene.add(p.mesh);
-			}
-
-
-
 			return this;
 		},
 
@@ -113,6 +106,8 @@
 			// Readd the new ones...
 			this.world = Object.create(World).init(this, Network.world.seed);
 			this.world.createChunks();
+
+			this.addPlants();
 
 			this.targets = this.targets.filter(function (t) {
 
@@ -129,6 +124,57 @@
 			}, this);
 
 			this.doneInitialReset = true;
+
+		},
+
+		addPlants: function () {
+
+			this.plants.forEach(function (p) {
+				this.scene.remove(p.mesh);
+			});
+
+			// Add plants
+			var x,
+				y,
+				z,
+				block = { type: null };
+
+			var safety;
+
+			for (var i = 0; i < 50; i++) {
+
+				safety = 0;
+
+				while (block.type !== "air") {
+					x = (Math.random() * (48 + 33)) - 33 | 0;
+					y = (Math.random() * 10 | 0) + 5;
+					z = (Math.random() * (48 + 17)) - 17 | 0;
+
+					block = this.world.getBlockAtPos({ x:x, y:y, z:z });
+					if (safety++ > 50) break;
+				}
+
+				safety = 0;
+
+				while (block.type === "air" && y > 0) {
+					y--;
+					block = this.world.getBlockAtPos({ x:x, y:y, z:z });
+					if (safety++ > 50) break;
+				}
+
+				if (block.type === "grass") {
+					var p = Object.create(Plant).init({
+						x: x,
+						y: y + 1.5,
+						z: z
+					});
+
+					this.plants.push(p);
+					this.scene.add(p.mesh);
+				} else {
+					i--; // Try again!
+				}
+			}
 
 		},
 
@@ -193,7 +239,7 @@
 			light2.position.set(data.world.radius * data.chunk.w - 3, 5, data.world.radius * data.chunk.w - 3);
 			this.scene.add(light2);
 
-			this.lights.cube = new THREE.PointLight(0xF4D0000, 12, 5);
+			this.lights.cube = new THREE.PointLight(0xF4D0000, 5, 5);
 			this.lights.cube.position.set(0, -5, 0);
 			this.scene.add(this.lights.cube);
 
@@ -689,11 +735,16 @@
 						data.rounds.duration.roundReady,
 						amount = (this.remaining || roundDuration);
 
-					console.log(amount);
-
 					utils.showMsg("#getReady", (this.remaining || roundDuration) - 0.1);
 				}
-				document.querySelector("#gameStartsIn").innerHTML = Math.round(this.remaining);
+				var remainingDisplay = Math.round(this.remaining);
+				if (remainingDisplay !== this.lastRemainingDisplay) {
+					if (remainingDisplay < 4) {
+						this.sounds.count.play();
+					}
+					this.lastRemainingDisplay = remainingDisplay;
+				}
+				document.querySelector("#gameStartsIn").innerHTML = remainingDisplay;
 
 				break;
 

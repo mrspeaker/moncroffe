@@ -328,7 +328,7 @@
 
 						// Lil bit of gold
 						if (type === "stone") {
-							if (Math.random() < 0.5) {
+							if (Math.random() < 0.01) {
 								type = "gold";
 							}
 						}
@@ -386,7 +386,20 @@
 				stats.faces += geometry.faces.length;
 
 
+				// Swap grass sometimes
 				var tile = blocks[block.type];
+
+				if (block.type === "grass") {
+					tile[5][1] = [15, 15, 14, 14, 13, 13, 12][Math.random() * 7 | 0];
+				}
+				if (block.type === "stone") {
+					tile[0][1] = [15, 14, 13][Math.random() * 3 | 0];
+					tile[1][1] = [15, 14, 13][Math.random() * 3 | 0];
+					tile[2][1] = [15, 14, 13][Math.random() * 3 | 0];
+					tile[3][1] = [15, 14, 13][Math.random() * 3 | 0];
+					tile[4][1] = [15, 14, 13][Math.random() * 3 | 0];
+					tile[5][1] = [15, 14, 13][Math.random() * 3 | 0];
+				}
 
 				var front = getBlock(tile[0][0], tile[0][1]),
 					left = getBlock(tile[1][0], tile[1][1]),

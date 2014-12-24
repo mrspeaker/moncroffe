@@ -19,7 +19,7 @@
 			var buf= geometry.getAttribute("uv"),
 				uvs = buf.array;
 
-			var x = 1,
+			var x = Math.random() < 0.4 ? 2 : 1,
 				y = 3;
 
 			uvs[0] = x / 4;
@@ -39,9 +39,19 @@
 				side: THREE.DoubleSide,
 				map: data.textures.plants
 			});
-			this.mesh = new THREE.Mesh( geometry, material );
+			this.mesh = new THREE.Object3D();
+
+			var one = new THREE.Mesh( geometry, material );
+			var two = new THREE.Mesh( geometry, material );
 
 			this.model.pos = { x: pos.x, y: pos.y, z: pos.z };
+
+			two.rotation.y += Math.PI / 2;
+
+			this.mesh.add(one);
+			this.mesh.add(two);
+
+
 			this.mesh.position.copy(pos);
 			this.mesh.rotation.x = Math.PI;
 			this.mesh.rotation.y = Math.random() * 2 * Math.PI;
