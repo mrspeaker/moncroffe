@@ -172,7 +172,7 @@ body {
 	padding-left: 5px;
 }
 
-.ev_join {
+.ev_join, .ev_name {
 	color: hsl(200, 50%, 50%);
 }
 .ev_kill {

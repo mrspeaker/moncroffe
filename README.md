@@ -40,6 +40,8 @@ Running:
 
 	game served on port 3001
 
+	Sometimes I'm running a server at: 162.243.121.239:3001
+
 ## Next todos
 
 - leaderboard (session)

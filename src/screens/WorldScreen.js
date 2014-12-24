@@ -24,6 +24,7 @@
 		bonuses_to_add: null,
 
 		plants: null,
+		fish: null,
 
 		world: null,
 		clouds: null,
@@ -83,6 +84,7 @@
 			this.particles = [];
 			this.scores = [];
 			this.plants = [];
+			this.fish = [];
 
 			screen.bindHandlers(this.player);
 
@@ -109,6 +111,7 @@
 			this.world.createChunks();
 
 			this.addPlants();
+			this.addFish();
 
 			this.targets = this.targets.filter(function (t) {
 
@@ -175,6 +178,46 @@
 				} else {
 					i--; // Try again!
 				}
+			}
+
+		},
+
+		addFish: function () {
+
+			this.fish.forEach(function (p) {
+				this.scene.remove(p.mesh);
+			}, this);
+
+			// Add fish
+			var x,
+				y,
+				z,
+				block = { type: null };
+
+			var safety;
+
+			for (var i = 0; i < 30; i++) {
+
+				safety = 0;
+
+				while (block.type !== "air") {
+					x = (Math.random() * (48 + 33)) - 33 | 0;
+					y = (Math.random() * 10 | 0) + 5;
+					z = (Math.random() * (48 + 17)) - 17 | 0;
+
+					block = this.world.getBlockAtPos({ x:x, y:y, z:z });
+					if (safety++ > 50) break;
+				}
+
+				var p = Object.create(Fish).init({
+					x: x,
+					y: y,
+					z: z
+				});
+
+				this.fish.push(p);
+				this.scene.add(p.mesh);
+				block = { type: null };
 			}
 
 		},
@@ -745,6 +788,7 @@
 				break;
 
 			case "ROUND":
+
 				if (this.stateFirst) {
 					if (!this.doneInitialReset) {
 						this.reset();
@@ -819,6 +863,14 @@
 				this.sounds.undersea.play();
 
 			}
+
+			this.fish = this.fish.filter(function (f) {
+
+				f.tick(dt);
+
+				return true;
+
+			}, this);
 
 		},
 
@@ -1100,7 +1152,7 @@
 
 			if (typeof msg[0] == "string") {
 				name = Network.getName(msg[0]),
-				post = name + ": " + msg[1];
+				post = "<span class='ev_name'>" + name + ":</span> " + msg[1];
 				this.sounds.bip.play();
 			} else {
 				post = "<span class='" +
