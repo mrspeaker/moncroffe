@@ -43,14 +43,16 @@
 
 			var one = new THREE.Mesh( geometry, material );
 			var two = new THREE.Mesh( geometry, material );
+			var three = new THREE.Mesh( geometry, material );
 
 			this.model.pos = { x: pos.x, y: pos.y, z: pos.z };
 
-			two.rotation.y += Math.PI / 2;
+			two.rotation.y = Math.PI / 3;
+			three.rotation.y = (Math.PI / 3) * 2;
 
 			this.mesh.add(one);
 			this.mesh.add(two);
-
+			this.mesh.add(three);
 
 			this.mesh.position.copy(pos);
 			this.mesh.rotation.x = Math.PI;
