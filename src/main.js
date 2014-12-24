@@ -46,6 +46,12 @@
 
 			});
 
+			/*document.querySelector("#exitGame").addEventListener("click", function (e) {
+
+				main.reset();
+
+			}, false);*/
+
 			this.run();
 
 		},
@@ -55,6 +61,9 @@
 			this.unbindPointer && this.unbindPointer();
 			if (Network.socket) {
 				Network.socket.io.disconnect();
+			}
+			if (this.screen && this.screen.scene) {
+				utils.removeAllFromScene(this.screen.scene);
 			}
 			this.screen = Object.create(TitleScreen).init(this);
 
@@ -165,13 +174,6 @@
 					return;
 				}
 
-				if (Settings.ao.some(isKey)) {
-					var pos = player.model.pos;
-					this.screen.useAO = !this.screen.useAO;
-					this.screen.world.reMeshChunk(pos.x / data.chunk.w | 0, pos.z / data.chunk.w | 0);
-					return;
-				}
-
 				if (e.keyCode === 49 /*1*/) {
 					s = Settings.mouse_sensitivity - 0.05;
 					Settings.mouse_sensitivity = s;
@@ -191,14 +193,21 @@
 				}
 
 				if (e.keyCode === 51 /*3*/) {
-					if (this.vrControls) {
-						this.vrControls.zeroSensor();
-					}
+					Settings.invert_mouse = !Settings.invert_mouse;
+					main.reset();
+				}
+
+				if (Settings.ao.some(isKey)) {
+					var pos = player.model.pos;
+					this.screen.useAO = !this.screen.useAO;
+					this.screen.world.reMeshChunk(pos.x / data.chunk.w | 0, pos.z / data.chunk.w | 0);
+					return;
 				}
 
 				if (e.keyCode === 53 /*5*/) {
-					Settings.invert_mouse = !Settings.invert_mouse;
-					main.reset();
+					if (this.vrControls) {
+						this.vrControls.zeroSensor();
+					}
 				}
 
 				if (e.keyCode === 84) {
@@ -361,6 +370,8 @@
 
 		startGame: function () {
 
+			utils.removeAllFromScene(this.screen.scene);
+
 			this.screen = Object.create(WorldScreen).init(this);
 
 		},
@@ -384,7 +395,7 @@
 
 				var effect = new THREE.ShaderPass(THREE.VignetteShader);
 				this.vignetteEffect = effect.uniforms["darkness"];
-				this.vignetteEffect.value = 0.7;
+				this.vignetteEffect.value = 1.2;
 				this.composer.addPass( effect );
 
 				var effect = new THREE.ShaderPass( THREE.HueSaturationShader );

@@ -138,7 +138,7 @@
 					// Ergh... screen effect when swimming.
 					// It's added in one place, removed in anohter
 					// put it somewhere sensibile
-					this.screen.screen.vignetteEffect.value = 0.7;
+					this.screen.screen.vignetteEffect.value = 1.2;
 				}
 				// If player is moving...
 				if (zo !== 0) {

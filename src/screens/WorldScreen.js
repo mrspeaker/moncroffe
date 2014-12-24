@@ -887,7 +887,7 @@
 					ret = false;
 					this.player.powerUp(350);
 					this.sounds.power.play();
-					this.screen.vignetteEffect.value = 1.2;
+					this.screen.vignetteEffect.value = 0.8;
 					this.explodeParticles(b.model.pos, false);
 					Network.powerballGotByMe(b.id);
 				}

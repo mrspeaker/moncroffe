@@ -13,6 +13,8 @@
 
 		init: function (screen) {
 
+			var dom = utils.dom;
+
 			this.screen = screen;
 			this.scene = new THREE.Scene();
 
@@ -21,27 +23,29 @@
 			this.pp.mesh.rotation.y += Math.PI / 1.5;
 			this.scene.add(this.pp.mesh);
 
-			document.querySelector("#playerName").value = Settings.playerName;
-			var join = document.querySelector("#lezgo"),
+			dom.$("#playerName").value = Settings.playerName;
+			var join = dom.$("#lezgo"),
 				joinHandler = function () {
 					join.removeEventListener("click", joinHandler, false);
 					this.connect();
 				}.bind(this);
 			join.addEventListener("click", joinHandler, false);
 
-			var create = document.querySelector("#lezcreate"),
+			var create = dom.$("#lezcreate"),
 				createHandler = function () {
 					create.removeEventListener("click", createHandler);
 					this.connect(true);
 				}.bind(this);
 			create.addEventListener("click", createHandler, false);
 
-			document.querySelector("#gui").style.display = "none";
-			document.querySelector("#cursor").style.display = "none";
-			document.querySelector("#blocker").style.display = "none";
-			document.querySelector("#instructions").style.display = "none";
+			dom.hide(dom.$("#gui"));
+			dom.hide(dom.$("#cursor"));
+			dom.hide(dom.$("#blocker"));
+			dom.hide(dom.$("#instructions"));
+			dom.$$("#bg > div").forEach(dom.hide);
 
-			document.querySelector("#lobby").style.display = "block";
+			dom.show(dom.$("#lobby"));
+
 			utils.msg(" ");
 
 			return this;
@@ -63,10 +67,10 @@
 			}
 
 			Network.init(name, function () {
-				document.querySelector("#blocker").style.display = "";
-				document.querySelector("#instructions").style.display = "";
-				document.querySelector("#gui").style.display = "";
-				document.querySelector("#cursor").style.display = "";
+				utils.dom.$("#blocker").style.display = "";
+				utils.dom.$("#instructions").style.display = "";
+				utils.dom.$("#gui").style.display = "";
+				utils.dom.$("#cursor").style.display = "";
 
 				self.next();
 			});

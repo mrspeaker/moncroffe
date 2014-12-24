@@ -15,9 +15,11 @@ Now with Oculus Rift support!
 	'1/2': Adjust mouse sensitivity
 
 	'e': Toggle Oculus Rift mode
-	'3': Reset headset in VR mode
+
+	'3': Invert mouse pitch
 	'4': Toggle Ambient Occlusion (debugging)
-	'5': Invert mouse pitch
+	'5': Reset headset in VR mode
+
 	Wheel: Change block to add
 
 Query params /:
@@ -40,10 +42,8 @@ Running:
 
 ## Next todos
 
-- sound for round ending/starting
-- sound for player disconnect
-- allow restart to titlescreen. Tough.
 - leaderboard (session)
+- allow restart to titlescreen. Tough.
 
 ## Bugz
 
@@ -56,6 +56,7 @@ Running:
 - Block & face selection wrong when close to blocks
 - Bullet gets stuck when firing close to block
 - game should run in "offline mode"?
+- collision bug - jumps like crazy.
 
 > server
 
@@ -67,14 +68,13 @@ Running:
 > other
 
 - Sounds of other players
+- sound for player disconnect
 - VR head tracking doesn't aim gun
 - VR Should walk in direction looking
 
 ## Needs
 
 - Greedy meshing. Currently had basic face-culling only.
-- Block-based lighting
-- Shift-walk for overhang picking?
 - Camera pitch/yaw not same as minecraft when looking up/down
 - Leaderboard (global)
 
@@ -85,9 +85,9 @@ Running:
 - Choose "just you" or "everyone" for add/remove blocks
   - make tunnels just for you, baracades against everyone etc
 
-- Some reason clown particles get attracted to cube (theme)
-- The more you destroy clowns, the more coins the block sucks, greater the blocks value becomes. if people can't find it, it's value will rise
-
+### Theme
+- Some reason clown particles get attracted to cube
+- The more you destroy clowns, the more coins the block sucks, greater the blocks value becomes. if people can't find it, it's value will rise?
 - Health level on player, colour desaturates - easier to hide when nearly dead
 
 ## Cube geometry notes
