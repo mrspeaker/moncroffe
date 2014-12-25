@@ -196,7 +196,7 @@
 
 			var safety;
 
-			for (var i = 0; i < 30; i++) {
+			for (var i = 0; i < 50; i++) {
 
 				safety = 0;
 
