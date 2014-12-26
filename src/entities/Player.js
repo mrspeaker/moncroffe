@@ -139,6 +139,7 @@
 					// It's added in one place, removed in anohter
 					// put it somewhere sensibile
 					this.screen.screen.vignetteEffect.value = 1.2;
+					this.screen.sounds.powerdown.play();
 				}
 				// If player is moving...
 				if (zo !== 0) {

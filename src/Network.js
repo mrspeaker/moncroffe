@@ -44,7 +44,7 @@
 
 			if (this.socket) {
 				// TODO: figure out reconnectiong, restarting!
-				console.log("Wah?", this.socket)
+				console.log("Wah?", this.socket);
 				this.socket.emit("join", name);
 				return this;
 			}

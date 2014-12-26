@@ -67,7 +67,8 @@
 				starty: Object.create(Sound).init("res/audio/starty", 0.8),
 				power: Object.create(Sound).init("res/audio/power", 0.4),
 				count1: Object.create(Sound).init("res/audio/count1", 0.3),
-				count2: Object.create(Sound).init("res/audio/count2", 0.3)
+				count2: Object.create(Sound).init("res/audio/count2", 0.3),
+				powerdown: Object.create(Sound).init("res/audio/powerdown", 0.5)
 			};
 
 			this.screen = screen;
