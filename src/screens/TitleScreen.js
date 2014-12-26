@@ -52,10 +52,12 @@
 		},
 
 		connect: function (createRoom) {
+
 			var self = this,
-				name = core.utils.cleanInput(document.querySelector("#playerName").value),
+				name = core.utils.cleanInput(utils.dom.$("#playerName").value),
 				lobby = document.querySelector("#lobby");
-			lobby.style.display = "none";
+
+			utils.dom.hide(lobby)
 
 			if (name !== Settings.playerName) {
 				Settings.playerName = name;
@@ -64,6 +66,12 @@
 
 			if (createRoom) {
 				alert("sorry, no private games yet.");
+			}
+
+			if (Network.socket) {
+				console.log("already connected");
+				self.next();
+				return;
 			}
 
 			Network.init(name, function () {

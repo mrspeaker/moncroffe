@@ -40,17 +40,17 @@
 
 			var self = this;
 
-			this.unbindPointer = utils.bindPointerLock(this.renderer.domElement, function (state) {
+			this.unbindPointer = utils.bindPointerLock(utils.dom.$("#board"), function (state) {
 
 				self.onPointerLockChange(state);
 
 			});
 
-			/*document.querySelector("#exitGame").addEventListener("click", function (e) {
+			utils.dom.on("#exitGame", "click", function (e) {
 
 				main.reset();
 
-			}, false);*/
+			});
 
 			this.run();
 
@@ -65,7 +65,19 @@
 			if (this.screen && this.screen.scene) {
 				utils.removeAllFromScene(this.screen.scene);
 			}
+			// LOl... old camera gets borked when switching scenes
+			// hack is just replace it. Figure it out, yo.
+			this.camera = new THREE.PerspectiveCamera(85, 1, 0.01, 500);
+			this.setCameraDimensions();
 			this.screen = Object.create(TitleScreen).init(this);
+
+		},
+
+		startGame: function () {
+
+			utils.removeAllFromScene(this.screen.scene);
+
+			this.screen = Object.create(WorldScreen).init(this);
 
 		},
 
@@ -368,14 +380,6 @@
 
 		},
 
-		startGame: function () {
-
-			utils.removeAllFromScene(this.screen.scene);
-
-			this.screen = Object.create(WorldScreen).init(this);
-
-		},
-
 		tick: function () {
 
 			var delta = this.clock.getDelta() / this.oneFrameEvery;
@@ -385,25 +389,29 @@
 				//utils.msg(dt); // Track big/small updates
 			}
 
-			if (this.screen.scene && this.screen.scene !== this.lastScene) {
+			if (this.screen.scene && this.screen.name !== this.lastScene) {
 
-				this.lastScene = this.screen.scene;
+				this.lastScene = this.screen.name;
 
 				// Create a new composer
-				this.composer = new THREE.EffectComposer(this.renderer);
-				this.composer.addPass(new THREE.RenderPass(this.screen.scene, this.camera));
+				if (this.screen.name === "WorldScreen") {
+					this.composer = new THREE.EffectComposer(this.renderer);
+					this.composer.addPass(new THREE.RenderPass(this.screen.scene, this.camera));
 
-				var effect = new THREE.ShaderPass(THREE.VignetteShader);
-				this.vignetteEffect = effect.uniforms["darkness"];
-				this.vignetteEffect.value = 1.2;
-				this.composer.addPass( effect );
+					var effect = new THREE.ShaderPass(THREE.VignetteShader);
+					this.vignetteEffect = effect.uniforms["darkness"];
+					this.vignetteEffect.value = 1.2;
+					this.composer.addPass( effect );
 
-				var effect = new THREE.ShaderPass( THREE.HueSaturationShader );
-				effect.uniforms["saturation"].value = 0.6;
-				this.hue = effect.uniforms["hue"];
+					var effect = new THREE.ShaderPass( THREE.HueSaturationShader );
+					effect.uniforms["saturation"].value = 0.6;
+					this.hue = effect.uniforms["hue"];
 
-				effect.renderToScreen = true;
-				this.composer.addPass( effect );
+					effect.renderToScreen = true;
+					this.composer.addPass( effect );
+				} else {
+					this.composer = null;
+				}
 			}
 
 			if (this.hue) {

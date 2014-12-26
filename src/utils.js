@@ -47,13 +47,17 @@
 	utils.dom.$ = function (sel) { return document.querySelector(sel); }
 	utils.dom.$$ = utils.selectorAll;
 	utils.dom.on = function (el, evnt, f) {
+
 		utils.dom.$(el).addEventListener(evnt, f, false);
+
 	};
 
 	utils.removeAllFromScene = function (scene) {
 
 		scene.children.forEach(function (child) {
+
 			scene.remove(child);
+
 		});
 
 		return scene;
@@ -61,9 +65,11 @@
 	};
 
 	utils.urlParams = (function () {
+
 		if (!window.location && !window.location.search) {
 			return {};
 		}
+
 		var params = {},
 			match,
 			pl = /\+/g,  // Regex for replacing addition symbol with a space
@@ -76,6 +82,7 @@
 		}
 
 		return params;
+
 	}());
 
 	utils.bindPointerLock = function (el, onChange) {
@@ -85,8 +92,6 @@
 			havePointerLock = "pointerLockElement" in document || "mozPointerLockElement" in document || "webkitPointerLockElement" in document;
 
 		function unbind () {
-
-			document.exitPointerLock();
 
 			["pointerlockchange", "mozpointerlockchange", "webkitpointerlockchange"].forEach(function (e) {
 				document.removeEventListener(e, pointerlockchange, false);
@@ -99,11 +104,16 @@
 			blocker.style.display = "none";
 			instructions.style.display = "none";
 
+			(document.exitPointerLock ||
+				document.mozExitPointerLock ||
+				document.webkitExitPointerLock).call(document);
+
 		}
 
 		if (havePointerLock) {
 			var element = el; //document.body;
 			var pointerlockchange = function () {
+
 				if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
 					onChange(true);
 					blocker.style.display = "none";
@@ -114,10 +124,13 @@
 					blocker.style.display = "box";
 					instructions.style.display = "";
 				}
+
 			};
 
 			var pointerlockerror = function () {
+
 				instructions.style.display = "";
+
 			};
 
 			["pointerlockchange", "mozpointerlockchange", "webkitpointerlockchange"].forEach(function (e) {
@@ -155,12 +168,14 @@
 		}
 
 		function getBlock(x, y) {
+
 			return [
 				new THREE.Vector2(x / 16, y / 16),
 				new THREE.Vector2((x + 1) / 16, y / 16),
 				new THREE.Vector2(x / 16, (y + 1) / 16),
 				new THREE.Vector2((x + 1) / 16, (y + 1) / 16)
 			];
+
 		}
 
 		var front = getBlock(tile[0][0], tile[0][1]),
