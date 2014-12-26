@@ -41,6 +41,12 @@
 			this.chunkZ = chunk.z;
 			this.chunkId = chunk.x + ":" + chunk.z;
 
+			this.worldPos = {
+				x: pos.x + (chunk.x * chunk.w),
+				y: pos.y,
+				z: pos.z + (chunk.z * chunk.w)
+			};
+
 			this.face = face;
 
 		},

@@ -699,7 +699,7 @@
 
 			origin.addScalar(0.5);
 
-			core.utils.raycast(origin, ob.getDirection(), 5, function (x, y, z, face) {
+			core.utils.raycast(origin, ob.getDirection(), 3.5, function (x, y, z, face) {
 
 				if (x === "miss") {
 					cursor.hide();
@@ -725,7 +725,7 @@
 				x -= chunkX * chW;
 				z -= chunkZ * chW;
 
-				cursor.set({x: x, y: y, z: z}, {x: chunkX, z: chunkZ}, face);
+				cursor.set({x: x, y: y, z: z}, {x: chunkX, z: chunkZ, w: chW, h: chH}, face);
 
 				return chunk[z][y][x].type !== "air";
 			});
@@ -1027,8 +1027,14 @@
 						]);
 
 				if (!added) {
-					this.fire();
-					this.player.knockback();
+					var distToCursor = core.utils.dist(this.player.model.pos, this.cursor.worldPos);
+					if (distToCursor > 2) {
+						this.fire();
+						this.player.knockback();
+					} else {
+						// Too close to shoot
+						// TODO: make a sound eh.
+					}
 				}
 				this.doAddBlock = false;
 			}
