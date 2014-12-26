@@ -45,8 +45,8 @@
 			if (this.socket) {
 				// TODO: figure out reconnectiong, restarting!
 				console.log("Wah?", this.socket)
-				//this.socket.emit("join", name);
-				//return this;
+				this.socket.emit("join", name);
+				return this;
 			}
 
 			var socket = this.socket = window.io(window.location.host,  {
@@ -70,6 +70,7 @@
 				//main.reset();
 
 				// TODO: lol.
+				console.log("DISCON AND RREFRESH")
 				socket.io.disconnect();
 				setTimeout(function () {
 					window.askToLeave = false;

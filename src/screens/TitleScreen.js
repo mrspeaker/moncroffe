@@ -70,8 +70,8 @@
 
 			if (Network.socket) {
 				console.log("already connected");
-				self.next();
-				return;
+				//self.next();
+				//return;
 			}
 
 			Network.init(name, function () {
@@ -80,11 +80,19 @@
 				utils.dom.$("#gui").style.display = "";
 				utils.dom.$("#cursor").style.display = "";
 
+
 				self.next();
 			});
 		},
 
 		next: function () {
+			var self = this;
+
+			this.screen.unbindPointer = utils.bindPointerLock(utils.dom.$("#board"), function (state) {
+
+				self.screen.onPointerLockChange(state);
+
+			});
 
 			this.screen.startGame();
 

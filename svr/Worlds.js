@@ -78,6 +78,8 @@ var Worlds = {
 
 		client.on("join", function (name) {
 
+			console.log("Rec join!", name)
+
 			name = core.utils.cleanInput(name, 3, 15);
 
 			// Update name

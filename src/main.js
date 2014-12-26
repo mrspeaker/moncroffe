@@ -40,12 +40,6 @@
 
 			var self = this;
 
-			this.unbindPointer = utils.bindPointerLock(utils.dom.$("#board"), function (state) {
-
-				self.onPointerLockChange(state);
-
-			});
-
 			utils.dom.on("#exitGame", "click", function (e) {
 
 				main.reset();
@@ -60,7 +54,8 @@
 
 			this.unbindPointer && this.unbindPointer();
 			if (Network.socket) {
-				Network.socket.io.disconnect();
+				//Network.socket.io.disconnect();
+				// hmm... if i don't disconnect, I'll still get messages from the game?!
 			}
 			if (this.screen && this.screen.scene) {
 				utils.removeAllFromScene(this.screen.scene);
