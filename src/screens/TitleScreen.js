@@ -46,7 +46,12 @@
 
 			dom.show(dom.$("#lobby"));
 
+			// TODO: init here, then join on join
+			//Network.init();
+
 			utils.msg(" ");
+
+			this.scene.add(Particles.group);
 
 			return this;
 		},

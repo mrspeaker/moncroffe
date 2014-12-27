@@ -67,6 +67,42 @@
 			<input type="text" id="chatMsg" />
 		</div>
 	</div>
+
+	<script type="x-shader/x-vertex" id="vParticles">
+
+		attribute float size;
+		attribute vec3 pcolor;
+
+		varying vec3 vColor;
+
+		void main() {
+
+			vColor = pcolor;
+
+			vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+			gl_PointSize = size * ( 200.0 / length( mvPosition.xyz ) );
+			gl_Position = projectionMatrix * mvPosition;
+
+		}
+
+	</script>
+
+	<script type="x-shader/x-fragment" id="fParticles">
+
+		uniform sampler2D texture;
+
+		varying vec3 vColor;
+
+		void main() {
+
+			vec4 outColor = texture2D( texture, gl_PointCoord );
+
+			gl_FragColor = outColor * vec4( vColor, 1.0 );
+
+		}
+
+	</script>
+
 	<script src="lib/three/three.min.js"></script>
 	<script src="lib/three/CubeGeometry.js"></script>
 	<script src="lib/three/UVSprite.js"></script>
@@ -95,6 +131,7 @@
 	<script src="src/world/Chunk.js"></script>
 	<script src="src/world/World.js"></script>
 	<script src="src/particles/Particle.js"></script>
+	<script src="src/particles/Particles.js"></script>
 	<script src="src/particles/Flotsam.js"></script>
 	<script src="src/entities/Player.js"></script>
 	<script src="src/entities/PlayerProxy.js"></script>
