@@ -99,6 +99,8 @@
 
 			this.sounds.starty.play();
 
+			screen.camera.position.set(0, this.player.getEyeLevel(), 0);
+
 			return this;
 		},
 

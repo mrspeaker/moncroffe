@@ -264,12 +264,17 @@
 				camera.position.set(-5, 18, 5);
 				camera.rotation.set(0, -Math.PI / 2 , 0);
 			} else {
-				camera.position.y = this.model.bb.y - 1 - 0.2;
+				camera.position.y = this.getEyeLevel();
 			}
 
 			this.screen.scene.add(controls.getObject());
 
 			return controls;
+		},
+
+		getEyeLevel: function () {
+
+			return this.model.bb.y - 1 - 0.2
 		},
 
 		changeTool: function (dir) {
