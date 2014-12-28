@@ -58,11 +58,18 @@
 
 	for ( i = 0; i < particlesLength; i ++ ) {
 
+		var p = randomSpherePoint(1.4);
+
 		particles.vertices.push(
+			/*newpos(
+				Math.random() * 0.2 - 0.1,
+				Math.random() * 0.2 - 0.1,
+				Math.random() * 0.2 - 0.1 ) );*/
 			newpos(
-				Math.random() * 0.2 - 0.1,
-				Math.random() * 0.2 - 0.1,
-				Math.random() * 0.2 - 0.1 ) );
+				p[0],
+				p[1],
+				p[2]
+			));
 		Pool.add( i );
 
 	}
@@ -84,7 +91,7 @@
 
 	uniforms = {
 
-		texture:   { type: "t", value: texture }
+		texture: { type: "t", value: texture }
 
 	};
 
@@ -151,7 +158,7 @@
 
 	for( var v = 0; v < vertices.length; v ++ ) {
 
-		values_size[ v ] = 0.01;
+		values_size[ v ] = 0.05;
 
 		values_color[ v ] = new THREE.Color( 0x2EA469 ).lerp(new THREE.Color(0x2EA4D9), Math.random());
 
@@ -174,6 +181,17 @@
 		return target;
 
 	};
+
+	function randomSpherePoint(radius){
+		var u = Math.random();
+		var v = Math.random();
+		var theta = 2 * Math.PI * u;
+		var phi = Math.acos(2 * v - 1);
+		var x = radius * Math.sin(phi) * Math.cos(theta);
+		var y = radius * Math.sin(phi) * Math.sin(theta);
+		var z = radius * Math.cos(phi);
+		return [x, y, z];
+	}
 
 
 	Particles.group = group;

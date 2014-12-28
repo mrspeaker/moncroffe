@@ -51,9 +51,9 @@
 
 			utils.msg(" ");
 
-			this.scene.add(Particles.group);
+			this.pp.body.add(Particles.group);
 
-
+			//Particles.group.z = -3;
 
 			return this;
 		},
@@ -110,9 +110,12 @@
 			this.pp.rottt();
 
 			//Particles.particleCloud.geometry.verticesNeedUpdate = true;
-			Particles.group.rotation.x += 0.001;
+			Particles.group.rotation.x -= 0.016;
 			Particles.group.rotation.z += 0.002;
 			Particles.group.rotation.y -= 0.0005;
+
+			this.screen.camera.position.z = 1.5 + Math.sin(Date.now() / 1000) * 1;
+			this.screen.camera.position.x = 0 + Math.sin(Date.now() / 1000) * 0.8;
 		}
 
 	};
