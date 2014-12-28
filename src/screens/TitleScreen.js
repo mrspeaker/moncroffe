@@ -53,6 +53,8 @@
 
 			this.scene.add(Particles.group);
 
+
+
 			return this;
 		},
 
@@ -105,12 +107,12 @@
 
 		tick: function () {
 
-			//this.clown.mesh.rotation.x += 0.05;
-			//this.clown.mesh.rotation.y += 0.055;
-			//this.clown.mesh.rotation.z += 0.060;
-
 			this.pp.rottt();
 
+			//Particles.particleCloud.geometry.verticesNeedUpdate = true;
+			Particles.group.rotation.x += 0.001;
+			Particles.group.rotation.z += 0.002;
+			Particles.group.rotation.y -= 0.0005;
 		}
 
 	};

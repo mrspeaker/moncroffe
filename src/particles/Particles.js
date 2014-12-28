@@ -15,7 +15,7 @@
 
 	// Create particle objects for Three.js
 
-	var particlesLength = 70000;
+	var particlesLength = 5000;
 
 	var particles = new THREE.Geometry();
 
@@ -60,9 +60,9 @@
 
 		particles.vertices.push(
 			newpos(
-				Math.random() * 200 - 100,
-				Math.random() * 100 + 150,
-				Math.random() * 50 ) );
+				Math.random() * 0.2 - 0.1,
+				Math.random() * 0.2 - 0.1,
+				Math.random() * 0.2 - 0.1 ) );
 		Pool.add( i );
 
 	}
@@ -151,19 +151,30 @@
 
 	for( var v = 0; v < vertices.length; v ++ ) {
 
-		values_size[ v ] = 50;
+		values_size[ v ] = 0.01;
 
-		values_color[ v ] = new THREE.Color( 0xff0000 );
+		values_color[ v ] = new THREE.Color( 0x2EA469 ).lerp(new THREE.Color(0x2EA4D9), Math.random());
 
-		particles.vertices[ v ].set( Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY );
+		//particles.vertices[ v ].set( Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY );
+
 
 	}
 
-	group.add( particleCloud );
-	particleCloud.y = 10;
-
-
 	particleCloud.geometry.verticesNeedUpdate = true;
+	Particles.particleCloud = particleCloud;
+
+	group.add( particleCloud );
+	particleCloud.position.set(0, 0, 0);
+
+	var setTargetParticle = function() {
+
+		var target = Pool.get();
+		values_size[ target ] = Math.random() * 50 + 10;
+
+		return target;
+
+	};
+
 
 	Particles.group = group;
 
