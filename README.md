@@ -55,8 +55,6 @@ Running:
 
 > client
 
-- Camera goes through block when close, looking on angle
-- Block & face selection wrong when close to blocks
 - Bullet gets stuck when firing close to block
 - game should run in "offline mode"?
 - collision bug - jumps like crazy.
@@ -66,7 +64,6 @@ Running:
 - Can get stuck in "born" state (close puter while game is playing)
 - Block add/remove not synced
 - escape html in innerHTML calls
-- server game keeps running even when no clients
 
 > other
 
@@ -79,7 +76,6 @@ Running:
 ## Needs
 
 - Greedy meshing. Currently had basic face-culling only.
-- Camera pitch/yaw not same as minecraft when looking up/down
 - Leaderboard (global)
 
 ## Would be cool/maybes
@@ -92,7 +88,6 @@ Running:
 ### Theme
 - Some reason clown particles get attracted to cube
 - The more you destroy clowns, the more coins the block sucks, greater the blocks value becomes. if people can't find it, it's value will rise?
-- Health level on player, colour desaturates - easier to hide when nearly dead
 
 ## Cube geometry notes
 

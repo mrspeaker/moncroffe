@@ -41,7 +41,6 @@ body {
 #cursor {
 	position: absolute;
 	margin-left: -5pt;
-	border:1px solid green;
 	left: 50%;
 	top: 50%;
 	font-family: helvetica, arial, sans-serif;
@@ -59,7 +58,6 @@ body {
 	position:absolute;
 	top: 5px;
 	left: 5px;
-	/*font-family: monospace;*/
 }
 
 .msg-big {
