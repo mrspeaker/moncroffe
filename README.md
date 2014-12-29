@@ -45,7 +45,8 @@ Running:
 ## Next todos
 
 - leaderboard (session)
-- allow restart to titlescreen. Tough.
+- allow restart to titlescreen.
+- resize with correct aspect
 
 ## Bugz
 

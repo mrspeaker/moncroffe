@@ -40,7 +40,8 @@ body {
 
 #cursor {
 	position: absolute;
-	margin-top: 15px;
+	margin-left: -5pt;
+	border:1px solid green;
 	left: 50%;
 	top: 50%;
 	font-family: helvetica, arial, sans-serif;

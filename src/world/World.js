@@ -562,15 +562,15 @@
 
 							// Merge it
 							totalGeom.merge(mesh.geometry, mesh.matrix);
+
 						}
 					}
 				}
 			}
 
 			//utils.msg("Cubes:" + stats.cubes, " F:" + stats.faces, " V:" + stats.verts);
-
 			var totalMesh = new THREE.Mesh(totalGeom, this.blockMaterial);
-			totalMesh.matrixAutoUpdate = false;
+			totalMesh.matrixAutoUpdate = false; // needed? why?
 			return totalMesh;
 		},
 

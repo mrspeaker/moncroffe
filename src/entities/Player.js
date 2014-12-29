@@ -218,7 +218,7 @@
 				bobY = bobbing ? - Math.abs(Math.cos(Date.now() / speed)) * size + (size/2) : 0;
 
 			// Sync the camera
-			this.controls.setPos(model.pos.x + bobX, model.pos.y + bobY, model.pos.z);
+			this.controls.setPos(model.pos.x + bobX, model.pos.y + bobY + this.getEyeLevel(), model.pos.z);
 
 			this.syncMesh();
 
@@ -264,7 +264,7 @@
 				camera.position.set(-5, 18, 5);
 				camera.rotation.set(0, -Math.PI / 2 , 0);
 			} else {
-				camera.position.y = this.getEyeLevel();
+				//camera.position.y = this.getEyeLevel();
 			}
 
 			this.screen.scene.add(controls.getObject());

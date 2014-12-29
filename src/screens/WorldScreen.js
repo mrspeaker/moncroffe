@@ -99,7 +99,9 @@
 
 			this.sounds.starty.play();
 
-			screen.camera.position.set(0, this.player.getEyeLevel(), 0);
+			//screen.camera.position.set(0, this.player.getEyeLevel(), this.player.model.bb.z / 2);
+			screen.camera.position.set(0, 0, 0);
+			//this.player.controls.
 
 			return this;
 		},
@@ -543,7 +545,7 @@
 					this.sounds.join.play();
 
 					player = Network.clients[p.id] = Object.create(PlayerProxy).init(p.id, p.name, isSelf);
-					this.scene.add(player.mesh);
+					//this.scene.add(player.mesh);
 
 				} else {
 					// no name on connect, only join... so update here
@@ -700,7 +702,9 @@
 				chW = data.chunk.w,
 				chH = data.chunk.h;
 
-			origin.addScalar(0.5);
+			// Grr... why + 0.1? Picking still seems a tiny bit off.
+			origin.x += this.player.model.bb.x / 2 + 0.1;
+			origin.z += this.player.model.bb.z / 2 + 0.1;
 
 			core.utils.raycast(origin, ob.getDirection(), 3.5, function (x, y, z, face) {
 
