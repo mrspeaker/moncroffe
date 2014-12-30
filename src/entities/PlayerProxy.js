@@ -116,7 +116,8 @@
 			body.add(bits.head);
 
 			if (isSelf) {
-				bits.head.visible = false;
+				//bits.head.visible = false;
+				body.visible = false;
 			}
 
 			return body;

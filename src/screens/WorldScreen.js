@@ -545,7 +545,7 @@
 					this.sounds.join.play();
 
 					player = Network.clients[p.id] = Object.create(PlayerProxy).init(p.id, p.name, isSelf);
-					//this.scene.add(player.mesh);
+					this.scene.add(player.mesh);
 
 				} else {
 					// no name on connect, only join... so update here

@@ -80,7 +80,8 @@
 				// todo: umm, cb was for before... still needed?
 				this.connectedReceived(data, function () {});
 			}).bind(this));
-			socket.on("ping", this.pingReceived.bind(this));
+
+			socket.on("world/ping", this.pingReceived.bind(this));
 			socket.on("dropped", this.dropReceived.bind(this));
 
 			socket.on("clownDestroyed", this.clownDestroyed.bind(this));

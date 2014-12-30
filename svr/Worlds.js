@@ -48,27 +48,13 @@ var Worlds = {
 
 	onClientConnected: function (client, io) {
 
-		var World = this.getWorld();
-
-		if (!World.clients.length) {
-			// First person joining.
-			World.resetAll();
-		}
+		var World = null,
+			self = this;
 
 		client.join("lobby");
 		// client.broadcast.to('lobby').emit("welcomToLobby"); - sends to all except client.
 		io.sockets.in("lobby").emit("lobby/welcome"); // - sends to all in room.
 		// console.log(io.sockets.adapter.rooms); - get all rooms
-
-		// Restart if second person joins for the first time
-		if (World.clients.length === 1 && !World.roundsEverStarted) {
-			// Second person joining.
-			World.setState("BORN");
-			World.reset(false);
-			World.roundsEverStarted = true;
-		}
-
-		World.initPlayer(client);
 
 		console.log("Network:: " + client.userid + " connected");
 
@@ -88,6 +74,23 @@ var Worlds = {
 			io.sockets.in('universe').emit("world/welcome", name);
 
 			name = core.utils.cleanInput(name, 3, 15);
+
+			World = self.getWorld();
+
+			if (!World.clients.length) {
+				// First person joining.
+				World.resetAll();
+			}
+
+			// Restart if second person joins for the first time
+			if (World.clients.length === 1 && !World.roundsEverStarted) {
+				// Second person joining.
+				World.setState("BORN");
+				World.reset(false);
+				World.roundsEverStarted = true;
+			}
+
+			World.initPlayer(client);
 
 			// Update name
 			client.player.name = name;
@@ -175,10 +178,12 @@ var Worlds = {
 			shotPlayer.stats.deaths++;
 
 			World.clients.forEach(function (c) {
+
 				c.emit("receiveShotPlayer", {
 					hit: player,
 					by: client.userid
 				});
+
 			});
 
 		});
@@ -256,7 +261,7 @@ var Worlds = {
 
 			World.clients.forEach(function (c) {
 
-				c.emit("ping", {
+				c.emit("world/ping", {
 					elapsed: World.elapsed,
 					remaining: World.remaining,
 					players: World.players,
