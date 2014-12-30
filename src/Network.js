@@ -29,22 +29,26 @@
 
 		},
 
-		init: function (name, joinCb) {
+		init: function () {
 
 			this.clients = {};
-
+			this.name = null;
 			this.lastPingSent = Date.now();
 			this.lastPingRec = Date.now();
-
 			this.world = {
 				seed: null
 			};
 
-			this.name = name;
+
+			this.initSocket();
+
+			return this;
+		},
+
+		initSocket: function () {
 
 			if (this.socket) {
-				// TODO: figure out reconnectiong, restarting!
-				console.log("Wah?", this.socket);
+				console.log("Init has socket already?", this.socket);
 				this.socket.emit("join", name);
 				return this;
 			}
@@ -53,22 +57,7 @@
 				reconnection: true
 			});
 
-			// socket.io.on('connect_error', function (obj) {
-			//     // does not fire
-			//     console.log("connect_error");
-			//     main.reset();
-			// });
-
-			// socket.io.on('connect_timeout', function (obj) {
-			//     // does not fire
-			//     console.log("connect_timeout");
-			//     main.reset();
-			// });
-
 			socket.io.on("reconnect", function () {
-
-				//main.reset();
-
 				// TODO: lol.
 				console.log("DISCON AND RREFRESH");
 				socket.io.disconnect();
@@ -86,9 +75,10 @@
 				console.log("All you've got to lose is your viginity.");
 			});
 
-			// Listeners
+			// Listeners // TODO: namespace events
 			socket.on("onconnected", (function (data) {
-				this.connectedReceived(data, joinCb);
+				// todo: umm, cb was for before... still needed?
+				this.connectedReceived(data, function () {});
 			}).bind(this));
 			socket.on("ping", this.pingReceived.bind(this));
 			socket.on("dropped", this.dropReceived.bind(this));
@@ -102,10 +92,12 @@
 				main.screen.receiveScores(s);
 			});
 
-			// Let's go!
-			socket.emit("join", name);
+		},
 
-			return this;
+		joinTheWorld: function (name) {
+
+			this.socket.emit("joinTheWorld", name);
+
 		},
 
 		tick: function (model) {

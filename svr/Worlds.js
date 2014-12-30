@@ -56,10 +56,9 @@ var Worlds = {
 		}
 
 		client.join("lobby");
-		//client.broadcast.to('lobby').emit("welcomToLobby"); - sends to all except client.
+		// client.broadcast.to('lobby').emit("welcomToLobby"); - sends to all except client.
 		io.sockets.in('lobby').emit('welcomeToLobby'); // - sends to all in room.
-
-		console.log(io.sockets.adapter.rooms);
+		// console.log(io.sockets.adapter.rooms); - get all rooms
 
 		// Restart if second person joins for the first time
 		if (World.clients.length === 1 && !World.roundsEverStarted) {
@@ -82,7 +81,7 @@ var Worlds = {
 
 		});
 
-		client.on("join", function (name) {
+		client.on("joinTheWorld", function (name) {
 
 			client.leave("lobby");
 			client.join("universe");

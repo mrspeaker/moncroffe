@@ -22,6 +22,7 @@
 			this.pp.mesh.position.set(0, 0, -3);
 			this.pp.mesh.rotation.y += Math.PI / 1.5;
 			this.scene.add(this.pp.mesh);
+			this.pp.body.add(Particles.group);
 
 			dom.$("#playerName").value = Settings.playerName;
 			var join = dom.$("#lezgo"),
@@ -47,24 +48,19 @@
 			dom.show(dom.$("#lobby"));
 
 			// TODO: init here, then join on join
-			//Network.init();
+			Network.init();
 
 			utils.msg(" ");
-
-			this.pp.body.add(Particles.group);
-
-			//Particles.group.z = -3;
 
 			return this;
 		},
 
 		connect: function (createRoom) {
 
-			var self = this,
-				name = core.utils.cleanInput(utils.dom.$("#playerName").value),
+			var name = core.utils.cleanInput(utils.dom.$("#playerName").value),
 				lobby = document.querySelector("#lobby");
 
-			utils.dom.hide(lobby)
+			utils.dom.hide(lobby);
 
 			if (name !== Settings.playerName) {
 				Settings.playerName = name;
@@ -75,21 +71,20 @@
 				alert("sorry, no private games yet.");
 			}
 
-			if (Network.socket) {
-				console.log("already connected");
+			if (!Network.socket) {
+				console.error("Should have already got a connection");
 				//self.next();
 				//return;
 			}
 
-			Network.init(name, function () {
-				utils.dom.$("#blocker").style.display = "";
-				utils.dom.$("#instructions").style.display = "";
-				utils.dom.$("#gui").style.display = "";
-				utils.dom.$("#cursor").style.display = "";
+			utils.dom.$("#blocker").style.display = "";
+			utils.dom.$("#instructions").style.display = "";
+			utils.dom.$("#gui").style.display = "";
+			utils.dom.$("#cursor").style.display = "";
 
+			Network.joinTheWorld(name);
+			this.next();
 
-				self.next();
-			});
 		},
 
 		next: function () {
@@ -109,7 +104,6 @@
 
 			this.pp.rottt();
 
-			//Particles.particleCloud.geometry.verticesNeedUpdate = true;
 			Particles.group.rotation.x -= 0.016;
 			Particles.group.rotation.z += 0.002;
 			Particles.group.rotation.y -= 0.0005;
