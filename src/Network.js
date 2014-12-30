@@ -68,10 +68,10 @@
 
 			});
 
-			socket.on("welcomeToLobby", function () {
+			socket.on("lobby/welcome", function () {
 				console.log("Welcome to the lobby!");
 			});
-			socket.on("welcomeToThisWorld", function () {
+			socket.on("world/welcome", function () {
 				console.log("All you've got to lose is your viginity.");
 			});
 
