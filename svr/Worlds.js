@@ -46,7 +46,7 @@ var Worlds = {
 
 	},
 
-	onClientConnected: function (client) {
+	onClientConnected: function (client, io) {
 
 		var World = this.getWorld();
 
@@ -54,6 +54,12 @@ var Worlds = {
 			// First person joining.
 			World.resetAll();
 		}
+
+		client.join("lobby");
+		//client.broadcast.to('lobby').emit("welcomToLobby"); - sends to all except client.
+		io.sockets.in('lobby').emit('welcomeToLobby'); // - sends to all in room.
+
+		console.log(io.sockets.adapter.rooms);
 
 		// Restart if second person joins for the first time
 		if (World.clients.length === 1 && !World.roundsEverStarted) {
@@ -78,7 +84,9 @@ var Worlds = {
 
 		client.on("join", function (name) {
 
-			console.log("Rec join!", name)
+			client.leave("lobby");
+			client.join("universe");
+			io.sockets.in('universe').emit('welcomeToThisWorld', name);
 
 			name = core.utils.cleanInput(name, 3, 15);
 

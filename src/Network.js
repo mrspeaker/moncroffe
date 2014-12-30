@@ -70,13 +70,20 @@
 				//main.reset();
 
 				// TODO: lol.
-				console.log("DISCON AND RREFRESH")
+				console.log("DISCON AND RREFRESH");
 				socket.io.disconnect();
 				setTimeout(function () {
 					window.askToLeave = false;
 					window.location.href = window.location.href;
 				}, 250);
 
+			});
+
+			socket.on("welcomeToLobby", function () {
+				console.log("Welcome to the lobby!");
+			});
+			socket.on("welcomeToThisWorld", function () {
+				console.log("All you've got to lose is your viginity.");
 			});
 
 			// Listeners

@@ -22,7 +22,7 @@ app.use("/lib", express.static(__dirname + "/../lib/"));
 
 io.on("connection", function (client) {
 
-	Worlds.onClientConnected(client);
+	Worlds.onClientConnected(client, io);
 
 });
 
