@@ -11,7 +11,7 @@ app.get("/", function(req, res){
 	res.sendFile("index.html", {"root": "../"});
 });
 
-Worlds.init();
+Worlds.init(io.sockets);
 
 app.use("/src", express.static(__dirname + "/../src/"));
 app.use("/res", express.static(__dirname + "/../res/"));
@@ -34,8 +34,6 @@ io.on("connection", function (client) {
 	client.on("joinTheWorld", function (playerName) {
 
 		this.leave("lobby");
-		this.join("universe");
-		io.sockets.in('universe').emit("world/welcome", playerName);
 
 		Worlds.joinAWorld(this, playerName);
 
@@ -45,7 +43,8 @@ io.on("connection", function (client) {
 	// Not used yet.
 	client.on("leaveTheWorld", function () {
 
-		this.leave("universe");
+		this.world.removePlayer(this.userid);
+
 		this.join("lobby");
 
 	});

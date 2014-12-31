@@ -48,8 +48,8 @@
 		initSocket: function () {
 
 			if (this.socket) {
-				console.log("Init has socket already?", this.socket);
-				this.socket.emit("join", name);
+				console.log("Already connected, yo.", this.socket);
+				//this.socket.emit("join", name);
 				return this;
 			}
 
@@ -76,9 +76,9 @@
 			});
 
 			// Listeners // TODO: namespace events
-			socket.on("onconnected", (function (data) {
+			socket.on("joinedAWorld", (function (data) {
 				// todo: umm, cb was for before... still needed?
-				this.connectedReceived(data, function () {});
+				this.joinedAWorld(data, function () {});
 			}).bind(this));
 
 			socket.on("world/ping", this.pingReceived.bind(this));
@@ -101,6 +101,12 @@
 
 		},
 
+		leaveTheWorld: function () {
+
+			this.socket.emit("leaveTheWorld", name);
+
+		},
+
 		tick: function (model) {
 
 			// Do update ping
@@ -113,11 +119,11 @@
 
 		},
 
-		connectedReceived: function (data, cb) {
+		joinedAWorld: function (data, cb) {
 
 			this.clientId = data.id;
 			this.world.seed = data.seed;
-			console.log("Connected as:", data.id, " seed:", data.seed);
+			console.log("Joined as:", data.id, " seed:", data.seed);
 			cb && cb();
 
 		},

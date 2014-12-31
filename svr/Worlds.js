@@ -9,12 +9,15 @@ var Worlds = {
 	worlds: null,
 	waitingPlayers: null,
 	leaderboards: null,
+	sockets: null,
 
-	init: function () {
+	init: function (sockets) {
 
 		this.worlds = [];
 		this.waitingPlayers = [];
 		this.leaderboards = {};
+
+		this.sockets = sockets;
 
 		return this;
 	},
@@ -64,9 +67,11 @@ var Worlds = {
 			World.roundsEverStarted = true;
 		}
 
-		World.addAndInitPlayer(client, cleanName);
+		World.initAndAddPlayer(client, cleanName);
 
-		client.emit("onconnected", {
+		client.join(World.id);
+
+		client.emit("joinedAWorld", {
 			id: client.userid,
 			seed: World.seed
 		});
@@ -75,6 +80,8 @@ var Worlds = {
 
 	listenToWorldEvents: function (client) {
 
+		var sockets = this.sockets;
+
 		// Todo: move client logic to player/client.
 		client.on("disconnect", function () {
 
@@ -82,23 +89,23 @@ var Worlds = {
 
 			console.log("Network:: " + this.userid + pn + " disconnected");
 
-			this.world.removePlayer(this.userid);
+			if (this.world) {
+
+				this.world.removePlayer(this.userid);
+
+			}
 
 		});
 
 		client.on("ping", function (ping) {
 
-			this.world.players.forEach(function (p) {
+			var p = this.player;
 
-				if (ping.clientId === p.id) {
-					p.pos.x = ping.pos.x;
-					p.pos.y = ping.pos.y;
-					p.pos.z = ping.pos.z;
+			p.pos.x = ping.pos.x;
+			p.pos.y = ping.pos.y;
+			p.pos.z = ping.pos.z;
 
-					p.rot = ping.rot;
-				}
-
-			});
+			p.rot = ping.rot;
 
 		});
 
@@ -107,35 +114,20 @@ var Worlds = {
 
 		client.on("clownHit", function (id) {
 
-			this.world.clients.forEach(function (c) {
-
-				c.emit("clownDestroyed", id);
-
-			});
+			sockets.in(this.world.id).emit("clownDestroyed", id);
 
 		});
 
 		client.on("powerballGotByMe", function (pid) {
 
-			this.world.clients.forEach(function (c) {
-
-				if (c === client) return;
-				c.emit("powerballGotByOthers", pid);
-
-			});
+			this.broadcast.to(this.world.id).emit("powerballGotByOthers", pid);
 
 		});
 
 		client.on("fireBullet", function (bullet) {
 
 			// todo - keep time stamp or something
-
-			this.world.clients.forEach(function (c) {
-
-				if (c === client) return;
-				c.emit("otherFiredBullet", bullet);
-
-			});
+			this.broadcast.to(this.world.id).emit("otherFiredBullet", bullet);
 
 		});
 
@@ -162,14 +154,10 @@ var Worlds = {
 			this.stats.hits++;
 			shotPlayer.stats.deaths++;
 
-			this.world.clients.forEach(function (c) {
-
-				c.emit("receiveShotPlayer", {
-					hit: player,
-					by: this.userid
-				});
-
-			}, this);
+			sockets.in(this.world.id).emit("receiveShotPlayer", {
+				hit: player,
+				by: this.userid
+			});
 
 		});
 
@@ -217,11 +205,7 @@ var Worlds = {
 
 		client.on("sendChat", function (msg) {
 
-			this.world.clients.forEach(function (c) {
-
-				c.emit("receiveChat", msg);
-
-			});
+			this.broadcast.to(this.world.id).emit("receiveChat", msg);
 
 		});
 	},
@@ -243,25 +227,23 @@ var Worlds = {
 
 	ping: function () {
 
+		var sockets = this.sockets;
+
 		this.worlds.forEach(function (World) {
 
-			World.clients.forEach(function (c) {
-
-				c.emit("world/ping", {
-					elapsed: World.elapsed,
-					remaining: World.remaining,
-					players: World.players,
-					bullets: World.bullets,
-					targets: World.targets,
-					// Should come as seperate messages, yo.
-					state: World.state,
-					bouy: World.bouy,
-					bonus: World.bonus,
-					seed: World.seed,
-					flash: World.flash,
-					round: World.round
-				});
-
+			sockets.in(World.id).emit("world/ping", {
+				elapsed: World.elapsed,
+				remaining: World.remaining,
+				players: World.players,
+				bullets: World.bullets,
+				targets: World.targets,
+				// Should come as seperate messages, yo.
+				state: World.state,
+				bouy: World.bouy,
+				bonus: World.bonus,
+				seed: World.seed,
+				flash: World.flash,
+				round: World.round
 			});
 
 			World.flash = false;

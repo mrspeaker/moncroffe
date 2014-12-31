@@ -46,7 +46,7 @@ var World = {
 		return this;
 	},
 
-	addAndInitPlayer: function (client, playerName) {
+	initAndAddPlayer: function (client, playerName) {
 
 		var player;
 

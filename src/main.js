@@ -54,9 +54,11 @@
 
 			this.unbindPointer && this.unbindPointer();
 			if (Network.socket) {
+				Network.leaveTheWorld();
 				//Network.socket.io.disconnect();
 				// hmm... if i don't disconnect, I'll still get messages from the game?!
 			}
+
 			if (this.screen && this.screen.scene) {
 				utils.removeAllFromScene(this.screen.scene);
 			}
