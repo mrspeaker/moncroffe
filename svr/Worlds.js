@@ -46,66 +46,49 @@ var Worlds = {
 
 	},
 
-	onClientConnected: function (client, io) {
+	joinAWorld: function (client, playerName) {
 
-		var World = null,
-			self = this;
+		var cleanName = core.utils.cleanInput(playerName, 3, 15),
+			World = this.getWorld();
 
-		client.join("lobby");
-		// client.broadcast.to('lobby').emit("welcomToLobby"); - sends to all except client.
-		io.sockets.in("lobby").emit("lobby/welcome"); // - sends to all in room.
-		// console.log(io.sockets.adapter.rooms); - get all rooms
+		if (!World.clients.length) {
+			// First person joining.
+			World.resetAll();
+		}
 
-		console.log("Network:: " + client.userid + " connected");
+		// Restart if second person joins for the first time
+		if (World.clients.length === 1 && !World.roundsEverStarted) {
+			// Second person joining.
+			World.setState("BORN");
+			World.reset(false);
+			World.roundsEverStarted = true;
+		}
+
+		World.addAndInitPlayer(client, cleanName);
+
+		client.emit("onconnected", {
+			id: client.userid,
+			seed: World.seed
+		});
+
+	},
+
+	listenToWorldEvents: function (client) {
 
 		// Todo: move client logic to player/client.
 		client.on("disconnect", function () {
 
-			console.log("Network:: " + client.userid + " (" + client.player.name + ") disconnected");
+			var pn = this.player ? " (" + this.player.name + ")" : "";
 
-			World.removePlayer(client.userid);
+			console.log("Network:: " + this.userid + pn + " disconnected");
 
-		});
-
-		client.on("joinTheWorld", function (name) {
-
-			client.leave("lobby");
-			client.join("universe");
-			io.sockets.in('universe').emit("world/welcome", name);
-
-			name = core.utils.cleanInput(name, 3, 15);
-
-			World = self.getWorld();
-
-			if (!World.clients.length) {
-				// First person joining.
-				World.resetAll();
-			}
-
-			// Restart if second person joins for the first time
-			if (World.clients.length === 1 && !World.roundsEverStarted) {
-				// Second person joining.
-				World.setState("BORN");
-				World.reset(false);
-				World.roundsEverStarted = true;
-			}
-
-			World.initPlayer(client);
-
-			// Update name
-			client.player.name = name;
-
-			client.emit("onconnected", {
-				id: client.userid,
-				seed: World.seed
-			});
-
+			this.world.removePlayer(this.userid);
 
 		});
 
 		client.on("ping", function (ping) {
 
-			World.players.forEach(function (p) {
+			this.world.players.forEach(function (p) {
 
 				if (ping.clientId === p.id) {
 					p.pos.x = ping.pos.x;
@@ -119,10 +102,12 @@ var Worlds = {
 
 		});
 
-		// tmp: should be calced on server
+		// NOTE: All the "hit" events should be calc-ed on server,
+		// not sent by the client! We don't trust 'em.
+
 		client.on("clownHit", function (id) {
 
-			World.clients.forEach(function (c) {
+			this.world.clients.forEach(function (c) {
 
 				c.emit("clownDestroyed", id);
 
@@ -132,7 +117,7 @@ var Worlds = {
 
 		client.on("powerballGotByMe", function (pid) {
 
-			World.clients.forEach(function (c) {
+			this.world.clients.forEach(function (c) {
 
 				if (c === client) return;
 				c.emit("powerballGotByOthers", pid);
@@ -145,7 +130,7 @@ var Worlds = {
 
 			// todo - keep time stamp or something
 
-			World.clients.forEach(function (c) {
+			this.world.clients.forEach(function (c) {
 
 				if (c === client) return;
 				c.emit("otherFiredBullet", bullet);
@@ -157,7 +142,7 @@ var Worlds = {
 		client.on("shotPlayer", function (player) {
 
 			// Check if shot is too soon
-			var shotPlayer = World.clients.filter(function (c) {
+			var shotPlayer = this.world.clients.filter(function (c) {
 					return c.userid === player;
 				}),
 				now = Date.now();
@@ -174,27 +159,28 @@ var Worlds = {
 			shotPlayer.lastHit = now;
 
 			// TODO: move these to player.stats?
-			client.stats.hits++;
+			this.stats.hits++;
 			shotPlayer.stats.deaths++;
 
-			World.clients.forEach(function (c) {
+			this.world.clients.forEach(function (c) {
 
 				c.emit("receiveShotPlayer", {
 					hit: player,
-					by: client.userid
+					by: this.userid
 				});
 
-			});
+			}, this);
 
 		});
 
 		client.on("gotBouy", function (pid) {
 
 			var now = Date.now(),
-				legit = true;
+				legit = true,
+				World = this.world;
 
 			// Check for distance
-			if (now - client.lastGetBouy < 1000) {
+			if (now - this.lastGetBouy < 1000) {
 				console.log("Too early for another bouy");
 				legit = false;
 			}
@@ -231,7 +217,7 @@ var Worlds = {
 
 		client.on("sendChat", function (msg) {
 
-			World.clients.forEach(function (c) {
+			this.world.clients.forEach(function (c) {
 
 				c.emit("receiveChat", msg);
 

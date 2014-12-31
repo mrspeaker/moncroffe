@@ -46,7 +46,7 @@ var World = {
 		return this;
 	},
 
-	initPlayer: function (client) {
+	addAndInitPlayer: function (client, playerName) {
 
 		var player;
 
@@ -56,6 +56,7 @@ var World = {
 
 		player = {
 			id: client.userid,
+			name: playerName || "???",
 			score: 0,
 			pos: { x: 0, y: 0, z: 0 },
 			rot: { x: 0, z: 0}
@@ -70,6 +71,7 @@ var World = {
 		this.players.push(player);
 
 		client.player = player;
+		client.world = this;
 
 	},
 
