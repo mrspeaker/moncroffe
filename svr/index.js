@@ -21,15 +21,12 @@ io.on("connection", function (client) {
 
 	// join lobby
 	client.join("lobby");
-	// client.broadcast.to('lobby').emit("welcomToLobby"); - sends to all except client.
-	io.sockets.in("lobby").emit("lobby/welcome"); // - sends to all in room.
+	io.sockets.in("lobby").emit("lobby/welcome");
 	// console.log(io.sockets.adapter.rooms); - get all rooms
-
 	console.log("Network :: player initial connection");
 
 	// Listen to world events
 	Worlds.listenToWorldEvents(client);
-
 
 	client.on("joinTheWorld", function (playerName) {
 

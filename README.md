@@ -45,7 +45,6 @@ Running:
 ## Next todos
 
 - leaderboard (session)
-- allow restart to titlescreen.
 - resize with correct aspect
 
 ## Bugz
@@ -56,14 +55,17 @@ Running:
 > client
 
 - Bullet gets stuck when firing close to block
-- game should run in "offline mode"?
-- collision bug - jumps like crazy.
+- collision bug - jumps like crazy. To reproduce:
+
+    walk -> []
+         []___
 
 > server
 
 - Can get stuck in "born" state (close puter while game is playing)
 - Block add/remove not synced
 - escape html in innerHTML calls
+- game should run in "offline mode"?
 
 > other
 
@@ -86,6 +88,7 @@ Running:
   - make tunnels just for you, baracades against everyone etc
 
 ### Theme
+
 - Some reason clown particles get attracted to cube
 - The more you destroy clowns, the more coins the block sucks, greater the blocks value becomes. if people can't find it, it's value will rise?
 
