@@ -48,26 +48,27 @@
 		},
 
 		tick: function (dt) {
+
 			var m = this.mesh,
 				pow = dt * this.velocity;
 
 			if (this.count++ < this.life && !this.stopped) {
+
 				m.translateZ(pow);
 				this.model.pos = {
 					x: m.position.x,
 					y: m.position.y,
 					z: m.position.z
 				};
+
 				if (this.count === this.life) {
+
 					this.stopped = true;
+
 				}
 			}
 
-			if (this.count < this.hangAroundFor) {
-				return true;
-			}
-
-			return false;
+			return this.count < this.hangAroundFor;
 		}
 
 	};

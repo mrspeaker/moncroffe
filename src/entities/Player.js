@@ -47,6 +47,7 @@
 			this.syncAll();
 
 			return this;
+
 		},
 
 		respawn: function () {
@@ -235,6 +236,7 @@
 		},
 
 		syncMesh: function () {
+
 			var model = this.model,
 				mesh = this.mesh,
 				marker = this.marker;
@@ -243,8 +245,11 @@
 			mesh.position.set(model.pos.x, model.pos.y, model.pos.z);
 
 			if (marker) {
+
 				marker.position.set(model.pos.x, model.pos.y - (model.bb.y / 2) + 0.05, model.pos.z);
+
 			}
+
 		},
 
 		knockback: function () {
@@ -261,15 +266,20 @@
 					window.Settings);
 
 			if (this.thrd) {
+
 				camera.position.set(-5, 18, 5);
 				camera.rotation.set(0, -Math.PI / 2 , 0);
+
 			} else {
+
 				//camera.position.y = this.getEyeLevel();
+
 			}
 
 			this.screen.scene.add(controls.getObject());
 
 			return controls;
+
 		},
 
 		getEyeLevel: function () {
@@ -280,8 +290,11 @@
 		changeTool: function (dir) {
 
 			if (Date.now() - this.lastToolChange < 200) {
+
 				return;
+
 			}
+
 			this.lastToolChange = Date.now();
 
 			var blocks = this.screen.world.blocks,
@@ -289,10 +302,14 @@
 
 			tool += dir;
 			if (dir > 0 && tool > blocks.length - 1) {
+
 				tool = 1;
+
 			}
 			if (dir < 0 && tool === 0) {
+
 				tool = blocks.length - 1;
+
 			}
 
 			document.querySelector("#gui").innerHTML = blocks[tool];

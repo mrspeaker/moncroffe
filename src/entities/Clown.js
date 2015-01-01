@@ -50,6 +50,7 @@
 		},
 
 		tick: function (dt) {
+
 			var mesh = this.mesh,
 				pow = dt * this.speed;
 
@@ -58,10 +59,13 @@
 			this.pos = mesh.position;
 
 			if (this.count++ > 2000) {
+
 				this.remove = true;
+
 			}
 
 			return !(this.remove);
+
 		}
 
 	};

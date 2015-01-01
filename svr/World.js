@@ -86,7 +86,9 @@ var World = {
 		this.clients = this.clients.filter(function (c) {
 
 			if (c.userid !== userid) {
+
 				c.emit("dropped", userid);
+
 			}
 			return c.userid !== userid;
 
@@ -139,10 +141,14 @@ var World = {
 		switch (state) {
 
 		case "BORN":
+
 			if (this.stateFirst) {
+
 				// Reset all player's scores...
 				this.players.forEach(function (p) {
+
 					p.score = 0;
+
 				});
 
 				this.round = 0;
@@ -150,15 +156,21 @@ var World = {
 			}
 
 			if (stateElapsed > data.rounds.duration.born) {
+
 				this.setState("ROUND_READY");
+
 			}
+
 			break;
 
 		case "ROUND_READY":
+
 			if (this.stateFirst) {
+
 				this.remaining = 0;
 				this.reset(false);
 				this.stateFirst = false;
+
 			}
 
 			readyDuration = this.round === 0 ?
@@ -168,21 +180,32 @@ var World = {
 			this.remaining = readyDuration - stateElapsed;
 
 			if (stateElapsed > readyDuration) {
+
 				this.setState("ROUND");
+
 			}
+
 			break;
 
 		case "ROUND":
+
 			if (this.stateFirst) {
+
 				this.roundEndTime = stateElapsed + data.rounds.duration.round;
 				this.stateFirst = false;
 				this.setEveryoneSafe();
+
 			}
+
 			if (stateElapsed > this.roundEndTime) {
+
 				this.setState("ROUND_OVER");
 				this.roundEndTime = null;
+
 			}
+
 			this.tick_GO();
+
 			break;
 
 		case "ROUND_OVER":
@@ -191,30 +214,42 @@ var World = {
 				this.stateFirst = false;
 
 				if (this.round === data.rounds.total - 1) {
+
 					this.setState("GAME_OVER");
 					break;
+
 				}
 
 				this.sendHi();
 			}
 
 			if (stateElapsed > data.rounds.duration.roundOver) {
+
 				this.round++;
 				this.setState("ROUND_READY");
 				this.roundsEverStarted = false; // If player dropped out last round, resart if the re-join.
+
 			}
+
 			break;
 
 		case "GAME_OVER":
+
 			if (this.stateFirst) {
+
 				this.stateFirst = false;
 				this.sendHi();
+
 			}
 
 			if (stateElapsed > data.rounds.duration.gameOver) {
+
 				this.resetAll();
+
 			}
+
 			break;
+
 		}
 
 		return true;
@@ -224,7 +259,9 @@ var World = {
 	setEveryoneSafe: function () {
 
 		this.clients.forEach(function (c) {
+
 			c.lastHit = Date.now();
+
 		});
 
 	},
@@ -301,7 +338,9 @@ var World = {
 
 		// Add bouy if not present
 		if (!this.bouy && Math.random () < 0.01) {
+
 			this.bouy = this.getSafePos();
+
 		}
 
 	},

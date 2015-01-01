@@ -31,7 +31,11 @@
 			this.body = this.makeALilMan(new THREE.Object3D(), isSelf);
 			this.mesh.add(this.body);
 
-			if (!isSelf) this.addNameLabel(name ? name : "???");
+			if (!isSelf) {
+
+				this.addNameLabel(name ? name : "???");
+
+			}
 
 			return this;
 
@@ -40,7 +44,9 @@
 		addNameLabel: function (txt) {
 
 			if (this.label) {
+
 				this.mesh.remove(this.label);
+
 			}
 
 			this.label = utils.createCanvasPlane(256, 256, function (ctx, w, h) {
@@ -116,8 +122,10 @@
 			body.add(bits.head);
 
 			if (isSelf) {
+
 				//bits.head.visible = false;
 				body.visible = false;
+
 			}
 
 			return body;
@@ -135,29 +143,41 @@
 		tick: function (dt, lookAt) {
 
 			if (this.name !== this.initName) {
+
 				if (!this.isSelf) {
+
 					this.addNameLabel(this.name);
+
 				}
+
 				this.initName = this.name;
+
 			}
 
 			if (this.blinkTime > 0) {
+
 				this.mesh.visible = this.blinkTime % 10 < 5;
+
 				if (this.blinkTime-- === 0) {
+
 					this.mesh.visible = true;
+
 				}
+
 			}
 
 			var lastPos = this.model.lastPos,
 				pos = this.model.pos;
 
 			if (this.checkWalk-- <= 0) {
+
 				this.walking = pos.x !== lastPos.x || pos.z !== lastPos.z;
 
 				lastPos.x = pos.x;
 				lastPos.y = pos.y;
 				lastPos.z = pos.z;
 				this.checkWalk = 7;
+
 			}
 
 			this.syncMesh(lookAt);
@@ -175,11 +195,15 @@
 
 			// MOve arms!
 			if (this.walking) {
+
 				this.walk();
+
 			}
 
         	if (this.label) {
+
         		this.label.rotation.setFromRotationMatrix(camera.matrix);
+
         	}
 
 		},

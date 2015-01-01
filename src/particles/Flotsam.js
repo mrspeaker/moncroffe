@@ -58,7 +58,9 @@
 			this.flotsam.forEach(function (sf) {
 
 				if ((sf.position.y += 0.015) > data.world.seaLevel) {
+
 					sf.position.y = 0;
+
 				}
 
 			});

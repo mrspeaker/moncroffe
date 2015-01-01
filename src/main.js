@@ -23,8 +23,6 @@
 		screen: null,
 		lastScene: null,
 
-		havePointerLock: "pointerLockElement" in document || "mozPointerLockElement" in document || "webkitPointerLockElement" in document,
-
 		init: function () {
 
 			Sound._setVolume(0);
@@ -54,11 +52,15 @@
 
 			this.unbindPointer && this.unbindPointer();
 			if (Network.socket) {
+
 				Network.leaveTheWorld();
+
 			}
 
 			if (this.screen && this.screen.scene) {
+
 				utils.removeAllFromScene(this.screen.scene);
+
 			}
 
 			// LOl... old camera gets borked when switching scenes
@@ -80,13 +82,17 @@
 
 		initUserSettings: function () {
 
-			var Settings = window.Settings = core.utils.extend({}, user_settings);
+			var Settings = window.Settings = core.utils.extend({}, user_settings),
+				stored = window.localStorage.getItem("settings");
 
-			var stored = window.localStorage.getItem("settings");
 			if (stored !== null && stored !== "undefined") {
+
 				window.Settings = core.utils.extend(window.Settings, JSON.parse(stored));
+
 			} else {
+
 				this.saveSettings();
+
 			}
 
 		},
@@ -124,23 +130,28 @@
 
 			this.renderer = new THREE.WebGLRenderer();
 			this.vrRenderer = new THREE.VREffect(this.renderer, function (err) {
+
 				if (err) {
+
 					console.error("vr error:", err);
+
 				}
+
 			});
+
 			this.camera = new THREE.PerspectiveCamera(85, 1, 0.01, 500);
 			this.setCameraDimensions();
 			this.vrControls = new THREE.VRControls(this.camera);
 
 			this.clock = new THREE.Clock();
 
-			document.querySelector("#board").appendChild(this.renderer.domElement);
+			utils.dom.$("#board").appendChild(this.renderer.domElement);
 
 		},
 
 		bindHandlers: function (player) {
 
-			document.addEventListener("mousedown", (function(e){
+			utils.dom.on(document, "mousedown", function(e) {
 
 				if (!player.controls.enabled) {
 					return;
@@ -152,15 +163,15 @@
 					this.screen.doAddBlock = true;
 				}
 
-			}).bind(this), false);
+			}.bind(this));
 
 			// Stop right-click menu
-			document.addEventListener("contextmenu", function(e) {
+			utils.dom.on(document, "contextmenu", function(e) {
 
 				e.preventDefault();
 				return false;
 
-			}, false);
+			});
 
 			var onMouseWheel = function (e) {
 
@@ -169,9 +180,9 @@
 
 			};
 
-			document.addEventListener("mousewheel", onMouseWheel, false);
-			document.addEventListener("DOMMouseScroll", onMouseWheel, false);
-			document.addEventListener("keydown", (function (e) {
+			utils.dom.on(document, "mousewheel", onMouseWheel);
+			utils.dom.on(document, "DOMMouseScroll", onMouseWheel);
+			utils.dom.on(document, "keydown", function (e) {
 
 				var key = e.keyCode,
 					isKey = function (k) { return k === key; },
@@ -224,34 +235,41 @@
 					e.preventDefault();
 				}
 
-			}).bind(this), false);
+			}.bind(this));
 
-			window.addEventListener("resize", this.setCameraDimensions.bind(this), false);
+			utils.dom.on(window, "resize", this.setCameraDimensions.bind(this));
 
 			// Hide all the HUDS
-			Array.prototype.slice.call(document.querySelectorAll("#bg > div")).forEach(function (el) {
-				el.style.display = "none";
-			});
+			utils.dom.$$("#bg > div").forEach(utils.dom.hide);
 
 			var self = this;
-			document.querySelector("#chatMsg").addEventListener("keydown", function (e) {
+			utils.dom.on("#chatMsg", "keydown", function (e) {
 
 				e.stopPropagation();
 
 				if (e.keyCode === 13) {
+
 					if (this.value !== "") {
+
 						window.Network.sendChat(this.value);
+
 					}
+
 					self.toggleChat();
 				}
 
 			});
 
 			window.onbeforeunload = function() {
+
 				if (!window.askToLeave) {
+
 					return;
+
 				}
+
 				return 'Sure you wanna leave?';
+
 			};
 
 		},
@@ -265,15 +283,22 @@
 			visible = !visible;
 
 			if (visible) {
+
 				box.value = "";
 				box.focus();
+
 			}
 
 		},
 
 		onPointerLockChange: function (state) {
 
-			if (!this.screen.player) return;
+			if (!this.screen.player) {
+
+				return;
+
+			}
+
 			this.screen.player.controls.enabled = state;
 
 		},
@@ -369,8 +394,10 @@
 		run: function () {
 
 			if (this.frame++ % this.oneFrameEvery === 0) {
+
 				this.tick();
 				this.render();
+
 			}
 
 			requestAnimationFrame(function () { main.run(); });
@@ -380,11 +407,8 @@
 		tick: function () {
 
 			var delta = this.clock.getDelta() / this.oneFrameEvery;
+
 			delta = Math.min(60 / 1000, delta); // HACK: Limit for physics
-			var dt = delta * 1000 | 0;
-			if (dt < 15 || dt > 21) {
-				//utils.msg(dt); // Track big/small updates
-			}
 
 			if (this.screen.scene && this.screen.name !== this.lastScene) {
 
@@ -392,6 +416,7 @@
 
 				// Create a new composer
 				if (this.screen.name === "WorldScreen") {
+
 					this.composer = new THREE.EffectComposer(this.renderer);
 					this.composer.addPass(new THREE.RenderPass(this.screen.scene, this.camera));
 
@@ -406,15 +431,20 @@
 
 					effect.renderToScreen = true;
 					this.composer.addPass( effect );
+
 				} else {
+
 					this.composer = null;
+
 				}
 			}
 
 			if (this.hue) {
+
 				//-35 to 10
 				//-1 to 1
 				this.hue.value = (((Math.sin(Date.now() / 20000) + 1) * 0.5) * 40 - 30) / 100;
+
 			}
 
 			this.screen.tick(delta);
@@ -424,16 +454,24 @@
 		render: function () {
 
 			if (!this.isOculus) {
+
 				if (this.composer) {
+
 					this.composer.render();
+
 				} else {
+
 					this.renderer.render(this.screen.scene, this.camera);
+
 				}
+
 			} else {
+
 				this.vrControls.update();
 				this.vrRenderer.render(
 					this.screen.scene,
 					this.camera);
+
 			}
 
 		}

@@ -109,7 +109,11 @@
 		reset: function () {
 
 			// remove old chunks...
-			if (this.world) this.world.removeChunks();
+			if (this.world) {
+
+				this.world.removeChunks();
+
+			}
 
 			// Readd the new ones...
 			this.world = Object.create(World).init(this, Network.world.seed);
@@ -139,7 +143,9 @@
 		addPlants: function () {
 
 			this.plants.forEach(function (p) {
+
 				this.scene.remove(p.mesh);
+
 			}, this);
 
 			// Add plants
@@ -148,6 +154,8 @@
 				z,
 				block = { type: null };
 
+
+			// Choose random good places for them
 			var safety;
 
 			for (var i = 0; i < 50; i++) {
@@ -155,23 +163,28 @@
 				safety = 0;
 
 				while (block.type !== "air") {
+
 					x = (Math.random() * (48 + 33)) - 33 | 0;
 					y = (Math.random() * 10 | 0) + 5;
 					z = (Math.random() * (48 + 17)) - 17 | 0;
 
 					block = this.world.getBlockAtPos({ x:x, y:y, z:z });
 					if (safety++ > 50) break;
+
 				}
 
 				safety = 0;
 
 				while (block.type === "air" && y > 0) {
+
 					y--;
 					block = this.world.getBlockAtPos({ x:x, y:y, z:z });
 					if (safety++ > 50) break;
+
 				}
 
 				if (block.type === "grass") {
+
 					var p = Object.create(Plant).init({
 						x: x,
 						y: y + 1.5,
@@ -180,8 +193,11 @@
 
 					this.plants.push(p);
 					this.scene.add(p.mesh);
+
 				} else {
+
 					i--; // Try again!
+
 				}
 			}
 
@@ -190,7 +206,9 @@
 		addFish: function () {
 
 			this.fish.forEach(function (p) {
+
 				this.scene.remove(p.mesh);
+
 			}, this);
 
 			// Add fish
@@ -206,12 +224,14 @@
 				safety = 0;
 
 				while (block.type !== "air") {
+
 					x = (Math.random() * (48 + 33)) - 33 | 0;
 					y = (Math.random() * 10 | 0) + 5;
 					z = (Math.random() * (48 + 17)) - 17 | 0;
 
 					block = this.world.getBlockAtPos({ x:x, y:y, z:z });
 					if (safety++ > 50) break;
+
 				}
 
 				var p = Object.create(Fish).init({
@@ -223,6 +243,7 @@
 				this.fish.push(p);
 				this.scene.add(p.mesh);
 				block = { type: null };
+
 			}
 
 		},
@@ -373,7 +394,9 @@
 			var time = (this.elapsed % 160) / 80; // (% 1x day/night cycle) / 0.5x; (in seconds)
 
 			if (time > 1) {
+
 				time = 1 + (1 - time);
+
 			}
 
 			this.scene.fog.color = this.fog.current.clone().lerp(new THREE.Color(0x000022), time);
@@ -398,6 +421,7 @@
 			var num = isClown ? 18 : 10;
 
 			for (var i = 0; i < num; i++) {
+
 				var p = Object.create(Particle).init(
 					0.3,
 					new THREE.Vector3(
@@ -407,8 +431,10 @@
 					isClown ? data.materials.target : data.materials.blocks,
 					isClown,
 					dir);
+
 				this.scene.add(p.mesh);
 				this.particles.push(p);
+
 			}
 
 		},
@@ -430,10 +456,13 @@
 
 				var dead = t.id === id;
 				if (dead) {
+
 					this.addBonus(t.mesh.position, t.id);
 					this.scene.remove(t.mesh);
 					this.explodeParticles(t.pos, true, t.bouyDir);
+
 				}
+
 				return !dead;
 
 			}, this);
@@ -446,9 +475,12 @@
 
 				var dead = p.id === pid;
 				if (dead) {
+
 					this.explodeParticles(p.mesh.position, false);
 					this.scene.remove(p.mesh);
+
 				}
+
 				return !dead;
 
 			}, this);
@@ -477,13 +509,16 @@
 				byPlayer = Network.getPlayer(byId);
 
 			if (pid === Network.clientId) {
+
 				this.player.respawn();
 				this.flashType = "dead";
 				this.flashTime = 100;
 				this.sounds.die.play();
 
 				this.receiveChat([-2, "You were hit" + (byPlayer ? " by " + byPlayer.name : "")]);
+
 				return;
+
 			}
 
 			if (hitPlayer) {
@@ -509,37 +544,48 @@
 			var bouy = this.bouy;
 
 			if (ping.state !== this.state) {
+
 				this.stateFirst = true;
+
 				if (ping.state === "ROUND_READY" && ping.seed) {
+
 					Network.world.seed = ping.seed;
 					this.round = ping.round;
+
 				}
 
 				if (ping.state === "GAME_OVER") {
+
 					utils.showMsg("#gameOver", data.rounds.duration.gameOver - 0.1);
+
 				}
 			}
+
 			this.state = ping.state;
 			this.remaining = ping.remaining;
 
 			var msg = this.state;
 			if (this.state == "ROUND") {
+
 				msg += " " + (this.round + 1) +
 					" of " + data.rounds.total +
 					". <span class='msg-highlight msg-big'>" +
 					(core.utils.formatTime(this.remaining | 0)) +
 					"</span>";
+
 			}
 
 			utils.msg(msg);
 
 			this.scores = [];
+
 			ping.players.forEach(function (p) {
 
 				var isSelf = p.id === Network.clientId,
 					player = Network.clients[p.id];
 
 				if (!player) {
+
 					// TODO: no name on connect, only join!
 					console.log("Player joined:", p.id, p.name);
 					this.sounds.join.play();
@@ -548,43 +594,59 @@
 					this.scene.add(player.mesh);
 
 				} else {
+
 					// no name on connect, only join... so update here
 					if (Network.clients[p.id].name !== p.name) {
 						Network.clients[p.id].name = p.name;
 						this.receiveChat([-1, p.name + " joined."]);
 					}
+
 				}
 
 				if (!isSelf) {
+
 					player.model.pos = p.pos;
 					player.model.rot = p.rot;
+
 				}
 
 				this.scores.push({mine: isSelf, name: p.name, score: p.score});
+
 			}, this);
 
 			this.scores = this.scores.sort(function (a, b) {
+
 				return b.score - a.score;
+
 			});
 
 			this.scores.forEach(function (s, i) {
+
 				utils.msgln(
 					(s.mine ? "<strong>" : "") +
 					"<span class='msg-highlight'>" + s.score + ": </span> " + s.name +
 					(s.mine ? "</strong>" : ""));
+
 			});
 
 			if (ping.targets.length) {
+
 				this.targets_to_add = this.targets_to_add.concat(ping.targets);
+
 			}
 			if (ping.bonus) {
+
 				this.bonuses_to_add.push(ping.bonus);
+
 			}
 
 			if (ping.bouy) {
+
 				var pb = ping.bouy;
 				if (!this.bouy) {
+
 					this.addBouy();
+
 				}
 				var bouyPos = this.bouy.model.origPos;
 
@@ -598,19 +660,25 @@
 
 					// Update the targets
 					this.targets.forEach(function (t) {
+
 						t.bouyDir = this.bouy.mesh.position.clone();
+
 					}, this);
 
 				}
 
 			} else {
+
 				// Hack - if bouy killed, move it away
 				if (this.bouy) {
+
 					this.bouy.mesh.position.set(0, -3, 0);
+
 				}
 			}
 
 			if (ping.flash) {
+
 				// THIS means someone got bouy...
 				this.flashTime = 100;
 				this.flashType = "get";
@@ -626,6 +694,7 @@
 				this.receiveChat([-3, name + " got the box."]);
 
 				this.sounds.find.play();
+
 			}
 
 			this.elapsed = ping.elapsed;
@@ -1164,15 +1233,18 @@
 			inner = inner.slice(0, 500);
 
 			if (typeof msg[0] == "string") {
+
 				name = Network.getName(msg[0]),
 				post = "<span class='ev_name'>" + name + ":</span> " + msg[1];
 				this.sounds.bip.play();
+
 			} else {
+
 				post = "<span class='" +
 				["", "ev_join", "ev_kill", "ev_get"][Math.abs(msg[0])] +
 				"'>" + msg[1] + "</span>";
-			}
 
+			}
 
 			document.querySelector("#chatLog").innerHTML = post + "<br/>" + inner;
 
@@ -1181,11 +1253,13 @@
 		receiveScores: function (scores) {
 
 			var html = createScoresHTML(scores.map(function (s) {
+
 				return {
 					name: Network.getName(s.id),
 					score: s.score,
 					hits: s.hits,
 					deaths: s.deaths
+
 				}
 			}));
 

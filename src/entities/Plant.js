@@ -65,6 +65,7 @@
 		tick: function (dt) {
 
 			return !(this.remove);
+
 		}
 
 	};

@@ -46,12 +46,15 @@
 			this.pos = mesh.position;
 
 			if (this.pos.z > 250) {
+
 				this.mesh.position.z -= 500;
 				//this.remove = true;
 				this.mesh.position.x = Math.random() * 500 - 250;
+
 			}
 
 			return !(this.remove);
+
 		}
 
 	};

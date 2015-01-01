@@ -39,13 +39,16 @@
 
 				// Create the chunk data
 				.map(function (ch) {
+
 					var x = ch[0],
 						z = ch[1],
 						id = x + ":" + z,
 						chunk;
 
 					chunk = this.chunks[id] = this.createChunk(x, z);
+
 					return { id: id, x: x, z: z, chunk: chunk };
+
 				}, this);
 
 			// Todo: promise-ify (or at least callback-ify!)
@@ -69,9 +72,13 @@
 		},
 
 		removeChunks: function () {
+
 			for (var ch in this.chunkGeom) {
+
 				this.scene.remove(this.chunkGeom[ch]);
+
 			}
+
 		},
 
 		setBlockAt: function (x, y, z, type) {
@@ -87,11 +94,17 @@
 			x = Math.floor(x);
 			z = Math.floor(z);
 			y = Math.round(y);
-			if (y < 0) y = 0;
+			if (y < 0) {
+
+				y = 0;
+
+			}
 
 			chunk = this.chunks[chunkX + ":" + chunkZ];
 			if (chunk) {
+
 				chunk[z][y][x].type = type;
+
 			}
 
 			return { x: chunkX, z:chunkZ };
@@ -128,13 +141,17 @@
 			z -= chunkZ * chW;
 
 			if (y > chH - 1 || y < 0) {
+
 				return { type: "air" };
+
 			}
 
 			chunk = this.chunks[chunkX + ":" + chunkZ];
 
 			if (!chunk) {
+
 				return { type: "air" };
+
 			}
 
 			return chunk[z][y][x];
@@ -158,20 +175,24 @@
 			z -= chunkZ * chW;
 
 			if (y > chH - 1 || y < 0) {
+
 				return {
 					chunkX: 999,
 					chunkZ: 999
 				};
+
 			}
 
 			chunk = this.chunks[chunkX + ":" + chunkZ];
 
 			if (!chunk) {
+
 				// prolly outside the world
 				return {
 					chunkX: 999,
 					chunkZ: 999
 				};
+
 			}
 
 			return {
@@ -347,6 +368,7 @@
 		// TODO: refactor this with a "createQuad" function,
 		// so it can be fed to a greedy mesher.
 		createChunkGeom: function (x, z, chunk) {
+
 			var blockSize = data.block.size,
 				useAO = this.screen.useAO,
 				w = data.chunk.w,
@@ -368,12 +390,14 @@
 			};
 
 			function getBlock(x, y) {
+
 				return [
 					new THREE.Vector2(x / 16, y / 16),
 					new THREE.Vector2((x + 1) / 16, y / 16),
 					new THREE.Vector2(x / 16, (y + 1) / 16),
 					new THREE.Vector2((x + 1) / 16, (y + 1) / 16)
 				];
+
 			}
 
 			function getGeometry(block, tileOffsetForFun) {
@@ -386,20 +410,25 @@
 				stats.faces += geometry.faces.length;
 
 
-				// Swap grass sometimes
 				var tile = blocks[block.type];
 
+				// Swap grass pattern sometimes
 				if (block.type === "grass") {
+
 					tile[5][1] = [15, 15, 14, 14, 13, 13, 12][tileOffsetForFun % 7];
+
 				}
 
+				// Swap stone pattern sometimes
 				if (block.type === "stone") {
+
 					tile[0][1] = [15, 14, 13][tileOffsetForFun % 3];
 					tile[1][1] = [15, 14, 13][tileOffsetForFun % 3];
 					tile[2][1] = [15, 14, 13][tileOffsetForFun % 3];
 					tile[3][1] = [15, 14, 13][tileOffsetForFun % 3];
 					tile[4][1] = [15, 14, 13][tileOffsetForFun % 3];
 					tile[5][1] = [15, 14, 13][tileOffsetForFun % 3];
+
 				}
 
 				var front = getBlock(tile[0][0], tile[0][1]),
@@ -412,6 +441,7 @@
 
 				// Set UV texture coords for the cube
 				faceUVs[0] = [];
+
 				if (!surround.front) {
 					faceUVs[0].push([front[0], front[1], front[3]]);
 					faceUVs[0].push([front[0], front[3], front[2]]);
@@ -499,16 +529,22 @@
 			var totalGeom = new THREE.Geometry(),
 				isBlockAt = this.isBlockAt.bind(this),
 				vertexAO = function (pos, n) {
+
 					var corner = isBlockAt(pos[0] + n[0][0], pos[1] + n[0][1], pos[2] + n[0][2]),
 						side1 = isBlockAt(pos[0] + n[1][0], pos[1] + n[1][1], pos[2] + n[1][2]),
 						side2 = isBlockAt(pos[0] + n[2][0], pos[1] + n[2][1], pos[2] + n[2][2]),
 						val = 0;
 
 					if (side1 && side2) {
+
   						val = 0;
+
   					} else {
+
   						val = (3 - (side1 + side2 + corner)) / 3;
+
   					}
+
 					return (val * 0.5) + 0.5;
 
 				};
@@ -528,11 +564,17 @@
 
 			var mesh = new THREE.Mesh(),
 				i, j, k, block, pos, count = 0;
+
 			mesh.matrixAutoUpdate = false;
+
 			for (i = 0; i < w; i++) {
+
 				for (j = 0; j < h; j++) {
+
 					for (k = 0; k < w; k++) {
+
 						block = chunk[i][j][k];
+
 						if (block.type !== "air") {
 
 							pos = [xo + k, j, zo + i];
@@ -564,8 +606,11 @@
 							totalGeom.merge(mesh.geometry, mesh.matrix);
 
 						}
+
 					}
+
 				}
+
 			}
 
 			//utils.msg("Cubes:" + stats.cubes, " F:" + stats.faces, " V:" + stats.verts);
@@ -579,7 +624,9 @@
 			var chId = x + ":" + z;
 
 			if (!this.chunks[chId]) {
+
 				return;
+
 			}
 
 			var scene = this.scene;

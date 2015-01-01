@@ -80,6 +80,7 @@
 		},
 
 		tick: function (dt) {
+
 			var mesh = this.mesh,
 				pow = dt * this.speed;
 
@@ -92,12 +93,16 @@
 			}
 
 			if (Math.random() < 0.005) {
+
 				this.mesh.rotation.y = Math.random() * Math.PI * 2;
+
 			}
+
 			this.tail.rotation.y = (Math.PI / 2) + (Math.sin(Date.now() / 100) * 0.3);
 			this.tail.position.x = - (Math.sin(Date.now() / 100) * 0.03);
 
 			return !(this.remove);
+
 		}
 
 	};

@@ -7,19 +7,29 @@
 	utils.msg = function () {
 		var dom = document.querySelector("#watch"),
 			args = Array.prototype.slice.call(arguments);
+
 		dom.innerHTML = "";
+
 		args.forEach(function (m, i) {
+
 			dom.innerHTML += m + (i < args.length - 1 ? " : " : "");
+
 		});
 	};
 
 	utils.msgln = function () {
+
 		var dom = document.querySelector("#watch"),
 			args = Array.prototype.slice.call(arguments);
+
 		dom.innerHTML += "<br/>";
+
 		args.forEach(function (m, i) {
+
 			dom.innerHTML += m + (i < args.length - 1 ? " : " : "");
+
 		});
+
 	};
 
 	utils.showMsg = function (id, time) {
@@ -29,8 +39,10 @@
 		document.querySelector(id).style.display = "";
 
 		return setTimeout(function () {
+
 			document.querySelector("#bg").style.display = "none";
 			document.querySelector(id).style.display = "none";
+
 		}, time);
 
 	};
@@ -46,9 +58,11 @@
 	utils.dom.hide = function (el) { el.style.display = "none"; };
 	utils.dom.$ = function (sel) { return document.querySelector(sel); }
 	utils.dom.$$ = utils.selectorAll;
-	utils.dom.on = function (el, evnt, f) {
+	utils.dom.on = function (sel, evnt, f) {
 
-		utils.dom.$(el).addEventListener(evnt, f, false);
+		var el = typeof sel === "string" ? utils.dom.$(sel) : sel;
+
+		el.addEventListener(evnt, f, false);
 
 	};
 
@@ -78,7 +92,9 @@
 			query = window.location.search.substring(1);
 
 		while (match = search.exec(query)) {
+
 		   params[decode(match[1])] = decode(match[2]);
+
 		}
 
 		return params;
@@ -94,11 +110,15 @@
 		function unbind () {
 
 			["pointerlockchange", "mozpointerlockchange", "webkitpointerlockchange"].forEach(function (e) {
+
 				document.removeEventListener(e, pointerlockchange, false);
+
 			});
 
 			["pointerlockerror", "mozpointerlockerror", "webkitpointerlockerror"].forEach(function (e) {
+
 				document.removeEventListener(e, pointerlockerror, false);
+
 			});
 
 			blocker.style.display = "none";
@@ -115,14 +135,18 @@
 			var pointerlockchange = function () {
 
 				if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
+
 					onChange(true);
 					blocker.style.display = "none";
+
 				} else {
+
 					onChange(false);
 					blocker.style.display = "-webkit-box";
 					blocker.style.display = "-moz-box";
 					blocker.style.display = "box";
 					instructions.style.display = "";
+
 				}
 
 			};
@@ -134,21 +158,29 @@
 			};
 
 			["pointerlockchange", "mozpointerlockchange", "webkitpointerlockchange"].forEach(function (e) {
+
 				document.addEventListener(e, pointerlockchange, false);
+
 			});
 
 			["pointerlockerror", "mozpointerlockerror", "webkitpointerlockerror"].forEach(function (e) {
+
 				document.addEventListener(e, pointerlockerror, false);
+
 			});
 
 			instructions.addEventListener("click", function () {
+
 				instructions.style.display = "none";
 				// Ask the browser to lock the pointer
 				element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
 				element.requestPointerLock();
-			}, false );
+
+			}, false);
 		} else {
+
 			instructions.innerHTML = "Your browser doesn't seem to support Pointer Lock API";
+
 		}
 
 		return unbind;
@@ -157,6 +189,7 @@
 	utils.texturify = function (cube, tile, surround) {
 
 		if (!surround) {
+
 			surround = {
 				front: false,
 				right: false,
@@ -165,6 +198,7 @@
 				top: false,
 				bottom: false
 			};
+
 		}
 
 		function getBlock(x, y) {
@@ -219,31 +253,35 @@
 
 	utils.createCanvasPlane = function (w, h, drawFunc) {
 
-		var scale = 0.01;
-
 		var canvas = document.createElement("canvas"),
-			ctx = canvas.getContext("2d");
+			ctx = canvas.getContext("2d"),
+			scale = 0.01,
+			texture,
+			material,
+			geometry,
+			planeMesh;
 
 		canvas.width = w;
 		canvas.height = h;
 
 		drawFunc(ctx, w, h);
 
-		var texture = new THREE.Texture(canvas);
+		texture = new THREE.Texture(canvas);
 		texture.needsUpdate = true;
 
-		var material = new THREE.MeshBasicMaterial({
+		material = new THREE.MeshBasicMaterial({
 			map: texture,
 			side: THREE.DoubleSide,
 			transparent: true
 		});
 
-		var geometry = new THREE.PlaneBufferGeometry(canvas.width, canvas.height, 1, 1),
-			planeMesh = new THREE.Mesh(geometry, material);
+		geometry = new THREE.PlaneBufferGeometry(canvas.width, canvas.height, 1, 1);
+		planeMesh = new THREE.Mesh(geometry, material);
 
 		planeMesh.scale.set(scale, scale, scale);
 
 		return planeMesh;
+
 	};
 
 	window.utils = utils;

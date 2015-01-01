@@ -32,17 +32,21 @@
 				// Fixme: crazyies in firefox... fires twice?
 				audio.addEventListener("canplaythrough", onload, false);
 				var prog = function() {
+
 					// FIXME: no canplaythrough on mobile safari...
 					// Does it even play audio? Don't do sounds, or only handle
 					// progress event for this.
 					onload.call(this);
 					audio.removeEventListener("progress", prog);
+
 				};
 				audio.addEventListener("progress", prog, false);
 
 				audio.addEventListener("error", function () {
+
 					console.error("Error loading audio resource:", audio.src);
 					onload.call(this);
+
 				});
 				audio.load();
 
@@ -64,10 +68,14 @@
 
 			if (!this.audio._loaded) { return; }
 			this.audio.pause();
-			try{
+			try {
+
 				this.audio.currentTime = 0;
-			} catch(err){
+
+			} catch(err) {
+
 				console.log(err);
+
 			}
 
 		},
@@ -96,13 +104,18 @@
 
 		// Should check for canplaythrough before doing anything...
 		for (path in sounds) {
+
 			sound = sounds[path];
 			if (!sound._loaded) continue;
 			sound.pause();
 			try {
+
 				sound.currentTime = 0;
+
 			} catch (err) {
+
 				console.log("err");
+
 			}
 		}
 	};
@@ -110,12 +123,18 @@
 	Sound._setVolume = function (v) {
 
 		for (var path in sounds) {
+
 			sounds[path].pause();
 			try {
+
 				sounds[path].volume = sounds[path]._volume * v;
+
 			} catch (err) {
+
 				console.log("err");
+
 			}
+
 		}
 
 	};

@@ -42,11 +42,15 @@ var Worlds = {
 
 		// Find a world with free spots
 		var world = this.worlds.reduce(function (ac, el) {
+
 			if (ac) return ac;
 			if (el.clients.length < data.server.maxClients) {
+
 				console.log("Joining world:", el.id);
 				return el;
+
 			}
+
 		}, null);
 
 		// ... or create a new one.
@@ -60,16 +64,20 @@ var Worlds = {
 			World = this.getWorld();
 
 		if (!World.clients.length) {
+
 			// First person joining.
 			World.resetAll();
+
 		}
 
 		// Restart if second person joins for the first time
 		if (World.clients.length === 1 && !World.roundsEverStarted) {
+
 			// Second person joining.
 			World.setState("BORN");
 			World.reset(false);
 			World.roundsEverStarted = true;
+
 		}
 
 		World.initAndAddPlayer(client, cleanName);
@@ -140,18 +148,24 @@ var Worlds = {
 
 			// Check if shot is too soon
 			var shotPlayer = this.world.clients.filter(function (c) {
+
 					return c.userid === player;
+
 				}),
 				now = Date.now();
 
 			if (!shotPlayer.length) {
+
 				console.log("erp... no player with this id");
 				return;
+
 			}
 
 			shotPlayer = shotPlayer[0];
 			if (now - shotPlayer.lastHit < data.safeTime) {
+
 				return;
+
 			}
 			shotPlayer.lastHit = now;
 
@@ -174,13 +188,17 @@ var Worlds = {
 
 			// Check for distance
 			if (now - this.lastGetBouy < 1000) {
+
 				console.log("Too early for another bouy");
 				legit = false;
+
 			}
 
 			if (!World.bouy) {
+
 				console.error("Hmm... no bouy, but more tha 1000ms");
 				legit = false;
+
 			}
 
 			if (legit) {
@@ -189,13 +207,20 @@ var Worlds = {
 				World.players = World.players.map(function (p) {
 
 					if (p.id === pid) {
+
 						if (core.utils.dist(p.pos, World.bouy) > 4) {
+
 							console.log("hmmm... cheaty?");
 							legit = false;
+
 						} else {
+
 							p.score++;
+
 						}
+
 					}
+
 					return p;
 
 				});
@@ -203,7 +228,9 @@ var Worlds = {
 
 			// Reset and party
 			if (legit) {
+
 				World.gotBouy(pid);
+
 			}
 
 		});
@@ -222,8 +249,11 @@ var Worlds = {
 
 			var res = w.tick();
 			if (!res) {
+
 				console.log("World removed: ", w.id);
+
 			}
+
 			return res;
 
 		});
