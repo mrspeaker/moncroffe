@@ -55,17 +55,17 @@
 			this.unbindPointer && this.unbindPointer();
 			if (Network.socket) {
 				Network.leaveTheWorld();
-				//Network.socket.io.disconnect();
-				// hmm... if i don't disconnect, I'll still get messages from the game?!
 			}
 
 			if (this.screen && this.screen.scene) {
 				utils.removeAllFromScene(this.screen.scene);
 			}
+
 			// LOl... old camera gets borked when switching scenes
 			// hack is just replace it. Figure it out, yo.
 			this.camera = new THREE.PerspectiveCamera(85, 1, 0.01, 500);
 			this.setCameraDimensions();
+
 			this.screen = Object.create(TitleScreen).init(this);
 
 		},

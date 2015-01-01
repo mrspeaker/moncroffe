@@ -1,4 +1,4 @@
-(function (main) {
+(function () {
 
 	"use strict";
 
@@ -48,9 +48,11 @@
 		initSocket: function () {
 
 			if (this.socket) {
+
 				console.log("Already connected, yo.", this.socket);
-				//this.socket.emit("join", name);
+
 				return this;
+
 			}
 
 			var socket = this.socket = window.io(window.location.host,  {
@@ -58,27 +60,36 @@
 			});
 
 			socket.io.on("reconnect", function () {
+
 				// TODO: lol.
 				console.log("DISCON AND RREFRESH");
 				socket.io.disconnect();
 				setTimeout(function () {
+
 					window.askToLeave = false;
 					window.location.href = window.location.href;
+
 				}, 250);
 
 			});
 
 			socket.on("lobby/welcome", function () {
+
 				console.log("Welcome to the lobby!");
+
 			});
 			socket.on("world/welcome", function () {
+
 				console.log("All you've got to lose is your viginity.");
+
 			});
 
 			// Listeners // TODO: namespace events
 			socket.on("joinedAWorld", (function (data) {
+
 				// todo: umm, cb was for before... still needed?
 				this.joinedAWorld(data, function () {});
+
 			}).bind(this));
 
 			socket.on("world/ping", this.pingReceived.bind(this));
@@ -90,7 +101,15 @@
 			socket.on("receiveShotPlayer", this.receiveShotPlayer.bind(this));
 			socket.on("receiveChat", this.receiveChat.bind(this));
 			socket.on("scores", function (s) {
+
 				main.screen.receiveScores(s);
+
+			});
+
+			socket.on("hiscores", function (s) {
+
+				main.screen.receiveHiScores && main.screen.receiveHiScores(s);
+
 			});
 
 		},
@@ -113,8 +132,10 @@
 			var now = Date.now();
 
 			if (this.clientId && now - this.lastPingSent > this.pingEvery) {
+
 				this.lastPingSent = now;
 				this.pingSend(model.pos, model.rot);
+
 			}
 
 		},
@@ -134,10 +155,12 @@
 			var c = this.clients[id];
 
 			if (c) {
+
 				// TODO: derp, global ref
 				main.screen.receiveChat([-1, c.name + " left."]);
 				main.screen.scene.remove(c.mesh);
 				delete this.clients[id];
+
 			}
 
 		},
@@ -145,7 +168,9 @@
 		pingReceived: function (ping) {
 
 			if (!this.clientId) {
+
 				return;
+
 			}
 
 			// Get delta since last ping
@@ -153,7 +178,9 @@
 			this.lastPingRec = ping.elapsed;
 
 			if (main.screen.pingReceived) {
+
 				main.screen.pingReceived(ping, ping.elapsed, this.delta);
+
 			}
 
 		},
@@ -245,4 +272,4 @@
 
 	window.Network = Network;
 
-}(window.main));
+}());

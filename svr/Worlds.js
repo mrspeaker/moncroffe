@@ -15,7 +15,12 @@ var Worlds = {
 
 		this.worlds = [];
 		this.waitingPlayers = [];
-		this.leaderboards = {};
+		this.leaderboards = {
+			allTime: [
+				[2, "mr speaker"],
+				[1, "lol lol"]
+			]
+		};
 
 		this.sockets = sockets;
 

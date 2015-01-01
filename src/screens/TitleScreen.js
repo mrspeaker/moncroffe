@@ -1,4 +1,4 @@
-(function (THREE, Clown, data) {
+(function (THREE, Network, Particles, PlayerProxy, data, core, utils) {
 
 	"use strict";
 
@@ -13,30 +13,44 @@
 
 		init: function (screen) {
 
-			var dom = utils.dom;
-
 			this.screen = screen;
 			this.scene = new THREE.Scene();
 
-			this.pp = Object.create(PlayerProxy).init(1, " ");
-			this.pp.mesh.position.set(0, 0, -3);
-			this.pp.mesh.rotation.y += Math.PI / 1.5;
-			this.scene.add(this.pp.mesh);
-			this.pp.body.add(Particles.group);
+			this.initDOM();
+			Network.init();
+			this.addMan();
+			utils.msg(" ");
 
-			dom.$("#playerName").value = Settings.playerName;
-			var join = dom.$("#lezgo"),
-				joinHandler = function () {
-					join.removeEventListener("click", joinHandler, false);
-					this.connect();
-				}.bind(this);
+			return this;
+		},
+
+		initDOM: function () {
+
+			var dom = utils.dom,
+				join = dom.$("#lezgo"),
+				create = dom.$("#lezcreate"),
+				joinHandler,
+				createHandler;
+
+
+			dom.$("#playerName").value = window.Settings.playerName;
+
+			joinHandler = function () {
+
+				join.removeEventListener("click", joinHandler, false);
+				this.connect();
+
+			}.bind(this);
+
 			join.addEventListener("click", joinHandler, false);
 
-			var create = dom.$("#lezcreate"),
-				createHandler = function () {
-					create.removeEventListener("click", createHandler);
-					this.connect(true);
-				}.bind(this);
+			createHandler = function () {
+
+				create.removeEventListener("click", createHandler);
+				this.connect(true);
+
+			}.bind(this);
+
 			create.addEventListener("click", createHandler, false);
 
 			dom.hide(dom.$("#gui"));
@@ -47,28 +61,37 @@
 
 			dom.show(dom.$("#lobby"));
 
-			// TODO: init here, then join on join
-			Network.init();
+		},
 
-			utils.msg(" ");
+		addMan: function () {
 
-			return this;
+			this.pp = Object.create(PlayerProxy).init(1, " ");
+			this.pp.mesh.position.set(0, 0, -3);
+			this.pp.mesh.rotation.y += Math.PI / 1.5;
+			this.scene.add(this.pp.mesh);
+			this.pp.body.add(Particles.group);
+
 		},
 
 		connect: function (createRoom) {
 
-			var name = core.utils.cleanInput(utils.dom.$("#playerName").value),
+			var dom = utils.dom,
+				name = core.utils.cleanInput(dom.$("#playerName").value),
 				lobby = document.querySelector("#lobby");
 
-			utils.dom.hide(lobby);
+			dom.hide(lobby);
 
-			if (name !== Settings.playerName) {
-				Settings.playerName = name;
-				main.saveSettings();
+			if (name !== window.Settings.playerName) {
+
+				window.Settings.playerName = name;
+				this.screen.saveSettings();
+
 			}
 
 			if (createRoom) {
+
 				alert("sorry, no private games yet.");
+
 			}
 
 			if (!Network.socket) {
@@ -77,10 +100,10 @@
 				//return;
 			}
 
-			utils.dom.$("#blocker").style.display = "";
-			utils.dom.$("#instructions").style.display = "";
-			utils.dom.$("#gui").style.display = "";
-			utils.dom.$("#cursor").style.display = "";
+			dom.$("#blocker").style.display = "";
+			dom.$("#instructions").style.display = "";
+			dom.$("#gui").style.display = "";
+			dom.$("#cursor").style.display = "";
 
 			Network.joinTheWorld(name);
 			this.next();
@@ -88,6 +111,7 @@
 		},
 
 		next: function () {
+
 			var self = this;
 
 			this.screen.unbindPointer = utils.bindPointerLock(utils.dom.$("#board"), function (state) {
@@ -97,6 +121,12 @@
 			});
 
 			this.screen.startGame();
+
+		},
+
+		receiveHiScores: function (s) {
+
+			console.log(s);
 
 		},
 
@@ -118,6 +148,10 @@
 
 }(
 	window.THREE,
-	window.Clown,
-	window.data
+	window.Network,
+	window.Particles,
+	window.PlayerProxy,
+	window.data,
+	window.core,
+	window.utils
 ));
