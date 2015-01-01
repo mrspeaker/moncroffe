@@ -33,7 +33,7 @@
 
 		tick: function () { },
 
-		createChunks: function () {
+		createChunks: function (xoff, yoff, zoff) {
 
 			var chunks = core.utils.spiral2D(this.radius)
 
@@ -58,7 +58,7 @@
 				if (!chunks.length) return;
 
 				var ch = chunks[0];
-				self.chunkGeom[ch.id] = self.createChunkGeom(ch.x, ch.z, ch.chunk);
+				self.chunkGeom[ch.id] = self.createChunkGeom(ch.x + xoff, yoff, ch.z + zoff, ch.chunk);
 				self.scene.add(self.chunkGeom[ch.id]);
 
 				setTimeout(function () {
@@ -367,13 +367,14 @@
 
 		// TODO: refactor this with a "createQuad" function,
 		// so it can be fed to a greedy mesher.
-		createChunkGeom: function (x, z, chunk) {
+		createChunkGeom: function (x, y, z, chunk) {
 
 			var blockSize = data.block.size,
 				useAO = this.screen.useAO,
 				w = data.chunk.w,
 				h = data.chunk.h,
 				xo = x * w,
+				yo = y * h,
 				zo = z * w,
 				stats = {
 					verts: 0,
@@ -577,10 +578,10 @@
 
 						if (block.type !== "air") {
 
-							pos = [xo + k, j, zo + i];
+							pos = [xo + k, yo + j, zo + i];
 
 							// For face culling
-							block.surround = this.getSurrounding(pos[0], j, pos[2]);
+							block.surround = this.getSurrounding(pos[0], pos[1], pos[2]);
 
 							// For AO calcs
 							block.vertLight = [
@@ -599,7 +600,7 @@
 							mesh.geometry = getGeometry(block, Math.abs((xo + k) ^ (zo + i) + j));
 
 							// Move up so bottom of cube is at 0, not -0.5
-							mesh.position.set(pos[0], j + blockSize / 2, pos[2]);
+							mesh.position.set(pos[0], pos[1] + blockSize / 2, pos[2]);
 							mesh.updateMatrix();
 
 							// Merge it
