@@ -3,12 +3,15 @@
 var data = {
 
 	init: function () {
+
 		var world = this.world,
 			chunk = this.chunk;
+
 		world.midX = chunk.w / 2;
 		world.midZ = chunk.w;
 		world.maxX = chunk.w * world.radius + (chunk.w / 2);
 		world.maxZ = chunk.w * world.radius;
+
 	},
 
 	textures: {},

@@ -219,25 +219,36 @@
 		},
 
 		reMeshChunkAndSurrounds: function (chX, chZ, x, z) {
+
 			var chW = data.chunk.w,
 				rechunks = [[chX, chZ]];
 
 			// Check if surrounding chunks need re-meshing
 			if (z === 0) {
+
 				rechunks.push([chX, chZ - 1]);
+
 			}
 			if (z === chW - 1) {
+
 				rechunks.push([chX, chZ + 1]);
+
 			}
 			if (x === 0) {
+
 				rechunks.push([chX - 1, chZ]);
+
 			}
 			if (x === chW - 1) {
+
 				rechunks.push([chX + 1, chZ]);
+
 			}
 
 			rechunks.forEach(function (ch) {
+
 				this.reMeshChunk(ch[0], ch[1]);
+
 			}, this);
 		},
 
@@ -256,40 +267,60 @@
 				chW = data.chunk.w;
 
 			if (pos.z + face.z >= chW) {
+
 				chunkZ++;
 				pos.z -= chW;
+
 			}
 			if (pos.z + face.z < 0) {
+
 				chunkZ--;
 				pos.z += chW;
+
 			}
 			if (pos.x + face.x >= chW) {
+
 				chunkX++;
 				pos.x -= chW;
+
 			}
 			if (pos.x + face.x < 0) {
+
 				chunkX--;
 				pos.x += chW;
+
 			}
 
 			var chunk = this.chunks[chunkX + ":" + chunkZ];
 			if (!chunk) {
+
 				return false;
+
 			}
 
 			// Check if player is in this block
 			if (playerBlocks.some(function (pb) {
+
 				var cAp = this.getBlockChunkAndPosAt(pb[0], pb[1], pb[2]);
 
 				if (chunkX !== cAp.chunkX || chunkZ !== cAp.chunkZ) {
+
 					return false;
+
 				}
+
 				if (cAp.x === pos.x + face.x && cAp.y == pos.y + face.y && cAp.z == pos.z + face.z) {
+
 					return true;
+
 				}
+
 				return false;
+
 			}, this)) {
+
 				return false;
+
 			}
 
 			chunk[pos.z + face.z][pos.y + face.y][pos.x + face.x].type = this.blocks[blockId];
@@ -305,7 +336,9 @@
 
 			// Don't dig ground
 			if (!cursor.visible || pos.y === 0) {
+
 				return;
+
 			}
 
 			this.chunks[cursor.chunkId][pos.z][pos.y][pos.x].type = "air";
@@ -321,11 +354,15 @@
 
 			// Create the chunk
 			var chunk = [];
+
 			for (var z = 0; z < chW; z++) {
+
 				chunk[z] = [];
 				for (var y = 0; y < chH; y++) {
+
 					chunk[z][y] = [];
 					for (var x = 0; x < chW; x++) {
+
 						var type = "air";
 
 						// Arena chunk...
@@ -337,21 +374,28 @@
 						var val2 = noise.simplex3((x + (xo * chW)) / 20, y / 20, (z + (zo* chW)) / 22);
 
 						if (y === 0) {
+
 							type = val2 < -0.1 ? "stone" : (Math.random() < 0.3 ? "dirt":"grass");
+
 						} else {
+
 							if (y < 16 && val > 0) {
+
 								type = y < 8 && val2 < -0.1 ? "stone" : "grass";
+
 							}
+
 							/*if (val < -0.75) {//} && Math.abs(val) < 0.02) {
 								this.screen.waypoints.push([x + (xo * chW), y, z + (zo * chW)]);
 							}*/
+
 						}
 
 						// Lil bit of gold
-						if (type === "stone") {
-							if (Math.random() < 0.01) {
-								type = "gold";
-							}
+						if (type === "stone" && Math.random() < 0.01) {
+
+							type = "gold";
+
 						}
 
 						chunk[z][y][x] = {
@@ -486,38 +530,50 @@
 
 					// front
 					if (!surround.front) {
+
 						geometry.faces[faceIdx++].vertexColors = [v[0], v[1], v[3]];
 						geometry.faces[faceIdx++].vertexColors = [v[0], v[3], v[2]];
+
 					}
 
 					// left
 					if (!surround.left) {
+
 						geometry.faces[faceIdx++].vertexColors = [v[1], v[5], v[7]];
 						geometry.faces[faceIdx++].vertexColors = [v[1], v[7], v[3]];
+
 					}
 
 					// back
 					if (!surround.back) {
+
 						geometry.faces[faceIdx++].vertexColors = [v[5], v[4], v[6]];
 						geometry.faces[faceIdx++].vertexColors = [v[5], v[6], v[7]];
+
 					}
 
 					// right
 					if (!surround.right) {
+
 						geometry.faces[faceIdx++].vertexColors = [v[4], v[0], v[2]];
 						geometry.faces[faceIdx++].vertexColors = [v[4], v[2], v[6]];
+
 					}
 
 					// bottom
 					if (!surround.bottom) {
+
 						geometry.faces[faceIdx++].vertexColors = [v[4], v[5], v[1]];
 						geometry.faces[faceIdx++].vertexColors = [v[4], v[1], v[0]];
+
 					}
 
 					// top
 					if (!surround.top) {
+
 						geometry.faces[faceIdx++].vertexColors = [v[2], v[3], v[7]];
 						geometry.faces[faceIdx++].vertexColors = [v[2], v[7], v[6]];
+
 					}
 
 				}
@@ -617,7 +673,9 @@
 			//utils.msg("Cubes:" + stats.cubes, " F:" + stats.faces, " V:" + stats.verts);
 			var totalMesh = new THREE.Mesh(totalGeom, this.blockMaterial);
 			totalMesh.matrixAutoUpdate = false; // needed? why?
+
 			return totalMesh;
+
 		},
 
 		reMeshChunk: function (x, z) {

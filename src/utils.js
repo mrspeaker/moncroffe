@@ -5,6 +5,7 @@
 	var utils = {};
 
 	utils.msg = function () {
+
 		var dom = document.querySelector("#watch"),
 			args = Array.prototype.slice.call(arguments);
 
@@ -15,6 +16,7 @@
 			dom.innerHTML += m + (i < args.length - 1 ? " : " : "");
 
 		});
+
 	};
 
 	utils.msgln = function () {
@@ -131,6 +133,7 @@
 		}
 
 		if (havePointerLock) {
+
 			var element = el; //document.body;
 			var pointerlockchange = function () {
 
@@ -177,6 +180,7 @@
 				element.requestPointerLock();
 
 			}, false);
+
 		} else {
 
 			instructions.innerHTML = "Your browser doesn't seem to support Pointer Lock API";
@@ -223,28 +227,40 @@
 		// Set UV texture coords for the cube
 		faceUVs[0] = [];
 		if (!surround.front) {
+
 			faceUVs[0].push([front[0], front[1], front[3]]);
 			faceUVs[0].push([front[0], front[3], front[2]]);
+
 		}
 		if (!surround.left) {
+
 			faceUVs[0].push([left[0], left[1], left[3]]);
 			faceUVs[0].push([left[0], left[3], left[2]]);
+
 		}
 		if (!surround.back) {
+
 			faceUVs[0].push([back[0], back[1], back[3]]);
 			faceUVs[0].push([back[0], back[3], back[2]]);
+
 		}
 		if (!surround.right) {
+
 			faceUVs[0].push([right[0], right[1], right[3]]);
 			faceUVs[0].push([right[0], right[3], right[2]]);
+
 		}
 		if (!surround.bottom) {
+
 			faceUVs[0].push([bottom[0], bottom[1], bottom[3]]);
 			faceUVs[0].push([bottom[0], bottom[3], bottom[2]]);
+
 		}
 		if (!surround.top) {
+
 			faceUVs[0].push([top[0], top[1], top[3]]);
 			faceUVs[0].push([top[0], top[3], top[2]]);
+
 		}
 
 		return cube;

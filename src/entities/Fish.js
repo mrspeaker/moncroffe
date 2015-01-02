@@ -71,9 +71,6 @@
 
 			this.model.pos = { x: pos.x, y: pos.y, z: pos.z };
 			this.mesh.position.copy(pos);
-			//this.mesh.lookAt(pos.add(direction));
-
-			//this.direction = direction;
 
 			return this;
 
@@ -87,10 +84,6 @@
 			mesh.translateZ(pow);
 
 			this.pos = mesh.position;
-
-			if (this.count++ > 2000) {
-			//	this.remove = true;
-			}
 
 			if (Math.random() < 0.005) {
 

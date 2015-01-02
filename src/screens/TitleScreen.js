@@ -15,10 +15,10 @@
 
 			this.screen = screen;
 			this.scene = new THREE.Scene();
+			this.addMan();
 
 			this.initDOM();
 			Network.init();
-			this.addMan();
 			utils.msg(" ");
 
 			return this;
@@ -31,7 +31,6 @@
 				create = dom.$("#lezcreate"),
 				joinHandler,
 				createHandler;
-
 
 			dom.$("#playerName").value = window.Settings.playerName;
 
@@ -95,9 +94,9 @@
 			}
 
 			if (!Network.socket) {
+
 				console.error("Should have already got a connection");
-				//self.next();
-				//return;
+
 			}
 
 			dom.$("#blocker").style.display = "";
@@ -112,15 +111,15 @@
 
 		next: function () {
 
-			var self = this;
+			var screen = this.screen;
 
-			this.screen.unbindPointer = utils.bindPointerLock(utils.dom.$("#board"), function (state) {
+			screen.unbindPointer = utils.bindPointerLock(utils.dom.$("#board"), function (state) {
 
-				self.screen.onPointerLockChange(state);
+				screen.onPointerLockChange(state);
 
 			});
 
-			this.screen.startGame();
+			screen.startGame();
 
 		},
 
@@ -138,8 +137,8 @@
 			Particles.group.rotation.z += 0.002;
 			Particles.group.rotation.y -= 0.0005;
 
-			this.screen.camera.position.z = 1.5 + Math.sin(Date.now() / 1000) * 1;
 			this.screen.camera.position.x = 0 + Math.sin(Date.now() / 1000) * 0.8;
+			this.screen.camera.position.z = 1.5 + Math.sin(Date.now() / 1000) * 1;
 		}
 
 	};

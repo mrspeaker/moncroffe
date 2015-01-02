@@ -14,7 +14,7 @@
 
 	};
 
-	utils.cleanInput = function (txt, min, max) {
+	utils.cleanInput = function (txt) {
 
 		var name = txt
 			.replace(/^\s+|\s+$|\s{2,3}/g, "") // Trim, and no 2+ spaces
@@ -75,6 +75,7 @@
 
 		// Spiral pattern
 		while (radius--) {
+
 			w++;
 			h++;
 
@@ -109,6 +110,7 @@
 
 	// extends 'from' object with members from 'to'. If 'to' is null, a deep clone of 'from' is returned
 	utils.extend = function (from, to) {
+
 	    if (from === null || typeof from !== "object") return from;
 	    if (from.constructor != Object && from.constructor != Array) return from;
 	    if (from.constructor == Date || from.constructor == RegExp || from.constructor == Function ||
@@ -117,9 +119,10 @@
 
 	    to = to || new from.constructor();
 
-	    for (var name in from)
-	    {
+	    for (var name in from) {
+
 	        to[name] = typeof to[name] == "undefined" ? utils.extend(from[name], null) : to[name];
+
 	    }
 
 	    return to;
@@ -263,9 +266,13 @@
 	core.utils = utils;
 
 	if (typeof module !== "undefined") {
+
 		module.exports = core;
+
 	} else {
+
 		window.core = core;
+
 	}
 
 }());

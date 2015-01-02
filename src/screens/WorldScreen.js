@@ -99,9 +99,7 @@
 
 			this.sounds.starty.play();
 
-			//screen.camera.position.set(0, this.player.getEyeLevel(), this.player.model.bb.z / 2);
 			screen.camera.position.set(0, 0, 0);
-			//this.player.controls.
 
 			return this;
 		},
@@ -143,6 +141,7 @@
 			this.targets = this.targets.filter(function (t) {
 
 				this.scene.remove(t.mesh);
+
 				return false;
 
 			}, this);
@@ -150,6 +149,7 @@
 			this.bonuses = this.bonuses.filter(function (b) {
 
 				this.scene.remove(b.mesh);
+
 				return false;
 
 			}, this);
@@ -170,12 +170,10 @@
 			var x,
 				y,
 				z,
-				block = { type: null };
-
+				block = { type: null },
+				safety;
 
 			// Choose random good places for them
-			var safety;
-
 			for (var i = 0; i < 50; i++) {
 
 				safety = 0;
@@ -233,9 +231,8 @@
 			var x,
 				y,
 				z,
-				block = { type: null };
-
-			var safety;
+				block = { type: null },
+				safety;
 
 			for (var i = 0; i < 50; i++) {
 
@@ -263,22 +260,6 @@
 				block = { type: null };
 
 			}
-
-		},
-
-		findyCube: function () {
-
-			var c = new THREE.Mesh(
-				utils.texturify(
-					new THREE.CubeGeometry(0.8),
-					[[1, 8], [1, 8], [1, 8], [1, 8], [1, 8], [1, 8]]
-				),
-				data.materials.blocks
-			);
-
-			this.scene.add(c);
-			c.position.set(3, 18, 3);
-			this.findy = c;
 
 		},
 
@@ -316,7 +297,7 @@
 			this.lights.ambientLight = new THREE.AmbientLight(0x999999);
 			this.scene.add(this.lights.ambientLight);
 
-			this.lights.player = new THREE.PointLight(0x84b2f3, 1, 8);//(0xF3AC44, 1, 8);
+			this.lights.player = new THREE.PointLight(0x84b2f3, 1, 8);
 			this.screen.camera.add(this.lights.player); // light follows player
 
 			var light = new THREE.PointLight(0xA4D2F3, 1, 10);
@@ -331,7 +312,6 @@
 			this.lights.cube.position.set(0, -5, 0);
 			this.scene.add(this.lights.cube);
 
-			//this.fog.above = new THREE.Fog(0xE8D998, 10, 80);
 			this.fog = {
 				above: new THREE.Color(0xE8D998),
 				below: new THREE.Color(0x0267BE),
@@ -409,7 +389,8 @@
 
 		updateDayNight: function () {
 
-			var time = (this.elapsed % 160) / 80; // (% 1x day/night cycle) / 0.5x; (in seconds)
+			var time = (this.elapsed % 160) / 80, // (% 1x day/night cycle) / 0.5x; (in seconds)
+				strat = this.stratosphere;
 
 			if (time > 1) {
 
@@ -421,7 +402,6 @@
 			this.lights.ambientLight.color = (new THREE.Color(0x9999cc)).lerp(new THREE.Color(0x2f2f2f), time);
 			this.lights.player.intensity = time > 0.5 ? 1 : 0;
 
-			var strat = this.stratosphere;
 			strat.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
 			strat.uniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);
 			strat.skybox.visible = time < 0.875;
@@ -432,8 +412,11 @@
 		explodeParticles: function (pos, isClown, dir) {
 
 			if (!pos) {
+
 				console.error("no pos?", pos, isClown, dir);
+
 				return;
+
 			}
 
 			var num = isClown ? 18 : 10;
@@ -464,6 +447,7 @@
 				var player = Network.clients[p];
 				// todo: 150 magic number
 				player.blinkTime = 150;
+
 			}
 
 		},
@@ -524,7 +508,8 @@
 			var pid = hitData.hit,
 				byId = hitData.by,
 				hitPlayer = Network.getPlayer(pid),
-				byPlayer = Network.getPlayer(byId);
+				byPlayer = Network.getPlayer(byId),
+				msg;
 
 			if (pid === Network.clientId) {
 
@@ -541,25 +526,30 @@
 
 			if (hitPlayer) {
 
-				var msg;
-
 				if (byId === Network.clientId) {
+
 					msg = "You killed " + hitPlayer.name + ".";
+
 				} else {
+
 					msg = hitPlayer.name + " was hit" +
 						(byPlayer ? " by " + byPlayer.name : "") + ".";
+
 				}
 
 				this.explodeParticles(hitPlayer.model.pos, false);
 				// todo: 150 magic number
 				hitPlayer.blinkTime = 150;
 				this.receiveChat([-2, msg]);
+
 			}
+
 		},
 
 		pingReceived: function (ping) {
 
-			var bouy = this.bouy;
+			var bouy = this.bouy,
+				msg;
 
 			if (ping.state !== this.state) {
 
@@ -582,7 +572,7 @@
 			this.state = ping.state;
 			this.remaining = ping.remaining;
 
-			var msg = this.state;
+			msg = this.state;
 			if (this.state == "ROUND") {
 
 				msg += " " + (this.round + 1) +
@@ -615,8 +605,10 @@
 
 					// no name on connect, only join... so update here
 					if (Network.clients[p.id].name !== p.name) {
+
 						Network.clients[p.id].name = p.name;
 						this.receiveChat([-1, p.name + " joined."]);
+
 					}
 
 				}
@@ -719,12 +711,17 @@
 		},
 
 		getLeaders: function () {
+
 			return this.scores
 				.filter(function (s) {
+
 					return s.score === this.scores[0].score;
+
 				}, this)
 				.map(function (s) {
+
 					return s.name;
+
 				})
 				.join("<br />");
 		},
@@ -740,6 +737,7 @@
 
 
 			if (this.screen.isOculus) {
+
 				// var vector = new THREE.Vector3( 0, 0, 1 );
 				// var camMatrix = ob.getObject().children[0].children[0].matrixWorld;
 				// vector.applyQuaternion(new THREE.Vector3().setFromRotationMatrix(camMatrix));
@@ -747,11 +745,16 @@
 				// //vector.matrix.multiply(camMatrix);
 				// //direction.add(vector);// vector.angleTo( origin );
 				// direction.copy(vector);
+
 			}
 
 			// Eh, to fire from another location need
 			// to translate, then re-do getDirection logic
-			if (!this.screen.isOculus) origin.y += 0.4;
+			if (!this.screen.isOculus) {
+
+				origin.y += 0.4;
+
+			}
 
 			var bullet = Object.create(Bullet).init(origin, direction, data.materials.bullet);
 			this.bullets.push(bullet);
@@ -772,11 +775,7 @@
 			});
 
 			this.sounds.shoot.rewind();
-			var shoot = this.sounds.shoot;
-			//setTimeout(function () {
-				shoot.play();
-			//}, 5);
-
+			this.sounds.shoot.play();
 
 		},
 
@@ -796,8 +795,11 @@
 			core.utils.raycast(origin, ob.getDirection(), 3.5, function (x, y, z, face) {
 
 				if (x === "miss") {
+
 					cursor.hide();
+
 					return false;
+
 				}
 
 				cursor.show();
@@ -810,7 +812,9 @@
 					chunk = chs[chunkX + ":" + chunkZ];
 
 				if (!chunk) {
+
 					return false;
+
 				}
 
 				// Set mesh to original position
@@ -835,12 +839,17 @@
 
 			case "BORN":
 				if (this.stateFirst) {
+
 					this.reset();
+
 				}
+
 				break;
 
 			case "ROUND_READY":
+
 				if (this.stateFirst) {
+
 					// Shoot up in the air
 					model = this.player.model;
 					model.pos.y = 21;
@@ -849,17 +858,23 @@
 					var msg = "";
 
 					if (this.round === 0) {
+
 						msg =
 						"Find the <strong>BOX</strong> to win." +
 						"<img style='float:right;margin-top:-40px' src='res/images/box.png'/><br/>" +
 						"<strong>FOLLOW</strong> the explosions." +
 						"<img style='width:100px;float:right;margin-top:-40px' src='res/images/guys.png' />" +
-						"<br/><br/>First <strong>HALF</strong>"
+						"<br/><br/>First <strong>HALF</strong>";
+
 					} else if (this.round === data.rounds.total - 1) {
+
 						msg = "Final round<br/>";
+
 					}
 					else {
+
 						msg = "Round " + (this.round + 1);
+
 					}
 
 					document.querySelector("#getReadyStage").innerHTML = msg;
@@ -867,16 +882,24 @@
 					roundDuration = this.round === 0 ?
 						data.rounds.duration.firstRoundReady :
 						data.rounds.duration.roundReady;
+
 					utils.showMsg("#getReady", (this.remaining || roundDuration) - 0.1);
+
 				}
 
 				remainingDisplay = Math.round(this.remaining);
 				if (remainingDisplay !== this.lastRemainingDisplay) {
+
 					if (remainingDisplay < 4) {
+
 						this.sounds[remainingDisplay < 1 ? "count2" : "count1"].play();
+
 					}
+
 					this.lastRemainingDisplay = remainingDisplay;
+
 				}
+
 				document.querySelector("#gameStartsIn").innerHTML = remainingDisplay;
 
 				break;
@@ -884,29 +907,44 @@
 			case "ROUND":
 
 				if (this.stateFirst) {
+
 					if (!this.doneInitialReset) {
+
 						this.reset();
+
 					}
+
 					this.setEveryoneSafeBlinky();
 				}
+
 				this.tick_ROUND(dt);
 
 				remainingDisplay = Math.round(this.remaining);
 				if (remainingDisplay !== this.lastRemainingDisplay) {
+
 					if (remainingDisplay < 4) {
+
 						this.sounds[remainingDisplay < 1 ? "count2" : "count1"].play();
+
 					}
 					this.lastRemainingDisplay = remainingDisplay;
+
 				}
 
 				data.textures.uparrow.offset.set(0, 32 - (Date.now() / 200) % 32);
+
 				break;
 
 			case "ROUND_OVER":
+
 				if (this.stateFirst && this.round < data.rounds.total - 1 ) {
+
 					utils.showMsg("#roundOver", data.rounds.duration.roundOver - 0.5);
+
 				}
+
 				break;
+
 			}
 
 			this.stateFirst = false;
@@ -935,6 +973,7 @@
 				sea = data.world.seaLevel - 0.7; // - this.player.model.bb.h;
 
 			if (curY >= sea && lastY < sea) {
+
 				// Went up!
 				this.fog.current = this.fog.above;
 				this.scene.fog.density = 0.0005;
@@ -943,9 +982,11 @@
 				this.player.jumpPower = 23;
 				this.player.model.swimming = false;
 				this.sounds.undersea.stop();
+
 			}
 
 			if (curY < sea && lastY >= sea) {
+
 				// Went downs!
 				this.scene.fog.density = 0.05;
 				this.fog.current = this.fog.below;
@@ -979,24 +1020,36 @@
 
 			var player = Network.getPlayer();
 			if (player) {
+
 				player.tick(dt);
 				player.model.pos.x = model.pos.x;
 				player.model.pos.y = model.pos.y;
 				player.model.pos.z = model.pos.z;
 				player.model.rot = model.rot;
+
 			}
 
 			this.bullets = this.bullets.filter(function (b) {
+
 				var ret = b.tick(dt);
 				if (ret) {
+
 					var block = world.getBlockAtPos(b.model.pos);
+
 					if (block.type !== "air") {
+
 						b.stop();
+
 					}
+
 				} else {
+
 					scene.remove(b.mesh);
+
 				}
+
 				return ret;
+
 			});
 
 			var maxX = data.world.maxX,
@@ -1007,22 +1060,33 @@
 			// Remove any hit targets
 
 			this.targets = this.targets.filter(function (t) {
+
 				var ret = t.tick(dt);
 				if (!ret) {
+
 					scene.remove(t.mesh);
+
 				} else {
+
 					// If not to far out into space...
 					if (Math.abs(t.pos.x - xo) < maxX * 1.3 && Math.abs(t.pos.z - zo) < maxZ * 1.3) {
+
 						var hit = this.bullets.some(function (b) {
+
 							return b.ownShot && !b.stopped && core.utils.dist(b.model.pos, t.pos) < t.model.bb.x;
+
 						});
+
 						if (hit) {
+
 							Network.targetHit(t.id);
 							this.sounds.splode.play();
+
 						}
 					}
 				}
 				return ret;
+
 			}, this);
 
 			this.bonuses = this.bonuses.filter(function (b) {
@@ -1030,17 +1094,22 @@
 				var ret = b.tick(dt);
 
 				if (core.utils.dist(this.player.model.pos, b.model.pos) < 2) {
+
 					ret = false;
 					this.player.powerUp(350);
 					this.sounds.power.play();
 					this.screen.vignetteEffect.value = 0.8;
 					this.explodeParticles(b.model.pos, false);
 					Network.powerballGotByMe(b.id);
+
 				}
 
 				if (!ret) {
+
 					scene.remove(b.mesh);
+
 				}
+
 				return ret;
 
 			}, this);
@@ -1054,22 +1123,27 @@
 				player.tick(dt, camera);
 
 				hit = this.bullets.some(function (b) {
+
 					return !self &&
 						b.ownShot &&
 						!b.stopped &&
 						core.utils.dist(b.model.pos, player.model.pos) < 1;
+
 				});
 
 				if (hit) {
+
 					Network.shotPlayer(player.id);
+
 				}
 			}
 
 			if (this.bouy) {
+
 				this.bouy.tick(dt);
 				var dist = core.utils.dist(this.player.model.pos, this.bouy.model.pos);
-				window.dist = dist;
 				if (dist < 2) {
+
 					Network.gotBouy();
 					this.bouy.mesh.position.set(0, -1, 0);
 					this.bouy.model.pos = {
@@ -1077,29 +1151,41 @@
 						y: -10,
 						z: 0
 					}
+
 				}
+
 			}
 
 			this.particles = this.particles.filter(function (p) {
+
 				var t = p.tick(dt);
 				if (!t) {
+
 					scene.remove(p.mesh);
+
 				}
+
 				return t;
+
 			});
 
 			world.tick(dt);
 
 			if (this.flashTime-- > 0) {
+
 				this.lights.ambientLight.color = new THREE.Color(this.flashTime % 10 < 5 ?
 					(this.flashType === "dead" ? 0xff0000 : 0xffffff) : 0x000000);
+
 			}
 
 			if (this.screen.frame % 50 === 0) {
+
 				this.updateDayNight();
+
 			}
 
 			if (this.doAddBlock) {
+
 				var pos = this.player.model.pos,
 					bb = this.player.model.bb,
 					added = world.addBlockAtCursor(
@@ -1121,15 +1207,22 @@
 						]);
 
 				if (!added) {
+
 					var distToCursor = core.utils.dist(this.player.model.pos, this.cursor.worldPos);
+
 					if (distToCursor > 2) {
+
 						this.fire();
 						this.player.knockback();
+
 					} else {
+
 						// Too close to shoot
 						// TODO: make a sound eh.
+
 					}
 				}
+
 				this.doAddBlock = false;
 			}
 
@@ -1154,7 +1247,9 @@
 				data.materials.target);
 
 			if (this.bouy) {
+
 				target.bouyDir = this.bouy.mesh.position.clone();
+
 			}
 
 			this.targets.push(target);
@@ -1284,7 +1379,6 @@
 			document.querySelector("#roundWinner").innerHTML = html;
 			// TODO: duplicated
 			document.querySelector("#gameOverWin").innerHTML = html;
-
 
 		}
 

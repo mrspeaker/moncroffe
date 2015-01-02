@@ -22,8 +22,8 @@
 				1,
 				(Math.random() * 40) + 15
 			);
-			var material = new THREE.MeshLambertMaterial( {color: 0xeeeeee} );
-			var mesh = new THREE.Mesh( geometry, material );
+			var material = new THREE.MeshLambertMaterial({ color: 0xeeeeee });
+			var mesh = new THREE.Mesh(geometry, material);
 
 			this.mesh = new THREE.Object3D();
 			this.mesh.add(mesh);
