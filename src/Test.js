@@ -4,28 +4,52 @@ var Test = {
 
 		var self = this;
 
-		var chunk = World.createChunk(0, 0);
+		var chunks = [
+			[ 2, 0, -2],
+			[ 1, 0, -2],
+			[ 0, 0, -2],
+			[-1, 0, -2],
+			[-2, 0, -2],
 
-		var geom = this.createChunkGeom(0, 0, -20, chunk);
 
-		scene.add(geom);
+			[ 2, -1, -2],
+			[ 1, -1, -2],
+			[ 0, -1, -2],
+			[-1, -1, -2],
+			[-2, -1, -2],
+		];
 
-		this.lotsMerge(function (g) {
+		console.log(chunks)
 
-		});
+		function renderChunk (chunks) {
+
+			var c = chunks.pop();
+
+			var chunk = World.createChunk(c[0], c[2]);
+			self.createChunkGeom(c[0], c[1], c[2], chunk, function (mesh) {
+
+				scene.add(mesh);
+
+				if (chunks.length) {
+
+					renderChunk(chunks);
+
+				}
+
+			});
+
+		}
+		renderChunk(chunks)
+
 
 	},
 
-	lotsMerge: function () {
-
-	},
-
-	createChunkGeom: function (x, y, z, chunk) {
+	createChunkGeom: function (x, y, z, chunk, cb) {
 
 		var blockSize = 1,
 			useAO = true,
-			w = 10,
-			h = 10
+			w = 16,
+			h = 20,
 			xo = x * w,
 			yo = y * h,
 			zo = z * w,
@@ -101,6 +125,8 @@ var Test = {
 
 		mesh.matrixAutoUpdate = false;
 
+		var todos = [];
+
 		for (i = 0; i < w; i++) {
 
 			for (j = 0; j < h; j++) {
@@ -108,6 +134,14 @@ var Test = {
 				for (k = 0; k < w; k++) {
 
 					block = chunk[i][j][k];
+
+					if (block.type !== "air") {
+
+						todos.push([block, k, j, i]);
+
+					}
+
+					/*
 
 					if (block.type !== "air") {
 
@@ -123,7 +157,7 @@ var Test = {
 						// Merge it
 						totalGeom.merge(mesh.geometry, mesh.matrix);
 
-					}
+					}*/
 
 				}
 
@@ -131,9 +165,46 @@ var Test = {
 
 		}
 
-		var totalMesh = new THREE.Mesh(totalGeom, this.blockMaterial);
+		var blockMaterial = data.materials.target;
 
-		return totalMesh;
+		function mergy (leftTodo) {
+
+			if (!leftTodo.length) {
+
+				cb(new THREE.Mesh(totalGeom, blockMaterial));
+
+				return;
+
+			}
+
+			setTimeout(function () {
+
+				var deets = leftTodo.pop();
+
+				block = deets[0];
+				i = deets[1];
+				j = deets[2];
+				k = deets[3];
+
+				pos = [xo + k, yo + j, zo + i];
+
+				// Make a cube
+				mesh.geometry = getGeometry(block);
+
+				// Move up so bottom of cube is at 0, not -0.5
+				mesh.position.set(pos[0], pos[1] + blockSize / 2, pos[2]);
+				mesh.updateMatrix();
+
+				// Merge it
+				totalGeom.merge(mesh.geometry, mesh.matrix);
+
+				mergy(leftTodo);
+
+			}, 0);
+
+		}
+
+		mergy(todos);
 
 	}
 
