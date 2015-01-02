@@ -21,6 +21,9 @@
 			Network.init();
 			utils.msg(" ");
 
+			window.noise.seed((Math.random() * 20000) | 0);
+			Test.run(this.scene);
+
 			return this;
 		},
 
