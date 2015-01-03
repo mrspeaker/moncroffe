@@ -119,12 +119,12 @@
 				world2.createChunks(0, 1, 8);
 				world2.createChunks(0, 1, -8);
 
-				world2.createChunks(8, 1, 9);
-				world2.createChunks(-8, 1, 9);
-				world2.createChunks(9, 1, 8);
-				world2.createChunks(9, 1, -8);
+				world2.createChunks(8, 2, 9);
+				world2.createChunks(-8, 2, 9);
+				world2.createChunks(9, 2, 8);
+				world2.createChunks(9, 2, -8);
 
-				world2.createChunks(0, 4, 0);
+				world2.createChunks(0, 5, 0);
 
 				var world3 = Object.create(World).init(this, 456);
 				world3.createChunks(0, 3, 6);

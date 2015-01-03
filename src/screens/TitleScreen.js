@@ -21,37 +21,6 @@
 			Network.init();
 			utils.msg(" ");
 
-			var light = new THREE.AmbientLight( Math.random() * 0xffffff );
-			this.scene.add( light );
-			var light = new THREE.DirectionalLight( Math.random() * 0xffffff );
-			light.position.set( Math.random(), Math.random(), Math.random() ).normalize();
-			this.scene.add( light );
-
-			//Test.run(this.scene);
-
-			var voxelData = GreedyTestData["Hill"];
-			var greedyGeom = Test.makeGreedyGeom(GreedyMesh(voxelData.voxels, voxelData.dims));
-
-			var totalMesh = new THREE.Mesh(
-				greedyGeom,
-				new THREE.MeshLambertMaterial({
-					color		: 0x4444aa,
-					side: THREE.DoubleSide,
-					fog: true,
-				})
-			);
-
-			totalMesh.position.set(0, 0, -5);
-
-			var bb = greedyGeom.boundingBox;
-			totalMesh.position.x = -(bb.max.x + bb.min.x) / 2.0;
-			totalMesh.position.y = -(bb.max.y + bb.min.y) / 2.0;
-			totalMesh.position.z = -(bb.max.z + bb.min.z) / 2.0 - 28.0;
-
-			this.totalMesh = totalMesh;
-
-			this.scene.add(totalMesh);
-
 			return this;
 		},
 
@@ -162,10 +131,7 @@
 
 		tick: function () {
 
-			//this.pp.rottt();
-
-			this.totalMesh.rotation.x -= 0.016;
-			this.totalMesh.rotation.z -= 0.016;
+			this.pp.rottt();
 
 			Particles.group.rotation.x -= 0.016;
 			Particles.group.rotation.z += 0.002;
