@@ -203,6 +203,42 @@ var Test = {
 
 		mergy(todos);
 
+	},
+
+	makeGreedyGeom: function (quads) {
+
+		var geometry = new THREE.Geometry();
+
+		geometry.vertices.length = 0;
+		geometry.faces.length = 0;
+
+		console.log("quads:", quads.length);
+
+		for(var i = 0; i < quads.length; ++i) {
+
+			var q = quads[i],
+				vCount = geometry.vertices.length;
+
+			for (var j = 0; j < 4; ++j) {
+
+				geometry.vertices.push(new THREE.Vector3(q[j][0], q[j][1], q[j][2]));
+
+			}
+
+			// Order is different to CubeGeometry
+			geometry.faces.push(new THREE.Face3(vCount, vCount + 1, vCount + 2));
+			geometry.faces.push(new THREE.Face3(vCount, vCount + 2, vCount + 3));
+		}
+
+		geometry.computeFaceNormals();
+		geometry.verticesNeedUpdate = true;
+		geometry.elementsNeedUpdate = true;
+		geometry.normalsNeedUpdate = true;
+		geometry.computeBoundingBox();
+		geometry.computeBoundingSphere();
+
+		return geometry;
+
 	}
 
 };
