@@ -61,6 +61,8 @@ Running:
     walk -> []
          []___
 
+- Chunks assume only one Y chunk (chId = "x:z")
+
 > server
 
 - Can get stuck in "born" state (close puter while game is playing)

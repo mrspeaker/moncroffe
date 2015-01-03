@@ -255,8 +255,11 @@
 		addBlockAtCursor: function (cursor, blockId, playerBlocks) {
 
 			if (!cursor.visible) {
+
 				return false;
+
 			}
+
 			var face = cursor.face,
 				pos = cursor.pos;
 
@@ -692,7 +695,7 @@
 			// start = screen.clock.getElapsedTime()
 
 			scene.remove(this.chunkGeom[chId]);
-			this.chunkGeom[chId] = this.createChunkGeom(x, z, this.chunks[chId]);
+			this.chunkGeom[chId] = this.createChunkGeom(x, 0, z, this.chunks[chId]);
 			scene.add(this.chunkGeom[chId]);
 
 			// end = screen.clock.getElapsedTime();

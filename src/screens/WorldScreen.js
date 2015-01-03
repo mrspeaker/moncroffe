@@ -1227,8 +1227,10 @@
 			}
 
 			if (this.doRemoveBlock) {
+
 				world.removeBlockAtCursor(this.cursor);
 				this.doRemoveBlock = false;
+
 			}
 
 			// Do update ping
