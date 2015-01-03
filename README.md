@@ -46,6 +46,7 @@ Running:
 
 - leaderboard (session)
 - resize with correct aspect
+- choose player tint color
 
 ## Bugz
 

@@ -1,8 +1,12 @@
 var Test = {
 
+	timer: null,
+
 	run: function (scene) {
 
 		var self = this;
+
+		window.noise.seed((Math.random() * 20000) | 0);
 
 		var chunks = [
 			[ 2, 0, -2],
@@ -19,7 +23,6 @@ var Test = {
 			[-2, -1, -2],
 		];
 
-		console.log(chunks)
 
 		function renderChunk (chunks) {
 
@@ -41,6 +44,12 @@ var Test = {
 		}
 		renderChunk(chunks)
 
+
+	},
+
+	stop: function () {
+
+		window.clearTimeout(this.timer);
 
 	},
 
@@ -141,24 +150,6 @@ var Test = {
 
 					}
 
-					/*
-
-					if (block.type !== "air") {
-
-						pos = [xo + k, yo + j, zo + i];
-
-						// Make a cube
-						mesh.geometry = getGeometry(block);
-
-						// Move up so bottom of cube is at 0, not -0.5
-						mesh.position.set(pos[0], pos[1] + blockSize / 2, pos[2]);
-						mesh.updateMatrix();
-
-						// Merge it
-						totalGeom.merge(mesh.geometry, mesh.matrix);
-
-					}*/
-
 				}
 
 			}
@@ -177,7 +168,7 @@ var Test = {
 
 			}
 
-			setTimeout(function () {
+			Test.timer = setTimeout(function () {
 
 				var deets = leftTodo.pop();
 
