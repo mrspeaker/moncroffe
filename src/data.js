@@ -50,7 +50,7 @@ var data = {
 			born: 3,
 			firstRoundReady: 7,
 			roundReady: 4,
-			round: 2 * 60,
+			round: 0.2 * 60,
 			roundOver: 4,
 			gameOver: 10
 		}

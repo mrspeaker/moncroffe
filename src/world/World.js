@@ -21,6 +21,11 @@
 			this.scene = screen.scene;
 
 			this.blockMaterial = data.materials.blocks;
+			this.testMaterial = new THREE.MeshLambertMaterial({
+				color		: 0x4444aa,
+				side: THREE.DoubleSide,
+				ambient: 0x7f7f7f
+			});
 
 			var chW = data.chunk.w;
 			this.xo = chW / 2;
@@ -58,14 +63,14 @@
 				if (!chunks.length) return;
 
 				var ch = chunks[0];
-				self.chunkGeom[ch.id] = self.createChunkGeom(ch.x + xoff, yoff, ch.z + zoff, ch.chunk);
+				self.chunkGeom[ch.id] = self.createGreedyChunkGeom(ch.x + xoff, yoff, ch.z + zoff, ch.chunk);
 				self.scene.add(self.chunkGeom[ch.id]);
 
 				setTimeout(function () {
 
 					createChunksGeom(chunks.slice(1));
 
-				}, 20);
+				}, 1);
 
 			}(chunks));
 
@@ -412,6 +417,42 @@
 			return chunk;
 		},
 
+		createGreedyChunkGeom: function (x, y, z, chunk) {
+
+			var zw = chunk.length,
+				yw = chunk[0].length,
+				xw = chunk[0][0].length,
+				voxels = [],
+				dims = [zw, yw, xw];
+
+			for (var zz = 0; zz < zw; zz++) {
+				for (var yy = 0; yy < yw; yy++) {
+					for (var xx = 0; xx < xw; xx++) {
+						voxels.push(
+							chunk[zz][yy][xx].type !== "air"
+						);
+					}
+				}
+			}
+
+
+			var greedyGeom = Test.makeGreedyGeom(GreedyMesh(voxels, dims));
+
+			var totalMesh = new THREE.Mesh(greedyGeom, this.testMaterial);
+			totalMesh.matrixAutoUpdate = false; // needed? why?
+
+			totalMesh.position.set(
+				x * xw - 0.5,
+				y * yw,
+				z * zw - 0.5
+			);
+			totalMesh.updateMatrix();
+
+
+			return totalMesh;
+
+		},
+
 		// TODO: refactor this with a "createQuad" function,
 		// so it can be fed to a greedy mesher.
 		createChunkGeom: function (x, y, z, chunk) {
@@ -692,14 +733,14 @@
 			}
 
 			var scene = this.scene;
-			// start = screen.clock.getElapsedTime()
+			//start = screen.clock.getElapsedTime()
 
 			scene.remove(this.chunkGeom[chId]);
-			this.chunkGeom[chId] = this.createChunkGeom(x, 0, z, this.chunks[chId]);
+			this.chunkGeom[chId] = this.createGreedyChunkGeom(x, 0, z, this.chunks[chId]);
 			scene.add(this.chunkGeom[chId]);
 
-			// end = screen.clock.getElapsedTime();
-			// utils.msgln("Remesh Chunk[" + chId + "]:", ((end - start) * 1000 | 0) + "ms");
+			//end = screen.clock.getElapsedTime();
+			//utils.msgln("Remesh Chunk[" + chId + "]:", ((end - start) * 1000 | 0) + "ms");
 
 		}
 

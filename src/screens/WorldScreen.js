@@ -110,30 +110,30 @@
 			if (this.world) {
 
 				this.world.removeChunks();
-				this.world3.removeChunks();
+
+			} else {
+
+				var world2 = Object.create(World).init(this, 123);
+				world2.createChunks(8, 1, 0);
+				world2.createChunks(-8, 1, 0);
+				world2.createChunks(0, 1, 8);
+				world2.createChunks(0, 1, -8);
+
+				world2.createChunks(8, 1, 9);
+				world2.createChunks(-8, 1, 9);
+				world2.createChunks(9, 1, 8);
+				world2.createChunks(9, 1, -8);
+
+				world2.createChunks(0, 4, 0);
+
+				var world3 = Object.create(World).init(this, 456);
+				world3.createChunks(0, 3, 6);
 
 			}
 
 			// Readd the new ones...
 			this.world = Object.create(World).init(this, Network.world.seed);
 			this.world.createChunks(0, 0, 0);
-
-			var self = this;
-			setTimeout(function () {
-
-				//self.world2 = Object.create(World).init(self, 123);
-				//self.world2.createChunks(10, 0, 0);
-
-				setTimeout(function () {
-
-					self.world3 = Object.create(World).init(self, 123);
-					self.world3.createChunks(0, 3, 6);
-
-				}, 7000);
-
-
-			}, 4000);
-
 
 			this.addPlants();
 			this.addFish();

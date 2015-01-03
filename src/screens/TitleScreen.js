@@ -15,7 +15,7 @@
 
 			this.screen = screen;
 			this.scene = new THREE.Scene();
-			//this.addMan();
+			this.addMan();
 
 			this.initDOM();
 			Network.init();
@@ -29,14 +29,15 @@
 
 			//Test.run(this.scene);
 
-			var voxelData = GreedyTestData["4x4x4"];
+			var voxelData = GreedyTestData["Hill"];
 			var greedyGeom = Test.makeGreedyGeom(GreedyMesh(voxelData.voxels, voxelData.dims));
 
 			var totalMesh = new THREE.Mesh(
 				greedyGeom,
 				new THREE.MeshLambertMaterial({
 					color		: 0x4444aa,
-					side: THREE.DoubleSide
+					side: THREE.DoubleSide,
+					fog: true,
 				})
 			);
 
@@ -45,7 +46,7 @@
 			var bb = greedyGeom.boundingBox;
 			totalMesh.position.x = -(bb.max.x + bb.min.x) / 2.0;
 			totalMesh.position.y = -(bb.max.y + bb.min.y) / 2.0;
-			totalMesh.position.z = -10;
+			totalMesh.position.z = -(bb.max.z + bb.min.z) / 2.0 - 28.0;
 
 			this.totalMesh = totalMesh;
 

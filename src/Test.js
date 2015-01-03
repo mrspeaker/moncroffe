@@ -15,7 +15,6 @@ var Test = {
 			[-1, 0, -3],
 			[-2, 0, -3],
 
-
 			[ 2, -1, -3],
 			[ 1, -1, -3],
 			[ 0, -1, -3],
@@ -211,8 +210,6 @@ var Test = {
 
 		geometry.vertices.length = 0;
 		geometry.faces.length = 0;
-
-		console.log("quads:", quads.length);
 
 		for(var i = 0; i < quads.length; ++i) {
 
