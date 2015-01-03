@@ -9,18 +9,18 @@ var Test = {
 		window.noise.seed((Math.random() * 20000) | 0);
 
 		var chunks = [
-			[ 2, 0, -2],
-			[ 1, 0, -2],
-			[ 0, 0, -2],
-			[-1, 0, -2],
-			[-2, 0, -2],
+			[ 2, 0, -3],
+			[ 1, 0, -3],
+			[ 0, 0, -3],
+			[-1, 0, -3],
+			[-2, 0, -3],
 
 
-			[ 2, -1, -2],
-			[ 1, -1, -2],
-			[ 0, -1, -2],
-			[-1, -1, -2],
-			[-2, -1, -2],
+			[ 2, -1, -3],
+			[ 1, -1, -3],
+			[ 0, -1, -3],
+			[-1, -1, -3],
+			[-2, -1, -3],
 		];
 
 
@@ -170,24 +170,30 @@ var Test = {
 
 			Test.timer = setTimeout(function () {
 
-				var deets = leftTodo.pop();
+				var atATime = Math.min(15, leftTodo.length);
 
-				block = deets[0];
-				i = deets[1];
-				j = deets[2];
-				k = deets[3];
+				for (var b = 0; b < atATime; b++) {
 
-				pos = [xo + k, yo + j, zo + i];
+					var deets = leftTodo.pop();
 
-				// Make a cube
-				mesh.geometry = getGeometry(block);
+					block = deets[0];
+					i = deets[1];
+					j = deets[2];
+					k = deets[3];
 
-				// Move up so bottom of cube is at 0, not -0.5
-				mesh.position.set(pos[0], pos[1] + blockSize / 2, pos[2]);
-				mesh.updateMatrix();
+					pos = [xo + k, yo + j, zo + i];
 
-				// Merge it
-				totalGeom.merge(mesh.geometry, mesh.matrix);
+					// Make a cube
+					mesh.geometry = getGeometry(block);
+
+					// Move up so bottom of cube is at 0, not -0.5
+					mesh.position.set(pos[0], pos[1] + blockSize / 2, pos[2]);
+					mesh.updateMatrix();
+
+					// Merge it
+					totalGeom.merge(mesh.geometry, mesh.matrix);
+
+				}
 
 				mergy(leftTodo);
 
