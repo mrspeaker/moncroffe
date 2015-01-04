@@ -89,6 +89,8 @@ Running:
 - Some indestructible/special blocks
 - Choose "just you" or "everyone" for add/remove blocks
   - make tunnels just for you, baracades against everyone etc
+- Move between worlds.
+- When shot, lose your blocks: can "lock" them in dangerous-to-get-to tower.
 
 ### Theme
 
@@ -96,6 +98,8 @@ Running:
 - The more you destroy clowns, the more coins the block sucks, greater the blocks value becomes. if people can't find it, it's value will rise?
 
 ## Cube geometry notes
+
+Original (non-greedy version) went like this:
 
 	  6---7
 	 /|  /|
@@ -129,4 +133,6 @@ Triangles: 0-1-3 and 0-3-2
 Quad: 0-1-3-2
 
 Face order: Front, Left, Back, Right, Bottom, Top
+
+Now using greedy meshing: https://github.com/mikolalysenko/mikolalysenko.github.com/tree/master/MinecraftMeshes2/js
 

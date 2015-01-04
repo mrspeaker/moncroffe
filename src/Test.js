@@ -204,38 +204,52 @@ var Test = {
 
 	},
 
-	makeGreedyGeom: function (quads) {
+	makeGreedyGeom: function (result) {
 
-		var geometry = new THREE.Geometry();
-
+		var geometry	= new THREE.Geometry();
 		geometry.vertices.length = 0;
 		geometry.faces.length = 0;
+		for(var i=0; i<result.vertices.length; ++i) {
 
-		for(var i = 0; i < quads.length; ++i) {
+			var q = result.vertices[i];
+			geometry.vertices.push(new THREE.Vector3(q[0], q[1], q[2]));
 
-			var q = quads[i],
-				vCount = geometry.vertices.length;
+		}
+		for(var i=0; i<result.faces.length; ++i) {
 
-			for (var j = 0; j < 4; ++j) {
+			var q = result.faces[i];
+			if(q.length === 5) {
 
-				geometry.vertices.push(new THREE.Vector3(q[j][0], q[j][1], q[j][2]));
+		  		var f = new THREE.Face3(q[0], q[1], q[2]);
+		  		f.color = new THREE.Color(q[4]);
+		  		f.vertexColors = [f.color,f.color,f.color,f.color];
+		  		geometry.faces.push(f);
+
+		  		f = new THREE.Face3(q[0], q[2], q[3]);
+		  		f.color = new THREE.Color(q[4]);
+		  		f.vertexColors = [f.color,f.color,f.color,f.color];
+		  		geometry.faces.push(f);
+
+			} else if(q.length == 4) {
+
+		  		var f = new THREE.Face3(q[0], q[1], q[2]);
+		  		f.color = new THREE.Color(q[3]);
+		  		f.vertexColors = [f.color,f.color,f.color];
+		  		geometry.faces.push(f);
 
 			}
-
-			// Order is different to CubeGeometry
-			geometry.faces.push(new THREE.Face3(vCount, vCount + 1, vCount + 2));
-			geometry.faces.push(new THREE.Face3(vCount, vCount + 2, vCount + 3));
 		}
 
 		geometry.computeFaceNormals();
+
 		geometry.verticesNeedUpdate = true;
 		geometry.elementsNeedUpdate = true;
 		geometry.normalsNeedUpdate = true;
+
 		geometry.computeBoundingBox();
 		geometry.computeBoundingSphere();
 
 		return geometry;
-
 	}
 
 };

@@ -400,7 +400,7 @@
 
 			this.scene.fog.color = this.fog.current.clone().lerp(new THREE.Color(0x000022), time);
 			this.lights.ambientLight.color = (new THREE.Color(0x9999cc)).lerp(new THREE.Color(0x2f2f2f), time);
-			this.lights.player.intensity = time > 0.5 ? 1 : 0;
+			this.lights.player.intensity = 1; // TODO: until we get textures/ao back! time > 0.5 ? 1 : 0;
 
 			strat.uniforms.topColor.value = new THREE.Color(0x88C4EC).lerp(new THREE.Color(0x000000), time);
 			strat.uniforms.bottomColor.value = new THREE.Color(0xE8D998).lerp(new THREE.Color(0x000000), time);

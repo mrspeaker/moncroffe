@@ -22,9 +22,11 @@
 
 			this.blockMaterial = data.materials.blocks;
 			this.testMaterial = new THREE.MeshLambertMaterial({
-				color		: 0x4444aa,
+				/*color		: 0x4444aa,*/
 				side: THREE.DoubleSide,
-				ambient: 0x7f7f7f
+				/*ambient: 0x7f7f7f,*/
+				fog: true,
+				vertexColors: true
 			});
 
 			var chW = data.chunk.w;
@@ -428,16 +430,31 @@
 			for (var zz = 0; zz < zw; zz++) {
 				for (var yy = 0; yy < yw; yy++) {
 					for (var xx = 0; xx < xw; xx++) {
-						voxels.push(
-							chunk[zz][yy][xx].type !== "air"
-						);
+						var col = 0;
+						switch (chunk[zz][yy][xx].type) {
+						case "air":
+							col = 0;
+							break;
+						case "stone":
+							col = "0x828DB2";
+							break;
+						case "grass":
+							col = "0x54773F";
+							break;
+						case "dirt":
+							col = "0x3C404F";
+							break;
+						default:
+							col = "0x6B7291";
+						}
+						voxels.push(col);
 					}
 				}
 			}
 
 
-			var greedyGeom = Test.makeGreedyGeom(GreedyMesh(voxels, dims));
-
+			var meshed = GreedyMesh(voxels, dims);
+			var greedyGeom = Test.makeGreedyGeom(meshed);
 			var totalMesh = new THREE.Mesh(greedyGeom, this.testMaterial);
 			totalMesh.matrixAutoUpdate = false; // needed? why?
 
