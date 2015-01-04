@@ -23,10 +23,11 @@
 			this.blockMaterial = data.materials.blocks;
 			this.testMaterial = new THREE.MeshLambertMaterial({
 				/*color		: 0x4444aa,*/
-				side: THREE.DoubleSide,
-				/*ambient: 0x7f7f7f,*/
+				/*side: THREE.DoubleSide,*/
+				/*ambient: 0xff7f7f,*/
 				fog: true,
-				vertexColors: true
+				vertexColors: THREE.VertexColors,
+				map: data.textures.blocks
 			});
 
 			var chW = data.chunk.w;
