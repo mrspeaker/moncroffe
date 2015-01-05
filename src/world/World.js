@@ -27,7 +27,7 @@
 				/*ambient: 0xff7f7f,*/
 				fog: true,
 				vertexColors: THREE.VertexColors,
-				map: data.textures.blocks
+				/*map: data.textures.blocks*/
 			});
 
 			var chW = data.chunk.w;
@@ -429,9 +429,13 @@
 				dims = [zw, yw, xw];
 
 			for (var zz = 0; zz < zw; zz++) {
+
 				for (var yy = 0; yy < yw; yy++) {
+
 					for (var xx = 0; xx < xw; xx++) {
+
 						var col = 0;
+
 						switch (chunk[zz][yy][xx].type) {
 						case "air":
 							col = 0;
@@ -448,6 +452,7 @@
 						default:
 							col = "0x6B7291";
 						}
+
 						voxels.push(col);
 					}
 				}
