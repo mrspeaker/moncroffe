@@ -366,13 +366,23 @@
 			// Don't dig ground
 			if (!cursor.visible || pos.y === 0) {
 
-				return;
+				return false;
 
 			}
 
-			this.chunks[cursor.chunkId][pos.z][pos.y][pos.x].type = "air";
+			var dug = this.chunks[cursor.chunkId][pos.z][pos.y][pos.x];
 
-			this.reMeshChunkAndSurrounds(cursor.chunkX, cursor.chunkZ, pos.x, pos.z);
+			if (dug.type !== "air") {
+
+				this.chunks[cursor.chunkId][pos.z][pos.y][pos.x].type = "air";
+				this.reMeshChunkAndSurrounds(cursor.chunkX, cursor.chunkZ, pos.x, pos.z);
+
+				return true;
+
+			}
+
+			return false;
+
 		},
 
 		// Todo: move me to Chunk

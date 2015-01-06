@@ -1252,29 +1252,33 @@
 							[pos.x + (bb.x / 2), pos.y + (bb.y / 2) - 0.5, pos.z + (bb.z / 2)]
 						]);
 
-				if (!added) {
-
-					var distToCursor = core.utils.dist(this.player.model.pos, this.cursor.worldPos);
-
-					if (distToCursor > 2) {
-
-						this.fire();
-						this.player.knockback();
-
-					} else {
-
-						// Too close to shoot
-						// TODO: make a sound eh.
-
-					}
-				}
-
 				this.doAddBlock = false;
 			}
 
 			if (this.doRemoveBlock) {
 
-				world.removeBlockAtCursor(this.cursor);
+				var removed = world.removeBlockAtCursor(this.cursor);
+
+				console.log("removy....", removed)
+
+				if (!removed) {
+
+					//console.log()
+
+					//var distToCursor = core.utils.dist(this.player.model.pos, this.cursor.worldPos);
+
+					//if (distToCursor > 2) {
+
+						this.fire();
+						this.player.knockback();
+
+					//} else {
+
+						// Too close to shoot
+						// TODO: make a sound eh.
+
+					//}
+				}
 				this.doRemoveBlock = false;
 
 			}

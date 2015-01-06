@@ -158,9 +158,9 @@
 				}
 
 				if (e.shiftKey || e.button !== 0) {
-					this.screen.doRemoveBlock = true;
-				} else {
 					this.screen.doAddBlock = true;
+				} else {
+					this.screen.doRemoveBlock = true;
 				}
 
 			}.bind(this));
