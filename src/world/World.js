@@ -21,12 +21,13 @@
 			this.scene = screen.scene;
 
 			this.blockMaterial = data.materials.blocks;
-			this.testMaterial = new THREE.MeshLambertMaterial({
+			this.testMaterial = new THREE.MeshPhongMaterial({
 				/*color		: 0x4444aa,*/
 				/*side: THREE.DoubleSide,*/
 				/*ambient: 0xff7f7f,*/
 				fog: true,
 				vertexColors: THREE.VertexColors,
+				shading: THREE.FlatShading
 				/*map: data.textures.blocks*/
 			});
 
@@ -40,6 +41,23 @@
 		},
 
 		tick: function () { },
+
+		posToChunk: function (pos) {
+
+			var chW = data.chunk.w,
+				chunkX = Math.floor(pos.x / chW),
+				chunkZ = Math.floor(pos.z / chW),
+				x = pos.x - chunkX * chW,
+				z = pos.z - chunkZ * chW;
+
+			return {
+				chX: chunkX,
+				chZ: chunkZ,
+				x: x,
+				z: z
+			}
+
+		},
 
 		createChunks: function (xoff, yoff, zoff) {
 

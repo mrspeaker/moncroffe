@@ -77,26 +77,15 @@ var Test = {
 			quad = result.faces[i];
 
 			var col = new THREE.Color(quad[4]);
-			// var normal = new THREE.Vector3(0, 1, 0);
 
 	  		face = new THREE.Face3(quad[0], quad[1], quad[2]);
-	  		//face.color = new THREE.Color(quad[4]);
 	  		face.vertexColors = [col, col, col];
-	  		//geometry.faceVertexUvs[0].push([uvs[0], uvs[2], uvs[3]]);
-	  		//geometry.faceVertexUvs[0].push([
-	  		//	uvs[0], uvs[2], uvs[3]
-	  		//	THREE.Vector2( 0, 0 )
-	  		//]);
 	  		geometry.faces.push(face);
 
 
 	  		face = new THREE.Face3(quad[0], quad[2], quad[3]);
-	  		//face.color = new THREE.Color(quad[4]);
-	  		//col.clone().lerp(new THREE.Color(0x000000), 0.5)
-	  		face.vertexColors = [col, col, col];//.clone().lerp(new THREE.Color(0x000000), 0.5)];
-
-	  		//geometry.faceVertexUvs[0].push([uvs[0], uvs[3], uvs[2]]);
-	  		geometry.faces.push(face);
+	  		face.vertexColors = [col, col, col.clone().lerp(new THREE.Color(0x000000), 0.2)];
+			geometry.faces.push(face);
 
 		}
 

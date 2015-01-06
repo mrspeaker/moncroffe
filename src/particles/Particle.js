@@ -5,9 +5,14 @@
 		count: 0,
 		vy: 0,
 
-		init: function (size, pos, material, isClown, dir) {
+		init: function (pos, material, isClown, dir, deets) {
 
-			this.life = 100 + (Math.random() * 50 | 0);
+			for (var k in deets) {
+				this[k] = deets[k];
+			}
+
+			var size = this.size || 0.3;
+			this.life = this.life || 100 + (Math.random() * 50 | 0);
 
 			this.mesh = new THREE.Mesh(
 				utils.texturify(
@@ -26,6 +31,7 @@
 				pos.z + ((Math.random ()) - 0.5)
 			));
 
+			this.isClown = isClown;
 			this.dir = dir;
 			this.speedOffset = (Math.random() * 10) / 100;
 
@@ -36,7 +42,7 @@
 
 			var m = this.mesh,
 				pow = dt + (dt * this.speedOffset),
-				stageOne = this.count / this.life <= 0.15,
+				stageOne = !this.isClown || this.count / this.life <= 0.15,
 				stageTwo = !stageOne;
 
 			if (stageOne) {

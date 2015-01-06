@@ -4,6 +4,7 @@
 
 	var Bullet = {
 
+		remove: false,
 		stopped: false,
 		ownShot: true,
 
@@ -68,7 +69,7 @@
 				}
 			}
 
-			return this.count < this.hangAroundFor;
+			return !this.remove && this.count < this.hangAroundFor;
 		}
 
 	};

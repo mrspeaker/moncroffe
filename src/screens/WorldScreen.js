@@ -409,29 +409,73 @@
 
 		},
 
-		explodeParticles: function (pos, isClown, dir) {
+		explodeGround: function (pos) {
 
-			if (!pos) {
+			var world = this.world,
+				offs = [];
 
-				console.error("no pos?", pos, isClown, dir);
+			for (var z = -1; z < 1; z++) {
+				for (var y = -1; y < 1; y++) {
+					for (var x = -1; x < 1; x++) {
+						offs.push([x, y, z]);
+					}
+				}
+			}
 
-				return;
+			offs.forEach(function (o) {
+				var y = pos.y + o[1];
+				if (y > 1) {
+					world.setBlockAtPos({x: pos.x + o[0], y: pos.y + o[1], z: pos.z + o[2]} , "air");
+				}
+			});
+
+			this.explodeGroundParticles(pos, false);
+
+			var ch = this.world.posToChunk(pos);
+
+			world.reMeshChunkAndSurrounds(ch.chX, ch.chZ, ch.x, ch.z);
+
+		},
+
+		explodeGroundParticles: function (pos) {
+
+			for (var i = 0; i < 8; i++) {
+
+				var p = Object.create(Particle).init(
+					new THREE.Vector3(
+						pos.x + ((Math.random() * 3) - 1.5),
+						pos.y + ((Math.random() * 3) - 1.5),
+						pos.z + ((Math.random() * 3) - 1.5)),
+					data.materials.blocks,
+					false,
+					{
+						size: 0.8,
+						life: 10
+					});
+
+				this.scene.add(p.mesh);
+				this.particles.push(p);
 
 			}
+		},
+
+		explodeParticles: function (pos, isClown, dir) {
 
 			var num = isClown ? 18 : 10;
 
 			for (var i = 0; i < num; i++) {
 
 				var p = Object.create(Particle).init(
-					0.3,
 					new THREE.Vector3(
 						pos.x + ((Math.random() * 3) - 1.5),
 						pos.y + ((Math.random() * 3) - 1.5),
 						pos.z + ((Math.random() * 3) - 1.5)),
 					isClown ? data.materials.target : data.materials.blocks,
 					isClown,
-					dir);
+					dir,
+					{
+						size: 0.3
+					});
 
 				this.scene.add(p.mesh);
 				this.particles.push(p);
@@ -1039,6 +1083,8 @@
 					if (block.type !== "air") {
 
 						b.stop();
+						b.remove = true;
+						this.explodeGround(b.model.pos);
 
 					}
 
@@ -1050,7 +1096,7 @@
 
 				return ret;
 
-			});
+			}, this);
 
 			var maxX = data.world.maxX,
 				maxZ = data.world.maxZ,
