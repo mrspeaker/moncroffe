@@ -47,6 +47,7 @@ Running:
 - leaderboard (session)
 - resize with correct aspect
 - choose player tint color
+- sync blocks
 
 ## Bugz
 
@@ -87,10 +88,8 @@ Running:
 
 - Create levels that others can play
 - Some indestructible/special blocks
-- Choose "just you" or "everyone" for add/remove blocks
-  - make tunnels just for you, baracades against everyone etc
 - Move between worlds.
-- When shot, lose your blocks: can "lock" them in dangerous-to-get-to tower.
+- When shot, lose your boxes: can "lock" them in dangerous-to-get-to tower.
 
 ### Theme
 
