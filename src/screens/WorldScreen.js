@@ -1259,11 +1259,7 @@
 
 				var removed = world.removeBlockAtCursor(this.cursor);
 
-				console.log("removy....", removed)
-
 				if (!removed) {
-
-					//console.log()
 
 					//var distToCursor = core.utils.dist(this.player.model.pos, this.cursor.worldPos);
 
