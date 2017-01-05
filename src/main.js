@@ -1,492 +1,492 @@
 (function (World, core, utils, THREE, Sound, data, user_settings, TitleScreen, WorldScreen) {
 
-	"use strict";
+  "use strict";
 
-	var main = {
+  var main = {
 
-		isOculus: false,
+    isOculus: false,
 
-		frame: 0,
-		oneFrameEvery: 1, // Slow down time, for testing
-		quality: 1, // Divides the screen width/height and streches the canvas
+    frame: 0,
+    oneFrameEvery: 1, // Slow down time, for testing
+    quality: 1, // Divides the screen width/height and streches the canvas
 
-		camera: null,
-		renderer: null,
-		vrRenderer: null,
-		vrControls: null,
-		clock: null,
+    camera: null,
+    renderer: null,
+    vrRenderer: null,
+    vrControls: null,
+    clock: null,
 
-		textures: {},
-		materials: {},
+    textures: {},
+    materials: {},
 
-		network: null, // TODO: do real network thingo.
-		screen: null,
-		lastScene: null,
+    network: null, // TODO: do real network thingo.
+    screen: null,
+    lastScene: null,
 
-		init: function () {
+    init: function () {
 
-			Sound._setVolume(0);
+      Sound._setVolume(0);
 
-			data.init();
-			data.textures = this.loadTextures();
-			data.materials = this.createMaterials(data.textures);
+      data.init();
+      data.textures = this.loadTextures();
+      data.materials = this.createMaterials(data.textures);
 
-			this.initUserSettings();
-			this.init3d();
+      this.initUserSettings();
+      this.init3d();
 
-			this.reset();
+      this.reset();
 
-			var self = this;
+      var self = this;
 
-			utils.dom.on("#exitGame", "click", function (e) {
+      utils.dom.on("#exitGame", "click", function (e) {
 
-				main.reset();
+        main.reset();
 
-			});
+      });
 
-			this.run();
+      this.run();
 
-		},
+    },
 
-		reset: function () {
+    reset: function () {
 
-			this.unbindPointer && this.unbindPointer();
-			if (Network.socket) {
+      this.unbindPointer && this.unbindPointer();
+      if (Network.socket) {
 
-				Network.leaveTheWorld();
+        Network.leaveTheWorld();
 
-			}
+      }
 
-			if (this.screen && this.screen.scene) {
+      if (this.screen && this.screen.scene) {
 
-				utils.removeAllFromScene(this.screen.scene);
+        utils.removeAllFromScene(this.screen.scene);
 
-			}
+      }
 
-			// LOl... old camera gets borked when switching scenes
-			// hack is just replace it. Figure it out, yo.
-			this.camera = new THREE.PerspectiveCamera(85, 1, 0.01, 500);
-			this.setCameraDimensions();
+      // LOl... old camera gets borked when switching scenes
+      // hack is just replace it. Figure it out, yo.
+      this.camera = new THREE.PerspectiveCamera(85, 1, 0.01, 500);
+      this.setCameraDimensions();
 
-			this.screen = Object.create(TitleScreen).init(this);
+      this.screen = Object.create(TitleScreen).init(this);
 
-		},
+    },
 
-		startGame: function () {
+    startGame: function () {
 
-			utils.removeAllFromScene(this.screen.scene);
+      utils.removeAllFromScene(this.screen.scene);
 
-			this.screen = Object.create(WorldScreen).init(this);
+      this.screen = Object.create(WorldScreen).init(this);
 
-		},
+    },
 
-		initUserSettings: function () {
+    initUserSettings: function () {
 
-			var Settings = window.Settings = core.utils.extend({}, user_settings),
-				stored = window.localStorage.getItem("settings");
+      var Settings = window.Settings = core.utils.extend({}, user_settings),
+        stored = window.localStorage.getItem("settings");
 
-			if (stored !== null && stored !== "undefined") {
+      if (stored !== null && stored !== "undefined") {
 
-				window.Settings = core.utils.extend(window.Settings, JSON.parse(stored));
+        window.Settings = core.utils.extend(window.Settings, JSON.parse(stored));
 
-			} else {
+      } else {
 
-				this.saveSettings();
+        this.saveSettings();
 
-			}
+      }
 
-		},
+    },
 
-		saveSettings: function () {
+    saveSettings: function () {
 
-			window.localStorage.setItem("settings", JSON.stringify(window.Settings));
+      window.localStorage.setItem("settings", JSON.stringify(window.Settings));
 
-		},
+    },
 
-		makeAzerty: function () {
+    makeAzerty: function () {
 
-			var Settings = window.Settings;
+      var Settings = window.Settings;
 
-			Settings.up = Settings.up.filter(function (k) { return k !== 87; }).concat([90]); // remove W, add Z
-			Settings.left = Settings.left.filter(function (k) { return k !== 65; }).concat([81]); // remove A, add Q
-			this.saveSettings();
-			alert("need to refresh...");
-			console.log("game french-ified");
+      Settings.up = Settings.up.filter(function (k) { return k !== 87; }).concat([90]); // remove W, add Z
+      Settings.left = Settings.left.filter(function (k) { return k !== 65; }).concat([81]); // remove A, add Q
+      this.saveSettings();
+      alert("need to refresh...");
+      console.log("game french-ified");
 
-		},
+    },
 
-		makeQwerty: function () {
+    makeQwerty: function () {
 
-			var Settings = window.Settings;
+      var Settings = window.Settings;
 
-			Settings.up = Settings.up.filter(function (k) { return k !== 90; }).concat([87]); // remove Z, add W
-			Settings.left = Settings.left.filter(function (k) { return k !== 81; }).concat([65]); // remove Q, add A
-			this.saveSettings();
-			alert("need to refresh...");
+      Settings.up = Settings.up.filter(function (k) { return k !== 90; }).concat([87]); // remove Z, add W
+      Settings.left = Settings.left.filter(function (k) { return k !== 81; }).concat([65]); // remove Q, add A
+      this.saveSettings();
+      alert("need to refresh...");
 
-		},
+    },
 
-		init3d: function () {
+    init3d: function () {
 
-			this.renderer = new THREE.WebGLRenderer();
-			this.vrRenderer = new THREE.VREffect(this.renderer, function (err) {
+      this.renderer = new THREE.WebGLRenderer();
+      this.vrRenderer = new THREE.VREffect(this.renderer, function (err) {
 
-				if (err) {
+        if (err) {
 
-					console.error("vr error:", err);
+          console.error("vr error:", err);
 
-				}
+        }
 
-			});
+      });
 
-			this.camera = new THREE.PerspectiveCamera(85, 1, 0.01, 500);
-			this.setCameraDimensions();
-			this.vrControls = new THREE.VRControls(this.camera);
+      this.camera = new THREE.PerspectiveCamera(85, 1, 0.01, 500);
+      this.setCameraDimensions();
+      this.vrControls = new THREE.VRControls(this.camera);
 
-			this.clock = new THREE.Clock();
+      this.clock = new THREE.Clock();
 
-			utils.dom.$("#board").appendChild(this.renderer.domElement);
+      utils.dom.$("#board").appendChild(this.renderer.domElement);
 
-		},
+    },
 
-		bindHandlers: function (player) {
+    bindHandlers: function (player) {
 
-			utils.dom.on(document, "mousedown", function(e) {
+      utils.dom.on(document, "mousedown", function(e) {
 
-				if (!player.controls.enabled) {
-					return;
-				}
+        if (!player.controls.enabled) {
+          return;
+        }
 
-				if (e.shiftKey || e.button !== 0) {
-					this.screen.doAddBlock = true;
-				} else {
-					this.screen.doRemoveBlock = true;
-				}
+        if (e.shiftKey || e.button !== 0) {
+          this.screen.doAddBlock = true;
+        } else {
+          this.screen.doRemoveBlock = true;
+        }
 
-			}.bind(this));
+      }.bind(this));
 
-			// Stop right-click menu
-			utils.dom.on(document, "contextmenu", function(e) {
+      // Stop right-click menu
+      utils.dom.on(document, "contextmenu", function(e) {
 
-				e.preventDefault();
-				return false;
+        e.preventDefault();
+        return false;
 
-			});
+      });
 
-			var onMouseWheel = function (e) {
+      var onMouseWheel = function (e) {
 
-				var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-				player.changeTool(-delta);
+        var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+        player.changeTool(-delta);
 
-			};
+      };
 
-			utils.dom.on(document, "mousewheel", onMouseWheel);
-			utils.dom.on(document, "DOMMouseScroll", onMouseWheel);
-			utils.dom.on(document, "keydown", function (e) {
+      utils.dom.on(document, "mousewheel", onMouseWheel);
+      utils.dom.on(document, "DOMMouseScroll", onMouseWheel);
+      utils.dom.on(document, "keydown", function (e) {
 
-				var key = e.keyCode,
-					isKey = function (k) { return k === key; },
-					s,
-					Settings = window.Settings;
+        var key = e.keyCode,
+          isKey = function (k) { return k === key; },
+          s,
+          Settings = window.Settings;
 
-				if (Settings.oculus.some(isKey)) {
-					this.toggleOculus();
-					return;
-				}
+        if (Settings.oculus.some(isKey)) {
+          this.toggleOculus();
+          return;
+        }
 
-				if (e.keyCode === 49 /*1*/) {
-					s = Settings.mouse_sensitivity - 0.05;
-					Settings.mouse_sensitivity = s;
-					player.controls.setSensitivity(s);
-					utils.msg("Sensitivity", s.toFixed(2));
+        if (e.keyCode === 49 /*1*/) {
+          s = Settings.mouse_sensitivity - 0.05;
+          Settings.mouse_sensitivity = s;
+          player.controls.setSensitivity(s);
+          utils.msg("Sensitivity", s.toFixed(2));
 
-					this.saveSettings();
-				}
+          this.saveSettings();
+        }
 
-				if (e.keyCode === 50 /*2*/) {
-					s = Settings.mouse_sensitivity + 0.05;
-					Settings.mouse_sensitivity = s;
-					player.controls.setSensitivity(s);
-					utils.msg("Sensitivity", s.toFixed(2));
+        if (e.keyCode === 50 /*2*/) {
+          s = Settings.mouse_sensitivity + 0.05;
+          Settings.mouse_sensitivity = s;
+          player.controls.setSensitivity(s);
+          utils.msg("Sensitivity", s.toFixed(2));
 
-					this.saveSettings();
-				}
+          this.saveSettings();
+        }
 
-				if (e.keyCode === 51 /*3*/) {
-					Settings.invert_mouse = !Settings.invert_mouse;
-					main.reset();
-				}
+        if (e.keyCode === 51 /*3*/) {
+          Settings.invert_mouse = !Settings.invert_mouse;
+          main.reset();
+        }
 
-				if (Settings.ao.some(isKey)) {
-					var pos = player.model.pos;
-					this.screen.useAO = !this.screen.useAO;
-					this.screen.world.reMeshChunk(pos.x / data.chunk.w | 0, pos.z / data.chunk.w | 0);
-					return;
-				}
+        if (Settings.ao.some(isKey)) {
+          var pos = player.model.pos;
+          this.screen.useAO = !this.screen.useAO;
+          this.screen.world.reMeshChunk(pos.x / data.chunk.w | 0, pos.z / data.chunk.w | 0);
+          return;
+        }
 
-				if (e.keyCode === 53 /*5*/) {
-					if (this.vrControls) {
-						this.vrControls.zeroSensor();
-					}
-				}
+        if (e.keyCode === 53 /*5*/) {
+          if (this.vrControls) {
+            this.vrControls.zeroSensor();
+          }
+        }
 
-				if (e.keyCode === 84) {
-					this.toggleChat();
-					e.preventDefault();
-				}
+        if (e.keyCode === 84) {
+          this.toggleChat();
+          e.preventDefault();
+        }
 
-			}.bind(this));
+      }.bind(this));
 
-			utils.dom.on(window, "resize", this.setCameraDimensions.bind(this));
+      utils.dom.on(window, "resize", this.setCameraDimensions.bind(this));
 
-			// Hide all the HUDS
-			utils.dom.$$("#bg > div").forEach(utils.dom.hide);
+      // Hide all the HUDS
+      utils.dom.$$("#bg > div").forEach(utils.dom.hide);
 
-			var self = this;
-			utils.dom.on("#chatMsg", "keydown", function (e) {
+      var self = this;
+      utils.dom.on("#chatMsg", "keydown", function (e) {
 
-				e.stopPropagation();
+        e.stopPropagation();
 
-				if (e.keyCode === 13) {
+        if (e.keyCode === 13) {
 
-					if (this.value !== "") {
+          if (this.value !== "") {
 
-						window.Network.sendChat(this.value);
+            window.Network.sendChat(this.value);
 
-					}
+          }
 
-					self.toggleChat();
-				}
+          self.toggleChat();
+        }
 
-			});
+      });
 
-			window.onbeforeunload = function() {
+      window.onbeforeunload = function() {
 
-				if (!window.askToLeave) {
+        if (!window.askToLeave) {
 
-					return;
+          return;
 
-				}
+        }
 
-				return 'Sure you wanna leave?';
+        return 'Sure you wanna leave?';
 
-			};
+      };
 
-		},
+    },
 
-		toggleChat: function () {
+    toggleChat: function () {
 
-			var box = document.querySelector("#chatMsg"),
-				visible = box.style.display === "block";
+      var box = document.querySelector("#chatMsg"),
+        visible = box.style.display === "block";
 
-			box.style.display = visible ? "none" : "block";
-			visible = !visible;
+      box.style.display = visible ? "none" : "block";
+      visible = !visible;
 
-			if (visible) {
+      if (visible) {
 
-				box.value = "";
-				box.focus();
+        box.value = "";
+        box.focus();
 
-			}
+      }
 
-		},
+    },
 
-		onPointerLockChange: function (state) {
+    onPointerLockChange: function (state) {
 
-			if (!this.screen.player) {
+      if (!this.screen.player) {
 
-				return;
+        return;
 
-			}
+      }
 
-			this.screen.player.controls.enabled = state;
+      this.screen.player.controls.enabled = state;
 
-		},
+    },
 
-		setCameraDimensions: function () {
+    setCameraDimensions: function () {
 
-			var w = window.innerWidth,
-				h = window.innerHeight,
-				quality = this.quality;
+      var w = window.innerWidth,
+        h = window.innerHeight,
+        quality = this.quality;
 
-			this.camera.aspect = w / h;
-			this.camera.updateProjectionMatrix();
-			this.renderer.setSize(w / quality, h / quality);
-			this.vrRenderer.setSize(w / quality, h / quality);
+      this.camera.aspect = w / h;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(w / quality, h / quality);
+      this.vrRenderer.setSize(w / quality, h / quality);
 
-		},
+    },
 
-		loadTextures: function () {
+    loadTextures: function () {
 
-			var t = {
-				blocks: THREE.ImageUtils.loadTexture("res/images/terrain.png"),
-				night: THREE.ImageUtils.loadTexture("res/images/night.jpg"),
-				uparrow: THREE.ImageUtils.loadTexture("res/images/uparrow.png"),
-				plants: THREE.ImageUtils.loadTexture("res/images/plants.png")
-			};
+      var t = {
+        blocks: THREE.ImageUtils.loadTexture("res/images/terrain.png"),
+        night: THREE.ImageUtils.loadTexture("res/images/night.jpg"),
+        uparrow: THREE.ImageUtils.loadTexture("res/images/uparrow.png"),
+        plants: THREE.ImageUtils.loadTexture("res/images/plants.png")
+      };
 
-			t.blocks.magFilter = THREE.NearestFilter;
-			t.blocks.minFilter = THREE.NearestFilter;
+      t.blocks.magFilter = THREE.NearestFilter;
+      t.blocks.minFilter = THREE.NearestFilter;
 
-			t.night.wrapS = t.night.wrapT = THREE.RepeatWrapping;
-			t.night.repeat.set(3, 3);
+      t.night.wrapS = t.night.wrapT = THREE.RepeatWrapping;
+      t.night.repeat.set(3, 3);
 
-			t.plants.magFilter = THREE.NearestFilter;
-			t.plants.minFilter = THREE.NearestFilter;
+      t.plants.magFilter = THREE.NearestFilter;
+      t.plants.minFilter = THREE.NearestFilter;
 
-			t.uparrow.magFilter = THREE.NearestFilter;
-			t.uparrow.minFilter = THREE.NearestFilter;
-			t.uparrow.wrapS = t.uparrow.wrapT = THREE.RepeatWrapping;
-			t.uparrow.repeat.set(30, 30);
+      t.uparrow.magFilter = THREE.NearestFilter;
+      t.uparrow.minFilter = THREE.NearestFilter;
+      t.uparrow.wrapS = t.uparrow.wrapT = THREE.RepeatWrapping;
+      t.uparrow.repeat.set(30, 30);
 
-			return t;
+      return t;
 
-		},
+    },
 
-		createMaterials: function (textures) {
+    createMaterials: function (textures) {
 
-			var m = {};
+      var m = {};
 
-			m.bullet = new THREE.MeshBasicMaterial({
-				blending	: THREE.AdditiveBlending,
-				color		: 0x4444aa,
-				depthWrite	: false,
-				transparent	: true
-			});
+      m.bullet = new THREE.MeshBasicMaterial({
+        blending  : THREE.AdditiveBlending,
+        color    : 0x4444aa,
+        depthWrite  : false,
+        transparent  : true
+      });
 
-			m.target = new THREE.MeshBasicMaterial({
-				map: textures.blocks,
-				depthWrite	: false,
-				transparent	: true,
-				opacity: 0.75
-			});
+      m.target = new THREE.MeshBasicMaterial({
+        map: textures.blocks,
+        depthWrite  : false,
+        transparent  : true,
+        opacity: 0.75
+      });
 
-			m.target2 = new THREE.MeshBasicMaterial({
-				map: textures.blocks,
-				color : 0xff44aa
-			});
+      m.target2 = new THREE.MeshBasicMaterial({
+        map: textures.blocks,
+        color : 0xff44aa
+      });
 
-			m.blocks = new THREE.MeshLambertMaterial({
-				map: textures.blocks,
-				wrapAround: true,
-				vertexColors: THREE.VertexColors,
-				wireframe: false
-			});
+      m.blocks = new THREE.MeshLambertMaterial({
+        map: textures.blocks,
+        wrapAround: true,
+        vertexColors: THREE.VertexColors,
+        wireframe: false
+      });
 
-			m.arrow = new THREE.MeshLambertMaterial({
-				map: textures.uparrow,
-				transparent: true,
-				opacity: 0.2,
-				side: THREE.DoubleSide
-			});
+      m.arrow = new THREE.MeshLambertMaterial({
+        map: textures.uparrow,
+        transparent: true,
+        opacity: 0.2,
+        side: THREE.DoubleSide
+      });
 
-			return m;
-		},
+      return m;
+    },
 
-		toggleOculus: function () {
+    toggleOculus: function () {
 
-			this.isOculus = !this.isOculus;
-			this.setCameraDimensions();
-			document.querySelector("#cursor").className = this.isOculus ? "oculus" : "";
+      this.isOculus = !this.isOculus;
+      this.setCameraDimensions();
+      document.querySelector("#cursor").className = this.isOculus ? "oculus" : "";
 
-		},
+    },
 
-		run: function () {
+    run: function () {
 
-			if (this.frame++ % this.oneFrameEvery === 0) {
+      if (this.frame++ % this.oneFrameEvery === 0) {
 
-				this.tick();
-				this.render();
+        this.tick();
+        this.render();
 
-			}
+      }
 
-			requestAnimationFrame(function () { main.run(); });
+      requestAnimationFrame(function () { main.run(); });
 
-		},
+    },
 
-		tick: function () {
+    tick: function () {
 
-			var delta = this.clock.getDelta() / this.oneFrameEvery;
+      var delta = this.clock.getDelta() / this.oneFrameEvery;
 
-			delta = Math.min(60 / 1000, delta); // HACK: Limit for physics
+      delta = Math.min(60 / 1000, delta); // HACK: Limit for physics
 
-			if (this.screen.scene && this.screen.name !== this.lastScene) {
+      if (this.screen.scene && this.screen.name !== this.lastScene) {
 
-				this.lastScene = this.screen.name;
+        this.lastScene = this.screen.name;
 
-				// Create a new composer
-				if (this.screen.name === "WorldScreen") {
+        // Create a new composer
+        if (this.screen.name === "WorldScreen") {
 
-					this.composer = new THREE.EffectComposer(this.renderer);
-					this.composer.addPass(new THREE.RenderPass(this.screen.scene, this.camera));
+          this.composer = new THREE.EffectComposer(this.renderer);
+          this.composer.addPass(new THREE.RenderPass(this.screen.scene, this.camera));
 
-					var effect = new THREE.ShaderPass(THREE.VignetteShader);
-					this.vignetteEffect = effect.uniforms["darkness"];
-					this.vignetteEffect.value = 1.2;
-					this.composer.addPass( effect );
+          var effect = new THREE.ShaderPass(THREE.VignetteShader);
+          this.vignetteEffect = effect.uniforms["darkness"];
+          this.vignetteEffect.value = 1.2;
+          this.composer.addPass( effect );
 
-					var effect = new THREE.ShaderPass( THREE.HueSaturationShader );
-					effect.uniforms["saturation"].value = 0.6;
-					this.hue = effect.uniforms["hue"];
+          var effect = new THREE.ShaderPass( THREE.HueSaturationShader );
+          effect.uniforms["saturation"].value = 0.6;
+          this.hue = effect.uniforms["hue"];
 
-					effect.renderToScreen = true;
-					this.composer.addPass( effect );
+          effect.renderToScreen = true;
+          this.composer.addPass( effect );
 
-				} else {
+        } else {
 
-					this.composer = null;
+          this.composer = null;
 
-				}
-			}
+        }
+      }
 
-			if (this.hue) {
+      if (this.hue) {
 
-				//-35 to 10
-				//-1 to 1
-				this.hue.value = (((Math.sin(Date.now() / 20000) + 1) * 0.5) * 40 - 30) / 100;
+        //-35 to 10
+        //-1 to 1
+        this.hue.value = (((Math.sin(Date.now() / 20000) + 1) * 0.5) * 40 - 30) / 100;
 
-			}
+      }
 
-			this.screen.tick(delta);
+      this.screen.tick(delta);
 
-		},
+    },
 
-		render: function () {
+    render: function () {
 
-			if (!this.isOculus) {
+      if (!this.isOculus) {
 
-				if (this.composer) {
+        if (this.composer) {
 
-					this.composer.render();
+          this.composer.render();
 
-				} else {
+        } else {
 
-					this.renderer.render(this.screen.scene, this.camera);
+          this.renderer.render(this.screen.scene, this.camera);
 
-				}
+        }
 
-			} else {
+      } else {
 
-				this.vrControls.update();
-				this.vrRenderer.render(
-					this.screen.scene,
-					this.camera);
+        this.vrControls.update();
+        this.vrRenderer.render(
+          this.screen.scene,
+          this.camera);
 
-			}
+      }
 
-		}
-	};
+    }
+  };
 
-	window.main = main;
+  window.main = main;
 
 }(
-	window.World,
-	window.core,
-	window.utils,
-	window.THREE,
-	window.Sound,
-	window.data,
-	window.user_settings,
-	window.TitleScreen,
-	window.WorldScreen
+  window.World,
+  window.core,
+  window.utils,
+  window.THREE,
+  window.Sound,
+  window.data,
+  window.user_settings,
+  window.TitleScreen,
+  window.WorldScreen
 ));

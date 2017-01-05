@@ -84,7 +84,9 @@ var Test = {
 
 
 	  		face = new THREE.Face3(quad[0], quad[2], quad[3]);
-	  		face.vertexColors = [col, col, col.clone().lerp(new THREE.Color(0x000000), 0.2)];
+				// TODO: Ambient occlusion back!
+				face.vertexColors = [col, col, col];
+
 			geometry.faces.push(face);
 
 		}
