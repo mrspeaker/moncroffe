@@ -5,7 +5,6 @@
 Find the mysterious boxes... the evil clowns know where they are. Shoot them to find the way.
 Now with Oculus Rift support!
 
-
 	Keys/WSAD: move
 	Left click: Shoot / Add block
 	Right click (or shift left): Remove block
@@ -44,6 +43,10 @@ Running:
 
 ## Next todos
 
+- revert greedy meshing.
+	* go back to old commit
+	* use BufferGeometry and create chunk manually, not World's mesh.merge - that's the slow part.
+
 - leaderboard (session)
 - resize with correct aspect
 - choose player tint color
@@ -81,7 +84,6 @@ Running:
 
 ## Needs
 
-- Greedy meshing. Currently had basic face-culling only.
 - Leaderboard (global)
 
 ## Would be cool/maybes
@@ -134,4 +136,3 @@ Quad: 0-1-3-2
 Face order: Front, Left, Back, Right, Bottom, Top
 
 Now using greedy meshing: https://github.com/mikolalysenko/mikolalysenko.github.com/tree/master/MinecraftMeshes2/js
-
