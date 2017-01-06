@@ -7,7 +7,7 @@
     blocks: ["air", "grass", "stone", "dirt", "gold"],
 
     seed: utils.urlParams.seed || (Math.random() * 99999999 | 0),
-    radius: 1,
+    radius: 2,
 
     elapsed: 0,
 
