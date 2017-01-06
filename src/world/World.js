@@ -25,7 +25,7 @@
         /*color    : 0x4444aa,*/
         /*side: THREE.DoubleSide,*/
         /*ambient: 0xff7f7f,*/
-        wireframe:true,
+        wireframe:false,
         fog: true,
         vertexColors: THREE.VertexColors,
         shading: THREE.FlatShading
